@@ -7,5 +7,5 @@ dart run remove_from_coverage -f coverage/lcov.info \
   -r '\.g\.dart$' \
   -r '\.mocks\.dart$' \
   -r '\.freezed\.dart$' \
-  -r 'lib/common/generated/' \
-  -r 'lib/common/constants/'
+  -r 'lib/common/generated/.*' \
+  -r 'lib/common/constants/.*'

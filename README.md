@@ -42,6 +42,9 @@ Our goal is to support standard features across most launchers while enabling pl
 
 ## 🛠️ Build from Source
 
+<details>
+<summary>Tap to show/hide build instructions</summary>
+
 Ensure [Flutter](https://docs.flutter.dev/get-started/install) is installed, and then run:
 
 ```bash
@@ -52,6 +55,8 @@ flutter build <platform>
 ```
 
 Replace `<platform>` with `linux`, `macos` or `windows`.
+
+</details>
 
 ## 🔄 Forks & Redistribution
 
@@ -67,6 +72,10 @@ This launcher depends on APIs and services that requires to accept the following
 - [Microsoft Identity Platform Terms of Use](https://docs.microsoft.com/en-us/legal/microsoft-identity-platform/terms-of-use)
 - [Minecraft EULA and Usage Guidelines](https://www.minecraft.net/en-us/usage-guidelines)
 - [CurseForge 3rd Party API Terms and Conditions](https://support.curseforge.com/en/support/solutions/articles/9000207405-curse-forge-3rd-party-api-terms-and-conditions)
+
+## 🌱 Contributing
+
+For contribution guidelines, please refer to the [Contributing Guide](./CONTRIBUTING.md).
 
 ## ⚠️ Disclaimer
 
