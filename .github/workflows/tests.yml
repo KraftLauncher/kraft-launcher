@@ -9,6 +9,7 @@ on:
       - test/**
       - integration_test/**
       - pubspec.yaml
+      - pubspec.lock
   pull_request:
     paths:
       - .github/workflows/tests.yml
@@ -16,6 +17,7 @@ on:
       - test/**
       - integration_test/**
       - pubspec.yaml
+      - pubspec.lock
 
 jobs:
   tests:

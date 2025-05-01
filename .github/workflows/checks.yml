@@ -9,6 +9,7 @@ on:
       - test/**
       - integration_test/**
       - pubspec.yaml
+      - pubspec.lock
       - analysis_options.yaml
   pull_request:
     paths:
@@ -17,6 +18,7 @@ on:
       - test/**
       - integration_test/**
       - pubspec.yaml
+      - pubspec.lock
       - analysis_options.yaml
 
 jobs:

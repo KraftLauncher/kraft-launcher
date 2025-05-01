@@ -8,7 +8,6 @@ on:
       - lib/**
       - test/**
       - integration_test/**
-      - pubspec.yaml
       - scripts/clean_coverage.sh
 
 jobs:
