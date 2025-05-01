@@ -1,5 +1,12 @@
 # Kraft Launcher
 
+<p align="center">
+<a href="https://github.com/EchoEllet/kraft-launcher"><img src="https://img.shields.io/github/stars/EchoEllet/kraft-launcher" alt="Star on Github"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-purple.svg" alt="License: MIT"></a>
+<a href="https://github.com/EchoEllet/kraft-launcher/actions"><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/EchoEllet/48575fd9d18dc33989ab0eb602af3b53/raw/kraft-launcher-coverage-badge.json" alt="Code Coverage Badge"></a>
+<a href="https://github.com/EchoEllet/kraft-launcher/actions/workflows/tests.yml"><img src="https://github.com/EchoEllet/kraft-launcher/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+</p>
+
 An unofficial, open-source launcher for [Minecraft Java](https://www.minecraft.net/en-us/store/minecraft-java-bedrock-edition-pc) that provides profile isolation, seamless profile sharing with other players, and installing mods with ease.
 
 > [!NOTE]
