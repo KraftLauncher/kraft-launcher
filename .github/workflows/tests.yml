@@ -7,12 +7,14 @@ on:
       - .github/workflows/tests.yml
       - lib/**
       - test/**
+      - integration_test/**
       - pubspec.yaml
   pull_request:
     paths:
       - .github/workflows/tests.yml
       - lib/**
       - test/**
+      - integration_test/**
       - pubspec.yaml
 
 jobs:

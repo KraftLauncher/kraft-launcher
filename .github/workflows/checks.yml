@@ -7,6 +7,7 @@ on:
       - .github/workflows/checks.yml
       - lib/**
       - test/**
+      - integration_test/**
       - pubspec.yaml
       - analysis_options.yaml
   pull_request:
@@ -14,6 +15,7 @@ on:
       - .github/workflows/checks.yml
       - lib/**
       - test/**
+      - integration_test/**
       - pubspec.yaml
       - analysis_options.yaml
 

@@ -3,6 +3,12 @@ name: Create coverage badge
 on:
   push:
     branches: [main]
+    paths:
+      - .github/workflows/coverage-badge.yml
+      - lib/**
+      - test/**
+      - integration_test/**
+      - pubspec.yaml
 
 jobs:
   build:
@@ -20,7 +26,7 @@ jobs:
       - name: Install package dependencies
         run: flutter pub get
 
-      - name: Run tests and collect coverage information
+      - name: Run unit tests and collect coverage information
         run: flutter test --coverage
 
       - name: Clean Coverage
