@@ -50,3 +50,10 @@ jobs:
 
       - name: Preview Potential Dart Fixes
         run: dart fix --dry-run
+
+      # This action will validate absolute HTTP links, but will not check 
+      # relative anchor links within the same Markdown file (e.g., [Install](#install)).
+      - name: Verify Markdown Links
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          config-file: .github/workflows/markdown_link_check_config.json
