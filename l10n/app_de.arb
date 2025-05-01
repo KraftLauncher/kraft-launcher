@@ -1,0 +1,169 @@
+{
+  "@@locale": "de",
+  "settings": "Einstellungen",
+  "home": "Startseite",
+  "profiles": "Profile",
+  "accounts": "Konten",
+  "about": "Über",
+  "switchAccount": "Konto wechseln",
+  "play": "Spielen",
+  "addAccount": "Konto hinzufügen",
+  "cancel": "Abbrechen",
+  "microsoft": "Microsoft",
+  "offline": "Offline",
+  "signInWithMicrosoft": "Mit Microsoft anmelden",
+  "addMicrosoftAccount": "Microsoft-Konto hinzufügen",
+  "useDeviceCodeMethod": "Alternativ die Methode mit Gerätecode verwenden",
+  "@useDeviceCodeMethod": {
+    "description": "Vorschlag, dass der Benutzer alternativ die Gerätecode-Methode für die Microsoft-Anmeldung verwenden kann"
+  },
+  "copyCode": "Code kopieren",
+  "copiedToClipboard": "In die Zwischenablage kopiert",
+  "deviceCodeStepVisit": "1. Besuche",
+  "deviceCodeStepEnter": "2. Gib den folgenden Code ein:",
+  "deviceCodeQrInstruction": "Scanne, um den Link auf einem anderen Gerät zu öffnen.\nDu musst auch den obigen Code eingeben.",
+  "loggingInWithMicrosoftAccount": "Anmeldung mit Microsoft-Konto",
+  "authProgressWaitingForUserLogin": "Warte auf Benutzerauthentifizierung...",
+  "authProgressExchangingAuthCode": "Austausch des Autorisierungscodes...",
+  "authProgressRequestingXboxLiveToken": "Zugriff auf Xbox Live anfordern...",
+  "authProgressRequestingXstsToken": "Xbox Live-Sitzung autorisieren...",
+  "authProgressLoggingIntoMinecraft": "Anmeldung bei Minecraft-Diensten...",
+  "authProgressFetchingMinecraftProfile": "Minecraft-Profil abrufen...",
+  "loginSuccessAccountAddedMessage": "Hallo, {username}! Du hast dich erfolgreich bei Minecraft angemeldet.",
+  "@loginSuccessAccountAddedMessage": {
+    "description": "Nachricht, die nach erfolgreicher Anmeldung bei einem Microsoft-Konto angezeigt wird.",
+    "placeholders": {
+      "username": {
+        "type": "String",
+        "example": "Steve",
+        "description": "Minecraft-Benutzername des Spielers, der sich gerade angemeldet hat."
+      }
+    }
+  },
+  "loginSuccessAccountUpdatedMessage": "Willkommen zurück, {username}! Deine Kontodaten wurden aktualisiert.",
+  "@loginSuccessAccountUpdatedMessage": {
+    "description": "Nachricht, die angezeigt wird, wenn sich ein Benutzer mit einem zuvor hinzugefügten Microsoft-Konto anmeldet und die Kontoinformationen aktualisiert wurden.",
+    "placeholders": {
+      "username": {
+        "type": "String",
+        "example": "Steve",
+        "description": "Minecraft-Benutzername des Spielers, dessen Konto gerade aktualisiert wurde."
+      }
+    }
+  },
+  "username": "Benutzername",
+  "accountType": "Kontotyp",
+  "removeAccount": "Konto entfernen",
+  "unexpectedError": "Unerwarteter Fehler: {message}.",
+  "@unexpectedError": {
+    "description": "Allgemeine Nachricht zur Anzeige unerwarteter Fehler während eines Vorgangs.",
+    "placeholders": {
+      "message": {
+        "type": "String",
+        "example": "Verbindungstimeout",
+        "description": "Kurzbeschreibung des unerwarteten Fehlers."
+      }
+    }
+  },
+  "missingAuthCodeError": "Es wurde kein Autorisierungscode angegeben. Die Anmeldung muss neu gestartet werden.",
+  "@missingAuthCodeError": {
+    "description": "Wird angezeigt, wenn eine Anmeldung ohne Parameter 'code' erfolgt, was bedeutet, dass der Microsoft-Autorisierungscode fehlt oder der Benutzer die Seite manuell geöffnet hat."
+  },
+  "expiredAuthCodeError": "Der Autorisierungscode ist abgelaufen. Bitte starte den Anmeldevorgang neu.",
+  "@expiredAuthCodeError": {
+    "description": "Wird angezeigt, wenn der Microsoft-Autorisierungscode abgelaufen oder bereits verwendet wurde."
+  },
+  "expiredMicrosoftAccessTokenError": "Das OAuth-Zugriffstoken für Microsoft ist abgelaufen. Bitte melde dich erneut an.",
+  "@expiredMicrosoftAccessTokenError": {
+    "description": "Wird angezeigt, wenn das Microsoft-Zugriffstoken für das Abrufen des Xbox-Tokens abgelaufen ist."
+  },
+  "unauthorizedMinecraftAccessError": "Nicht autorisierter Zugriff auf Minecraft. Autorisierung ist abgelaufen oder ungültig.",
+  "@unauthorizedMinecraftAccessError": {
+    "description": "Wird angezeigt, wenn die Minecraft-API einen 401-Fehler zurückgibt, normalerweise weil das Zugriffstoken abgelaufen oder ungültig ist."
+  },
+  "createOfflineAccount": "Offline-Konto erstellen",
+  "updateOfflineAccount": "Offline-Konto aktualisieren",
+  "offlineMinecraftAccountCreationNotice": "Gib einen gewünschten Minecraft-Benutzernamen ein. Offline-Konten werden lokal gespeichert und können keine Online-Server oder Realms nutzen.",
+  "create": "Erstellen",
+  "minecraftUsernameHint": "Beispiel: Steve",
+  "@minecraftUsernameHint": {
+    "description": "Beispiel für einen Minecraft-Benutzernamen, angezeigt als Eingabehinweis."
+  },
+  "usernameEmptyError": "Benutzername darf nicht leer sein",
+  "usernameTooShortError": "Benutzername muss mindestens 3 Zeichen lang sein",
+  "usernameTooLongError": "Benutzername darf maximal 16 Zeichen lang sein",
+  "usernameInvalidCharactersError": "Benutzername darf nur Buchstaben, Zahlen und Unterstriche (_) enthalten.",
+  "usernameContainsWhitespacesError": "Benutzername darf keine Leerzeichen enthalten.",
+  "update": "Aktualisieren",
+  "minecraftId": "Minecraft-ID",
+  "removeAccountConfirmation": "Konto wirklich entfernen?",
+  "removeAccountConfirmationNotice": "Dieses Konto wird aus dem Launcher entfernt.\nDu musst es erneut hinzufügen, um damit zu spielen.",
+  "remove": "Entfernen",
+  "chooseYourPreferredLanguage": "Wähle deine bevorzugte Sprache",
+  "appLanguage": "App-Sprache",
+  "system": "System",
+  "themeMode": "Designmodus",
+  "selectDarkLightOrSystemTheme": "Wähle zwischen dunklem, hellem oder systemeigenem Design",
+  "classicMaterialDesign": "Klassisches Material Design",
+  "useClassicMaterialDesignTheme": "Klassisches Material Design verwenden",
+  "dynamicColor": "Dynamische Farben",
+  "automaticallyAdaptToSystemColors": "Automatisch an Systemfarben anpassen",
+  "general": "Allgemein",
+  "java": "Java",
+  "launcher": "Launcher",
+  "advanced": "Erweitert",
+  "appearance": "Darstellung",
+  "dark": "Dunkel",
+  "light": "Hell",
+  "customAccentColor": "Benutzerdefinierte Akzentfarbe",
+  "customizeAccentColor": "Passen Sie die Akzentfarbe des App-Themes an.",
+  "pickAColor": "Farbe auswählen",
+  "close": "Schließen",
+  "authProgressExchangingDeviceCode": "Gerätecode wird ausgetauscht...",
+  "authProgressRequestingDeviceCode": "Gerätecode wird angefordert...",
+  "or": "ODER",
+  "loginCodeExpired": "Anmeldecode abgelaufen",
+  "tryAgain": "Erneut versuchen",
+  "uiPreferences": "UI-Einstellungen",
+  "defaultTab": "Standard-Tab",
+  "initialTabSelectionDescription": "Wählen Sie den Tab, der beim Start der App zuerst angezeigt wird",
+  "search": "Suche",
+  "refreshAccount": "Konto aktualisieren",
+  "sessionExpiredOrAccessRevoked": "Die Sitzung des Kontos ist abgelaufen oder der Zugriff wurde widerrufen. Bitte melde dich erneut an, um fortzufahren.",
+  "accountRefreshedMessage": "Das Konto für {username} wurde erfolgreich aktualisiert.",
+  "@accountRefreshedMessage": {
+    "description": "Nachricht, die angezeigt wird, wenn der Benutzer ein Konto aktualisiert. Beinhaltet den Benutzernamen.",
+    "placeholders": {
+      "username": {
+        "type": "String",
+        "example": "alex123",
+        "description": "Der Benutzername des aktualisierten Kontos."
+      }
+    }
+  },
+  "revokeAccess": "Zugriff widerrufen",
+  "microsoftRequestLimitError": "Anforderungsgrenze erreicht beim Kommunizieren mit den Microsoft-Authentifizierungsservern. Bitte versuche es in Kürze erneut.",
+  "authProgressRefreshingMicrosoftTokens": "Microsoft-Tokens werden aktualisiert...",
+  "authProgressCheckingMinecraftJavaOwnership": "Überprüfe Minecraft Java-Besitz...",
+  "@authProgressCheckingMinecraftJavaOwnership": {
+    "description": "Nachricht, die angezeigt wird, wenn das System den Besitzstatus von Minecraft Java des Benutzers überprüft."
+  },
+  "waitForOngoingTask": "Bitte warte, während die aktuelle Aufgabe abgeschlossen wird.",
+  "accountsEmptyTitle": "Minecraft-Konten verwalten",
+  "accountsEmptySubtitle": "Füge Minecraft-Konten hinzu, um nahtlos zu wechseln. Konten werden sicher auf diesem Gerät gespeichert.",
+  "authCodeRedirectPageLoginSuccessTitle": "Erfolgreiche Anmeldung",
+  "authCodeRedirectPageLoginSuccessMessage": "Du hast dich erfolgreich bei {launcherName} mit deinem Microsoft-Konto angemeldet. Du kannst dieses Fenster nun schließen.",
+  "@authCodeRedirectPageLoginSuccessMessage": {
+    "description": "Nachricht, die auf der HTML-Seite oder der Weiterleitungsseite nach erfolgreicher Anmeldung über Microsoft-Konto mit dem Authentifizierungscode angezeigt wird.",
+    "placeholders": {
+      "launcherName": {
+        "type": "String",
+        "example": "Kraft Launcher",
+        "description": "Der Name des Launchers, bei dem der Benutzer sich angemeldet hat."
+      }
+    }
+  },
+  "errorOccurred": "Ein Fehler ist aufgetreten",
+  "reportBug": "Fehler melden",
+  "unknownErrorWhileLoadingAccounts": "Ein unbekannter Fehler ist beim Laden der Konten aufgetreten. Bitte versuchen Sie es später erneut."
+}

@@ -1,0 +1,169 @@
+{
+  "@@locale": "ar",
+  "settings": "الإعدادات",
+  "home": "الرئيسية",
+  "profiles": "الملفات الشخصية",
+  "accounts": "الحسابات",
+  "about": "حول",
+  "switchAccount": "تبديل الحساب",
+  "play": "تشغيل",
+  "addAccount": "إضافة حساب",
+  "cancel": "إلغاء",
+  "microsoft": "مايكروسوفت",
+  "offline": "بدون اتصال",
+  "signInWithMicrosoft": "تسجيل الدخول باستخدام مايكروسوفت",
+  "addMicrosoftAccount": "إضافة حساب مايكروسوفت",
+  "useDeviceCodeMethod": "بدلاً من ذلك، استخدم طريقة رمز الجهاز",
+  "@useDeviceCodeMethod": {
+    "description": "اقتراح بأن المستخدم يمكنه بدلاً من ذلك استخدام طريقة رمز الجهاز لتسجيل الدخول بمايكروسوفت"
+  },
+  "copyCode": "نسخ الرمز",
+  "copiedToClipboard": "تم النسخ إلى الحافظة",
+  "deviceCodeStepVisit": "1. قم بزيارة",
+  "deviceCodeStepEnter": "2. أدخل الرمز أدناه:",
+  "deviceCodeQrInstruction": "امسح لفتح الرابط على جهاز آخر.\nستحتاج إلى إدخال الرمز أعلاه أيضاً.",
+  "loggingInWithMicrosoftAccount": "جاري تسجيل الدخول بحساب مايكروسوفت",
+  "authProgressWaitingForUserLogin": "بانتظار مصادقة المستخدم...",
+  "authProgressExchangingAuthCode": "جارٍ استبدال رمز التفويض...",
+  "authProgressRequestingXboxLiveToken": "طلب الوصول إلى Xbox Live...",
+  "authProgressRequestingXstsToken": "تفويض جلسة Xbox Live...",
+  "authProgressLoggingIntoMinecraft": "تسجيل الدخول إلى خدمات Minecraft...",
+  "authProgressFetchingMinecraftProfile": "جلب ملف Minecraft الشخصي...",
+  "loginSuccessAccountAddedMessage": "مرحباً، {username}! لقد سجلت الدخول إلى Minecraft بنجاح.",
+  "@loginSuccessAccountAddedMessage": {
+    "description": "رسالة تظهر بعد تسجيل الدخول الناجح إلى حساب Minecraft باستخدام مايكروسوفت.",
+    "placeholders": {
+      "username": {
+        "type": "String",
+        "example": "Steve",
+        "description": "اسم مستخدم Minecraft للاعب الذي سجل الدخول للتو."
+      }
+    }
+  },
+  "loginSuccessAccountUpdatedMessage": "مرحباً مجدداً، {username}! تم تحديث تفاصيل حسابك.",
+  "@loginSuccessAccountUpdatedMessage": {
+    "description": "رسالة تظهر عند تسجيل الدخول باستخدام حساب مايكروسوفت تمت إضافته سابقًا، وتشير إلى تحديث معلومات الحساب.",
+    "placeholders": {
+      "username": {
+        "type": "String",
+        "example": "Steve",
+        "description": "اسم مستخدم Minecraft للاعب الذي تم تحديث حسابه للتو."
+      }
+    }
+  },
+  "username": "اسم المستخدم",
+  "accountType": "نوع الحساب",
+  "removeAccount": "إزالة الحساب",
+  "unexpectedError": "خطأ غير متوقع: {message}.",
+  "@unexpectedError": {
+    "description": "رسالة احتياطية لعرض الأخطاء غير المتوقعة أثناء أي عملية.",
+    "placeholders": {
+      "message": {
+        "type": "String",
+        "example": "انتهت مهلة الاتصال",
+        "description": "وصف مختصر للخطأ غير المتوقع الذي تم مواجهته."
+      }
+    }
+  },
+  "missingAuthCodeError": "لم يتم توفير رمز التفويض. يجب إعادة بدء تسجيل الدخول.",
+  "@missingAuthCodeError": {
+    "description": "تظهر عندما تتم إعادة التوجيه أثناء تسجيل الدخول دون وجود معامل 'code'، مما يعني أن رمز تفويض مايكروسوفت مفقود أو تم الوصول إليه يدويًا."
+  },
+  "expiredAuthCodeError": "انتهت صلاحية رمز التفويض. يرجى إعادة بدء عملية تسجيل الدخول.",
+  "@expiredAuthCodeError": {
+    "description": "تظهر عندما يكون رمز التفويض من مايكروسوفت غير صالح بسبب انتهاء المهلة أو إعادة استخدامه."
+  },
+  "expiredMicrosoftAccessTokenError": "انتهت صلاحية رمز وصول OAuth لمايكروسوفت. يجب تسجيل الدخول من جديد.",
+  "@expiredMicrosoftAccessTokenError": {
+    "description": "تظهر عندما ينتهي رمز الوصول من مايكروسوفت المستخدم لجلب رمز Xbox."
+  },
+  "unauthorizedMinecraftAccessError": "وصول غير مصرح به إلى Minecraft. انتهت صلاحية التفويض أو أنه غير صالح.",
+  "@unauthorizedMinecraftAccessError": {
+    "description": "تظهر عندما تُرجع Minecraft API استجابة تفيد بعدم وجود إذن (HTTP 401)، عادةً بسبب انتهاء صلاحية رمز الوصول إلى Minecraft أو كونه غير صالح."
+  },
+  "createOfflineAccount": "إنشاء حساب بدون اتصال",
+  "updateOfflineAccount": "تحديث حساب بدون اتصال",
+  "offlineMinecraftAccountCreationNotice": "أدخل اسم مستخدم Minecraft الذي ترغب به. يتم تخزين الحسابات غير المتصلة محليًا ولا يمكنها الوصول إلى الخوادم أو العوالم عبر الإنترنت.",
+  "create": "إنشاء",
+  "minecraftUsernameHint": "مثال: Steve",
+  "@minecraftUsernameHint": {
+    "description": "مثال لاسم مستخدم Minecraft، يظهر كتلميح."
+  },
+  "usernameEmptyError": "لا يمكن أن يكون اسم المستخدم فارغًا",
+  "usernameTooShortError": "يجب أن يحتوي اسم المستخدم على 3 أحرف على الأقل",
+  "usernameTooLongError": "يجب ألا يتجاوز اسم المستخدم 16 حرفًا",
+  "usernameInvalidCharactersError": "يمكن أن يحتوي اسم المستخدم على أحرف وأرقام وعلامات underscore (_) فقط.",
+  "usernameContainsWhitespacesError": "لا يمكن أن يحتوي اسم المستخدم على مسافات.",
+  "update": "تحديث",
+  "minecraftId": "معرّف Minecraft",
+  "removeAccountConfirmation": "هل تريد إزالة الحساب؟",
+  "removeAccountConfirmationNotice": "سيتم إزالة هذا الحساب من المشغل.\nستحتاج إلى إضافته مرة أخرى لاستخدامه في اللعب.",
+  "remove": "إزالة",
+  "chooseYourPreferredLanguage": "اختر لغتك المفضلة",
+  "appLanguage": "لغة التطبيق",
+  "system": "النظام",
+  "themeMode": "وضع المظهر",
+  "selectDarkLightOrSystemTheme": "اختر بين الوضع الداكن أو الفاتح أو نظام الجهاز",
+  "classicMaterialDesign": "تصميم Material الكلاسيكي",
+  "useClassicMaterialDesignTheme": "استخدم تصميم Material الكلاسيكي",
+  "dynamicColor": "ألوان ديناميكية",
+  "automaticallyAdaptToSystemColors": "التكيّف التلقائي مع ألوان النظام",
+  "general": "عام",
+  "java": "جافا",
+  "launcher": "المشغل",
+  "advanced": "متقدم",
+  "appearance": "المظهر",
+  "dark": "داكن",
+  "light": "فاتح",
+  "customAccentColor": "لون التمييز المخصص",
+  "customizeAccentColor": "قم بتخصيص لون التمييز لمظهر التطبيق.",
+  "pickAColor": "اختر لونًا",
+  "close": "إغلاق",
+  "authProgressExchangingDeviceCode": "جاري تبادل رمز الجهاز...",
+  "authProgressRequestingDeviceCode": "جاري طلب رمز الجهاز...",
+  "or": "أو",
+  "loginCodeExpired": "انتهت صلاحية رمز الدخول",
+  "tryAgain": "حاول مرة أخرى",
+  "uiPreferences": "تفضيلات الواجهة",
+  "defaultTab": "علامة التبويب الافتراضية",
+  "initialTabSelectionDescription": "اختر علامة التبويب التي تظهر أولاً عند فتح التطبيق",
+  "search": "بحث",
+  "refreshAccount": "تحديث الحساب",
+  "sessionExpiredOrAccessRevoked": "انتهت جلسة الحساب أو تم إلغاء الوصول. يرجى تسجيل الدخول مرة أخرى للاستمرار.",
+  "accountRefreshedMessage": "تم تحديث الحساب لـ {username} بنجاح.",
+  "@accountRefreshedMessage": {
+    "description": "الرسالة المعروضة عندما يقوم المستخدم بتحديث حساب. تشمل اسم المستخدم.",
+    "placeholders": {
+      "username": {
+        "type": "String",
+        "example": "alex123",
+        "description": "اسم المستخدم للحساب الذي تم تحديثه."
+      }
+    }
+  },
+  "revokeAccess": "إلغاء الوصول",
+  "microsoftRequestLimitError": "تم الوصول إلى حد الطلبات أثناء الاتصال بخوادم مصادقة Microsoft. يرجى المحاولة مرة أخرى بعد قليل.",
+  "authProgressRefreshingMicrosoftTokens": "جارٍ تحديث رموز Microsoft...",
+  "authProgressCheckingMinecraftJavaOwnership": "جارٍ التحقق من ملكية Minecraft Java...",
+  "@authProgressCheckingMinecraftJavaOwnership": {
+    "description": "الرسالة المعروضة عندما يقوم النظام بالتحقق من حالة ملكية Minecraft Java للمستخدم."
+  },
+  "waitForOngoingTask": "يرجى الانتظار حتى ينتهي المهمة الحالية.",
+  "accountsEmptyTitle": "إدارة حسابات Minecraft",
+  "accountsEmptySubtitle": "أضف حسابات Minecraft للتبديل السلس. يتم تخزين الحسابات بأمان على هذا الجهاز.",
+  "authCodeRedirectPageLoginSuccessTitle": "تم تسجيل الدخول",
+  "authCodeRedirectPageLoginSuccessMessage": "لقد قمت بتسجيل الدخول بنجاح إلى {launcherName} باستخدام حساب Microsoft الخاص بك. يمكنك الآن إغلاق هذه النافذة.",
+  "@authCodeRedirectPageLoginSuccessMessage": {
+    "description": "الرسالة المعروضة على صفحة HTML أو صفحة إعادة التوجيه بعد تسجيل الدخول بنجاح عبر حساب Microsoft باستخدام رمز المصادقة.",
+    "placeholders": {
+      "launcherName": {
+        "type": "String",
+        "example": "Kraft Launcher",
+        "description": "اسم المشغل الذي سجل المستخدم الدخول إليه."
+      }
+    }
+  },
+  "errorOccurred": "حدث خطأ",
+  "reportBug": "الإبلاغ عن خطأ",
+  "unknownErrorWhileLoadingAccounts": "حدث خطأ غير معروف أثناء تحميل الحسابات. يرجى المحاولة لاحقًا."
+}

@@ -1,0 +1,375 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for German (`de`).
+class AppLocalizationsDe extends AppLocalizations {
+  AppLocalizationsDe([String locale = 'de']) : super(locale);
+
+  @override
+  String get settings => 'Einstellungen';
+
+  @override
+  String get home => 'Startseite';
+
+  @override
+  String get profiles => 'Profile';
+
+  @override
+  String get accounts => 'Konten';
+
+  @override
+  String get about => 'Über';
+
+  @override
+  String get switchAccount => 'Konto wechseln';
+
+  @override
+  String get play => 'Spielen';
+
+  @override
+  String get addAccount => 'Konto hinzufügen';
+
+  @override
+  String get cancel => 'Abbrechen';
+
+  @override
+  String get microsoft => 'Microsoft';
+
+  @override
+  String get offline => 'Offline';
+
+  @override
+  String get signInWithMicrosoft => 'Mit Microsoft anmelden';
+
+  @override
+  String get addMicrosoftAccount => 'Microsoft-Konto hinzufügen';
+
+  @override
+  String get useDeviceCodeMethod =>
+      'Alternativ die Methode mit Gerätecode verwenden';
+
+  @override
+  String get copyCode => 'Code kopieren';
+
+  @override
+  String get copiedToClipboard => 'In die Zwischenablage kopiert';
+
+  @override
+  String get deviceCodeStepVisit => '1. Besuche';
+
+  @override
+  String get deviceCodeStepEnter => '2. Gib den folgenden Code ein:';
+
+  @override
+  String get deviceCodeQrInstruction =>
+      'Scanne, um den Link auf einem anderen Gerät zu öffnen.\nDu musst auch den obigen Code eingeben.';
+
+  @override
+  String get loggingInWithMicrosoftAccount => 'Anmeldung mit Microsoft-Konto';
+
+  @override
+  String get authProgressWaitingForUserLogin =>
+      'Warte auf Benutzerauthentifizierung...';
+
+  @override
+  String get authProgressExchangingAuthCode =>
+      'Austausch des Autorisierungscodes...';
+
+  @override
+  String get authProgressRequestingXboxLiveToken =>
+      'Zugriff auf Xbox Live anfordern...';
+
+  @override
+  String get authProgressRequestingXstsToken =>
+      'Xbox Live-Sitzung autorisieren...';
+
+  @override
+  String get authProgressLoggingIntoMinecraft =>
+      'Anmeldung bei Minecraft-Diensten...';
+
+  @override
+  String get authProgressFetchingMinecraftProfile =>
+      'Minecraft-Profil abrufen...';
+
+  @override
+  String loginSuccessAccountAddedMessage(String username) {
+    return 'Hallo, $username! Du hast dich erfolgreich bei Minecraft angemeldet.';
+  }
+
+  @override
+  String loginSuccessAccountUpdatedMessage(String username) {
+    return 'Willkommen zurück, $username! Deine Kontodaten wurden aktualisiert.';
+  }
+
+  @override
+  String get username => 'Benutzername';
+
+  @override
+  String get accountType => 'Kontotyp';
+
+  @override
+  String get removeAccount => 'Konto entfernen';
+
+  @override
+  String unexpectedError(String message) {
+    return 'Unerwarteter Fehler: $message.';
+  }
+
+  @override
+  String get missingAuthCodeError =>
+      'Es wurde kein Autorisierungscode angegeben. Die Anmeldung muss neu gestartet werden.';
+
+  @override
+  String get expiredAuthCodeError =>
+      'Der Autorisierungscode ist abgelaufen. Bitte starte den Anmeldevorgang neu.';
+
+  @override
+  String get expiredMicrosoftAccessTokenError =>
+      'Das OAuth-Zugriffstoken für Microsoft ist abgelaufen. Bitte melde dich erneut an.';
+
+  @override
+  String get unauthorizedMinecraftAccessError =>
+      'Nicht autorisierter Zugriff auf Minecraft. Autorisierung ist abgelaufen oder ungültig.';
+
+  @override
+  String get createOfflineAccount => 'Offline-Konto erstellen';
+
+  @override
+  String get updateOfflineAccount => 'Offline-Konto aktualisieren';
+
+  @override
+  String get offlineMinecraftAccountCreationNotice =>
+      'Gib einen gewünschten Minecraft-Benutzernamen ein. Offline-Konten werden lokal gespeichert und können keine Online-Server oder Realms nutzen.';
+
+  @override
+  String get create => 'Erstellen';
+
+  @override
+  String get minecraftUsernameHint => 'Beispiel: Steve';
+
+  @override
+  String get usernameEmptyError => 'Benutzername darf nicht leer sein';
+
+  @override
+  String get usernameTooShortError =>
+      'Benutzername muss mindestens 3 Zeichen lang sein';
+
+  @override
+  String get usernameTooLongError =>
+      'Benutzername darf maximal 16 Zeichen lang sein';
+
+  @override
+  String get usernameInvalidCharactersError =>
+      'Benutzername darf nur Buchstaben, Zahlen und Unterstriche (_) enthalten.';
+
+  @override
+  String get usernameContainsWhitespacesError =>
+      'Benutzername darf keine Leerzeichen enthalten.';
+
+  @override
+  String get update => 'Aktualisieren';
+
+  @override
+  String get minecraftId => 'Minecraft-ID';
+
+  @override
+  String get removeAccountConfirmation => 'Konto wirklich entfernen?';
+
+  @override
+  String get removeAccountConfirmationNotice =>
+      'Dieses Konto wird aus dem Launcher entfernt.\nDu musst es erneut hinzufügen, um damit zu spielen.';
+
+  @override
+  String get remove => 'Entfernen';
+
+  @override
+  String get chooseYourPreferredLanguage => 'Wähle deine bevorzugte Sprache';
+
+  @override
+  String get appLanguage => 'App-Sprache';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get themeMode => 'Designmodus';
+
+  @override
+  String get selectDarkLightOrSystemTheme =>
+      'Wähle zwischen dunklem, hellem oder systemeigenem Design';
+
+  @override
+  String get classicMaterialDesign => 'Klassisches Material Design';
+
+  @override
+  String get useClassicMaterialDesignTheme =>
+      'Klassisches Material Design verwenden';
+
+  @override
+  String get dynamicColor => 'Dynamische Farben';
+
+  @override
+  String get automaticallyAdaptToSystemColors =>
+      'Automatisch an Systemfarben anpassen';
+
+  @override
+  String get general => 'Allgemein';
+
+  @override
+  String get java => 'Java';
+
+  @override
+  String get launcher => 'Launcher';
+
+  @override
+  String get advanced => 'Erweitert';
+
+  @override
+  String get appearance => 'Darstellung';
+
+  @override
+  String get dark => 'Dunkel';
+
+  @override
+  String get light => 'Hell';
+
+  @override
+  String get customAccentColor => 'Benutzerdefinierte Akzentfarbe';
+
+  @override
+  String get customizeAccentColor =>
+      'Passen Sie die Akzentfarbe des App-Themes an.';
+
+  @override
+  String get pickAColor => 'Farbe auswählen';
+
+  @override
+  String get close => 'Schließen';
+
+  @override
+  String get authProgressExchangingDeviceCode =>
+      'Gerätecode wird ausgetauscht...';
+
+  @override
+  String get authProgressRequestingDeviceCode =>
+      'Gerätecode wird angefordert...';
+
+  @override
+  String get or => 'ODER';
+
+  @override
+  String get loginCodeExpired => 'Anmeldecode abgelaufen';
+
+  @override
+  String get tryAgain => 'Erneut versuchen';
+
+  @override
+  String get uiPreferences => 'UI-Einstellungen';
+
+  @override
+  String get defaultTab => 'Standard-Tab';
+
+  @override
+  String get initialTabSelectionDescription =>
+      'Wählen Sie den Tab, der beim Start der App zuerst angezeigt wird';
+
+  @override
+  String get search => 'Suche';
+
+  @override
+  String get refreshAccount => 'Konto aktualisieren';
+
+  @override
+  String get sessionExpiredOrAccessRevoked =>
+      'Die Sitzung des Kontos ist abgelaufen oder der Zugriff wurde widerrufen. Bitte melde dich erneut an, um fortzufahren.';
+
+  @override
+  String accountRefreshedMessage(String username) {
+    return 'Das Konto für $username wurde erfolgreich aktualisiert.';
+  }
+
+  @override
+  String get revokeAccess => 'Zugriff widerrufen';
+
+  @override
+  String get microsoftRequestLimitError =>
+      'Anforderungsgrenze erreicht beim Kommunizieren mit den Microsoft-Authentifizierungsservern. Bitte versuche es in Kürze erneut.';
+
+  @override
+  String get authProgressRefreshingMicrosoftTokens =>
+      'Microsoft-Tokens werden aktualisiert...';
+
+  @override
+  String get authProgressCheckingMinecraftJavaOwnership =>
+      'Überprüfe Minecraft Java-Besitz...';
+
+  @override
+  String get waitForOngoingTask =>
+      'Bitte warte, während die aktuelle Aufgabe abgeschlossen wird.';
+
+  @override
+  String get accountsEmptyTitle => 'Minecraft-Konten verwalten';
+
+  @override
+  String get accountsEmptySubtitle =>
+      'Füge Minecraft-Konten hinzu, um nahtlos zu wechseln. Konten werden sicher auf diesem Gerät gespeichert.';
+
+  @override
+  String get authCodeRedirectPageLoginSuccessTitle => 'Erfolgreiche Anmeldung';
+
+  @override
+  String authCodeRedirectPageLoginSuccessMessage(String launcherName) {
+    return 'Du hast dich erfolgreich bei $launcherName mit deinem Microsoft-Konto angemeldet. Du kannst dieses Fenster nun schließen.';
+  }
+
+  @override
+  String get errorOccurred => 'Ein Fehler ist aufgetreten';
+
+  @override
+  String get reportBug => 'Fehler melden';
+
+  @override
+  String get unknownErrorWhileLoadingAccounts =>
+      'Ein unbekannter Fehler ist beim Laden der Konten aufgetreten. Bitte versuchen Sie es später erneut.';
+
+  @override
+  String get minecraftRequestLimitError =>
+      'Request limit reached while communicating with Minecraft servers. Please try again shortly.';
+
+  @override
+  String unexpectedMinecraftApiError(Object message) {
+    return 'Unexpected error while communicating with Minecraft servers: $message. Please try again later.';
+  }
+
+  @override
+  String unexpectedMicrosoftApiError(Object message) {
+    return 'Unexpected error while communicating with Microsoft servers: $message. Please try again later.';
+  }
+
+  @override
+  String errorLoadingNetworkImage(Object message) {
+    return 'An error occurred while loading the image: $message';
+  }
+
+  @override
+  String get skinModelClassic => 'Classic';
+
+  @override
+  String get skinModelSlim => 'Slim';
+
+  @override
+  String get skinModel => 'Skin Model';
+
+  @override
+  String get updateSkin => 'Update Skin';
+
+  @override
+  String get featureUnsupportedYet =>
+      'This feature is not supported yet. Stay tuned for future updates!';
+
+  @override
+  String get news => 'News';
+}

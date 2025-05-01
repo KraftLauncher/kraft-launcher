@@ -1,0 +1,148 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../common/ui/utils/build_context_ext.dart';
+import '../data/minecraft_account.dart';
+import '../logic/account_cubit.dart';
+
+@immutable
+class OfflineAccountToUpdate {
+  const OfflineAccountToUpdate({required this.index, required this.account});
+
+  final int index;
+  final MinecraftAccount account;
+}
+
+class UpsertOfflineAccountDialog extends StatefulWidget {
+  const UpsertOfflineAccountDialog({
+    super.key,
+    required this.offlineAccountToUpdate,
+  });
+
+  final OfflineAccountToUpdate? offlineAccountToUpdate;
+
+  @override
+  State<UpsertOfflineAccountDialog> createState() =>
+      _UpsertOfflineAccountDialogState();
+}
+
+class _UpsertOfflineAccountDialogState
+    extends State<UpsertOfflineAccountDialog> {
+  late TextEditingController _usernameController;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameController = TextEditingController(
+      text: widget.offlineAccountToUpdate?.account.username,
+    );
+  }
+
+  static const _minLength = 3;
+  static const _maxLength = 16;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: Text(
+      widget.offlineAccountToUpdate != null
+          ? context.loc.updateOfflineAccount
+          : context.loc.createOfflineAccount,
+    ),
+    content: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 500, minHeight: 100),
+      child: Form(
+        key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(context.loc.offlineMinecraftAccountCreationNotice),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _usernameController,
+              decoration: InputDecoration(
+                labelText: context.loc.username,
+                hintText: context.loc.minecraftUsernameHint,
+                border: const OutlineInputBorder(),
+                counterText: () {
+                  final length = _usernameController.text.length;
+                  if (length < _minLength) {
+                    return '${_minLength - length}';
+                  }
+                  if (length > _maxLength) {
+                    return '${_maxLength - length}';
+                  }
+                  return '${_maxLength - length}';
+                }(),
+              ),
+              onFieldSubmitted: (value) => _create(),
+              onChanged: (value) => setState(() {}),
+              validator: (username) {
+                if (username!.trim().isEmpty) {
+                  return context.loc.usernameEmptyError;
+                }
+                if (username.length < _minLength) {
+                  return context.loc.usernameTooShortError;
+                }
+
+                if (username.length > _maxLength) {
+                  return context.loc.usernameTooLongError;
+                }
+
+                if (username.trim().contains(' ')) {
+                  return context.loc.usernameContainsWhitespacesError;
+                }
+
+                final validUsernameCharactersRegex = RegExp(r'^[a-zA-Z0-9_]+$');
+                if (!validUsernameCharactersRegex.hasMatch(username)) {
+                  return context.loc.usernameInvalidCharactersError;
+                }
+                return null;
+              },
+            ),
+          ],
+        ),
+      ),
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(context.loc.cancel),
+      ),
+      TextButton(
+        onPressed:
+            (_formKey.currentState?.validate() ?? false) ? _create : null,
+        child: Text(
+          widget.offlineAccountToUpdate != null
+              ? context.loc.update
+              : context.loc.create,
+        ),
+      ),
+    ],
+  );
+
+  void _create() {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    final offlineAccountToUpdate = widget.offlineAccountToUpdate;
+    if (offlineAccountToUpdate != null) {
+      context.read<AccountCubit>().updateOfflineAccount(
+        offlineAccountToUpdate.index,
+        username: _usernameController.text,
+      );
+    } else {
+      context.read<AccountCubit>().createOfflineAccount(
+        username: _usernameController.text,
+      );
+    }
+    Navigator.pop(context);
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    super.dispose();
+  }
+}

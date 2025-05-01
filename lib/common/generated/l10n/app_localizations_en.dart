@@ -1,0 +1,371 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get profiles => 'Profiles';
+
+  @override
+  String get accounts => 'Accounts';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get switchAccount => 'Switch Account';
+
+  @override
+  String get play => 'Play';
+
+  @override
+  String get addAccount => 'Add Account';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get microsoft => 'Microsoft';
+
+  @override
+  String get offline => 'Offline';
+
+  @override
+  String get signInWithMicrosoft => 'Sign in with Microsoft';
+
+  @override
+  String get addMicrosoftAccount => 'Add Microsoft Account';
+
+  @override
+  String get useDeviceCodeMethod => 'Alternatively, use the device code method';
+
+  @override
+  String get copyCode => 'Copy Code';
+
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get deviceCodeStepVisit => '1. Visit';
+
+  @override
+  String get deviceCodeStepEnter => '2. Enter the code below:';
+
+  @override
+  String get deviceCodeQrInstruction =>
+      'Scan to open the link on another device.\nYou’ll still need to enter the code above.';
+
+  @override
+  String get loggingInWithMicrosoftAccount =>
+      'Logging in with Microsoft account';
+
+  @override
+  String get authProgressWaitingForUserLogin =>
+      'Waiting for user authentication...';
+
+  @override
+  String get authProgressExchangingAuthCode =>
+      'Exchanging authorization code...';
+
+  @override
+  String get authProgressRequestingXboxLiveToken =>
+      'Requesting Xbox Live access...';
+
+  @override
+  String get authProgressRequestingXstsToken =>
+      'Authorizing Xbox Live session...';
+
+  @override
+  String get authProgressLoggingIntoMinecraft =>
+      'Logging into Minecraft services...';
+
+  @override
+  String get authProgressFetchingMinecraftProfile =>
+      'Retrieving Minecraft profile...';
+
+  @override
+  String loginSuccessAccountAddedMessage(String username) {
+    return 'Welcome, $username! You’re now signed in to Minecraft.';
+  }
+
+  @override
+  String loginSuccessAccountUpdatedMessage(String username) {
+    return 'Welcome back, $username! Your account details have been updated.';
+  }
+
+  @override
+  String get username => 'Username';
+
+  @override
+  String get accountType => 'Account Type';
+
+  @override
+  String get removeAccount => 'Remove Account';
+
+  @override
+  String unexpectedError(String message) {
+    return 'Unexpected error: $message.';
+  }
+
+  @override
+  String get missingAuthCodeError =>
+      'Auth code not provided. Sign-in must be restarted.';
+
+  @override
+  String get expiredAuthCodeError =>
+      'Auth code has expired. Restart sign-in process.';
+
+  @override
+  String get expiredMicrosoftAccessTokenError =>
+      'Microsoft OAuth access token expired. New sign-in required.';
+
+  @override
+  String get unauthorizedMinecraftAccessError =>
+      'Unauthorized access to Minecraft. Authorization is expired or invalid.';
+
+  @override
+  String get createOfflineAccount => 'Create Offline Account';
+
+  @override
+  String get updateOfflineAccount => 'Update Offline Account';
+
+  @override
+  String get offlineMinecraftAccountCreationNotice =>
+      'Enter your desired Minecraft username. Offline accounts are stored locally and can\'t access online servers or Realms.';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get minecraftUsernameHint => 'e.g., Steve';
+
+  @override
+  String get usernameEmptyError => 'Username cannot be empty';
+
+  @override
+  String get usernameTooShortError => 'Username must be at least 3 characters';
+
+  @override
+  String get usernameTooLongError => 'Username must be at most 16 characters';
+
+  @override
+  String get usernameInvalidCharactersError =>
+      'Username can only contain letters, numbers, and underscores.';
+
+  @override
+  String get usernameContainsWhitespacesError =>
+      'Username cannot contain spaces.';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get minecraftId => 'Minecraft ID';
+
+  @override
+  String get removeAccountConfirmation => 'Remove Account?';
+
+  @override
+  String get removeAccountConfirmationNotice =>
+      'This account will be removed from the launcher.\nYou\'ll need to add it again to use it for playing.';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get chooseYourPreferredLanguage => 'Choose your preferred language';
+
+  @override
+  String get appLanguage => 'App Language';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get themeMode => 'Theme Mode';
+
+  @override
+  String get selectDarkLightOrSystemTheme =>
+      'Select dark, light, or system theme';
+
+  @override
+  String get classicMaterialDesign => 'Classic Material Design';
+
+  @override
+  String get useClassicMaterialDesignTheme =>
+      'Use the classic Material Design theme';
+
+  @override
+  String get dynamicColor => 'Dynamic Color';
+
+  @override
+  String get automaticallyAdaptToSystemColors =>
+      'Automatically adapt to the system colors';
+
+  @override
+  String get general => 'General';
+
+  @override
+  String get java => 'Java';
+
+  @override
+  String get launcher => 'Launcher';
+
+  @override
+  String get advanced => 'Advanced';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get dark => 'Dark';
+
+  @override
+  String get light => 'Light';
+
+  @override
+  String get customAccentColor => 'Custom Accent Color';
+
+  @override
+  String get customizeAccentColor =>
+      'Customize the accent color of the app theme.';
+
+  @override
+  String get pickAColor => 'Pick a Color';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get authProgressExchangingDeviceCode => 'Exchanging device code...';
+
+  @override
+  String get authProgressRequestingDeviceCode => 'Exchanging device code...';
+
+  @override
+  String get or => 'OR';
+
+  @override
+  String get loginCodeExpired => 'Login code expired';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get uiPreferences => 'UI Preferences';
+
+  @override
+  String get defaultTab => 'Default Tab';
+
+  @override
+  String get initialTabSelectionDescription =>
+      'Choose the tab shown first when the app opens';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get refreshAccount => 'Refresh Account';
+
+  @override
+  String get sessionExpiredOrAccessRevoked =>
+      'The account session has expired or access was revoked. Please log in again to continue.';
+
+  @override
+  String accountRefreshedMessage(String username) {
+    return 'Account for $username has been refreshed successfully.';
+  }
+
+  @override
+  String get revokeAccess => 'Revoke Access';
+
+  @override
+  String get microsoftRequestLimitError =>
+      'Request limit reached while communicating with Microsoft authentication servers. Please try again shortly.';
+
+  @override
+  String get authProgressRefreshingMicrosoftTokens =>
+      'Refreshing Microsoft tokens...';
+
+  @override
+  String get authProgressCheckingMinecraftJavaOwnership =>
+      'Checking Minecraft Java ownership...';
+
+  @override
+  String get waitForOngoingTask =>
+      'Please hold on while the current task finishes.';
+
+  @override
+  String get accountsEmptyTitle => 'Manage Minecraft Accounts';
+
+  @override
+  String get accountsEmptySubtitle =>
+      'Add Minecraft accounts for seamless switching. Accounts are stored securely on this device.';
+
+  @override
+  String get authCodeRedirectPageLoginSuccessTitle => 'Successful Login';
+
+  @override
+  String authCodeRedirectPageLoginSuccessMessage(String launcherName) {
+    return 'You have successfully logged in to $launcherName using your Microsoft account. You can close this window.';
+  }
+
+  @override
+  String get errorOccurred => 'An Error Occurred';
+
+  @override
+  String get reportBug => 'Report Bug';
+
+  @override
+  String get unknownErrorWhileLoadingAccounts =>
+      'An unknown error occurred while loading the accounts. Please try again later.';
+
+  @override
+  String get minecraftRequestLimitError =>
+      'Request limit reached while communicating with Minecraft servers. Please try again shortly.';
+
+  @override
+  String unexpectedMinecraftApiError(Object message) {
+    return 'Unexpected error while communicating with Minecraft servers: $message. Please try again later.';
+  }
+
+  @override
+  String unexpectedMicrosoftApiError(Object message) {
+    return 'Unexpected error while communicating with Microsoft servers: $message. Please try again later.';
+  }
+
+  @override
+  String errorLoadingNetworkImage(Object message) {
+    return 'An error occurred while loading the image: $message';
+  }
+
+  @override
+  String get skinModelClassic => 'Classic';
+
+  @override
+  String get skinModelSlim => 'Slim';
+
+  @override
+  String get skinModel => 'Skin Model';
+
+  @override
+  String get updateSkin => 'Update Skin';
+
+  @override
+  String get featureUnsupportedYet =>
+      'This feature is not supported yet. Stay tuned for future updates!';
+
+  @override
+  String get news => 'News';
+}

@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+  # This creates too much PR noise; we prefer manual updates.
+  # - package-ecosystem: pub
+  #   directory: /
+  #   schedule:
+  #     interval: daily

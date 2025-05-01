@@ -1,0 +1,179 @@
+{
+    "@@locale": "en",
+    "settings": "Settings",
+    "home": "Home",
+    "profiles": "Profiles",
+    "accounts": "Accounts",
+    "about": "About",
+    "switchAccount": "Switch Account",
+    "play": "Play",
+    "addAccount": "Add Account",
+    "cancel": "Cancel",
+    "microsoft": "Microsoft",
+    "offline": "Offline",
+    "signInWithMicrosoft": "Sign in with Microsoft",
+    "addMicrosoftAccount": "Add Microsoft Account",
+    "useDeviceCodeMethod": "Alternatively, use the device code method",
+    "@useDeviceCodeMethod": {
+        "description": "Prompt that suggests the user can alternatively use the device code method for logging with Microsoft"
+    },
+    "copyCode": "Copy Code",
+    "copiedToClipboard": "Copied to clipboard",
+    "deviceCodeStepVisit": "1. Visit",
+    "deviceCodeStepEnter": "2. Enter the code below:",
+    "deviceCodeQrInstruction": "Scan to open the link on another device.\nYou’ll still need to enter the code above.",
+    "loggingInWithMicrosoftAccount": "Logging in with Microsoft account",
+    "authProgressWaitingForUserLogin": "Waiting for user authentication...",
+    "authProgressExchangingAuthCode": "Exchanging authorization code...",
+    "authProgressRequestingXboxLiveToken": "Requesting Xbox Live access...",
+    "authProgressRequestingXstsToken": "Authorizing Xbox Live session...",
+    "authProgressLoggingIntoMinecraft": "Logging into Minecraft services...",
+    "authProgressFetchingMinecraftProfile": "Retrieving Minecraft profile...",
+    "loginSuccessAccountAddedMessage": "Welcome, {username}! You’re now signed in to Minecraft.",
+    "@loginSuccessAccountAddedMessage": {
+        "description": "Snackbar message shown after successful login to a Minecraft account using Microsoft authentication.",
+        "placeholders": {
+            "username": {
+                "type": "String",
+                "example": "Steve",
+                "description": "The Minecraft username of the player who just signed in."
+            }
+        }
+    },
+    "loginSuccessAccountUpdatedMessage": "Welcome back, {username}! Your account details have been updated.",
+    "@loginSuccessAccountUpdatedMessage": {
+        "description": "Snackbar message shown when logging in with a Microsoft account that was previously added. Indicates that the account info has been refreshed or updated.",
+        "placeholders": {
+            "username": {
+                "type": "String",
+                "example": "Steve",
+                "description": "The Minecraft username of the player whose account was just updated."
+            }
+        }
+    },
+    "username": "Username",
+    "accountType": "Account Type",
+    "removeAccount": "Remove Account",
+    "unexpectedError": "Unexpected error: {message}.",
+    "@unexpectedError": {
+        "description": "Fallback error message for unexpected errors during any operation.",
+        "placeholders": {
+            "message": {
+                "type": "String",
+                "example": "Connection timeout",
+                "description": "A short description of the unexpected error encountered."
+            }
+        }
+    },
+    "missingAuthCodeError": "Auth code not provided. Sign-in must be restarted.",
+    "@missingAuthCodeError": {
+        "description": "Shown when the login process is redirected without a 'code' parameter, indicating that the Microsoft authorization code is missing or was manually accessed."
+    },
+    "expiredAuthCodeError": "Auth code has expired. Restart sign-in process.",
+    "@expiredAuthCodeError": {
+        "description": "Shown when the Microsoft authorization code is no longer valid due to timeout or reuse."
+    },
+    "expiredMicrosoftAccessTokenError": "Microsoft OAuth access token expired. New sign-in required.",
+    "@expiredMicrosoftAccessTokenError": {
+        "description": "Shown when the Microsoft access token used to fetch Xbox token."
+    },
+    "unauthorizedMinecraftAccessError": "Unauthorized access to Minecraft. Authorization is expired or invalid.",
+    "@unauthorizedMinecraftAccessError": {
+        "description": "Shown when the Minecraft API returns an unauthorized access response (HTTP 401), usually because the Minecraft access token is expired or invalid."
+    },
+    "createOfflineAccount": "Create Offline Account",
+    "updateOfflineAccount": "Update Offline Account",
+    "offlineMinecraftAccountCreationNotice": "Enter your desired Minecraft username. Offline accounts are stored locally and can't access online servers or Realms.",
+    "create": "Create",
+    "minecraftUsernameHint": "e.g., Steve",
+    "@minecraftUsernameHint": {
+        "description": "Example Minecraft username, shown as a hint."
+    },
+    "usernameEmptyError": "Username cannot be empty",
+    "usernameTooShortError": "Username must be at least 3 characters",
+    "usernameTooLongError": "Username must be at most 16 characters",
+    "usernameInvalidCharactersError": "Username can only contain letters, numbers, and underscores.",
+    "usernameContainsWhitespacesError": "Username cannot contain spaces.",
+    "update": "Update",
+    "minecraftId": "Minecraft ID",
+    "removeAccountConfirmation": "Remove Account?",
+    "removeAccountConfirmationNotice": "This account will be removed from the launcher.\nYou'll need to add it again to use it for playing.",
+    "remove": "Remove",
+    "chooseYourPreferredLanguage": "Choose your preferred language",
+    "appLanguage": "App Language",
+    "system": "System",
+    "themeMode": "Theme Mode",
+    "selectDarkLightOrSystemTheme": "Select dark, light, or system theme",
+    "classicMaterialDesign": "Classic Material Design",
+    "useClassicMaterialDesignTheme": "Use the classic Material Design theme",
+    "dynamicColor": "Dynamic Color",
+    "automaticallyAdaptToSystemColors": "Automatically adapt to the system colors",
+    "general": "General",
+    "java": "Java",
+    "launcher": "Launcher",
+    "advanced": "Advanced",
+    "appearance": "Appearance",
+    "dark": "Dark",
+    "light": "Light",
+    "customAccentColor": "Custom Accent Color",
+    "customizeAccentColor": "Customize the accent color of the app theme.",
+    "pickAColor": "Pick a Color",
+    "close": "Close",
+    "authProgressExchangingDeviceCode": "Exchanging device code...",
+    "authProgressRequestingDeviceCode": "Exchanging device code...",
+    "or": "OR",
+    "loginCodeExpired": "Login code expired",
+    "tryAgain": "Try Again",
+    "uiPreferences": "UI Preferences",
+    "defaultTab": "Default Tab",
+    "initialTabSelectionDescription": "Choose the tab shown first when the app opens",
+    "search": "Search",
+    "refreshAccount": "Refresh Account",
+    "sessionExpiredOrAccessRevoked": "The account session has expired or access was revoked. Please log in again to continue.",
+    "accountRefreshedMessage": "Account for {username} has been refreshed successfully.",
+    "@accountRefreshedMessage": {
+        "description": "Message shown when the user refreshes an account. Includes the username.",
+        "placeholders": {
+            "username": {
+                "type": "String",
+                "example": "alex123",
+                "description": "The username of the account that was refreshed."
+            }
+        }
+    },
+    "revokeAccess": "Revoke Access",
+    "microsoftRequestLimitError": "Request limit reached while communicating with Microsoft authentication servers. Please try again shortly.",
+    "authProgressRefreshingMicrosoftTokens": "Refreshing Microsoft tokens...",
+    "authProgressCheckingMinecraftJavaOwnership": "Checking Minecraft Java ownership...",
+    "@authProgressCheckingMinecraftJavaOwnership": {
+        "description": "Message shown when the system is checking the user's Minecraft Java ownership status."
+    },
+    "waitForOngoingTask": "Please hold on while the current task finishes.",
+    "accountsEmptyTitle": "Manage Minecraft Accounts",
+    "accountsEmptySubtitle": "Add Minecraft accounts for seamless switching. Accounts are stored securely on this device.",
+    "authCodeRedirectPageLoginSuccessTitle": "Successful Login",
+    "authCodeRedirectPageLoginSuccessMessage": "You have successfully logged in to {launcherName} using your Microsoft account. You can close this window.",
+    "@authCodeRedirectPageLoginSuccessMessage": {
+        "description": "Message displayed on the HTML page or redirect page after a successful login via Microsoft account using the authentication code.",
+        "placeholders": {
+            "launcherName": {
+                "type": "String",
+                "example": "Kraft Launcher",
+                "description": "The name of the launcher the user has logged into."
+            }
+        }
+    },
+    "errorOccurred": "An Error Occurred",
+    "reportBug": "Report Bug",
+    "unknownErrorWhileLoadingAccounts": "An unknown error occurred while loading the accounts. Please try again later.",
+    "minecraftRequestLimitError": "Request limit reached while communicating with Minecraft servers. Please try again shortly.",
+    "unexpectedMinecraftApiError": "Unexpected error while communicating with Minecraft servers: {message}. Please try again later.",
+    "unexpectedMicrosoftApiError": "Unexpected error while communicating with Microsoft servers: {message}. Please try again later.",
+    "errorLoadingNetworkImage": "An error occurred while loading the image: {message}",
+    "skinModelClassic": "Classic",
+    "skinModelSlim": "Slim",
+    "skinModel": "Skin Model",
+    "updateSkin": "Update Skin",
+    "featureUnsupportedYet": "This feature is not supported yet. Stay tuned for future updates!",
+    "news": "News"
+}

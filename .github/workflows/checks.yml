@@ -1,0 +1,50 @@
+name: Code Quality Checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/checks.yml
+      - lib/**
+      - test/**
+      - pubspec.yaml
+      - analysis_options.yaml
+  pull_request:
+    paths:
+      - .github/workflows/checks.yml
+      - lib/**
+      - test/**
+      - pubspec.yaml
+      - analysis_options.yaml
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter (Stable)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install Package Dependencies
+        run: flutter pub get
+
+      - name: Perform Flutter Analysis
+        run: flutter analyze --write=flutter_analyze.log
+
+      - if: ${{ !cancelled() }}
+        uses: yorifuji/flutter-analyze-commenter@v1
+        with:
+          analyze-log: flutter_analyze.log
+          verbose: false 
+
+      - name: Validate Dart Code Formatting
+        run: dart format --set-exit-if-changed .
+
+      - name: Preview Potential Dart Fixes
+        run: dart fix --dry-run

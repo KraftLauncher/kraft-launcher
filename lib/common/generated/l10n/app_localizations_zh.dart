@@ -1,0 +1,347 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Chinese (`zh`).
+class AppLocalizationsZh extends AppLocalizations {
+  AppLocalizationsZh([String locale = 'zh']) : super(locale);
+
+  @override
+  String get settings => '设置';
+
+  @override
+  String get home => '首页';
+
+  @override
+  String get profiles => '配置文件';
+
+  @override
+  String get accounts => '账户';
+
+  @override
+  String get about => '关于';
+
+  @override
+  String get switchAccount => '切换账户';
+
+  @override
+  String get play => '开始游戏';
+
+  @override
+  String get addAccount => '添加账户';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get microsoft => 'Microsoft';
+
+  @override
+  String get offline => '离线';
+
+  @override
+  String get signInWithMicrosoft => '使用 Microsoft 登录';
+
+  @override
+  String get addMicrosoftAccount => '添加 Microsoft 账户';
+
+  @override
+  String get useDeviceCodeMethod => '或者，使用设备代码方式登录';
+
+  @override
+  String get copyCode => '复制代码';
+
+  @override
+  String get copiedToClipboard => '已复制到剪贴板';
+
+  @override
+  String get deviceCodeStepVisit => '1. 访问';
+
+  @override
+  String get deviceCodeStepEnter => '2. 输入以下代码：';
+
+  @override
+  String get deviceCodeQrInstruction => '扫描以在其他设备上打开链接。\n你仍然需要输入上面的代码。';
+
+  @override
+  String get loggingInWithMicrosoftAccount => '正在使用 Microsoft 账户登录';
+
+  @override
+  String get authProgressWaitingForUserLogin => '正在等待用户验证...';
+
+  @override
+  String get authProgressExchangingAuthCode => '正在交换授权码...';
+
+  @override
+  String get authProgressRequestingXboxLiveToken => '正在请求 Xbox Live 访问权限...';
+
+  @override
+  String get authProgressRequestingXstsToken => '正在授权 Xbox Live 会话...';
+
+  @override
+  String get authProgressLoggingIntoMinecraft => '正在登录 Minecraft 服务...';
+
+  @override
+  String get authProgressFetchingMinecraftProfile => '正在获取 Minecraft 个人资料...';
+
+  @override
+  String loginSuccessAccountAddedMessage(String username) {
+    return '欢迎，$username！你已成功登录 Minecraft。';
+  }
+
+  @override
+  String loginSuccessAccountUpdatedMessage(String username) {
+    return '欢迎回来，$username！你的账户信息已更新。';
+  }
+
+  @override
+  String get username => '用户名';
+
+  @override
+  String get accountType => '账户类型';
+
+  @override
+  String get removeAccount => '移除账户';
+
+  @override
+  String unexpectedError(String message) {
+    return '意外错误：$message。';
+  }
+
+  @override
+  String get missingAuthCodeError => '未提供授权码。请重新开始登录。';
+
+  @override
+  String get expiredAuthCodeError => '授权码已过期。请重新开始登录流程。';
+
+  @override
+  String get expiredMicrosoftAccessTokenError =>
+      'Microsoft OAuth 访问令牌已过期。需要重新登录。';
+
+  @override
+  String get unauthorizedMinecraftAccessError => '未授权访问 Minecraft。授权已过期或无效。';
+
+  @override
+  String get createOfflineAccount => '创建离线账户';
+
+  @override
+  String get updateOfflineAccount => '更新离线账户';
+
+  @override
+  String get offlineMinecraftAccountCreationNotice =>
+      '请输入你想要的 Minecraft 用户名。离线账户将被保存在本地，无法访问在线服务器或 Realms。';
+
+  @override
+  String get create => '创建';
+
+  @override
+  String get minecraftUsernameHint => '例如：Steve';
+
+  @override
+  String get usernameEmptyError => '用户名不能为空';
+
+  @override
+  String get usernameTooShortError => '用户名至少需要 3 个字符';
+
+  @override
+  String get usernameTooLongError => '用户名最多只能包含 16 个字符';
+
+  @override
+  String get usernameInvalidCharactersError => '用户名只能包含字母、数字和下划线。';
+
+  @override
+  String get usernameContainsWhitespacesError => '用户名不能包含空格。';
+
+  @override
+  String get update => '更新';
+
+  @override
+  String get minecraftId => 'Minecraft ID';
+
+  @override
+  String get removeAccountConfirmation => '确认移除账户？';
+
+  @override
+  String get removeAccountConfirmationNotice =>
+      '该账户将从启动器中移除。\n你需要重新添加才能使用该账户进行游戏。';
+
+  @override
+  String get remove => '移除';
+
+  @override
+  String get chooseYourPreferredLanguage => '选择你偏好的语言';
+
+  @override
+  String get appLanguage => '应用语言';
+
+  @override
+  String get system => '系统';
+
+  @override
+  String get themeMode => '主题模式';
+
+  @override
+  String get selectDarkLightOrSystemTheme => '选择深色、浅色或系统主题';
+
+  @override
+  String get classicMaterialDesign => '经典 Material Design';
+
+  @override
+  String get useClassicMaterialDesignTheme => '使用经典 Material Design 主题';
+
+  @override
+  String get dynamicColor => '动态配色';
+
+  @override
+  String get automaticallyAdaptToSystemColors => '自动适应系统配色';
+
+  @override
+  String get general => '通用';
+
+  @override
+  String get java => 'Java';
+
+  @override
+  String get launcher => '启动器';
+
+  @override
+  String get advanced => '高级';
+
+  @override
+  String get appearance => '外观';
+
+  @override
+  String get dark => '深色';
+
+  @override
+  String get light => '浅色';
+
+  @override
+  String get customAccentColor => '自定义强调色';
+
+  @override
+  String get customizeAccentColor => '自定义应用主题的强调色。';
+
+  @override
+  String get pickAColor => '选择颜色';
+
+  @override
+  String get close => '关闭';
+
+  @override
+  String get authProgressExchangingDeviceCode => '正在交换设备代码...';
+
+  @override
+  String get authProgressRequestingDeviceCode => '正在请求设备代码...';
+
+  @override
+  String get or => '或';
+
+  @override
+  String get loginCodeExpired => '登录码已过期';
+
+  @override
+  String get tryAgain => '请再试一次';
+
+  @override
+  String get uiPreferences => '界面偏好设置';
+
+  @override
+  String get defaultTab => '默认标签页';
+
+  @override
+  String get initialTabSelectionDescription => '选择应用启动时首先显示的标签页';
+
+  @override
+  String get search => '搜索';
+
+  @override
+  String get refreshAccount => '刷新账户';
+
+  @override
+  String get sessionExpiredOrAccessRevoked => '账户会话已过期或访问权限已被撤销。请重新登录以继续。';
+
+  @override
+  String accountRefreshedMessage(String username) {
+    return '$username 的账户已成功刷新。';
+  }
+
+  @override
+  String get revokeAccess => '撤销访问';
+
+  @override
+  String get microsoftRequestLimitError => '与 Microsoft 认证服务器通信时达到请求限制。请稍后再试。';
+
+  @override
+  String get authProgressRefreshingMicrosoftTokens => '正在刷新 Microsoft 令牌...';
+
+  @override
+  String get authProgressCheckingMinecraftJavaOwnership =>
+      '正在检查 Minecraft Java 所有权...';
+
+  @override
+  String get waitForOngoingTask => '请稍等，当前任务正在完成。';
+
+  @override
+  String get accountsEmptyTitle => '管理 Minecraft 账户';
+
+  @override
+  String get accountsEmptySubtitle => '添加 Minecraft 账户以实现无缝切换。账户安全存储在此设备上。';
+
+  @override
+  String get authCodeRedirectPageLoginSuccessTitle => '登录成功';
+
+  @override
+  String authCodeRedirectPageLoginSuccessMessage(String launcherName) {
+    return '您已成功使用 Microsoft 账户登录到 $launcherName。您现在可以关闭此窗口。';
+  }
+
+  @override
+  String get errorOccurred => '发生了一个错误';
+
+  @override
+  String get reportBug => '报告错误';
+
+  @override
+  String get unknownErrorWhileLoadingAccounts => '加载账户时发生了未知错误。请稍后再试。';
+
+  @override
+  String get minecraftRequestLimitError =>
+      'Request limit reached while communicating with Minecraft servers. Please try again shortly.';
+
+  @override
+  String unexpectedMinecraftApiError(Object message) {
+    return 'Unexpected error while communicating with Minecraft servers: $message. Please try again later.';
+  }
+
+  @override
+  String unexpectedMicrosoftApiError(Object message) {
+    return 'Unexpected error while communicating with Microsoft servers: $message. Please try again later.';
+  }
+
+  @override
+  String errorLoadingNetworkImage(Object message) {
+    return 'An error occurred while loading the image: $message';
+  }
+
+  @override
+  String get skinModelClassic => 'Classic';
+
+  @override
+  String get skinModelSlim => 'Slim';
+
+  @override
+  String get skinModel => 'Skin Model';
+
+  @override
+  String get updateSkin => 'Update Skin';
+
+  @override
+  String get featureUnsupportedYet =>
+      'This feature is not supported yet. Stay tuned for future updates!';
+
+  @override
+  String get news => 'News';
+}

@@ -1,0 +1,40 @@
+{
+  "ar": [
+    "minecraftRequestLimitError",
+    "unexpectedMinecraftApiError",
+    "unexpectedMicrosoftApiError",
+    "errorLoadingNetworkImage",
+    "skinModelClassic",
+    "skinModelSlim",
+    "skinModel",
+    "updateSkin",
+    "featureUnsupportedYet",
+    "news"
+  ],
+
+  "de": [
+    "minecraftRequestLimitError",
+    "unexpectedMinecraftApiError",
+    "unexpectedMicrosoftApiError",
+    "errorLoadingNetworkImage",
+    "skinModelClassic",
+    "skinModelSlim",
+    "skinModel",
+    "updateSkin",
+    "featureUnsupportedYet",
+    "news"
+  ],
+
+  "zh": [
+    "minecraftRequestLimitError",
+    "unexpectedMinecraftApiError",
+    "unexpectedMicrosoftApiError",
+    "errorLoadingNetworkImage",
+    "skinModelClassic",
+    "skinModelSlim",
+    "skinModel",
+    "updateSkin",
+    "featureUnsupportedYet",
+    "news"
+  ]
+}
