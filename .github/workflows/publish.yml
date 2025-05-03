@@ -39,14 +39,14 @@ jobs:
           sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
 
-      - name: Build app for ${{ runner.os }}
+      - name: Build app for ${{ matrix.os }}
         shell: bash
         run: |
           mkdir -p build
 
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             flutter build windows
-            zip -r build/windows.zip build/windows/runner/Release/*
+            powershell -Command "Compress-Archive -Path 'build/windows/runner/Release/*' -DestinationPath 'build/windows.zip'"
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
             flutter build macos
             cp -r build/macos/Build/Products/Release/kraft_launcher.app build/macOS.app
