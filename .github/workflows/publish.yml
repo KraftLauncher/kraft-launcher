@@ -39,24 +39,27 @@ jobs:
           sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
 
-      - name: Build app for ${{ matrix.os }}
-        shell: bash
+      - name: Build Windows app
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          flutter build windows
+          New-Item -ItemType Directory -Force -Path build | Out-Null
+          Compress-Archive -Path build/windows/runner/Release/* -DestinationPath build/windows.zip
+
+      - name: Build macOS app
+        if: runner.os == 'macOS'
         run: |
           mkdir -p build
+          flutter build macos
+          cp -r build/macos/Build/Products/Release/kraft_launcher.app build/macOS.app
 
-          if [[ "${{ runner.os }}" == "Windows" ]]; then
-            flutter build windows
-            powershell -Command "Compress-Archive -Path 'build/windows/runner/Release/*' -DestinationPath 'build/windows.zip'"
-          elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            flutter build macos
-            cp -r build/macos/Build/Products/Release/kraft_launcher.app build/macOS.app
-          elif [[ "${{ runner.os }}" == "Linux" ]]; then
-            flutter build linux
-            tar -czvf build/linux.tar.gz -C build/linux/x64/release/bundle/ .
-          else
-            echo "Unsupported runner OS: ${{ runner.os }}"
-            exit 1
-          fi
+      - name: Build Linux app
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p build
+          flutter build linux
+          tar -czvf build/linux.tar.gz -C build/linux/x64/release/bundle/ .
 
       - name: Create Release on GitHub
         uses: softprops/action-gh-release@v2
