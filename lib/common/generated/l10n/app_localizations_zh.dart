@@ -362,4 +362,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get license => '许可证';
+
+  @override
+  String get sourceCode => 'Source Code';
 }

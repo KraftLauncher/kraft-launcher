@@ -388,4 +388,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get license => 'License';
+
+  @override
+  String get sourceCode => 'Source Code';
 }

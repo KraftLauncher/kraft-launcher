@@ -191,5 +191,6 @@
     "website": "Website",
     "contact": "Contact",
     "askQuestion": "Ask a question",
-    "license": "License"
+    "license": "License",
+    "sourceCode": "Source Code"
 }

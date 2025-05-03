@@ -392,4 +392,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get license => 'Lizenz';
+
+  @override
+  String get sourceCode => 'Source Code';
 }

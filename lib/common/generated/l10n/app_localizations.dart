@@ -767,6 +767,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'License'**
   String get license;
+
+  /// No description provided for @sourceCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Source Code'**
+  String get sourceCode;
 }
 
 class _AppLocalizationsDelegate

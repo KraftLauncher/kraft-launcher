@@ -383,4 +383,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get license => 'رخصة';
+
+  @override
+  String get sourceCode => 'Source Code';
 }

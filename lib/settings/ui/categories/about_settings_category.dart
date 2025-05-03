@@ -32,7 +32,7 @@ class AboutSettingsCategory extends StatelessWidget {
         Divider(color: context.theme.colorScheme.outline),
         const SizedBox(height: 6),
         ListTile(
-          title: const Text('GitHub'),
+          title: Text(context.loc.sourceCode),
           subtitle: Text(Constants.githubRepoLink.replaceFirst('https://', '')),
           leading: const Icon(Icons.code),
           onTap: () => launchUrl(Uri.parse(Constants.githubRepoLink)),
