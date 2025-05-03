@@ -308,40 +308,58 @@ class AppLocalizationsZh extends AppLocalizations {
   String get unknownErrorWhileLoadingAccounts => '加载账户时发生了未知错误。请稍后再试。';
 
   @override
-  String get minecraftRequestLimitError =>
-      'Request limit reached while communicating with Minecraft servers. Please try again shortly.';
+  String get minecraftRequestLimitError => '与Minecraft服务器通信时达到请求限制。请稍后再试。';
 
   @override
   String unexpectedMinecraftApiError(Object message) {
-    return 'Unexpected error while communicating with Minecraft servers: $message. Please try again later.';
+    return '与Minecraft服务器通信时发生意外错误：$message。请稍后再试。';
   }
 
   @override
   String unexpectedMicrosoftApiError(Object message) {
-    return 'Unexpected error while communicating with Microsoft servers: $message. Please try again later.';
+    return '与Microsoft服务器通信时发生意外错误：$message。请稍后再试。';
   }
 
   @override
   String errorLoadingNetworkImage(Object message) {
-    return 'An error occurred while loading the image: $message';
+    return '加载图像时发生错误：$message';
   }
 
   @override
-  String get skinModelClassic => 'Classic';
+  String get skinModelClassic => '经典';
 
   @override
-  String get skinModelSlim => 'Slim';
+  String get skinModelSlim => '瘦身';
 
   @override
-  String get skinModel => 'Skin Model';
+  String get skinModel => '皮肤模型';
 
   @override
-  String get updateSkin => 'Update Skin';
+  String get updateSkin => '更新皮肤';
 
   @override
-  String get featureUnsupportedYet =>
-      'This feature is not supported yet. Stay tuned for future updates!';
+  String get featureUnsupportedYet => '此功能尚不支持。请关注未来的更新！';
 
   @override
-  String get news => 'News';
+  String get news => '新闻';
+
+  @override
+  String legalDisclaimerMessage(String launcherName) {
+    return '$launcherName 不是官方的Minecraft产品。未获得Mojang或Microsoft的批准或与其关联。';
+  }
+
+  @override
+  String get support => '支持';
+
+  @override
+  String get website => '网站';
+
+  @override
+  String get contact => '联系方式';
+
+  @override
+  String get askQuestion => '提问';
+
+  @override
+  String get license => '许可证';
 }

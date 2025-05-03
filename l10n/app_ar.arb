@@ -165,5 +165,31 @@
   },
   "errorOccurred": "حدث خطأ",
   "reportBug": "الإبلاغ عن خطأ",
-  "unknownErrorWhileLoadingAccounts": "حدث خطأ غير معروف أثناء تحميل الحسابات. يرجى المحاولة لاحقًا."
+  "unknownErrorWhileLoadingAccounts": "حدث خطأ غير معروف أثناء تحميل الحسابات. يرجى المحاولة لاحقًا.",
+  "minecraftRequestLimitError": "تم الوصول إلى حد الطلب أثناء التواصل مع خوادم ماينكرافت. يرجى المحاولة لاحقًا.",
+  "unexpectedMinecraftApiError": "حدث خطأ غير متوقع أثناء التواصل مع خوادم ماينكرافت: {message}. يرجى المحاولة لاحقًا.",
+  "unexpectedMicrosoftApiError": "حدث خطأ غير متوقع أثناء التواصل مع خوادم مايكروسوفت: {message}. يرجى المحاولة لاحقًا.",
+  "errorLoadingNetworkImage": "حدث خطأ أثناء تحميل الصورة: {message}",
+  "skinModelClassic": "كلاسيكي",
+  "skinModelSlim": "نحيف",
+  "skinModel": "نموذج الجلد",
+  "updateSkin": "تحديث الجلد",
+  "featureUnsupportedYet": "هذه الميزة غير مدعومة بعد. تابع التحديثات المستقبلية!",
+  "news": "أخبار",
+  "legalDisclaimerMessage": "{launcherName} ليس منتج Minecraft رسمي. لم يتم اعتماده أو ربطه مع Mojang أو Microsoft.",
+  "@legalDisclaimerMessage": {
+    "description": "إخلاء مسؤولية قانونية يُعرض للمستخدم ليعلمهم أن المشغل ليس منتجًا رسميًا لماينكرافت وليس مرتبطًا بموجانغ أو مايكروسوفت.",
+    "placeholders": {
+      "launcherName": {
+        "type": "String",
+        "example": "مشغل كرافت",
+        "description": "اسم المشغل الذي يستخدمه المستخدم."
+      }
+    }
+  },
+  "support": "الدعم",
+  "website": "الموقع الإلكتروني",
+  "contact": "اتصل",
+  "askQuestion": "اطرح سؤالاً",
+  "license": "رخصة"
 }

@@ -328,39 +328,59 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get minecraftRequestLimitError =>
-      'Request limit reached while communicating with Minecraft servers. Please try again shortly.';
+      'تم الوصول إلى حد الطلب أثناء التواصل مع خوادم ماينكرافت. يرجى المحاولة لاحقًا.';
 
   @override
   String unexpectedMinecraftApiError(Object message) {
-    return 'Unexpected error while communicating with Minecraft servers: $message. Please try again later.';
+    return 'حدث خطأ غير متوقع أثناء التواصل مع خوادم ماينكرافت: $message. يرجى المحاولة لاحقًا.';
   }
 
   @override
   String unexpectedMicrosoftApiError(Object message) {
-    return 'Unexpected error while communicating with Microsoft servers: $message. Please try again later.';
+    return 'حدث خطأ غير متوقع أثناء التواصل مع خوادم مايكروسوفت: $message. يرجى المحاولة لاحقًا.';
   }
 
   @override
   String errorLoadingNetworkImage(Object message) {
-    return 'An error occurred while loading the image: $message';
+    return 'حدث خطأ أثناء تحميل الصورة: $message';
   }
 
   @override
-  String get skinModelClassic => 'Classic';
+  String get skinModelClassic => 'كلاسيكي';
 
   @override
-  String get skinModelSlim => 'Slim';
+  String get skinModelSlim => 'نحيف';
 
   @override
-  String get skinModel => 'Skin Model';
+  String get skinModel => 'نموذج الجلد';
 
   @override
-  String get updateSkin => 'Update Skin';
+  String get updateSkin => 'تحديث الجلد';
 
   @override
   String get featureUnsupportedYet =>
-      'This feature is not supported yet. Stay tuned for future updates!';
+      'هذه الميزة غير مدعومة بعد. تابع التحديثات المستقبلية!';
 
   @override
-  String get news => 'News';
+  String get news => 'أخبار';
+
+  @override
+  String legalDisclaimerMessage(String launcherName) {
+    return '$launcherName ليس منتج Minecraft رسمي. لم يتم اعتماده أو ربطه مع Mojang أو Microsoft.';
+  }
+
+  @override
+  String get support => 'الدعم';
+
+  @override
+  String get website => 'الموقع الإلكتروني';
+
+  @override
+  String get contact => 'اتصل';
+
+  @override
+  String get askQuestion => 'اطرح سؤالاً';
+
+  @override
+  String get license => 'رخصة';
 }

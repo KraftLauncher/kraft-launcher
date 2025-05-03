@@ -175,5 +175,21 @@
     "skinModel": "Skin Model",
     "updateSkin": "Update Skin",
     "featureUnsupportedYet": "This feature is not supported yet. Stay tuned for future updates!",
-    "news": "News"
+    "news": "News",
+    "legalDisclaimerMessage": "{launcherName} is NOT AN OFFICIAL MINECRAFT PRODUCT. It is NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.",
+    "@legalDisclaimerMessage": {
+        "description": "A legal disclaimer displayed to the user informing them that the launcher is not an official Minecraft product and is not associated with Mojang or Microsoft.",
+        "placeholders": {
+            "launcherName": {
+                "type": "String",
+                "example": "Kraft Launcher",
+                "description": "The name of the launcher the user is using."
+            }
+        }
+    },
+    "support": "Support",
+    "website": "Website",
+    "contact": "Contact",
+    "askQuestion": "Ask a question",
+    "license": "License"
 }

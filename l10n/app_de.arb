@@ -165,5 +165,31 @@
   },
   "errorOccurred": "Ein Fehler ist aufgetreten",
   "reportBug": "Fehler melden",
-  "unknownErrorWhileLoadingAccounts": "Ein unbekannter Fehler ist beim Laden der Konten aufgetreten. Bitte versuchen Sie es später erneut."
+  "unknownErrorWhileLoadingAccounts": "Ein unbekannter Fehler ist beim Laden der Konten aufgetreten. Bitte versuchen Sie es später erneut.",
+  "minecraftRequestLimitError": "Anfrage-Limit erreicht beim Kommunizieren mit den Minecraft-Servern. Bitte versuchen Sie es in Kürze erneut.",
+  "unexpectedMinecraftApiError": "Unerwarteter Fehler bei der Kommunikation mit den Minecraft-Servern: {message}. Bitte versuchen Sie es später erneut.",
+  "unexpectedMicrosoftApiError": "Unerwarteter Fehler bei der Kommunikation mit den Microsoft-Servern: {message}. Bitte versuchen Sie es später erneut.",
+  "errorLoadingNetworkImage": "Fehler beim Laden des Bildes: {message}",
+  "skinModelClassic": "Klassisch",
+  "skinModelSlim": "Slim",
+  "skinModel": "Skin-Modell",
+  "updateSkin": "Skin aktualisieren",
+  "featureUnsupportedYet": "Diese Funktion wird noch nicht unterstützt. Bleiben Sie dran für zukünftige Updates!",
+  "news": "Nachrichten",
+  "legalDisclaimerMessage": "{launcherName} ist KEIN OFFIZIELLES MINECRAFT-PRODUKT. Es ist NICHT VON MOJANG ODER MICROSOFT GENEHMIGT ODER MIT IHNEN VERBUNDEN.",
+  "@legalDisclaimerMessage": {
+    "description": "Ein rechtlicher Haftungsausschluss, der dem Benutzer anzeigt, dass der Launcher kein offizielles Minecraft-Produkt ist und nicht mit Mojang oder Microsoft verbunden ist.",
+    "placeholders": {
+      "launcherName": {
+        "type": "String",
+        "example": "Kraft Launcher",
+        "description": "Der Name des Launchers, den der Benutzer verwendet."
+      }
+    }
+  },
+  "support": "Support",
+  "website": "Website",
+  "contact": "Kontakt",
+  "askQuestion": "Frage stellen",
+  "license": "Lizenz"
 }

@@ -731,6 +731,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'News'**
   String get news;
+
+  /// A legal disclaimer displayed to the user informing them that the launcher is not an official Minecraft product and is not associated with Mojang or Microsoft.
+  ///
+  /// In en, this message translates to:
+  /// **'{launcherName} is NOT AN OFFICIAL MINECRAFT PRODUCT. It is NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.'**
+  String legalDisclaimerMessage(String launcherName);
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// No description provided for @website.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get website;
+
+  /// No description provided for @contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contact;
+
+  /// No description provided for @askQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question'**
+  String get askQuestion;
+
+  /// No description provided for @license.
+  ///
+  /// In en, this message translates to:
+  /// **'License'**
+  String get license;
 }
 
 class _AppLocalizationsDelegate

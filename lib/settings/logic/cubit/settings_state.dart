@@ -1,6 +1,6 @@
 part of 'settings_cubit.dart';
 
-enum SettingsCategory { general, launcher, java, advanced }
+enum SettingsCategory { general, launcher, java, advanced, about }
 
 final class SettingsState extends Equatable {
   const SettingsState({

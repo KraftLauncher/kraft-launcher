@@ -165,5 +165,31 @@
     },
     "errorOccurred": "发生了一个错误",
     "reportBug": "报告错误",
-    "unknownErrorWhileLoadingAccounts": "加载账户时发生了未知错误。请稍后再试。"
+    "unknownErrorWhileLoadingAccounts": "加载账户时发生了未知错误。请稍后再试。",
+    "minecraftRequestLimitError": "与Minecraft服务器通信时达到请求限制。请稍后再试。",
+    "unexpectedMinecraftApiError": "与Minecraft服务器通信时发生意外错误：{message}。请稍后再试。",
+    "unexpectedMicrosoftApiError": "与Microsoft服务器通信时发生意外错误：{message}。请稍后再试。",
+    "errorLoadingNetworkImage": "加载图像时发生错误：{message}",
+    "skinModelClassic": "经典",
+    "skinModelSlim": "瘦身",
+    "skinModel": "皮肤模型",
+    "updateSkin": "更新皮肤",
+    "featureUnsupportedYet": "此功能尚不支持。请关注未来的更新！",
+    "news": "新闻",
+    "legalDisclaimerMessage": "{launcherName} 不是官方的Minecraft产品。未获得Mojang或Microsoft的批准或与其关联。",
+    "@legalDisclaimerMessage": {
+        "description": "向用户显示的法律免责声明，通知他们该启动器不是Minecraft的官方产品，并且不与Mojang或Microsoft相关联。",
+        "placeholders": {
+            "launcherName": {
+                "type": "String",
+                "example": "Kraft Launcher",
+                "description": "用户正在使用的启动器的名称。"
+            }
+        }
+    },
+    "support": "支持",
+    "website": "网站",
+    "contact": "联系方式",
+    "askQuestion": "提问",
+    "license": "许可证"
 }

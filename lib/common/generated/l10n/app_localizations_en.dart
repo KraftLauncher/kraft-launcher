@@ -368,4 +368,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get news => 'News';
+
+  @override
+  String legalDisclaimerMessage(String launcherName) {
+    return '$launcherName is NOT AN OFFICIAL MINECRAFT PRODUCT. It is NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.';
+  }
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get website => 'Website';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get askQuestion => 'Ask a question';
+
+  @override
+  String get license => 'License';
 }

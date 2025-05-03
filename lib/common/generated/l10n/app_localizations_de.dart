@@ -337,39 +337,59 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get minecraftRequestLimitError =>
-      'Request limit reached while communicating with Minecraft servers. Please try again shortly.';
+      'Anfrage-Limit erreicht beim Kommunizieren mit den Minecraft-Servern. Bitte versuchen Sie es in Kürze erneut.';
 
   @override
   String unexpectedMinecraftApiError(Object message) {
-    return 'Unexpected error while communicating with Minecraft servers: $message. Please try again later.';
+    return 'Unerwarteter Fehler bei der Kommunikation mit den Minecraft-Servern: $message. Bitte versuchen Sie es später erneut.';
   }
 
   @override
   String unexpectedMicrosoftApiError(Object message) {
-    return 'Unexpected error while communicating with Microsoft servers: $message. Please try again later.';
+    return 'Unerwarteter Fehler bei der Kommunikation mit den Microsoft-Servern: $message. Bitte versuchen Sie es später erneut.';
   }
 
   @override
   String errorLoadingNetworkImage(Object message) {
-    return 'An error occurred while loading the image: $message';
+    return 'Fehler beim Laden des Bildes: $message';
   }
 
   @override
-  String get skinModelClassic => 'Classic';
+  String get skinModelClassic => 'Klassisch';
 
   @override
   String get skinModelSlim => 'Slim';
 
   @override
-  String get skinModel => 'Skin Model';
+  String get skinModel => 'Skin-Modell';
 
   @override
-  String get updateSkin => 'Update Skin';
+  String get updateSkin => 'Skin aktualisieren';
 
   @override
   String get featureUnsupportedYet =>
-      'This feature is not supported yet. Stay tuned for future updates!';
+      'Diese Funktion wird noch nicht unterstützt. Bleiben Sie dran für zukünftige Updates!';
 
   @override
-  String get news => 'News';
+  String get news => 'Nachrichten';
+
+  @override
+  String legalDisclaimerMessage(String launcherName) {
+    return '$launcherName ist KEIN OFFIZIELLES MINECRAFT-PRODUKT. Es ist NICHT VON MOJANG ODER MICROSOFT GENEHMIGT ODER MIT IHNEN VERBUNDEN.';
+  }
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get website => 'Website';
+
+  @override
+  String get contact => 'Kontakt';
+
+  @override
+  String get askQuestion => 'Frage stellen';
+
+  @override
+  String get license => 'Lizenz';
 }
