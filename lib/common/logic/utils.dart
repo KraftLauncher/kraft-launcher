@@ -32,7 +32,6 @@ extension ListX<T> on List<T> {
     return null;
   }
 
-  // TODO: Write tests for this, like getNewIndexAfterRemoval tests
   /// Returns the new focus element after an element was removed from the list.
   ///
   /// The new focus element is the next element if it exist, or the element before the current,

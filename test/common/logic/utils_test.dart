@@ -101,6 +101,40 @@ void main() {
           expect(list.getNewIndexAfterRemoval(removeIndex), removeIndex - 1);
         });
       });
+
+      group('getReplacementElementAfterRemoval', () {
+        test('returns null when list is empty', () {
+          expect(<int>[].getReplacementElementAfterRemoval(-1), null);
+        });
+
+        test('returns null when removing the only element at index 0', () {
+          final list = <int>[1];
+          list.removeAt(0);
+          expect(list.getReplacementElementAfterRemoval(0), null);
+        });
+
+        test('returns next element when it exists', () {
+          final list = [1, 2, 3, 4, 5];
+          const removeIndex = 1;
+          final nextElement = list[removeIndex + 1];
+          list.removeAt(removeIndex);
+          expect(
+            list.getReplacementElementAfterRemoval(removeIndex),
+            nextElement,
+          );
+        });
+
+        test('returns previous element when next does not exist', () {
+          final list = [1, 2, 3, 4, 5];
+          final removeIndex = list.length - 1;
+          final previousElement = list[removeIndex - 1];
+          list.removeAt(removeIndex);
+          expect(
+            list.getReplacementElementAfterRemoval(removeIndex),
+            previousElement,
+          );
+        });
+      });
     });
   });
 }
