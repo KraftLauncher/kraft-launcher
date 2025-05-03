@@ -43,9 +43,17 @@ void main() {
     minecraftAccountManager = MinecraftAccountManager(
       minecraftApi: mockMinecraftApi,
       microsoftAuthApi: mockMicrosoftAuthApi,
-
       accountStorage: mockAccountStorage,
     );
+
+    when(
+      () => mockAccountStorage.loadAccounts(),
+    ).thenReturn(MinecraftAccounts.empty());
+    when(() => mockAccountStorage.saveAccounts(any())).thenDoNothing();
+  });
+
+  setUpAll(() {
+    registerFallbackValue(MinecraftAccounts.empty());
   });
 
   group('auth code flow', () {
@@ -161,7 +169,6 @@ void main() {
         registerFallbackValue(
           const XboxLiveAuthTokenResponse(userHash: '', xboxToken: ''),
         );
-        registerFallbackValue(MinecraftAccounts.empty());
       });
 
       setUp(() {
@@ -217,10 +224,6 @@ void main() {
             expiresIn: -1,
           ),
         );
-        when(
-          () => mockAccountStorage.loadAccounts(),
-        ).thenReturn(MinecraftAccounts.empty());
-        when(() => mockAccountStorage.saveAccounts(any())).thenDoNothing();
       });
 
       test('starts server if not started already', () async {
@@ -1261,6 +1264,159 @@ void main() {
     verify(() => mockAccountStorage.loadAccounts()).called(1);
     verify(() => mockAccountStorage.saveAccounts(accounts)).called(1);
     verifyNoMoreInteractions(mockAccountStorage);
+  });
+
+  group('createOfflineAccount', () {
+    test('creates the account details correctly', () {
+      const username = 'example_username';
+      final result = minecraftAccountManager.createOfflineAccount(
+        username: username,
+      );
+      final newAccount = result.newAccount;
+      expect(newAccount.accountType, AccountType.offline);
+      expect(newAccount.username, username);
+      expect(newAccount.ownsMinecraftJava, null);
+      expect(newAccount.skins, <MinecraftSkin>[]);
+      expect(newAccount.ownsMinecraftJava, null);
+
+      final uuidV4Regex = RegExp(
+        r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
+      );
+      expect(newAccount.id, matches(uuidV4Regex));
+
+      expect(result.hasUpdatedExistingAccount, false);
+    });
+
+    test('saves and adds the account to the list when there are no accounts', () {
+      when(
+        () => mockAccountStorage.loadAccounts(),
+      ).thenReturn(MinecraftAccounts.empty());
+
+      final result = minecraftAccountManager.createOfflineAccount(username: '');
+      final newAccount = result.newAccount;
+
+      expect(
+        result.updatedAccounts.defaultAccountId,
+        newAccount.id,
+        reason:
+            'The defaultAccountId should be set to the newly created account when there are no accounts.',
+      );
+      expect(
+        result.updatedAccounts.toComparableJson(),
+        MinecraftAccounts(
+          all: [newAccount],
+          defaultAccountId: newAccount.id,
+        ).toComparableJson(),
+      );
+      expect(result.updatedAccounts.all.length, 1);
+
+      verifyInOrder([
+        () => mockAccountStorage.loadAccounts(),
+        () => mockAccountStorage.saveAccounts(result.updatedAccounts),
+      ]);
+      verifyNoMoreInteractions(mockAccountStorage);
+    });
+
+    test('saves and adds the account to the list when there are accounts', () {
+      const currentDefaultAccountId = 'player-id2';
+      final existingAccounts = MinecraftAccounts(
+        all: [
+          const MinecraftAccount(
+            id: currentDefaultAccountId,
+            username: 'player_username2',
+            accountType: AccountType.offline,
+            microsoftAccountInfo: null,
+            skins: [],
+            ownsMinecraftJava: true,
+          ),
+          MinecraftAccount(
+            id: 'player-id',
+            username: 'player_username',
+            accountType: AccountType.microsoft,
+            microsoftAccountInfo: MicrosoftAccountInfo(
+              microsoftOAuthAccessToken: ExpirableToken(
+                value: 'microsoft-access-token',
+                expiresAt: DateTime.now().add(const Duration(days: 4)),
+              ),
+              microsoftOAuthRefreshToken: 'microsoft-refresh-token',
+              minecraftAccessToken: ExpirableToken(
+                value: 'minecraft-access-token',
+                expiresAt: DateTime.now().add(const Duration(hours: 20)),
+              ),
+            ),
+            skins: const [
+              MinecraftSkin(
+                id: 'id',
+                state: 'ACTIVE',
+                url: 'http://dasdsas',
+                textureKey: 'dasdsadsadsa',
+                variant: MinecraftSkinVariant.classic,
+              ),
+              MinecraftSkin(
+                id: 'iadsadasd',
+                state: 'INACTIVE',
+                url: 'http://dasddsadsasas',
+                textureKey: 'dsad2sadsadsa',
+                variant: MinecraftSkinVariant.slim,
+              ),
+            ],
+            ownsMinecraftJava: true,
+          ),
+        ],
+        defaultAccountId: currentDefaultAccountId,
+      );
+      when(
+        () => mockAccountStorage.loadAccounts(),
+      ).thenReturn(existingAccounts);
+
+      final result = minecraftAccountManager.createOfflineAccount(username: '');
+      final newAccount = result.newAccount;
+
+      expect(
+        result.updatedAccounts.defaultAccountId,
+        currentDefaultAccountId,
+        reason:
+            'Should keep defaultAccountId unchanged when there is already an existing default account.',
+      );
+      expect(
+        result.updatedAccounts.toComparableJson(),
+        MinecraftAccounts(
+          all: [newAccount, ...existingAccounts.all],
+          defaultAccountId: currentDefaultAccountId,
+        ).toComparableJson(),
+      );
+      expect(
+        result.updatedAccounts.all.length,
+        existingAccounts.all.length + 1,
+      );
+
+      verifyInOrder([
+        () => mockAccountStorage.loadAccounts(),
+        () => mockAccountStorage.saveAccounts(result.updatedAccounts),
+      ]);
+      verifyNoMoreInteractions(mockAccountStorage);
+    });
+
+    test('creates unique id', () {
+      final id1 =
+          minecraftAccountManager
+              .createOfflineAccount(username: '')
+              .newAccount
+              .id;
+      final id2 =
+          minecraftAccountManager
+              .createOfflineAccount(username: '')
+              .newAccount
+              .id;
+      final id3 =
+          minecraftAccountManager
+              .createOfflineAccount(username: '')
+              .newAccount
+              .id;
+      expect(id1, isNot(equals(id2)));
+      expect(id2, isNot(equals(id3)));
+      expect(id3, isNot(equals(id1)));
+    });
   });
 }
 

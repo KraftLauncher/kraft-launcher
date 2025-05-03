@@ -396,6 +396,24 @@ class MinecraftAccountManager {
     );
   });
 
+  MinecraftAccounts _getUpdatedAccountsOnCreate({
+    required MinecraftAccount? currentDefaultAccount,
+    required MinecraftAccount newAccount,
+    required MinecraftAccounts currentAccounts,
+  }) {
+    final updatedAccountsList = [newAccount, ...currentAccounts.all];
+    return currentAccounts.copyWith(
+      all: updatedAccountsList,
+      defaultAccountId: Wrapped.value(
+        currentDefaultAccount != null
+            ? updatedAccountsList
+                .firstWhere((account) => currentDefaultAccount.id == account.id)
+                .id
+            : newAccount.id,
+      ),
+    );
+  }
+
   AccountResult createOfflineAccount({required String username}) {
     final newAccount = MinecraftAccount(
       accountType: AccountType.offline,
@@ -418,24 +436,6 @@ class MinecraftAccountManager {
       newAccount: newAccount,
       updatedAccounts: updatedAccounts,
       hasUpdatedExistingAccount: false,
-    );
-  }
-
-  MinecraftAccounts _getUpdatedAccountsOnCreate({
-    required MinecraftAccount? currentDefaultAccount,
-    required MinecraftAccount newAccount,
-    required MinecraftAccounts currentAccounts,
-  }) {
-    final updatedAccountsList = [newAccount, ...currentAccounts.all];
-    return currentAccounts.copyWith(
-      all: updatedAccountsList,
-      defaultAccountId: Wrapped.value(
-        currentDefaultAccount != null
-            ? updatedAccountsList
-                .firstWhere((account) => currentDefaultAccount.id == account.id)
-                .id
-            : newAccount.id,
-      ),
     );
   }
 
