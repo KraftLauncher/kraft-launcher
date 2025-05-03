@@ -6,6 +6,7 @@ ci:
 documentation:
   - changed-files:
     - any-glob-to-all-files:
+      - docs/**
       - CONTRIBUTING.md
       - CHANGELOG.md
       - README.md

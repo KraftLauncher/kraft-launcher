@@ -56,6 +56,7 @@ dev_dependencies:
   remove_from_coverage: ^2.0.0
   url_launcher_platform_interface: ^2.3.2
   plugin_platform_interface: ^2.1.8
+  flutter_launcher_icons: ^0.14.3
 
 dependency_overrides:
   # Remove the override if this PR merged: https://github.com/material-foundation/flutter-packages/pull/634
@@ -71,6 +72,8 @@ flutter:
     - assets/lottie/errors/
     - assets/lottie/loading/
     - assets/lottie/no_data_found/
+    # IMPORTANT: The asset assets/branding/icon.png is hardcoded in linux/runner/my_application.cc
+    - assets/branding/
 
 flutter_gen:
   output: lib/common/generated/
@@ -81,3 +84,12 @@ flutter_gen:
 
 pubspec_extract:
   destination: lib/common/generated/pubspec.g.dart
+
+flutter_launcher_icons:
+  image_path: assets/branding/icon.png
+  windows:
+    generate: true
+  macos:
+    generate: true
+  # Linux window icon is manually handled using `gtk_window_set_icon_from_file`,
+  # the launcher icon is handled using the packaging solutions (e.g., Flatpak).

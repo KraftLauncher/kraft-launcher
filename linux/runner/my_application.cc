@@ -20,6 +20,9 @@ static void my_application_activate(GApplication* application) {
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
 
+  // Set the window icon, this file must be included as an asset in pubspec.yaml to work.
+  gtk_window_set_icon_from_file(GTK_WINDOW(window), "assets/branding/icon.png", NULL);
+
   // Use a header bar when running in GNOME as this is the common style used
   // by applications and is the setup most users will be using (e.g. Ubuntu
   // desktop).
