@@ -8,14 +8,15 @@ import 'minecraft_account.dart';
 class MinecraftAccounts {
   const MinecraftAccounts({
     required this.all,
-    required this.defaultAccountIndex,
+    // TODO: Use id for both selected and default account instead of index?
+    required this.defaultAccountId,
   });
 
   factory MinecraftAccounts.empty() =>
-      const MinecraftAccounts(all: [], defaultAccountIndex: null);
+      const MinecraftAccounts(all: [], defaultAccountId: null);
 
   factory MinecraftAccounts.fromJson(JsonObject json) => MinecraftAccounts(
-    defaultAccountIndex: json['defaultAccountIndex'] as int?,
+    defaultAccountId: json['defaultAccountId'] as String?,
     all:
         (json['accounts']! as List<dynamic>)
             .cast<JsonObject>()
@@ -24,10 +25,12 @@ class MinecraftAccounts {
   );
 
   final List<MinecraftAccount> all;
-  final int? defaultAccountIndex;
+  final String? defaultAccountId;
 
   MinecraftAccount? get defaultAccount =>
-      defaultAccountIndex == null ? null : all[defaultAccountIndex!];
+      defaultAccountId == null
+          ? null
+          : all.firstWhere((account) => account.id == defaultAccountId);
 
   MinecraftAccount get defaultAccountOrThrow =>
       defaultAccount ??
@@ -37,17 +40,17 @@ class MinecraftAccounts {
 
   JsonObject toJson() => {
     'accounts': all.map((account) => account.toJson()).toList(),
-    'defaultAccountIndex': defaultAccountIndex,
+    'defaultAccountId': defaultAccountId,
   };
 
   MinecraftAccounts copyWith({
     List<MinecraftAccount>? all,
-    Wrapped<int?>? defaultAccountIndex,
+    Wrapped<String?>? defaultAccountId,
   }) => MinecraftAccounts(
     all: all ?? this.all,
-    defaultAccountIndex:
-        defaultAccountIndex != null
-            ? defaultAccountIndex.value
-            : this.defaultAccountIndex,
+    defaultAccountId:
+        defaultAccountId != null
+            ? defaultAccountId.value
+            : this.defaultAccountId,
   );
 }

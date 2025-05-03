@@ -14,13 +14,8 @@ import 'upsert_offline_account_dialog.dart';
 import 'utils/auth_progress_messages.dart';
 
 class AccountDetails extends StatelessWidget {
-  const AccountDetails({
-    super.key,
-    required this.account,
-    required this.accountIndex,
-  });
+  const AccountDetails({super.key, required this.account});
 
-  final int accountIndex;
   final MinecraftAccount account;
 
   @override
@@ -56,10 +51,7 @@ class AccountDetails extends StatelessWidget {
                           context: context,
                           builder:
                               (context) => UpsertOfflineAccountDialog(
-                                offlineAccountToUpdate: OfflineAccountToUpdate(
-                                  index: accountIndex,
-                                  account: account,
-                                ),
+                                offlineAccountToUpdate: account,
                               ),
                         );
                     }
@@ -176,7 +168,7 @@ class AccountDetails extends StatelessWidget {
                     if (!confirmed) {
                       return;
                     }
-                    accountCubit.removeAccount(accountIndex);
+                    accountCubit.removeAccount(account.id);
                   },
                   title: Text(
                     context.loc.removeAccount,

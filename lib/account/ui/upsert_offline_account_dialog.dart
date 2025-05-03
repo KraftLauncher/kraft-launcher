@@ -5,21 +5,13 @@ import '../../common/ui/utils/build_context_ext.dart';
 import '../data/minecraft_account.dart';
 import '../logic/account_cubit.dart';
 
-@immutable
-class OfflineAccountToUpdate {
-  const OfflineAccountToUpdate({required this.index, required this.account});
-
-  final int index;
-  final MinecraftAccount account;
-}
-
 class UpsertOfflineAccountDialog extends StatefulWidget {
   const UpsertOfflineAccountDialog({
     super.key,
     required this.offlineAccountToUpdate,
   });
 
-  final OfflineAccountToUpdate? offlineAccountToUpdate;
+  final MinecraftAccount? offlineAccountToUpdate;
 
   @override
   State<UpsertOfflineAccountDialog> createState() =>
@@ -35,7 +27,7 @@ class _UpsertOfflineAccountDialogState
   void initState() {
     super.initState();
     _usernameController = TextEditingController(
-      text: widget.offlineAccountToUpdate?.account.username,
+      text: widget.offlineAccountToUpdate?.username,
     );
   }
 
@@ -129,7 +121,7 @@ class _UpsertOfflineAccountDialogState
     final offlineAccountToUpdate = widget.offlineAccountToUpdate;
     if (offlineAccountToUpdate != null) {
       context.read<AccountCubit>().updateOfflineAccount(
-        offlineAccountToUpdate.index,
+        accountId: offlineAccountToUpdate.id,
         username: _usernameController.text,
       );
     } else {

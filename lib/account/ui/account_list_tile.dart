@@ -10,19 +10,17 @@ class AccountListTile extends StatelessWidget {
   const AccountListTile({
     super.key,
     required this.account,
-    required this.index,
     required this.isSelected,
   });
 
   final MinecraftAccount account;
-  final int index;
   final bool isSelected;
 
   @override
   Widget build(BuildContext context) => PrimaryTilePane(
     title: Text(account.username),
     leading: SkinIconImage(account: account, useCircleAvatar: false),
-    onTap: () => context.read<AccountCubit>().updateSelectedAccount(index),
+    onTap: () => context.read<AccountCubit>().updateSelectedAccount(account.id),
     selected: isSelected,
   );
 }

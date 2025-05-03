@@ -2,8 +2,12 @@ import 'dart:io';
 
 import 'package:mocktail/mocktail.dart';
 
-extension MockAsync on When<Future<void>> {
+extension WhenAsyncExt on When<Future<void>> {
   void thenDoNothing() => thenAnswer((_) async {});
+}
+
+extension WhenExt on When<void> {
+  void thenDoNothing() => thenAnswer((_) {});
 }
 
 Future<bool> isPortOpen(
@@ -18,4 +22,9 @@ Future<bool> isPortOpen(
   } on Exception catch (_) {
     return false;
   }
+}
+
+extension DateTimeExt on DateTime {
+  DateTime trimSeconds() => DateTime(year, month, day, hour, minute);
+  int get covertToExpiresIn => difference(DateTime.now().toUtc()).inSeconds;
 }

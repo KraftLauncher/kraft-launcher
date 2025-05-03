@@ -29,7 +29,7 @@ void main() {
       expect(accountsFile.existsSync(), true);
 
       expect(accounts.all, isEmpty);
-      expect(accounts.defaultAccountIndex, isNull);
+      expect(accounts.defaultAccountId, isNull);
 
       expect(accounts.toJson(), MinecraftAccounts.empty().toJson());
     },
@@ -43,7 +43,7 @@ void main() {
 
     final accounts = accountStorage.loadAccounts();
     expect(accounts.all, isEmpty);
-    expect(accounts.defaultAccountIndex, isNull);
+    expect(accounts.defaultAccountId, isNull);
 
     expect(
       accountStorage.loadAccounts().toJson(),
@@ -103,7 +103,7 @@ void main() {
           ownsMinecraftJava: true,
         ),
       ],
-      defaultAccountIndex: null,
+      defaultAccountId: null,
     );
     accountStorage.saveAccounts(savedAccounts);
 
@@ -132,7 +132,7 @@ void main() {
           ownsMinecraftJava: false,
         ),
         MinecraftAccount(
-          id: 'id',
+          id: 'id2',
           username: 'Steve',
           accountType: AccountType.microsoft,
           microsoftAccountInfo: MicrosoftAccountInfo(
@@ -158,7 +158,7 @@ void main() {
           ownsMinecraftJava: true,
         ),
       ],
-      defaultAccountIndex: null,
+      defaultAccountId: 'id2',
     );
     accountStorage.saveAccounts(expectedAccounts);
     final accounts = accountStorage.loadAccounts();

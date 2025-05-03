@@ -14,7 +14,6 @@ class AccountSwitcherIconButton extends StatelessWidget {
         (context, state) => MenuAnchor(
           menuChildren:
               state.accounts.all.indexed.map((entry) {
-                final index = entry.$1;
                 final account = entry.$2;
 
                 return MenuItemButton(
@@ -25,7 +24,7 @@ class AccountSwitcherIconButton extends StatelessWidget {
                   child: Text(account.username),
                   onPressed:
                       () => context.read<AccountCubit>().updateDefaultAccount(
-                        index,
+                        account.id,
                       ),
                 );
               }).toList(),

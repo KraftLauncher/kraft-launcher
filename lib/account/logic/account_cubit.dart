@@ -26,7 +26,9 @@ class AccountCubit extends Cubit<AccountState> {
         state.copyWith(
           status: AccountStatus.loadSuccess,
           accounts: accounts,
-          selectedIndex: Wrapped.value(accounts.all.isNotEmpty ? 0 : null),
+          selectedAccountId: Wrapped.value(
+            accounts.all.isNotEmpty ? accounts.all.first.id : null,
+          ),
         ),
       );
     } on AccountManagerException catch (e, stackTrace) {
@@ -39,14 +41,14 @@ class AccountCubit extends Cubit<AccountState> {
     }
   }
 
-  void updateSelectedAccount(int index) =>
-      emit(state.copyWith(selectedIndex: Wrapped.value(index)));
+  void updateSelectedAccount(String accountId) =>
+      emit(state.copyWith(selectedAccountId: Wrapped.value(accountId)));
 
-  void updateDefaultAccount(int index) {
+  void updateDefaultAccount(String accountId) {
     emit(
       state.copyWith(
         accounts: minecraftAccountManager.updateDefaultAccount(
-          newDefaultAccountIndex: index,
+          newDefaultAccountId: accountId,
           currentAccounts: state.accounts,
         ),
       ),
@@ -61,25 +63,19 @@ class AccountCubit extends Cubit<AccountState> {
       loginResult.newAccount,
       loginResult.updatedAccounts,
     );
+
     emit(
       state.copyWith(
         accounts: updatedAccounts,
-        selectedIndex: Wrapped.value(
-          _getNewSelectedAccountIndex(
-            newAccount: newAccount,
-            updatedAccounts: updatedAccounts,
-          ),
+        selectedAccountId: Wrapped.value(
+          updatedAccounts.all
+              .firstWhere((account) => account.id == newAccount.id)
+              .id,
         ),
         status: accountStatus,
       ),
     );
   }
-
-  int _getNewSelectedAccountIndex({
-    // The Minecraft account that was added or modified.
-    required MinecraftAccount newAccount,
-    required MinecraftAccounts updatedAccounts,
-  }) => updatedAccounts.all.indexOf(newAccount);
 
   void createOfflineAccount({required String username}) {
     final loginResult = minecraftAccountManager.createOfflineAccount(
@@ -92,9 +88,12 @@ class AccountCubit extends Cubit<AccountState> {
     );
   }
 
-  void updateOfflineAccount(int index, {required String username}) {
+  void updateOfflineAccount({
+    required String accountId,
+    required String username,
+  }) {
     final loginResult = minecraftAccountManager.updateOfflineAccount(
-      index: index,
+      accountId: accountId,
       username: username,
     );
 
@@ -104,17 +103,19 @@ class AccountCubit extends Cubit<AccountState> {
     );
   }
 
-  void removeAccount(int index) {
-    final updatedAccounts = minecraftAccountManager.removeAccount(
-      index: index,
-      currentMinecraftAccounts: state.accounts,
+  void removeAccount(String accountId) {
+    final removedAccountIndex = state.accounts.all.indexWhere(
+      (account) => account.id == accountId,
     );
+    final updatedAccounts = minecraftAccountManager.removeAccount(accountId);
 
     emit(
       state.copyWith(
         accounts: updatedAccounts,
-        selectedIndex: Wrapped.value(
-          updatedAccounts.all.getNewIndexAfterRemoval(index),
+        selectedAccountId: Wrapped.value(
+          updatedAccounts.all
+              .getReplacementElementAfterRemoval(removedAccountIndex)
+              ?.id,
         ),
         status: AccountStatus.accountRemoved,
       ),

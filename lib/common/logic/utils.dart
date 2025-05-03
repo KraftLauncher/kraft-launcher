@@ -12,7 +12,7 @@ class Wrapped<T> {
 }
 
 extension ListX<T> on List<T> {
-  /// Returns the new index to focus on after an item is removed from a list.
+  /// Returns the new index to focus on after an element is removed from a list.
   ///
   /// If the removed index is still within bounds, returns it (the next item takes its place).
   /// If the removed item was the last, returns the previous index if available.
@@ -28,6 +28,25 @@ extension ListX<T> on List<T> {
     }
     if (removedIndex - 1 >= 0) {
       return removedIndex - 1;
+    }
+    return null;
+  }
+
+  // TODO: Write tests for this, like getNewIndexAfterRemoval tests
+  /// Returns the new focus element after an element was removed from the list.
+  ///
+  /// The new focus element is the next element if it exist, or the element before the current,
+  /// or `null` if the list is empty.
+  ///
+  /// NOTE: This should be called on the new list with the removal, not the current list.
+  T? getReplacementElementAfterRemoval(int removedIndex) {
+    if (isEmpty) {
+      return null;
+    }
+
+    final newIndex = getNewIndexAfterRemoval(removedIndex);
+    if (newIndex != null) {
+      return this[newIndex];
     }
     return null;
   }

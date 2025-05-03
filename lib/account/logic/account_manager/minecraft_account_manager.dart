@@ -99,13 +99,7 @@ class MinecraftAccountManager {
   }
 
   Future<AccountResult?> loginWithMicrosoftAuthCode({
-    required void Function(
-      MicrosoftAuthProgress newProgress, {
-
-      /// Not null if [newProgress] is [MicrosoftAuthProgress.waitingForUserLogin]
-      String? authCodeLoginUrl,
-    })
-    onProgressUpdate,
+    required OnAuthProgressUpdateCallback onProgressUpdate,
     // The page content is not hardcoded for localization.
     required AuthCodeSuccessLoginPageContent successLoginPageContent,
   }) => _transformExceptions(() async {
@@ -357,12 +351,12 @@ class MinecraftAccountManager {
               all: [
                 ...currentAccounts.all..[existingAccountIndex] = newAccount,
               ],
-              defaultAccountIndex: Wrapped.value(
-                currentAccounts.defaultAccountIndex ?? 0,
+              defaultAccountId: Wrapped.value(
+                currentAccounts.defaultAccountId ?? newAccount.id,
               ),
             )
             : _getUpdatedAccountsOnCreate(
-              defaultAccount: currentAccounts.defaultAccount,
+              currentDefaultAccount: currentAccounts.defaultAccount,
               newAccount: newAccount,
               currentAccounts: currentAccounts,
             );
@@ -416,7 +410,7 @@ class MinecraftAccountManager {
 
     final updatedAccounts = _getUpdatedAccountsOnCreate(
       newAccount: newAccount,
-      defaultAccount: currentAccounts.defaultAccount,
+      currentDefaultAccount: currentAccounts.defaultAccount,
       currentAccounts: currentAccounts,
     );
     accountStorage.saveAccounts(updatedAccounts);
@@ -428,33 +422,37 @@ class MinecraftAccountManager {
   }
 
   MinecraftAccounts _getUpdatedAccountsOnCreate({
-    required MinecraftAccount? defaultAccount,
+    required MinecraftAccount? currentDefaultAccount,
     required MinecraftAccount newAccount,
     required MinecraftAccounts currentAccounts,
   }) {
     final updatedAccountsList = [newAccount, ...currentAccounts.all];
     return currentAccounts.copyWith(
       all: updatedAccountsList,
-      defaultAccountIndex: Wrapped.value(
-        defaultAccount != null
-            ? updatedAccountsList.indexWhere(
-              (account) => defaultAccount.id == account.id,
-            )
-            : 0,
+      defaultAccountId: Wrapped.value(
+        currentDefaultAccount != null
+            ? updatedAccountsList
+                .firstWhere((account) => currentDefaultAccount.id == account.id)
+                .id
+            : newAccount.id,
       ),
     );
   }
 
   AccountResult updateOfflineAccount({
-    required int index,
+    required String accountId,
     required String username,
   }) {
-    final currentMinecraftAccounts = loadAccounts();
-    final updatedAccount = currentMinecraftAccounts.all[index].copyWith(
+    final currentAccounts = loadAccounts();
+    final index = currentAccounts.all.indexWhere(
+      (account) => account.id == accountId,
+    );
+
+    final updatedAccount = currentAccounts.all[index].copyWith(
       username: username,
     );
-    final updatedAccounts = currentMinecraftAccounts.copyWith(
-      all: [...currentMinecraftAccounts.all..[index] = updatedAccount],
+    final updatedAccounts = currentAccounts.copyWith(
+      all: [...currentAccounts.all..[index] = updatedAccount],
     );
 
     accountStorage.saveAccounts(updatedAccounts);
@@ -465,16 +463,21 @@ class MinecraftAccountManager {
     );
   }
 
-  MinecraftAccounts removeAccount({
-    required int index,
-    required MinecraftAccounts currentMinecraftAccounts,
-  }) {
-    final updatedAccountsList = [...currentMinecraftAccounts.all]
-      ..removeAt(index);
-    final updatedAccounts = currentMinecraftAccounts.copyWith(
+  MinecraftAccounts removeAccount(String accountId) {
+    final currentAccounts = loadAccounts();
+    final removedAccountIndex = currentAccounts.all.indexWhere(
+      (account) => account.id == accountId,
+    );
+
+    final updatedAccountsList = [...currentAccounts.all]
+      ..removeWhere((account) => account.id == accountId);
+
+    final updatedAccounts = currentAccounts.copyWith(
       all: updatedAccountsList,
-      defaultAccountIndex: Wrapped.value(
-        updatedAccountsList.getNewIndexAfterRemoval(index),
+      defaultAccountId: Wrapped.value(
+        updatedAccountsList
+            .getReplacementElementAfterRemoval(removedAccountIndex)
+            ?.id,
       ),
     );
     accountStorage.saveAccounts(updatedAccounts);
@@ -490,11 +493,11 @@ class MinecraftAccountManager {
   }
 
   MinecraftAccounts updateDefaultAccount({
-    required int newDefaultAccountIndex,
+    required String newDefaultAccountId,
     required MinecraftAccounts currentAccounts,
   }) {
     final updatedAccounts = currentAccounts.copyWith(
-      defaultAccountIndex: Wrapped.value(newDefaultAccountIndex),
+      defaultAccountId: Wrapped.value(newDefaultAccountId),
     );
     accountStorage.saveAccounts(updatedAccounts);
     return updatedAccounts;
@@ -597,3 +600,12 @@ enum DeviceCodeTimerCloseReason {
   codeExpired,
   normal, // Either the user requested to cancel the timer or the user logged in
 }
+
+@visibleForTesting
+typedef OnAuthProgressUpdateCallback =
+    void Function(
+      MicrosoftAuthProgress newProgress, {
+
+      /// Not null if [newProgress] is [MicrosoftAuthProgress.waitingForUserLogin]
+      String? authCodeLoginUrl,
+    });

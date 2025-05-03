@@ -149,6 +149,20 @@ class MicrosoftAccountInfo {
     'microsoftOAuthRefreshToken': microsoftOAuthRefreshToken,
     'minecraftAccessToken': minecraftAccessToken.toJson(),
   };
+
+  MicrosoftAccountInfo copyWith({
+    ExpirableToken? microsoftOAuthAccessToken,
+    String? microsoftOAuthRefreshToken,
+    ExpirableToken? minecraftAccessToken,
+  }) {
+    return MicrosoftAccountInfo(
+      microsoftOAuthAccessToken:
+          microsoftOAuthAccessToken ?? this.microsoftOAuthAccessToken,
+      microsoftOAuthRefreshToken:
+          microsoftOAuthRefreshToken ?? this.microsoftOAuthRefreshToken,
+      minecraftAccessToken: minecraftAccessToken ?? this.minecraftAccessToken,
+    );
+  }
 }
 
 @immutable
@@ -169,6 +183,13 @@ class ExpirableToken {
   };
 
   bool get hasExpired => expiresAt.isBefore(DateTime.now());
+
+  ExpirableToken copyWith({String? value, DateTime? expiresAt}) {
+    return ExpirableToken(
+      value: value ?? this.value,
+      expiresAt: expiresAt ?? this.expiresAt,
+    );
+  }
 }
 
 enum MinecraftSkinVariant {

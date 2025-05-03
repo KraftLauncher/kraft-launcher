@@ -56,9 +56,8 @@ class AccountsTab extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 8),
                         child: AccountListTile(
                           account: account,
-                          index: index,
                           key: ValueKey(account.id),
-                          isSelected: state.selectedIndex == index,
+                          isSelected: state.selectedAccountId == account.id,
                         ),
                       );
                     },
@@ -71,11 +70,8 @@ class AccountsTab extends StatelessWidget {
             ),
           ),
           secondaryPane:
-              state.selectedIndex != null
-                  ? AccountDetails(
-                    accountIndex: state.selectedIndex!,
-                    account: state.accounts.all[state.selectedIndex!],
-                  )
+              state.selectedAccountId != null
+                  ? AccountDetails(account: state.selectedAccountOrThrow)
                   : null,
         );
       },

@@ -13,15 +13,25 @@ enum AccountStatus {
 @immutable
 final class AccountState extends Equatable {
   const AccountState({
-    this.selectedIndex,
-    this.accounts = const MinecraftAccounts(all: [], defaultAccountIndex: null),
+    this.selectedAccountId,
+    this.accounts = const MinecraftAccounts(all: [], defaultAccountId: null),
     this.status = AccountStatus.initial,
     this.exceptionWithStackTrace,
   });
 
   // The selected account in the accounts tab, pressing an account list tile
   // will updates the selected index.
-  final int? selectedIndex;
+  final String? selectedAccountId;
+
+  String? get selectedAccountIdOrThrow =>
+      selectedAccountId ??
+      (throw Exception(
+        'Expected the current selected Minecraft account to be not null',
+      ));
+
+  MinecraftAccount get selectedAccountOrThrow => accounts.all.firstWhere(
+    (account) => account.id == selectedAccountIdOrThrow,
+  );
 
   final MinecraftAccounts accounts;
 
@@ -33,20 +43,22 @@ final class AccountState extends Equatable {
 
   @override
   List<Object?> get props => [
-    selectedIndex,
+    selectedAccountId,
     accounts,
     status,
     exceptionWithStackTrace,
   ];
 
   AccountState copyWith({
-    Wrapped<int?>? selectedIndex,
+    Wrapped<String?>? selectedAccountId,
     MinecraftAccounts? accounts,
     AccountStatus? status,
     ExceptionWithStacktrace<AccountManagerException>? exceptionWithStackTrace,
   }) => AccountState(
-    selectedIndex:
-        selectedIndex != null ? selectedIndex.value : this.selectedIndex,
+    selectedAccountId:
+        selectedAccountId != null
+            ? selectedAccountId.value
+            : this.selectedAccountId,
     accounts: accounts ?? this.accounts,
     status: status ?? this.status,
     exceptionWithStackTrace:
