@@ -45,7 +45,7 @@ jobs:
         run: |
           flutter build windows
           New-Item -ItemType Directory -Force -Path build | Out-Null
-          Compress-Archive -Path build/windows/runner/Release/* -DestinationPath build/windows.zip
+          Compress-Archive -Path build\windows\runner\Release\* -DestinationPath build\windows.zip
 
       - name: Build macOS app
         if: runner.os == 'macOS'
