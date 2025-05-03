@@ -1,0 +1,63 @@
+name: Publish
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }} App
+    strategy:
+      matrix:
+        os: [ubuntu, windows, macos]
+    runs-on: ${{ matrix.os }}-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter (stable)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # To skip installing CocoaPods, ruby and avoid any build failures or compatibility issues.
+      - name: Enable Flutter Swift Package Manager on macOS
+        run: flutter config --enable-swift-package-manager
+        if: runner.os == 'macOS'
+      
+      - name: Install package dependencies
+        run: flutter pub get
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+
+      - name: Build Flutter app for ${{ matrix.os }}
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "windows" ]]; then
+            flutter build windows
+            zip -r build/windows.zip build/windows/runner/Release/*
+          elif [[ "${{ matrix.os }}" == "macos" ]]; then
+            flutter build macos
+            cp -r build/macos/Build/Products/Release/kraft_launcher.app build/macOS.app
+          elif [[ "${{ matrix.os }}" == "linux" ]]; then
+            flutter build linux
+            tar -czvf build/linux.tar.gz -C build/linux/x64/release/bundle/ .
+          fi
+
+      - name: Create Release on GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/windows.zip
+            build/macOS.app
+            build/linux.tar.gz
+            LICENSE
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -39,7 +39,7 @@ jobs:
           channel: stable
           cache: true
     
-        # To skip installing CocoaPods, ruby and avoid any build failures or compatibility issues.
+      # To skip installing CocoaPods, ruby and avoid any build failures or compatibility issues.
       - name: Enable Flutter Swift Package Manager on macOS
         run: flutter config --enable-swift-package-manager
         if: runner.os == 'macOS'
