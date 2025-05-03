@@ -49,7 +49,6 @@ class AccountCubit extends Cubit<AccountState> {
       state.copyWith(
         accounts: minecraftAccountManager.updateDefaultAccount(
           newDefaultAccountId: accountId,
-          currentAccounts: state.accounts,
         ),
       ),
     );

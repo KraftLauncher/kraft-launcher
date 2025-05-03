@@ -48,8 +48,6 @@ void main() {
     );
   });
 
-  // START: Auth code
-
   group('auth code flow', () {
     tearDown(() async {
       if (minecraftAccountManager.isServerRunning) {
@@ -221,7 +219,7 @@ void main() {
         );
         when(
           () => mockAccountStorage.loadAccounts(),
-        ).thenAnswer((_) => MinecraftAccounts.empty());
+        ).thenReturn(MinecraftAccounts.empty());
         when(() => mockAccountStorage.saveAccounts(any())).thenDoNothing();
       });
 
@@ -730,7 +728,7 @@ void main() {
         () async {
           when(
             () => mockAccountStorage.loadAccounts(),
-          ).thenAnswer((_) => MinecraftAccounts.empty());
+          ).thenReturn(MinecraftAccounts.empty());
 
           final newAccount = MinecraftAccount(
             id: 'player-id',
@@ -842,7 +840,7 @@ void main() {
 
           when(
             () => mockAccountStorage.loadAccounts(),
-          ).thenAnswer((_) => existingAccounts);
+          ).thenReturn(existingAccounts);
 
           final newAccount = MinecraftAccount(
             id: 'player-id3',
@@ -936,7 +934,7 @@ void main() {
 
           when(
             () => mockAccountStorage.loadAccounts(),
-          ).thenAnswer((_) => existingAccounts);
+          ).thenReturn(existingAccounts);
 
           final newAccount = MinecraftAccount(
             id: existingAccountId,
@@ -986,10 +984,96 @@ void main() {
         },
       );
     });
+  });
 
-    group('removeAccount', () {
-      test('removes account from the list correctly', () {
-        const id = 'minecraft-user-id';
+  group('removeAccount', () {
+    test('removes account from the list correctly', () {
+      const id = 'minecraft-user-id';
+      const currentAccounts = MinecraftAccounts(
+        all: [
+          MinecraftAccount(
+            id: id,
+            username: 'minecraft_username',
+            accountType: AccountType.offline,
+            microsoftAccountInfo: null,
+            skins: [],
+            ownsMinecraftJava: null,
+          ),
+          MinecraftAccount(
+            id: 'minecraft-user-id-2',
+            username: 'minecraft_username_2',
+            accountType: AccountType.offline,
+            microsoftAccountInfo: null,
+            skins: [],
+            ownsMinecraftJava: null,
+          ),
+        ],
+        defaultAccountId: 'minecraft-user-id-2',
+      );
+
+      when(() => mockAccountStorage.loadAccounts()).thenReturn(currentAccounts);
+
+      final newAccounts = minecraftAccountManager.removeAccount(id);
+      expect(
+        newAccounts.defaultAccountId,
+        currentAccounts.defaultAccountId,
+        reason:
+            'Keeps defaultAccountId unchanged if the default account was not removed.',
+      );
+      expect(
+        newAccounts.toComparableJson(),
+        currentAccounts
+            .copyWith(
+              all: [...currentAccounts.all]
+                ..removeWhere((account) => account.id == id),
+            )
+            .toComparableJson(),
+      );
+
+      verifyInOrder([
+        () => mockAccountStorage.loadAccounts(),
+        () => mockAccountStorage.saveAccounts(newAccounts),
+      ]);
+      verifyNoMoreInteractions(mockAccountStorage);
+    });
+
+    test('sets defaultAccountId to null when the only account is removed', () {
+      const id = 'minecraft-user-id';
+      const currentAccounts = MinecraftAccounts(
+        all: [
+          MinecraftAccount(
+            id: id,
+            username: 'minecraft_username',
+            accountType: AccountType.offline,
+            microsoftAccountInfo: null,
+            skins: [],
+            ownsMinecraftJava: null,
+          ),
+        ],
+        defaultAccountId: id,
+      );
+
+      when(() => mockAccountStorage.loadAccounts()).thenReturn(currentAccounts);
+
+      final newAccounts = minecraftAccountManager.removeAccount(id);
+      expect(
+        newAccounts.defaultAccountId,
+        isNull,
+        reason:
+            'defaultAccountId should be null when the only account is removed',
+      );
+      expect(
+        newAccounts.toComparableJson(),
+        currentAccounts
+            .copyWith(all: [], defaultAccountId: const Wrapped.value(null))
+            .toComparableJson(),
+      );
+    });
+
+    test(
+      'sets defaultAccountId to next element when current default account is removed',
+      () {
+        const id = 'minecraft-account-id';
         const currentAccounts = MinecraftAccounts(
           all: [
             MinecraftAccount(
@@ -1001,7 +1085,7 @@ void main() {
               ownsMinecraftJava: null,
             ),
             MinecraftAccount(
-              id: 'minecraft-user-id-2',
+              id: 'minecraft-next-account-id',
               username: 'minecraft_username_2',
               accountType: AccountType.offline,
               microsoftAccountInfo: null,
@@ -1009,41 +1093,43 @@ void main() {
               ownsMinecraftJava: null,
             ),
           ],
-          defaultAccountId: 'minecraft-user-id-2',
+          defaultAccountId: id,
         );
 
         when(
           () => mockAccountStorage.loadAccounts(),
-        ).thenAnswer((_) => currentAccounts);
+        ).thenReturn(currentAccounts);
 
         final newAccounts = minecraftAccountManager.removeAccount(id);
         expect(
           newAccounts.defaultAccountId,
-          currentAccounts.defaultAccountId,
+          isNot(equals(id)),
           reason:
-              'Keeps defaultAccountId unchanged if the default account was not removed.',
+              'defaultAccountId should change when the default account is removed',
         );
         expect(
-          newAccounts.toComparableJson(),
-          currentAccounts
-              .copyWith(
-                all: [...currentAccounts.all]
-                  ..removeWhere((account) => account.id == id),
-              )
-              .toComparableJson(),
+          newAccounts.defaultAccountId,
+          currentAccounts.all.last.id,
+          reason: 'defaultAccountId should change to the next account',
         );
+      },
+    );
 
-        verifyInOrder([
-          () => mockAccountStorage.loadAccounts(),
-          () => mockAccountStorage.saveAccounts(newAccounts),
-        ]);
-        verifyNoMoreInteractions(mockAccountStorage);
-      });
-
-      test('sets defaultAccountId to null when the only account is removed', () {
-        const id = 'minecraft-user-id';
+    test(
+      'sets defaultAccountId to the previous account when the default account is removed and it is the last account',
+      () {
+        const id = 'minecraft-account-id';
         const currentAccounts = MinecraftAccounts(
           all: [
+            MinecraftAccount(
+              id: 'minecraft-next-account-id',
+              username: 'minecraft_username_2',
+              accountType: AccountType.offline,
+              microsoftAccountInfo: null,
+              skins: [],
+              ownsMinecraftJava: null,
+            ),
+
             MinecraftAccount(
               id: id,
               username: 'minecraft_username',
@@ -1058,114 +1144,123 @@ void main() {
 
         when(
           () => mockAccountStorage.loadAccounts(),
-        ).thenAnswer((_) => currentAccounts);
+        ).thenReturn(currentAccounts);
 
         final newAccounts = minecraftAccountManager.removeAccount(id);
         expect(
           newAccounts.defaultAccountId,
-          isNull,
+          isNot(equals(id)),
           reason:
-              'defaultAccountId should be null when the only account is removed',
+              'defaultAccountId should change when the default account is removed',
         );
         expect(
-          newAccounts.toComparableJson(),
-          currentAccounts
-              .copyWith(all: [], defaultAccountId: const Wrapped.value(null))
-              .toComparableJson(),
+          newAccounts.defaultAccountId,
+          currentAccounts.all.first.id,
+          reason: 'defaultAccountId should be set to the previous account',
         );
-      });
+      },
+    );
+  });
 
-      test(
-        'sets defaultAccountId to next element when current default account is removed',
-        () {
-          const id = 'minecraft-account-id';
-          const currentAccounts = MinecraftAccounts(
-            all: [
-              MinecraftAccount(
-                id: id,
-                username: 'minecraft_username',
-                accountType: AccountType.offline,
-                microsoftAccountInfo: null,
-                skins: [],
-                ownsMinecraftJava: null,
-              ),
-              MinecraftAccount(
-                id: 'minecraft-next-account-id',
-                username: 'minecraft_username_2',
-                accountType: AccountType.offline,
-                microsoftAccountInfo: null,
-                skins: [],
-                ownsMinecraftJava: null,
-              ),
-            ],
-            defaultAccountId: id,
-          );
+  group('loadAccounts', () {
+    test('delegates to account storage', () {
+      final accounts1 = MinecraftAccounts.empty();
+      when(() => mockAccountStorage.loadAccounts()).thenReturn(accounts1);
 
-          when(
-            () => mockAccountStorage.loadAccounts(),
-          ).thenAnswer((_) => currentAccounts);
-
-          final newAccounts = minecraftAccountManager.removeAccount(id);
-          expect(
-            newAccounts.defaultAccountId,
-            isNot(equals(id)),
-            reason:
-                'defaultAccountId should change when the default account is removed',
-          );
-          expect(
-            newAccounts.defaultAccountId,
-            currentAccounts.all.last.id,
-            reason: 'defaultAccountId should change to the next account',
-          );
-        },
+      expect(
+        minecraftAccountManager.loadAccounts().toComparableJson(),
+        accounts1.toComparableJson(),
       );
 
-      test(
-        'sets defaultAccountId to the previous account when the default account is removed and it is the last account',
-        () {
-          const id = 'minecraft-account-id';
-          const currentAccounts = MinecraftAccounts(
-            all: [
-              MinecraftAccount(
-                id: 'minecraft-next-account-id',
-                username: 'minecraft_username_2',
-                accountType: AccountType.offline,
-                microsoftAccountInfo: null,
-                skins: [],
-                ownsMinecraftJava: null,
-              ),
+      verify(() => mockAccountStorage.loadAccounts()).called(1);
 
-              MinecraftAccount(
-                id: id,
-                username: 'minecraft_username',
-                accountType: AccountType.offline,
-                microsoftAccountInfo: null,
-                skins: [],
-                ownsMinecraftJava: null,
-              ),
-            ],
-            defaultAccountId: id,
-          );
-
-          when(
-            () => mockAccountStorage.loadAccounts(),
-          ).thenAnswer((_) => currentAccounts);
-
-          final newAccounts = minecraftAccountManager.removeAccount(id);
-          expect(
-            newAccounts.defaultAccountId,
-            isNot(equals(id)),
-            reason:
-                'defaultAccountId should change when the default account is removed',
-          );
-          expect(
-            newAccounts.defaultAccountId,
-            currentAccounts.all.first.id,
-            reason: 'defaultAccountId should be set to the previous account',
-          );
-        },
+      const accounts2 = MinecraftAccounts(
+        all: [
+          MinecraftAccount(
+            id: 'id',
+            username: 'username',
+            accountType: AccountType.offline,
+            microsoftAccountInfo: null,
+            skins: [],
+            ownsMinecraftJava: false,
+          ),
+        ],
+        defaultAccountId: 'defaultAccountId',
       );
+
+      when(() => mockAccountStorage.loadAccounts()).thenReturn(accounts2);
+
+      expect(
+        minecraftAccountManager.loadAccounts().toComparableJson(),
+        accounts2.toComparableJson(),
+      );
+
+      verify(() => mockAccountStorage.loadAccounts()).called(1);
+      verifyNoMoreInteractions(mockAccountStorage);
     });
+
+    test('throws $UnknownAccountManagerException on $Exception', () {
+      final exception = Exception('An example exception');
+      when(() => mockAccountStorage.loadAccounts()).thenThrow(exception);
+
+      expect(
+        () => minecraftAccountManager.loadAccounts(),
+        throwsA(
+          isA<UnknownAccountManagerException>().having(
+            (e) => e.message,
+            'message',
+            equals(exception.toString()),
+          ),
+        ),
+      );
+
+      verify(() => mockAccountStorage.loadAccounts()).called(1);
+      verifyNoMoreInteractions(mockAccountStorage);
+    });
+  });
+
+  test('updateDefaultAccount updates defaultAccountId correctly', () {
+    const currentDefaultAccountId = 'id2';
+    const newDefaultAccountId = 'id1';
+
+    const currentAccounts = MinecraftAccounts(
+      all: [
+        MinecraftAccount(
+          id: newDefaultAccountId,
+          username: 'username',
+          accountType: AccountType.offline,
+          microsoftAccountInfo: null,
+          skins: [],
+          ownsMinecraftJava: false,
+        ),
+        MinecraftAccount(
+          id: currentDefaultAccountId,
+          username: 'username',
+          accountType: AccountType.offline,
+          microsoftAccountInfo: null,
+          skins: [],
+          ownsMinecraftJava: false,
+        ),
+      ],
+      defaultAccountId: currentDefaultAccountId,
+    );
+    when(() => mockAccountStorage.loadAccounts()).thenReturn(currentAccounts);
+
+    final accounts = minecraftAccountManager.updateDefaultAccount(
+      newDefaultAccountId: newDefaultAccountId,
+    );
+
+    expect(accounts.defaultAccountId, newDefaultAccountId);
+    expect(
+      accounts.toComparableJson(),
+      currentAccounts
+          .copyWith(defaultAccountId: const Wrapped.value(newDefaultAccountId))
+          .toComparableJson(),
+    );
+
+    verify(() => mockAccountStorage.loadAccounts()).called(1);
+    verify(() => mockAccountStorage.saveAccounts(accounts)).called(1);
+    verifyNoMoreInteractions(mockAccountStorage);
   });
 }
 

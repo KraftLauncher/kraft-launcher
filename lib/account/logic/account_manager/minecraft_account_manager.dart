@@ -494,8 +494,8 @@ class MinecraftAccountManager {
 
   MinecraftAccounts updateDefaultAccount({
     required String newDefaultAccountId,
-    required MinecraftAccounts currentAccounts,
   }) {
+    final currentAccounts = accountStorage.loadAccounts();
     final updatedAccounts = currentAccounts.copyWith(
       defaultAccountId: Wrapped.value(newDefaultAccountId),
     );
