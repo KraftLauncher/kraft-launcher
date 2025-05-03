@@ -12,6 +12,8 @@ jobs:
         os: [ubuntu, windows, macos]
     runs-on: ${{ matrix.os }}-latest
     timeout-minutes: 10
+    permissions:
+      contents: write # Required for creating a GitHub release and uploading assets
 
     steps:
       - uses: actions/checkout@v4
