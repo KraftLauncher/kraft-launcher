@@ -16,8 +16,12 @@ class $AssetsBrandingGen {
   /// File path: assets/branding/icon.png
   AssetGenImage get icon => const AssetGenImage('assets/branding/icon.png');
 
+  /// File path: assets/branding/icon_framed.png
+  AssetGenImage get iconFramed =>
+      const AssetGenImage('assets/branding/icon_framed.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [icon];
+  List<AssetGenImage> get values => [icon, iconFramed];
 }
 
 class $AssetsLottieGen {
