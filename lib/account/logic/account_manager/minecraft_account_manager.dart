@@ -338,27 +338,27 @@ class MinecraftAccountManager {
       ownsMinecraftJava: ownsMinecraftJava,
     );
 
-    final currentAccounts = loadAccounts();
+    final existingAccounts = loadAccounts();
 
-    final existingAccountIndex = currentAccounts.all.indexWhere(
+    final existingAccountIndex = existingAccounts.all.indexWhere(
       (account) => account.id == newAccount.id,
     );
     final isAccountAlreadyAdded = existingAccountIndex != -1;
 
     final updatedAccounts =
         isAccountAlreadyAdded
-            ? currentAccounts.copyWith(
+            ? existingAccounts.copyWith(
               all: [
-                ...currentAccounts.all..[existingAccountIndex] = newAccount,
+                ...existingAccounts.all..[existingAccountIndex] = newAccount,
               ],
               defaultAccountId: Wrapped.value(
-                currentAccounts.defaultAccountId ?? newAccount.id,
+                existingAccounts.defaultAccountId ?? newAccount.id,
               ),
             )
             : _getUpdatedAccountsOnCreate(
-              currentDefaultAccount: currentAccounts.defaultAccount,
+              currentDefaultAccount: existingAccounts.defaultAccount,
               newAccount: newAccount,
-              currentAccounts: currentAccounts,
+              existingAccounts: existingAccounts,
             );
     accountStorage.saveAccounts(updatedAccounts);
     return AccountResult(
@@ -399,10 +399,10 @@ class MinecraftAccountManager {
   MinecraftAccounts _getUpdatedAccountsOnCreate({
     required MinecraftAccount? currentDefaultAccount,
     required MinecraftAccount newAccount,
-    required MinecraftAccounts currentAccounts,
+    required MinecraftAccounts existingAccounts,
   }) {
-    final updatedAccountsList = [newAccount, ...currentAccounts.all];
-    return currentAccounts.copyWith(
+    final updatedAccountsList = [newAccount, ...existingAccounts.all];
+    return existingAccounts.copyWith(
       all: updatedAccountsList,
       defaultAccountId: Wrapped.value(
         currentDefaultAccount != null
@@ -424,12 +424,12 @@ class MinecraftAccountManager {
       ownsMinecraftJava: null,
     );
 
-    final currentAccounts = loadAccounts();
+    final existingAccounts = loadAccounts();
 
     final updatedAccounts = _getUpdatedAccountsOnCreate(
       newAccount: newAccount,
-      currentDefaultAccount: currentAccounts.defaultAccount,
-      currentAccounts: currentAccounts,
+      currentDefaultAccount: existingAccounts.defaultAccount,
+      existingAccounts: existingAccounts,
     );
     accountStorage.saveAccounts(updatedAccounts);
     return AccountResult(
@@ -443,16 +443,16 @@ class MinecraftAccountManager {
     required String accountId,
     required String username,
   }) {
-    final currentAccounts = loadAccounts();
-    final index = currentAccounts.all.indexWhere(
+    final existingAccounts = loadAccounts();
+    final index = existingAccounts.all.indexWhere(
       (account) => account.id == accountId,
     );
 
-    final updatedAccount = currentAccounts.all[index].copyWith(
+    final updatedAccount = existingAccounts.all[index].copyWith(
       username: username,
     );
-    final updatedAccounts = currentAccounts.copyWith(
-      all: [...currentAccounts.all..[index] = updatedAccount],
+    final updatedAccounts = existingAccounts.copyWith(
+      all: [...existingAccounts.all..[index] = updatedAccount],
     );
 
     accountStorage.saveAccounts(updatedAccounts);
@@ -464,15 +464,15 @@ class MinecraftAccountManager {
   }
 
   MinecraftAccounts removeAccount(String accountId) {
-    final currentAccounts = loadAccounts();
-    final removedAccountIndex = currentAccounts.all.indexWhere(
+    final existingAccounts = loadAccounts();
+    final removedAccountIndex = existingAccounts.all.indexWhere(
       (account) => account.id == accountId,
     );
 
-    final updatedAccountsList = [...currentAccounts.all]
+    final updatedAccountsList = [...existingAccounts.all]
       ..removeWhere((account) => account.id == accountId);
 
-    final updatedAccounts = currentAccounts.copyWith(
+    final updatedAccounts = existingAccounts.copyWith(
       all: updatedAccountsList,
       defaultAccountId: Wrapped.value(
         updatedAccountsList
@@ -495,8 +495,8 @@ class MinecraftAccountManager {
   MinecraftAccounts updateDefaultAccount({
     required String newDefaultAccountId,
   }) {
-    final currentAccounts = accountStorage.loadAccounts();
-    final updatedAccounts = currentAccounts.copyWith(
+    final existingAccounts = accountStorage.loadAccounts();
+    final updatedAccounts = existingAccounts.copyWith(
       defaultAccountId: Wrapped.value(newDefaultAccountId),
     );
     accountStorage.saveAccounts(updatedAccounts);
