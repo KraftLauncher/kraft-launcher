@@ -11,6 +11,8 @@ Please review our [Code of Conduct](./CODE_OF_CONDUCT.md) to understand the expe
 
 ## 🎨 Code Style
 
+Also, see [Project Architecture](./docs/ARCHITECTURE.md).
+
 - [Effective Dart](https://dart.dev/effective-dart).
 - [Writing Effective Tests](https://github.com/flutter/flutter/blob/master/docs/contributing/testing/Writing-Effective-Tests.md).
 - [Style guide for Flutter repo](https://github.com/flutter/flutter/blob/master/docs/contributing/Style-guide-for-Flutter-repo.md).
