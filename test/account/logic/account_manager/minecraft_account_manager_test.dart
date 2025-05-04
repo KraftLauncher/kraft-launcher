@@ -740,12 +740,12 @@ void main() {
             microsoftAccountInfo: MicrosoftAccountInfo(
               microsoftOAuthAccessToken: ExpirableToken(
                 value: 'microsoft-access-token',
-                expiresAt: DateTime.now().add(const Duration(days: 4)),
+                expiresAt: DateTime(2025, 1, 20, 15, 40),
               ),
               microsoftOAuthRefreshToken: 'microsoft-refresh-token',
               minecraftAccessToken: ExpirableToken(
                 value: 'minecraft-access-token',
-                expiresAt: DateTime.now().add(const Duration(hours: 20)),
+                expiresAt: DateTime(2022, 1, 20, 15, 40),
               ),
             ),
             skins: const [
@@ -811,12 +811,12 @@ void main() {
                 microsoftAccountInfo: MicrosoftAccountInfo(
                   microsoftOAuthAccessToken: ExpirableToken(
                     value: 'microsoft-access-token',
-                    expiresAt: DateTime.now().add(const Duration(days: 4)),
+                    expiresAt: DateTime(2099, 1, 20, 15, 40),
                   ),
                   microsoftOAuthRefreshToken: 'microsoft-refresh-token',
                   minecraftAccessToken: ExpirableToken(
                     value: 'minecraft-access-token',
-                    expiresAt: DateTime.now().add(const Duration(hours: 20)),
+                    expiresAt: DateTime(2022, 1, 25, 15, 40),
                   ),
                 ),
                 skins: const [
@@ -852,12 +852,12 @@ void main() {
             microsoftAccountInfo: MicrosoftAccountInfo(
               microsoftOAuthAccessToken: ExpirableToken(
                 value: 'dsadsadsamicrosoft-access-token',
-                expiresAt: DateTime.now().add(const Duration(days: 1)),
+                expiresAt: DateTime(2024, 1, 20, 15, 40),
               ),
               microsoftOAuthRefreshToken: 'microsoftdsadsa-refresh-token',
               minecraftAccessToken: ExpirableToken(
                 value: 'midsadsanecraft-access-token',
-                expiresAt: DateTime.now().add(const Duration(hours: 120)),
+                expiresAt: DateTime(2023, 1, 21, 15, 40),
               ),
             ),
             skins: const [
@@ -1349,12 +1349,12 @@ void main() {
             microsoftAccountInfo: MicrosoftAccountInfo(
               microsoftOAuthAccessToken: ExpirableToken(
                 value: 'microsoft-access-token',
-                expiresAt: DateTime.now().add(const Duration(days: 4)),
+                expiresAt: DateTime(2020, 1, 20, 15, 40),
               ),
               microsoftOAuthRefreshToken: 'microsoft-refresh-token',
               minecraftAccessToken: ExpirableToken(
                 value: 'minecraft-access-token',
-                expiresAt: DateTime.now().add(const Duration(hours: 20)),
+                expiresAt: DateTime(2015, 1, 20, 15, 40),
               ),
             ),
             skins: const [
@@ -1455,12 +1455,12 @@ void main() {
           microsoftAccountInfo: MicrosoftAccountInfo(
             microsoftOAuthAccessToken: ExpirableToken(
               value: 'microsoft-access-token',
-              expiresAt: DateTime.now().add(const Duration(days: 4)),
+              expiresAt: DateTime(2009, 1, 20, 15, 40),
             ),
             microsoftOAuthRefreshToken: 'microsoft-refresh-token',
             minecraftAccessToken: ExpirableToken(
               value: 'minecraft-access-token',
-              expiresAt: DateTime.now().add(const Duration(hours: 20)),
+              expiresAt: DateTime(1995, 1, 20, 15, 40),
             ),
           ),
           skins: const [
