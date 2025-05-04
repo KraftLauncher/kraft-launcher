@@ -302,7 +302,7 @@ class MinecraftAccountManager {
   // END: Device code
 
   // Common steps for logging with Microsoft either via device code or auth code.
-  // Both will run differently but have [MicrosoftOauthTokenExchangeResponse]
+  // Both will run differently but have [MicrosoftOauthTokenExchangeResponse] in common.
   Future<AccountResult> _commonLoginWithMicrosoft({
     required MicrosoftOauthTokenExchangeResponse oauthTokenResponse,
     required void Function(MicrosoftAuthProgress newProgress) onProgressUpdate,

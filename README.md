@@ -67,7 +67,7 @@ If you plan to fork or redistribute this project, please follow these guidelines
 
 * Do not crack, pirate, or distribute builds that bypass Minecraft: Java Edition ownership checks. This is illegal and not supported. Offline mode is available, but users must own the game on at least one Microsoft account.
 * Update all branding, including the launcher name, app IDs and assets:
-    * See [constants.dart](./lib/common/constants/constants.dart) for reference on updating the app name.
+    * All static fields in [`ProjectInfoConstants`](./lib/common/constants/project_info_constants.dart) should be updated, including the app name.
     * Update all files inside [assets/branding](./assets/branding). Also run `dart run flutter_launcher_icons:generate` to replace them in platform runners.
     * The package name in `pubspec.yaml` and also the app id in the platform runners `linux`, `macos` and `windows`. Also refer to [Platform Runner Modifications](./docs/PLATFORM_RUNNER_MODIFICATIONS.md).
 * Clearly state that your fork is not affiliated with or endorsed by **Kraft Launcher**.

@@ -6,8 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../common/constants/constants.dart';
 import '../../common/constants/microsoft_constants.dart';
+import '../../common/constants/project_info_constants.dart';
 import '../../common/logic/utils.dart';
 import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/utils/scaffold_messenger_ext.dart';
@@ -145,7 +145,7 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                                         .authCodeRedirectPageLoginSuccessTitle,
                                 subtitle: context.loc
                                     .authCodeRedirectPageLoginSuccessMessage(
-                                      Constants.displayName,
+                                      ProjectInfoConstants.displayName,
                                     ),
                                 pageDir: Directionality.of(context).name,
                                 pageLangCode:

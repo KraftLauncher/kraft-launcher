@@ -15,7 +15,7 @@ import 'account/logic/account_manager/minecraft_account_manager.dart';
 import 'account/logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
 import 'account/ui/account_switcher_icon_button.dart';
 import 'account/ui/accounts_tab.dart';
-import 'common/constants/constants.dart';
+import 'common/constants/project_info_constants.dart';
 import 'common/generated/l10n/app_localizations.dart';
 import 'common/logic/app_data_paths.dart';
 import 'common/logic/app_logger.dart';
@@ -121,7 +121,7 @@ class MainApp extends StatelessWidget {
               builder:
                   (lightColorScheme, darkColorScheme) => MaterialApp.router(
                     routerConfig: _router,
-                    title: Constants.displayName,
+                    title: ProjectInfoConstants.displayName,
                     debugShowCheckedModeBanner: false,
                     theme: ThemeData(
                       useMaterial3: !generalSettings.useClassicMaterialDesign,

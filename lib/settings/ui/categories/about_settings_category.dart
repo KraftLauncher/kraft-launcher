@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants/constants.dart';
+import '../../../common/constants/project_info_constants.dart';
 import '../../../common/generated/assets.gen.dart';
 import '../../../common/ui/utils/build_context_ext.dart';
 
@@ -13,7 +14,10 @@ class AboutSettingsCategory extends StatelessWidget {
     return Column(
       children: [
         Assets.branding.iconFramed.image(width: 128, height: 128),
-        Text(Constants.displayName, style: context.theme.textTheme.titleLarge),
+        Text(
+          ProjectInfoConstants.displayName,
+          style: context.theme.textTheme.titleLarge,
+        ),
         Text(
           Constants.appDisplayVersion,
           style: context.theme.textTheme.bodySmall?.copyWith(
@@ -22,7 +26,7 @@ class AboutSettingsCategory extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          context.loc.legalDisclaimerMessage(Constants.displayName),
+          context.loc.legalDisclaimerMessage(ProjectInfoConstants.displayName),
           textAlign: TextAlign.center,
           style: context.theme.textTheme.bodySmall?.copyWith(
             color: context.theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -33,9 +37,12 @@ class AboutSettingsCategory extends StatelessWidget {
         const SizedBox(height: 6),
         ListTile(
           title: Text(context.loc.sourceCode),
-          subtitle: Text(Constants.githubRepoLink.replaceFirst('https://', '')),
+          subtitle: Text(
+            ProjectInfoConstants.githubRepoLink.replaceFirst('https://', ''),
+          ),
           leading: const Icon(Icons.code),
-          onTap: () => launchUrl(Uri.parse(Constants.githubRepoLink)),
+          onTap:
+              () => launchUrl(Uri.parse(ProjectInfoConstants.githubRepoLink)),
         ),
         ListTile(
           leading: const Icon(Icons.question_answer),
@@ -50,10 +57,10 @@ class AboutSettingsCategory extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.email),
           title: Text(context.loc.contact),
-          subtitle: const Text(Constants.contactEmail),
+          subtitle: const Text(ProjectInfoConstants.contactEmail),
           onTap:
               () => launchUrl(
-                Uri(scheme: 'mailto', path: Constants.contactEmail),
+                Uri(scheme: 'mailto', path: ProjectInfoConstants.contactEmail),
               ),
         ),
         ListTile(
