@@ -1,5 +1,7 @@
 import 'dart:async';
 
+// TODO: Write tests for this? If it's only for MinecraftAccountManager, it might not be needed since there are tests for this
+
 class AsyncTimer<T> {
   AsyncTimer({required this.timer});
 

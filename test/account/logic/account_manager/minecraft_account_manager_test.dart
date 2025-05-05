@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fake_async/fake_async.dart';
 import 'package:kraft_launcher/account/data/account_storage/account_storage.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_methods/microsoft_device_code_flow.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
@@ -973,6 +974,126 @@ void main() {
     });
   });
 
+  group('device code flow', () {
+    test('deviceCodePollingTimer defaults to null', () {
+      expect(minecraftAccountManager.deviceCodePollingTimer, null);
+    });
+
+    test('deviceCodePollingTimer the timer works correctly', () {
+      fakeAsync((async) {
+        bool callbackCalled = false;
+        int timerCallbackInvocationCount = 0;
+
+        const duration = Duration(seconds: 5);
+        minecraftAccountManager.deviceCodePollingTimer = AsyncTimer.periodic(
+          const Duration(seconds: 5),
+          () {
+            callbackCalled = true;
+            timerCallbackInvocationCount++;
+          },
+        );
+
+        expect(callbackCalled, false);
+        expect(timerCallbackInvocationCount, 0);
+
+        async.elapse(duration);
+
+        expect(callbackCalled, true);
+        expect(timerCallbackInvocationCount, 1);
+
+        const counts = 500;
+        for (int i = 0; i < counts; i++) {
+          async.elapse(duration);
+        }
+
+        expect(timerCallbackInvocationCount, counts + 1);
+      });
+    });
+
+    test(
+      'isDeviceCodePollingTimerActive returns false when timer is not active',
+      () {
+        expect(minecraftAccountManager.isDeviceCodePollingTimerActive, false);
+      },
+    );
+
+    AsyncTimer<MicrosoftDeviceCodeSuccess?> dummyTimer() => AsyncTimer.periodic(
+      // Dummy duration, this callback will not get invoked unless we call async.elapse().
+      const Duration(seconds: 5),
+      () => fail('Timer callback should not be called'),
+    );
+
+    test(
+      'isDeviceCodePollingTimerActive returns true when timer is active',
+      () {
+        fakeAsync((async) {
+          minecraftAccountManager.deviceCodePollingTimer = dummyTimer();
+
+          expect(minecraftAccountManager.isDeviceCodePollingTimerActive, true);
+          minecraftAccountManager.cancelDeviceCodePollingTimer();
+
+          // Ensure cancellation
+          expect(minecraftAccountManager.isDeviceCodePollingTimerActive, false);
+          expect(minecraftAccountManager.deviceCodePollingTimer, null);
+        });
+      },
+    );
+
+    test('requestCancelDeviceCodePollingTimer defaults to false', () {
+      expect(
+        minecraftAccountManager.requestCancelDeviceCodePollingTimer,
+        false,
+      );
+    });
+
+    test('cancelDeviceCodePollingTimer cancels the timer correctly', () {
+      fakeAsync((async) {
+        // Assuming false to confirm the timer sets it to true.
+        minecraftAccountManager.requestCancelDeviceCodePollingTimer = false;
+
+        int timerCallbackInvocationCount = 0;
+        const duration = Duration(seconds: 5);
+        minecraftAccountManager.deviceCodePollingTimer = AsyncTimer.periodic(
+          duration,
+          () => timerCallbackInvocationCount++,
+        );
+
+        // Ensure the timer is currently active
+        expect(minecraftAccountManager.isDeviceCodePollingTimerActive, true);
+        expect(minecraftAccountManager.deviceCodePollingTimer, isNotNull);
+
+        async.elapse(duration);
+        expect(
+          timerCallbackInvocationCount,
+          1,
+          reason: 'The timer is likely not working properly',
+        );
+
+        minecraftAccountManager.cancelDeviceCodePollingTimer();
+
+        async.elapse(duration);
+        expect(
+          timerCallbackInvocationCount,
+          1,
+          reason:
+              'The timer has been cancelled but the callback is still invoking, likely a bug.',
+        );
+
+        expect(
+          minecraftAccountManager.requestCancelDeviceCodePollingTimer,
+          true,
+          reason:
+              'Calling cancelDeviceCodePollingTimer should set requestCancelDeviceCodePollingTimer to false',
+        );
+        expect(minecraftAccountManager.deviceCodePollingTimer, isNull);
+      });
+    });
+
+    group('requestLoginWithMicrosoftDeviceCode', () {
+      // TODO: Start covering device code flow from zero, even if the file says it's covered.
+    });
+  });
+
   group('removeAccount', () {
     test('removes account from the list correctly', () {
       const id = 'minecraft-user-id';
@@ -1942,9 +2063,6 @@ void main() {
     );
   });
 }
-
-// TODO: This test is a WIP! Once auth code flow tests are done, we should also
-// start covering device code flow from zero, even if the file says it's covered!
 
 // The APIs provides expiresIn, since the expiresAt depends on
 // on the expiresIn, there is very short delay when
