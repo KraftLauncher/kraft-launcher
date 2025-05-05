@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
 import '../../common/logic/json.dart';
@@ -83,9 +84,11 @@ class MinecraftAccount {
 
   final List<MinecraftSkin> skins;
 
-  MinecraftSkin get activeSkin =>
-      skins.firstWhere((skin) => skin.state == 'ACTIVE');
+  MinecraftSkin? get activeSkin =>
+      skins.firstWhereOrNull((skin) => skin.state == 'ACTIVE');
 
+  // TODO: We probably won't make it to this point when user don't have a Microsoft account?
+  //  Handle the case where user don't have Minecraft, maybe need to remove this field if it's not needed.
   /// Not null if [accountType] is [AccountType.microsoft].
   final bool? ownsMinecraftJava;
 

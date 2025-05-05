@@ -92,3 +92,7 @@ It is NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.**
 ## 📜 Acknowledgments
 
 - The app icon was created with the assistance of a generative design tool.
+- The following open-source launchers were referenced for implementing certain features:
+    - [PrismLauncher](https://github.com/PrismLauncher/PrismLauncher)
+    - [ATLauncher](https://github.com/ATLauncher/ATLauncher/)
+    - [Pencil](https://github.com/Dreta/Pencil)

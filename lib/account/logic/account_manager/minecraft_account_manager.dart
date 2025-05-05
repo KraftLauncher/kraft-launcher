@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart'
-    show CachedNetworkImage;
 import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
@@ -21,6 +19,7 @@ import '../../data/minecraft_api/minecraft_api_exceptions.dart';
 import '../minecraft_skin_ext.dart';
 import 'async_timer.dart';
 import 'http_server_ext.dart';
+import 'image_cache_service/image_cache_service.dart';
 import 'minecraft_account_manager_exceptions.dart';
 
 // TODO: Separate Microsoft related logic into a new class, and probably have device code and auth code logic in two different classes?
@@ -30,12 +29,14 @@ class MinecraftAccountManager {
     required this.microsoftAuthApi,
     required this.minecraftApi,
     required this.accountStorage,
+    required this.imageCacheService,
   });
 
   final MicrosoftAuthApi microsoftAuthApi;
   final MinecraftApi minecraftApi;
 
   final AccountStorage accountStorage;
+  final ImageCacheService imageCacheService;
 
   Future<T> _transformExceptions<T>(Future<T> Function() run) async {
     try {
@@ -45,6 +46,7 @@ class MinecraftAccountManager {
     } on MinecraftApiException catch (e) {
       throw AccountManagerException.minecraftApiException(e);
     } on AccountManagerException {
+      // TODO: Is this tested?
       rethrow;
     } on Exception catch (e, stackTrace) {
       throw AccountManagerException.unknown(e.toString(), stackTrace);
@@ -99,7 +101,7 @@ class MinecraftAccountManager {
   }
 
   Future<AccountResult?> loginWithMicrosoftAuthCode({
-    required OnAuthProgressUpdateCallback onProgressUpdate,
+    required OnAuthProgressUpdateAuthCodeCallback onProgressUpdate,
     // The page content is not hardcoded for localization.
     required AuthCodeSuccessLoginPageContent successLoginPageContent,
   }) => _transformExceptions(() async {
@@ -188,7 +190,7 @@ class MinecraftAccountManager {
   /// has been cancelled (e.g., dialog is closed).
   Future<(AccountResult?, DeviceCodeTimerCloseReason)>
   requestLoginWithMicrosoftDeviceCode({
-    required void Function(MicrosoftAuthProgress newProgress) onProgressUpdate,
+    required OnAuthProgressUpdateCallback onProgressUpdate,
     required void Function(String deviceCode) onDeviceCodeAvailable,
   }) => _transformExceptions(() async {
     // NOTE: This flag is used to fix a race condition where the timer is requested
@@ -301,11 +303,12 @@ class MinecraftAccountManager {
 
   // END: Device code
 
-  // Common steps for logging with Microsoft either via device code or auth code.
-  // Both will run differently but have [MicrosoftOauthTokenExchangeResponse] in common.
+  // Common steps for logging in to Minecraft with Microsoft either via device code,
+  // auth code or when refreshing the account.
+  // All run differently but have [MicrosoftOauthTokenExchangeResponse] in common.
   Future<AccountResult> _commonLoginWithMicrosoft({
     required MicrosoftOauthTokenExchangeResponse oauthTokenResponse,
-    required void Function(MicrosoftAuthProgress newProgress) onProgressUpdate,
+    required OnAuthProgressUpdateCallback onProgressUpdate,
   }) async {
     onProgressUpdate(MicrosoftAuthProgress.requestingXboxToken);
     final xboxLiveTokenResponse = await microsoftAuthApi.requestXboxLiveToken(
@@ -370,7 +373,7 @@ class MinecraftAccountManager {
 
   Future<AccountResult> refreshMicrosoftAccount(
     MinecraftAccount account, {
-    required void Function(MicrosoftAuthProgress newProgress) onProgressUpdate,
+    required OnAuthProgressUpdateCallback onProgressUpdate,
   }) => _transformExceptions(() async {
     assert(
       account.accountType == AccountType.microsoft,
@@ -387,8 +390,8 @@ class MinecraftAccountManager {
         .getNewTokensFromRefreshToken(microsoftRefreshToken);
 
     // Delete current cached skin images.
-    await CachedNetworkImage.evictFromCache(account.headSkinImageUrl);
-    await CachedNetworkImage.evictFromCache(account.fullSkinImageUrl);
+    await imageCacheService.evictFromCache(account.headSkinImageUrl);
+    await imageCacheService.evictFromCache(account.fullSkinImageUrl);
 
     return _commonLoginWithMicrosoft(
       oauthTokenResponse: oauthTokenResponse,
@@ -602,10 +605,14 @@ enum DeviceCodeTimerCloseReason {
 }
 
 @visibleForTesting
-typedef OnAuthProgressUpdateCallback =
+typedef OnAuthProgressUpdateAuthCodeCallback =
     void Function(
       MicrosoftAuthProgress newProgress, {
 
       /// Not null if [newProgress] is [MicrosoftAuthProgress.waitingForUserLogin]
       String? authCodeLoginUrl,
     });
+
+@visibleForTesting
+typedef OnAuthProgressUpdateCallback =
+    void Function(MicrosoftAuthProgress newProgress);

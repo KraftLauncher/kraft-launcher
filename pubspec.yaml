@@ -41,6 +41,7 @@ dependencies:
       ref: 6c66ad23ee79749f30a8eece542cf54eaf157ed8
   flex_color_picker: ^3.7.0
   logging: ^1.3.0
+  collection: ^1.19.1
 
 dev_dependencies:
   flutter_test:

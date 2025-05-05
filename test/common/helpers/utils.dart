@@ -26,5 +26,16 @@ Future<bool> isPortOpen(
 
 extension DateTimeExt on DateTime {
   DateTime trimSeconds() => DateTime(year, month, day, hour, minute);
-  int get covertToExpiresIn => difference(DateTime.now().toUtc()).inSeconds;
+  int get covertToExpiresIn {
+    final now = DateTime.now();
+    final normalizedNow = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute,
+      now.second,
+    );
+    return difference(normalizedNow).inSeconds;
+  }
 }

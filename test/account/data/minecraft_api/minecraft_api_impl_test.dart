@@ -90,17 +90,17 @@ void main() {
       expect(response.username, username);
       expect(response.expiresIn, expiresIn);
     });
-    tooManyRequestsTest(
+    _tooManyRequestsTest(
       () => mockDio,
       () => minecraftApi.loginToMinecraftWithXbox(xboxLiveTokenResponse()),
       isPostRequest: true,
     );
-    unknownErrorTests(
+    _unknownErrorTests(
       () => mockDio,
       () => minecraftApi.loginToMinecraftWithXbox(xboxLiveTokenResponse()),
       isPostRequest: true,
     );
-    unauthorizedTest(
+    _unauthorizedTest(
       () => mockDio,
       () => minecraftApi.loginToMinecraftWithXbox(xboxLiveTokenResponse()),
       isPostRequest: true,
@@ -144,17 +144,17 @@ void main() {
       expect(response.skins, skins);
       expect(response.capes, capes);
     });
-    tooManyRequestsTest(
+    _tooManyRequestsTest(
       () => mockDio,
       () => minecraftApi.fetchMinecraftProfile(fakeMcAccessToken),
       isPostRequest: false,
     );
-    unknownErrorTests(
+    _unknownErrorTests(
       () => mockDio,
       () => minecraftApi.fetchMinecraftProfile(fakeMcAccessToken),
       isPostRequest: false,
     );
-    unauthorizedTest(
+    _unauthorizedTest(
       () => mockDio,
       () => minecraftApi.fetchMinecraftProfile(fakeMcAccessToken),
       isPostRequest: false,
@@ -199,17 +199,17 @@ void main() {
       );
     });
 
-    tooManyRequestsTest(
+    _tooManyRequestsTest(
       () => mockDio,
       () => minecraftApi.checkMinecraftJavaOwnership(fakeMcAccessToken),
       isPostRequest: false,
     );
-    unknownErrorTests(
+    _unknownErrorTests(
       () => mockDio,
       () => minecraftApi.checkMinecraftJavaOwnership(fakeMcAccessToken),
       isPostRequest: false,
     );
-    unauthorizedTest(
+    _unauthorizedTest(
       () => mockDio,
       () => minecraftApi.checkMinecraftJavaOwnership(fakeMcAccessToken),
       isPostRequest: false,
@@ -308,7 +308,7 @@ void main() {
       expect(response.capes.length, capes.length);
     });
 
-    tooManyRequestsTest(
+    _tooManyRequestsTest(
       () => mockDio,
       () => minecraftApi.uploadSkin(
         skinFile,
@@ -317,7 +317,7 @@ void main() {
       ),
       isPostRequest: true,
     );
-    unknownErrorTests(
+    _unknownErrorTests(
       () => mockDio,
       () => minecraftApi.uploadSkin(
         skinFile,
@@ -326,7 +326,7 @@ void main() {
       ),
       isPostRequest: true,
     );
-    unauthorizedTest(
+    _unauthorizedTest(
       () => mockDio,
       () => minecraftApi.uploadSkin(
         skinFile,
@@ -338,7 +338,7 @@ void main() {
   });
 }
 
-void tooManyRequestsTest(
+void _tooManyRequestsTest(
   MockDio Function() mockDio,
   Future<void> Function() call, {
   required bool isPostRequest,
@@ -366,7 +366,7 @@ void tooManyRequestsTest(
   );
 }
 
-void unknownErrorTests(
+void _unknownErrorTests(
   MockDio Function() mockDio,
   Future<void> Function() call, {
   required bool isPostRequest,
@@ -440,7 +440,7 @@ void unknownErrorTests(
   );
 }
 
-void unauthorizedTest(
+void _unauthorizedTest(
   MockDio Function() mockDio,
   Future<void> Function() call, {
   required bool isPostRequest,

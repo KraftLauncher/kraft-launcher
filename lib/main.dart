@@ -11,6 +11,7 @@ import 'account/data/account_storage/account_storage.dart';
 import 'account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
 import 'account/data/minecraft_api/minecraft_api_impl.dart';
 import 'account/logic/account_cubit.dart';
+import 'account/logic/account_manager/image_cache_service/default_image_cache_service.dart';
 import 'account/logic/account_manager/minecraft_account_manager.dart';
 import 'account/logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
 import 'account/ui/account_switcher_icon_button.dart';
@@ -74,6 +75,7 @@ class MainApp extends StatelessWidget {
             ),
             microsoftAuthApi: MicrosoftAuthApiImpl(dio: DioClient.instance),
             minecraftApi: MinecraftApiImpl(dio: DioClient.instance),
+            imageCacheService: DefaultImageCacheService(),
           ),
         ),
       ],

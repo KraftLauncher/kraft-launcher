@@ -108,12 +108,12 @@ void main() {
       },
     );
 
-    tooManyRequestsTest(
+    _tooManyRequestsTest(
       () => mockDio,
       () => microsoftAuthApi.exchangeAuthCodeForTokens(fakeAuthCode),
     );
 
-    unknownErrorTests(
+    _unknownErrorTests(
       () => mockDio,
       () => microsoftAuthApi.exchangeAuthCodeForTokens(fakeAuthCode),
     );
@@ -182,11 +182,11 @@ void main() {
       },
     );
 
-    tooManyRequestsTest(
+    _tooManyRequestsTest(
       () => mockDio,
       () => microsoftAuthApi.requestDeviceCode(),
     );
-    unknownErrorTests(
+    _unknownErrorTests(
       () => mockDio,
       () => microsoftAuthApi.requestDeviceCode(),
     );
@@ -293,14 +293,14 @@ void main() {
       },
     );
 
-    tooManyRequestsTest(
+    _tooManyRequestsTest(
       () => mockDio,
       () => microsoftAuthApi.checkDeviceCodeStatus(
         requestDeviceCodeResponse(deviceCode: 'any'),
       ),
     );
 
-    unknownErrorTests(
+    _unknownErrorTests(
       () => mockDio,
       () => microsoftAuthApi.checkDeviceCodeStatus(
         requestDeviceCodeResponse(deviceCode: 'any'),
@@ -415,13 +415,13 @@ void main() {
       },
     );
 
-    tooManyRequestsTest(
+    _tooManyRequestsTest(
       () => mockDio,
       () => microsoftAuthApi.requestXboxLiveToken(
         microsoftOauthTokenResponse(accessToken: ''),
       ),
     );
-    unknownErrorTests(
+    _unknownErrorTests(
       () => mockDio,
       () => microsoftAuthApi.requestXboxLiveToken(
         microsoftOauthTokenResponse(accessToken: ''),
@@ -505,11 +505,11 @@ void main() {
       expect(response.xboxToken, token);
     });
 
-    tooManyRequestsTest(
+    _tooManyRequestsTest(
       () => mockDio,
       () => microsoftAuthApi.requestXSTSToken(xboxLiveTokenResponse()),
     );
-    unknownErrorTests(
+    _unknownErrorTests(
       () => mockDio,
       () => microsoftAuthApi.requestXSTSToken(xboxLiveTokenResponse()),
     );
@@ -596,19 +596,19 @@ void main() {
       },
     );
 
-    tooManyRequestsTest(
+    _tooManyRequestsTest(
       () => mockDio,
       () => microsoftAuthApi.getNewTokensFromRefreshToken(''),
     );
 
-    unknownErrorTests(
+    _unknownErrorTests(
       () => mockDio,
       () => microsoftAuthApi.getNewTokensFromRefreshToken(''),
     );
   });
 }
 
-void tooManyRequestsTest(
+void _tooManyRequestsTest(
   MockDio Function() mockDio,
   Future<void> Function() call,
 ) {
@@ -628,7 +628,7 @@ void tooManyRequestsTest(
   );
 }
 
-void unknownErrorTests(
+void _unknownErrorTests(
   MockDio Function() mockDio,
   Future<void> Function() call,
 ) {

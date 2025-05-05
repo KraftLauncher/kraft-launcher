@@ -16,5 +16,7 @@ extension MinecraftSkinExt on MinecraftAccount {
   // Adds the skin id for caching purposes, based on the active skin's ID.
   // This is not required or supported by the API and it will be ignored.
   String _appendSkinIdQueryParam() =>
-      isMicrosoft ? '&skinId=${activeSkin.id}' : '';
+      isMicrosoft
+          ? (activeSkin != null ? '&skinId=${activeSkin!.id}' : '')
+          : '';
 }
