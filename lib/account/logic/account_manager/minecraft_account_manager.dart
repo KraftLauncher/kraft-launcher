@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:clock/clock.dart';
 import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
@@ -21,8 +22,6 @@ import 'async_timer.dart';
 import 'http_server_ext.dart';
 import 'image_cache_service/image_cache_service.dart';
 import 'minecraft_account_manager_exceptions.dart';
-
-// TODO: Separate Microsoft related logic into a new class, and probably have device code and auth code logic in two different classes?
 
 class MinecraftAccountManager {
   MinecraftAccountManager({
@@ -46,7 +45,6 @@ class MinecraftAccountManager {
     } on MinecraftApiException catch (e) {
       throw AccountManagerException.minecraftApiException(e);
     } on AccountManagerException {
-      // TODO: Is this tested?
       rethrow;
     } on Exception catch (e, stackTrace) {
       throw AccountManagerException.unknown(e.toString(), stackTrace);
@@ -191,7 +189,7 @@ class MinecraftAccountManager {
   Future<(AccountResult?, DeviceCodeTimerCloseReason)>
   requestLoginWithMicrosoftDeviceCode({
     required OnAuthProgressUpdateCallback onProgressUpdate,
-    required void Function(String deviceCode) onDeviceCodeAvailable,
+    required OnDeviceCodeAvailableCallback onDeviceCodeAvailable,
   }) => _transformExceptions(() async {
     // NOTE: This flag is used to fix a race condition where the timer is requested
     // to be cancelled before it's started (i.e. set to not null) since the timer
@@ -235,14 +233,14 @@ class MinecraftAccountManager {
           // will cause the timer to continue running.
           cancelDeviceCodePollingTimer();
 
+          // TODO: Maybe set requestCancelDeviceCodePollingTimer to false in here instead?
+
           // After this call, _requestCancelDeviceCodePollingTimer is remain true
           // and will be set to false on the next run.
           return;
         }
         // Check if the device code has expired before making the API call
-        final hasDeviceCodeExpired = deviceCodeExpiresAt.isBefore(
-          DateTime.now(),
-        );
+        final hasDeviceCodeExpired = clock.now().isAfter(deviceCodeExpiresAt);
         if (hasDeviceCodeExpired) {
           cancelTimerOnExpiration();
           return;
@@ -281,7 +279,7 @@ class MinecraftAccountManager {
 
     if (deviceCodePollingTimer != null) {
       AppLogger.w(
-        'This is likely a bug, the timer should be closed at this point',
+        'This is likely a bug, the timer should be cancelled at this point',
       );
       cancelDeviceCodePollingTimer();
     }
@@ -293,6 +291,7 @@ class MinecraftAccountManager {
       return (null, closeReason);
     }
 
+    onProgressUpdate(MicrosoftAuthProgress.exchangingDeviceCode);
     final result = await _commonLoginWithMicrosoft(
       oauthTokenResponse: oauthTokenExchangeResponse,
       onProgressUpdate: (newProgress) => onProgressUpdate(newProgress),
@@ -601,7 +600,8 @@ enum MicrosoftAuthProgress {
 
 enum DeviceCodeTimerCloseReason {
   codeExpired,
-  normal, // Either the user requested to cancel the timer or the user logged in
+  normal, // Either the user requested to cancel the timer (i.e., login with auth code instead)
+  // or the user logged in.
 }
 
 @visibleForTesting
@@ -616,3 +616,6 @@ typedef OnAuthProgressUpdateAuthCodeCallback =
 @visibleForTesting
 typedef OnAuthProgressUpdateCallback =
     void Function(MicrosoftAuthProgress newProgress);
+
+@visibleForTesting
+typedef OnDeviceCodeAvailableCallback = void Function(String deviceCode);
