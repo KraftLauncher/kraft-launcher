@@ -233,8 +233,6 @@ class MinecraftAccountManager {
           // will cause the timer to continue running.
           cancelDeviceCodePollingTimer();
 
-          // TODO: Maybe set requestCancelDeviceCodePollingTimer to false in here instead?
-
           // After this call, _requestCancelDeviceCodePollingTimer is remain true
           // and will be set to false on the next run.
           return;
