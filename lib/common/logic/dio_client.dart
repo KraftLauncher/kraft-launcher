@@ -19,6 +19,7 @@ abstract final class DioClient {
       // These hosts get frequent requests; skip logging to avoid console spam.
       const ignoreHosts = <String>[
         'resources.download.minecraft.net',
+        'libraries.minecraft.net',
         'piston-meta.mojang.com',
         'piston-data.mojang.com',
         'launchermeta.mojang.com',
