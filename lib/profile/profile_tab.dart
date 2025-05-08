@@ -374,7 +374,11 @@ class _ProfileTabState extends State<ProfileTab> {
           Uri.parse(assetIndexJsonDownloadUrl),
         )).dataOrThrow;
     final assetIndexFile = File(
-      p.join(assetsDirPath, 'indexes', assetIndexJson['id']! as String),
+      p.join(
+        assetsDirPath,
+        'indexes',
+        '${assetIndexJson['id']! as String}.json',
+      ),
     );
     assetIndexFile.createSync(recursive: true);
     assetIndexFile.writeAsStringSync(jsonEncodePretty(assetIndexResponseData));
