@@ -5,11 +5,9 @@ This document list all modification made to the default platform runner template
 ## Linux
 
 - Changed window icon using `gtk_window_set_icon_from_file(...)` in `my_application.cc`.
-- Changed window title to `Kraft Launcher`.
 
 ## Windows
 
-- Changed window title to `Kraft Launcher`.
 - Changed launcher icon using [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) CLI.
 
 ## macOS
@@ -17,3 +15,8 @@ This document list all modification made to the default platform runner template
 - Changed launcher icon using [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) CLI.
 - Added [network permission in `*.entitlements` files](https://docs.flutter.dev/data-and-backend/networking#macos).
 - Disabled Apple sandbox because it prevents launching Minecraft Java.
+
+## Common
+
+- Changed app id to `org.kraftlauncher.launcher`.
+- Changed window title to `Kraft Launcher`.
