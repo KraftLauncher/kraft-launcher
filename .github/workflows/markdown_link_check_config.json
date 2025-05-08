@@ -1,7 +1,7 @@
 {
     "ignorePatterns": [
         {
-            "pattern": "^(http|https):\\/\\/(?!github\\.com\\/EchoEllet\\/kraft-launcher\\/).*"
+            "pattern": "^(http|https):\\/\\/(?!github\\.com\\/KraftLauncher\\/kraft-launcher\\/).*"
         }
     ]
 }

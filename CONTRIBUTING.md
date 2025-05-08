@@ -3,7 +3,7 @@
 Thanks for your interest on contributing to **Kraft Launcher**!
 
 > [!NOTE]  
-> We highly encourage [creating issues on GitHub](https://github.com/EchoEllet/kraft-launcher/issues/new) before working on them—especially for medium to large changes.
+> We highly encourage [creating issues on GitHub](https://github.com/KraftLauncher/kraft-launcher/issues/new) before working on them—especially for medium to large changes.
 
 ## 📜 Code of Conduct
 
@@ -26,7 +26,7 @@ Also, see [Project Architecture](./docs/ARCHITECTURE.md).
 
 ## 🍴 Forking & cloning the repository
 
-- Fork the [GitHub repo](https://github.com/EchoEllet/kraft-launcher) to your account. If you already have a fork, make sure it’s up to date. 
+- Fork the [GitHub repo](https://github.com/KraftLauncher/kraft-launcher) to your account. If you already have a fork, make sure it’s up to date. 
 * Clone your fork:
 
     ```bash
@@ -36,7 +36,7 @@ Also, see [Project Architecture](./docs/ARCHITECTURE.md).
 * Add the upstream repo:
 
     ```bash
-    git remote add upstream git@github.com:EchoEllet/kraft-launcher.git
+    git remote add upstream git@github.com:KraftLauncher/kraft-launcher.git
     ```
 
     This allows you to fetch updates from the main repository.

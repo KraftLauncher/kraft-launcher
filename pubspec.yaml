@@ -1,7 +1,7 @@
 name: kraft_launcher
 description: "An unofficial Minecraft Launcher"
 publish_to: 'none'
-repository: https://github.com/EchoEllet/kraft-launcher
+repository: https://github.com/KraftLauncher/kraft-launcher
 # Run "dart ./scripts/generate_pubspec_dart_code.dart" when updating the version.
 version: 0.1.0+1
 

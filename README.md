@@ -1,19 +1,19 @@
 # Kraft Launcher
 
 <p align="center">
-<a href="https://github.com/EchoEllet/kraft-launcher"><img src="https://img.shields.io/github/stars/EchoEllet/kraft-launcher" alt="Star on Github"></a>
+<a href="https://github.com/KraftLauncher/kraft-launcher"><img src="https://img.shields.io/github/stars/KraftLauncher/kraft-launcher" alt="Star on Github"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-purple.svg" alt="License: MIT"></a>
-<a href="https://github.com/EchoEllet/kraft-launcher/actions"><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/EchoEllet/48575fd9d18dc33989ab0eb602af3b53/raw/d3f41f773e351ea4fc35c411d2c84ace1f49ebc4/kraft-launcher-coverage-badge.json" alt="Code Coverage Badge"></a>
-<a href="https://github.com/EchoEllet/kraft-launcher/actions/workflows/tests.yml"><img src="https://github.com/EchoEllet/kraft-launcher/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
-<a href="https://github.com/EchoEllet/kraft-launcher/releases"><img src="https://img.shields.io/github/downloads/EchoEllet/kraft-launcher/total" alt="GitHub Downloads (all assets, all releases)"></a>
-<a href="https://github.com/EchoEllet/kraft-launcher"><img src="https://img.shields.io/github/repo-size/EchoEllet/kraft-launcher" alt="GitHub repo size"></a>
-<a href="https://github.com/EchoEllet/kraft-launcher"><img src="https://img.shields.io/github/languages/code-size/EchoEllet/kraft-launcher" alt="GitHub code size in bytes"></a>
+<a href="https://github.com/KraftLauncher/kraft-launcher/actions"><img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/KraftLauncher/48575fd9d18dc33989ab0eb602af3b53/raw/d3f41f773e351ea4fc35c411d2c84ace1f49ebc4/kraft-launcher-coverage-badge.json" alt="Code Coverage Badge"></a>
+<a href="https://github.com/KraftLauncher/kraft-launcher/actions/workflows/tests.yml"><img src="https://github.com/KraftLauncher/kraft-launcher/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+<a href="https://github.com/KraftLauncher/kraft-launcher/releases"><img src="https://img.shields.io/github/downloads/KraftLauncher/kraft-launcher/total" alt="GitHub Downloads (all assets, all releases)"></a>
+<a href="https://github.com/KraftLauncher/kraft-launcher"><img src="https://img.shields.io/github/repo-size/KraftLauncher/kraft-launcher" alt="GitHub repo size"></a>
+<a href="https://github.com/KraftLauncher/kraft-launcher"><img src="https://img.shields.io/github/languages/code-size/KraftLauncher/kraft-launcher" alt="GitHub code size in bytes"></a>
 </p>
 
 An unofficial, open-source launcher for [Minecraft Java](https://www.minecraft.net/en-us/store/minecraft-java-bedrock-edition-pc) that provides profile isolation, seamless profile sharing with other players, and installing mods with ease.
 
 > [!NOTE]
-> This project is in its early stages and not yet ready for general use. For updates and progress, see [#1](https://github.com/EchoEllet/kraft-launcher/issues/1).
+> This project is in its early stages and not yet ready for general use. For updates and progress, see [#1](https://github.com/KraftLauncher/kraft-launcher/issues/1).
 
 **Kraft Launcher is not affiliated
 with [Mojang](https://mojang.com/), [Microsoft](https://www.microsoft.com/), or any of their
@@ -41,7 +41,7 @@ Our goal is to support standard features across most launchers while enabling pl
 * ⚡ **Quick Play**: Automatically join a Minecraft server, world, or realm on launch.
 
 > [!IMPORTANT]
-> Currently, the project doesn't implement most of these features yet, they were added early in `README` as they are planned in [#1](https://github.com/EchoEllet/kraft-launcher/issues/1), once they are available, this note will be removed.
+> Currently, the project doesn't implement most of these features yet, they were added early in `README` as they are planned in [#1](https://github.com/KraftLauncher/kraft-launcher/issues/1), once they are available, this note will be removed.
 
 ## 🛠️ Build from Source
 
@@ -51,7 +51,7 @@ Our goal is to support standard features across most launchers while enabling pl
 Ensure [Flutter](https://docs.flutter.dev/get-started/install) is installed, and then run:
 
 ```bash
-git clone --depth 1 https://github.com/EchoEllet/kraft-launcher
+git clone --depth 1 https://github.com/KraftLauncher/kraft-launcher
 cd kraft-launcher
 flutter pub get
 flutter build <platform>
