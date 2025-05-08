@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "dev.echoellet" "\0"
+            VALUE "CompanyName", "org.kraftlauncher" "\0"
             VALUE "FileDescription", "kraft_launcher" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "kraft_launcher" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 dev.echoellet. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 org.kraftlauncher. All rights reserved." "\0"
             VALUE "OriginalFilename", "kraft_launcher.exe" "\0"
             VALUE "ProductName", "kraft_launcher" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
