@@ -96,3 +96,4 @@ It is NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.**
     - [PrismLauncher](https://github.com/PrismLauncher/PrismLauncher)
     - [ATLauncher](https://github.com/ATLauncher/ATLauncher/)
     - [Pencil](https://github.com/Dreta/Pencil)
+- [mojang-meta-urls](https://gist.github.com/skyrising/95a8e6a7287634e097ecafa2f21c240f) gist.

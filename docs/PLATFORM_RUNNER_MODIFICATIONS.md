@@ -15,3 +15,5 @@ This document list all modification made to the default platform runner template
 ## macOS
 
 - Changed launcher icon using [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) CLI.
+- Added [network permission in `*.entitlements` files](https://docs.flutter.dev/data-and-backend/networking#macos).
+- Disabled Apple sandbox because it prevents launching Minecraft Java.

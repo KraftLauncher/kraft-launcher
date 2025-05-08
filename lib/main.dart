@@ -25,6 +25,7 @@ import 'common/ui/utils/build_context_ext.dart';
 import 'common/ui/utils/home_screen_tab_ext.dart';
 import 'common/ui/widgets/optional_dynamic_color_builder.dart';
 import 'common/ui/widgets/scaffold_with_tabs.dart';
+import 'profile/profile_tab.dart';
 import 'settings/data/settings.dart';
 import 'settings/data/settings_storage.dart';
 import 'settings/logic/cubit/settings_cubit.dart';
@@ -204,9 +205,7 @@ class HomeScreen extends StatelessWidget {
                 selectedIcon: Icon(tab.selectedIconData),
                 label: tab.getLabel(context.loc),
                 body: switch (tab) {
-                  HomeScreenTab.profiles => Center(
-                    child: Text(context.loc.profiles),
-                  ),
+                  HomeScreenTab.profiles => const ProfileTab(),
                   HomeScreenTab.accounts => const AccountsTab(),
                   HomeScreenTab.settings => const SettingsTab(),
                   HomeScreenTab.news => Center(child: Text(context.loc.news)),
