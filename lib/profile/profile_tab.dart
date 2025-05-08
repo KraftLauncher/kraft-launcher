@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path/path.dart' as p;
+import 'package:pool/pool.dart';
 
 import '../account/data/minecraft_account.dart';
 import '../account/logic/account_cubit.dart';
@@ -34,7 +35,8 @@ class ProfileTab extends StatefulWidget {
 class _ProfileTabState extends State<ProfileTab> {
   static const manifestUrl =
       'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json';
-  static const javaPath = 'java';
+  static const javaRuntimesUrl =
+      'https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json';
 
   // Also see https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json
   // and https://gist.github.com/skyrising/95a8e6a7287634e097ecafa2f21c240f
@@ -92,9 +94,11 @@ class _ProfileTabState extends State<ProfileTab> {
               try {
                 await launchGame(account: defaultAccount);
               } finally {
-                setState(() {
-                  _isLoading = false;
-                });
+                if (mounted) {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
               }
             },
             child: const Text('Play'),
@@ -114,6 +118,7 @@ class _ProfileTabState extends State<ProfileTab> {
     print('MC Dir: ${File(mcDirPath).absolute.path}');
     final librariesDirPath = p.join(mcDirPath, 'libraries');
     final assetsDirPath = p.join(mcDirPath, 'assets');
+    final javaRuntimesDirPath = Directory(p.join(mcDirPath, 'runtimes'));
 
     final gameDir = Directory(p.join(mcDirPath, 'game'));
     if (!gameDir.existsSync()) {
@@ -123,6 +128,10 @@ class _ProfileTabState extends State<ProfileTab> {
 
     if (!nativesTempDir.existsSync()) {
       nativesTempDir.createSync(recursive: true);
+    }
+
+    if (!javaRuntimesDirPath.existsSync()) {
+      javaRuntimesDirPath.createSync(recursive: true);
     }
 
     final osName = switch (defaultTargetPlatform) {
@@ -244,8 +253,9 @@ class _ProfileTabState extends State<ProfileTab> {
               if (rules.isEmpty) {
                 return true;
               }
-              final targetOsName =
-                  (rules.firstOrNull?['os'] as JsonObject?)?['name'] as String?;
+              final firstRule = rules.firstOrNull?['os'] as JsonObject?;
+              final targetOsName = firstRule?['name'] as String?;
+              // final targetOsVersion = firstRule?['version'] as String?;
               if (targetOsName == osName) {
                 return true;
               }
@@ -369,6 +379,9 @@ class _ProfileTabState extends State<ProfileTab> {
     assetIndexFile.createSync(recursive: true);
     assetIndexFile.writeAsStringSync(jsonEncodePretty(assetIndexResponseData));
 
+    final assetsPool = Pool(10, timeout: const Duration(seconds: 30));
+    final assetFutures = <Future<void>>[];
+
     final assetObjects = assetIndexResponseData['objects']! as JsonObject;
     for (final assetObject in assetObjects.entries) {
       final assetObjectValue = assetObject.value! as JsonObject;
@@ -381,18 +394,150 @@ class _ProfileTabState extends State<ProfileTab> {
       final assetFile = File(
         p.join(assetsDirPath, 'objects', firstTwo, assetHash),
       );
-      if (!assetFile.existsSync()) {
-        print('Downloading `${assetObject.key}`...');
-        await dio.downloadUri(Uri.parse(downloadUrl), assetFile.path);
+
+      if (assetFile.existsSync()) {
+        continue;
       }
+
+      final future = assetsPool.withResource(() async {
+        print('Downloading asset `${assetObject.key}`...');
+        await dio.downloadUri(Uri.parse(downloadUrl), assetFile.path);
+      });
+      assetFutures.add(future);
     }
+
+    await Future.wait(assetFutures);
+    await assetsPool.close();
+
+    final requiredJavaVersionComponent =
+        (versionDetailsResponseData['javaVersion']! as JsonObject)['component']!
+            as String;
+
+    final javaRuntimesResponseData =
+        (await dio.getUri<JsonObject>(Uri.parse(javaRuntimesUrl))).dataOrThrow;
+
+    final javaSystemRuntimeKey = switch (defaultTargetPlatform) {
+      TargetPlatform.linux => () {
+        assert(
+          Platform.version.toLowerCase().contains('linux_x64'),
+          'Only linux_x64 is supported',
+        );
+        return 'linux';
+      }(),
+      TargetPlatform.macOS => () {
+        if (Platform.version.toLowerCase().contains('macos_arm64')) {
+          return 'mac-os-arm64';
+        }
+        return 'mac-os';
+      }(),
+      TargetPlatform.windows => () {
+        if (Platform.version.toLowerCase().contains('arm64')) {
+          return 'windows-arm64';
+        }
+        return 'windows-x64';
+      }(),
+      _ => throw UnimplementedError('Unsupported OS: $defaultTargetPlatform'),
+    };
+    final runtimes =
+        javaRuntimesResponseData[javaSystemRuntimeKey]! as JsonObject;
+    final runtimeDetails =
+        (runtimes[requiredJavaVersionComponent]! as List<dynamic>).first
+            as JsonObject;
+    final javaRuntimeManifestUrl =
+        (runtimeDetails['manifest']! as JsonObject)['url']! as String;
+
+    final javaRuntimeManifestResponseData =
+        (await dio.getUri<JsonObject>(
+          Uri.parse(javaRuntimeManifestUrl),
+        )).dataOrThrow;
+    final javaRuntimeFilesWithDirectories =
+        javaRuntimeManifestResponseData['files']! as JsonObject;
+    final javaRuntimeFiles = javaRuntimeFilesWithDirectories.entries.where(
+      (e) => (e.value! as JsonObject)['type'] == 'file',
+    );
+
+    print(
+      'Required Java runtime component: $requiredJavaVersionComponent, runtime key: $javaSystemRuntimeKey',
+    );
+
+    final javaRuntimePool = Pool(10, timeout: const Duration(seconds: 30));
+    final javaRuntimeFutures = <Future<void>>[];
+
+    final javaRuntimeHomeDirectory = Directory(
+      p.join(javaRuntimesDirPath.path, requiredJavaVersionComponent),
+    );
+
+    if (!javaRuntimeHomeDirectory.existsSync()) {
+      javaRuntimeHomeDirectory.createSync(recursive: true);
+    }
+
+    for (final javaRuntimeDetails in javaRuntimeFiles) {
+      final runtimeValue = javaRuntimeDetails.value! as JsonObject;
+      final filePath = javaRuntimeDetails.key;
+
+      final runtimeFile = File(p.join(javaRuntimeHomeDirectory.path, filePath));
+
+      if (runtimeFile.existsSync()) {
+        continue;
+      }
+      final downloadUrl =
+          ((runtimeValue['downloads']! as JsonObject)['raw']!
+                  as JsonObject)['url']!
+              as String;
+
+      final future = javaRuntimePool.withResource(() async {
+        print('Downloading runtime file `${javaRuntimeDetails.key}`...');
+        await dio.downloadUri(Uri.parse(downloadUrl), runtimeFile.path);
+        if (Platform.isLinux || Platform.isMacOS) {
+          final executable = runtimeValue['executable']! as bool;
+          if (executable) {
+            print('Making file executable: ${['+x', runtimeFile.path]}');
+            final result = await Process.run('chmod', [
+              '+x',
+              runtimeFile.absolute.path,
+            ]);
+            if (result.exitCode != 0) {
+              throw Exception(
+                'Failed to make file executable: ${result.stderr}',
+              );
+            }
+          }
+        }
+      });
+      javaRuntimeFutures.add(future);
+    }
+
+    await Future.wait(javaRuntimeFutures);
+    await javaRuntimePool.close();
+
+    final javaExecutableFile = File(switch (defaultTargetPlatform) {
+      TargetPlatform.linux => p.join(
+        javaRuntimeHomeDirectory.path,
+        'bin',
+        'java',
+      ),
+      TargetPlatform.macOS => p.join(
+        javaRuntimeHomeDirectory.path,
+        'Contents',
+        'Home',
+        'bin',
+        'java',
+      ),
+      TargetPlatform.windows => p.join(
+        javaRuntimeHomeDirectory.path,
+        'bin',
+        'javaw.exe',
+      ),
+      _ => throw UnsupportedError('Unsupported os: $defaultTargetPlatform'),
+    });
+    print('Java Path: ${javaExecutableFile.path}');
 
     print('log config argument: $logConfigArgument');
     print('game arguments: $gameArguments');
     print('jvm arguments: $jvmArguments');
     print('Client JAR: ${classpath.first}');
 
-    final process = await Process.start(javaPath, [
+    final process = await Process.start(javaExecutableFile.absolute.path, [
       ...jvmArguments,
       mainClass,
       ...gameArguments,

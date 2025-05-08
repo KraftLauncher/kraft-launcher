@@ -16,11 +16,30 @@ abstract final class DioClient {
   static Dio _createDio() {
     final dio = Dio();
     if (kDebugMode) {
+      // These hosts get frequent requests; skip logging to avoid console spam.
+      const ignoreHosts = <String>[
+        'resources.download.minecraft.net',
+        'piston-meta.mojang.com',
+        'piston-data.mojang.com',
+        'launchermeta.mojang.com',
+      ];
       dio.interceptors.add(
         TalkerDioLogger(
-          settings: const TalkerDioLoggerSettings(
+          settings: TalkerDioLoggerSettings(
             printRequestHeaders: true,
             printResponseHeaders: true,
+            requestFilter: (options) {
+              if (ignoreHosts.contains(options.uri.host)) {
+                return false;
+              }
+              return true;
+            },
+            responseFilter: (response) {
+              if (ignoreHosts.contains(response.requestOptions.uri.host)) {
+                return false;
+              }
+              return true;
+            },
           ),
         ),
       );
