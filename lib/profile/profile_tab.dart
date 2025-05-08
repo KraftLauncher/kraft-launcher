@@ -518,6 +518,7 @@ class _ProfileTabState extends State<ProfileTab> {
       ),
       TargetPlatform.macOS => p.join(
         javaRuntimeHomeDirectory.path,
+        'jre.bundle',
         'Contents',
         'Home',
         'bin',
