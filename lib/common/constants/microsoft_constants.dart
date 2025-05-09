@@ -1,5 +1,6 @@
 // ignore_for_file: do_not_use_environment
 
+// TODO: Move values specific to the project to ProjectInfoConstants?
 abstract final class MicrosoftConstants {
   // TODO: We have sent a form requesting access to Minecraft APIs, and we're waiting for the response: https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR-ajEQ1td1ROpz00KtS8Gd5UNVpPTkVLNFVROVQxNkdRMEtXVjNQQjdXVC4u
 
@@ -21,7 +22,16 @@ abstract final class MicrosoftConstants {
   // Device code flow
   static const microsoftDeviceCodeLink = 'https://www.microsoft.com/link';
 
-  // TODO: We could also provide a direct link of this app for easier access (e.g., https://account.live.com/consent/Edit?client_id=xxxxxxxxxx)
-  static const revokeAccessLink = 'https://www.microsoft.com/consent';
+  /// The `client_id` is hardcoded and should match the same app as [loginClientId].
+  /// To update this link:
+  /// 1. Update the [loginClientId].
+  /// 2. Login with any Microsoft Account using the [loginClientId].
+  /// 3. Visit https://www.microsoft.com/consent
+  /// 4. Open the registered app, copy the link in the browser.
+  ///
+  /// This should be updated when updating [loginClientId].
+  ///
+  static const revokeAccessLink =
+      'https://account.live.com/consent/Edit?client_id=0000000049694D4F';
   static const createXboxAccountLink = 'https://www.xbox.com/live';
 }
