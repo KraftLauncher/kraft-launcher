@@ -21,6 +21,7 @@ import 'common/generated/l10n/app_localizations.dart';
 import 'common/logic/app_data_paths.dart';
 import 'common/logic/app_logger.dart';
 import 'common/logic/dio_client.dart';
+import 'common/logic/platform_check.dart';
 import 'common/ui/utils/build_context_ext.dart';
 import 'common/ui/utils/home_screen_tab_ext.dart';
 import 'common/ui/widgets/optional_dynamic_color_builder.dart';
@@ -40,7 +41,7 @@ Future<void> main() async {
             ? (Directory('devWorkingDirectory')..createSync(recursive: true))
             : await getApplicationSupportDirectory(),
   );
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+  if (isDesktop) {
     setWindowMinSize(const Size(850, 600));
   }
   AppLogger.init();
