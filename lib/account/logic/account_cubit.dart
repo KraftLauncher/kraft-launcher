@@ -17,6 +17,7 @@ class AccountCubit extends Cubit<AccountState> {
     loadAccounts();
   }
 
+  @visibleForTesting
   final MinecraftAccountManager minecraftAccountManager;
 
   Future<void> loadAccounts() async {

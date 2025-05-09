@@ -31,10 +31,15 @@ class MinecraftAccountManager {
     required this.imageCacheService,
   });
 
+  @visibleForTesting
   final MicrosoftAuthApi microsoftAuthApi;
+  @visibleForTesting
   final MinecraftApi minecraftApi;
 
+  @visibleForTesting
   final AccountStorage accountStorage;
+
+  @visibleForTesting
   final ImageCacheService imageCacheService;
 
   Future<T> _transformExceptions<T>(Future<T> Function() run) async {
