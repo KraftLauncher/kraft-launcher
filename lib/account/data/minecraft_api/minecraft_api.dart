@@ -129,7 +129,7 @@ abstract class MinecraftApi {
   Future<bool> checkMinecraftJavaOwnership(String minecraftAccessToken);
 
   // TODO: Handle the case where user don't have Microsoft account, account_creation_required will be thrown when calling: "https://xsts.auth.xboxlive.com/xsts/authorize", cover all cases
-  // TODO: Create exception for an invalid skin file which is possible.
+  // TODO: Create exception for an invalid skin file which is possible. Also enforce file size (accept only small image files)
   Future<MinecraftProfileResponse> uploadSkin(
     File skinFile, {
     required MinecraftSkinVariant skinVariant,

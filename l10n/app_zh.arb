@@ -191,5 +191,10 @@
     "website": "网站",
     "contact": "联系方式",
     "askQuestion": "提问",
-    "license": "许可证"
+    "license": "许可证",
+    "sourceCode": "源代码",
+    "invalidMinecraftSkinFile": "无效的皮肤图像。请上传有效的Minecraft皮肤文件。",
+    "@invalidMinecraftSkinFile": {
+        "description": "当用户上传无效的Minecraft皮肤文件时显示。"
+    }
 }

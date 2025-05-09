@@ -364,5 +364,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get license => '许可证';
 
   @override
-  String get sourceCode => 'Source Code';
+  String get sourceCode => '源代码';
+
+  @override
+  String get invalidMinecraftSkinFile => '无效的皮肤图像。请上传有效的Minecraft皮肤文件。';
 }

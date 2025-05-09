@@ -17,10 +17,18 @@ class MinecraftApiImpl extends MinecraftApi {
 
   final Dio dio;
 
-  Future<T> _handleCommonFailures<T>(Future<T> Function() run) async {
+  Future<T> _handleCommonFailures<T>(
+    Future<T> Function() run, {
+    T? Function(DioException e)? customHandle,
+  }) async {
     try {
       return await run();
     } on DioException catch (e, stackTrace) {
+      final customHandleResult = customHandle?.call(e);
+      if (customHandleResult != null) {
+        return customHandleResult;
+      }
+
       if (e.response?.statusCode == HttpStatus.tooManyRequests) {
         throw MinecraftApiException.tooManyRequests();
       }
@@ -101,23 +109,38 @@ class MinecraftApiImpl extends MinecraftApi {
     File skinFile, {
     required MinecraftSkinVariant skinVariant,
     required String minecraftAccessToken,
-  }) => _handleCommonFailures(() async {
-    final response = await dio.postUri<JsonObject>(
-      Uri.https('api.minecraftservices.com', '/minecraft/profile/skins'),
-      options: Options(
-        headers: {'Authorization': 'Bearer $minecraftAccessToken'},
-      ),
-      data: FormData.fromMap({
-        'file': MultipartFile.fromFileSync(
-          skinFile.path,
-          contentType: skinFile.mediaType,
+  }) => _handleCommonFailures(
+    () async {
+      final response = await dio.postUri<JsonObject>(
+        Uri.https('api.minecraftservices.com', '/minecraft/profile/skins'),
+        options: Options(
+          headers: {'Authorization': 'Bearer $minecraftAccessToken'},
         ),
-        'variant': switch (skinVariant) {
-          MinecraftSkinVariant.classic => 'classic',
-          MinecraftSkinVariant.slim => 'slim',
-        },
-      }),
-    );
-    return MinecraftProfileResponse.fromJson(response.dataOrThrow);
-  });
+        data: FormData.fromMap({
+          'file': MultipartFile.fromFileSync(
+            skinFile.path,
+            contentType: skinFile.mediaType,
+          ),
+          'variant': switch (skinVariant) {
+            MinecraftSkinVariant.classic => 'classic',
+            MinecraftSkinVariant.slim => 'slim',
+          },
+        }),
+      );
+      return MinecraftProfileResponse.fromJson(response.dataOrThrow);
+    },
+    customHandle: (e) {
+      if (e.response?.statusCode == HttpStatus.badRequest) {
+        final isInvalidSkinImageData =
+            e.response?.data.toString().toLowerCase().contains(
+              'Could not validate image data.'.toLowerCase(),
+            ) ??
+            false;
+        if (isInvalidSkinImageData) {
+          throw MinecraftApiException.invalidSkinImageData();
+        }
+      }
+      return null;
+    },
+  );
 }

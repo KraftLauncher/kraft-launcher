@@ -773,6 +773,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Source Code'**
   String get sourceCode;
+
+  /// Shown when the user uploads an invalid Minecraft skin file.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid skin image. Please upload a valid Minecraft skin file.'**
+  String get invalidMinecraftSkinFile;
 }
 
 class _AppLocalizationsDelegate

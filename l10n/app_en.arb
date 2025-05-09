@@ -192,5 +192,9 @@
     "contact": "Contact",
     "askQuestion": "Ask a question",
     "license": "License",
-    "sourceCode": "Source Code"
+    "sourceCode": "Source Code",
+    "invalidMinecraftSkinFile": "Invalid skin image. Please upload a valid Minecraft skin file.",
+    "@invalidMinecraftSkinFile": {
+        "description": "Shown when the user uploads an invalid Minecraft skin file."
+    }
 }

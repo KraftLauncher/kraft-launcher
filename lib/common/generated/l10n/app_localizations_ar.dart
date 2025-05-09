@@ -385,5 +385,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get license => 'رخصة';
 
   @override
-  String get sourceCode => 'Source Code';
+  String get sourceCode => 'رمز المصدر';
+
+  @override
+  String get invalidMinecraftSkinFile =>
+      'صورة سكين غير صالحة. يرجى تحميل ملف سكين Minecraft صالح.';
 }

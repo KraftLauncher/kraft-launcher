@@ -335,6 +335,28 @@ void main() {
       ),
       isPostRequest: true,
     );
+
+    test(
+      'throws $InvalidSkinImageDataMinecraftApiException when uploading invalid Minecraft skin image',
+      () async {
+        mockDio.mockPostUriFailure<JsonObject>(
+          statusCode: HttpStatus.badRequest,
+          responseData: {
+            'path': '/minecraft/profile/skins',
+            'errorMessage': 'Could not validate image data.',
+          },
+        );
+
+        await expectLater(
+          minecraftApi.uploadSkin(
+            skinFile,
+            skinVariant: MinecraftSkinVariant.slim,
+            minecraftAccessToken: '',
+          ),
+          throwsA(isA<InvalidSkinImageDataMinecraftApiException>()),
+        );
+      },
+    );
   });
 }
 

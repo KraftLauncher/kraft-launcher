@@ -191,5 +191,10 @@
   "website": "Website",
   "contact": "Kontakt",
   "askQuestion": "Frage stellen",
-  "license": "Lizenz"
+  "license": "Lizenz",
+  "sourceCode": "Source Code",
+  "invalidMinecraftSkinFile": "Ungültiges Hautbild. Bitte laden Sie eine gültige Minecraft-Skin-Datei hoch.",
+  "@invalidMinecraftSkinFile": {
+    "description": "Wird angezeigt, wenn der Benutzer eine ungültige Minecraft-Skin-Datei hochlädt."
+  }
 }

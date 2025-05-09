@@ -191,5 +191,10 @@
   "website": "الموقع الإلكتروني",
   "contact": "اتصل",
   "askQuestion": "اطرح سؤالاً",
-  "license": "رخصة"
+  "license": "رخصة",
+  "sourceCode": "رمز المصدر",
+  "invalidMinecraftSkinFile": "صورة سكين غير صالحة. يرجى تحميل ملف سكين Minecraft صالح.",
+  "@invalidMinecraftSkinFile": {
+    "description": "يتم عرضها عندما يقوم المستخدم بتحميل ملف سكين Minecraft غير صالح."
+  }
 }

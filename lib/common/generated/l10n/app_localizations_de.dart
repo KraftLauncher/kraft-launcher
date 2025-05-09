@@ -395,4 +395,8 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get sourceCode => 'Source Code';
+
+  @override
+  String get invalidMinecraftSkinFile =>
+      'Ungültiges Hautbild. Bitte laden Sie eine gültige Minecraft-Skin-Datei hoch.';
 }

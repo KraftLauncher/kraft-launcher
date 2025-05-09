@@ -34,6 +34,8 @@ extension AccountManagerExceptionMessages on AccountManagerException {
           loc.unauthorizedMinecraftAccessError,
         TooManyRequestsMinecraftApiException() =>
           loc.minecraftRequestLimitError,
+        InvalidSkinImageDataMinecraftApiException() =>
+          loc.invalidMinecraftSkinFile,
       },
       UnknownAccountManagerException() => loc.unexpectedError(
         exception.message,

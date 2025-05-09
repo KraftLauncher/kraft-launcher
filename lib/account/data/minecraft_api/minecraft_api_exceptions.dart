@@ -15,6 +15,9 @@ sealed class MinecraftApiException implements Exception {
   factory MinecraftApiException.unauthorized() =>
       const UnauthorizedMinecraftApiException();
 
+  factory MinecraftApiException.invalidSkinImageData() =>
+      const InvalidSkinImageDataMinecraftApiException();
+
   final String message;
 
   @override
@@ -39,4 +42,10 @@ final class TooManyRequestsMinecraftApiException extends MinecraftApiException {
     : super(
         'Request limit reached while communicating with Minecraft API services.',
       );
+}
+
+final class InvalidSkinImageDataMinecraftApiException
+    extends MinecraftApiException {
+  const InvalidSkinImageDataMinecraftApiException()
+    : super('The uploaded skin image data file is invalid.');
 }

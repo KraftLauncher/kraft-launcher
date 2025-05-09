@@ -391,4 +391,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sourceCode => 'Source Code';
+
+  @override
+  String get invalidMinecraftSkinFile =>
+      'Invalid skin image. Please upload a valid Minecraft skin file.';
 }
