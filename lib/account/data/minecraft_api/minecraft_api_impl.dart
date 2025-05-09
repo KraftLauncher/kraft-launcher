@@ -77,15 +77,26 @@ class MinecraftApiImpl extends MinecraftApi {
   @override
   Future<MinecraftProfileResponse> fetchMinecraftProfile(
     String minecraftAccessToken,
-  ) async => _handleCommonFailures(() async {
-    final response = await dio.getUri<JsonObject>(
-      Uri.https('api.minecraftservices.com', '/minecraft/profile'),
-      options: Options(
-        headers: {'Authorization': 'Bearer $minecraftAccessToken'},
-      ),
-    );
-    return MinecraftProfileResponse.fromJson(response.dataOrThrow);
-  });
+  ) async => _handleCommonFailures(
+    () async {
+      final response = await dio.getUri<JsonObject>(
+        Uri.https('api.minecraftservices.com', '/minecraft/profile'),
+        options: Options(
+          headers: {'Authorization': 'Bearer $minecraftAccessToken'},
+        ),
+      );
+      return MinecraftProfileResponse.fromJson(response.dataOrThrow);
+    },
+    customHandle: (e) {
+      final errorBody = e.response?.data as JsonObject?;
+      final code = errorBody?['error'] as String?;
+
+      if (code == 'NOT_FOUND') {
+        throw MinecraftApiException.accountNotFound();
+      }
+      return null;
+    },
+  );
 
   @override
   Future<bool> checkMinecraftJavaOwnership(String minecraftAccessToken) =>

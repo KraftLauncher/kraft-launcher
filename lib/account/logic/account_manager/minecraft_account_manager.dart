@@ -331,6 +331,9 @@ class MinecraftAccountManager {
       minecraftLoginResponse.accessToken,
     );
 
+    // TODO: Need to verify game ownership before fetching the profile to avoid 404 with NOT_FOUND.
+    // However, should we remove ownsMinecraftJava completely if demo mode will not be supported,
+    // and just show an error instead?
     onProgressUpdate(MicrosoftAuthProgress.checkingMinecraftJavaOwnership);
     final ownsMinecraftJava = await minecraftApi.checkMinecraftJavaOwnership(
       minecraftLoginResponse.accessToken,

@@ -238,5 +238,13 @@
     "@xstsRequiresAdultConsentRequiredError": {
         "description": "Shown when the user needs to be added to a family group by an adult to access Xbox services. This is required for XSTS authorization due to age restrictions."
     },
-    "createXboxAccount": "Create Xbox Account"
+    "createXboxAccount": "Create Xbox Account",
+    "minecraftAccountNotFoundError": "Minecraft account was not found. Please ensure you are logged in with the correct Microsoft account.",
+    "@minecraftAccountNotFoundError": {
+        "description": "Shown when the user successfully logs in with a Microsoft account, but no associated Minecraft profile is found. This may happen if the user has not purchased or redeemed the game."
+    },
+    "minecraftOwnershipRequiredError": "This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.",
+    "@minecraftOwnershipRequiredError": {
+        "description": "Shown when the Microsoft account is valid and a Minecraft profile may exist, but no active license for Minecraft is found. This may occur if the game has not been purchased or redeemed. Users can resolve this at https://www.minecraft.net/redeem or https://www.minecraft.net/store/minecraft-deluxe-collection-pc."
+    }
 }

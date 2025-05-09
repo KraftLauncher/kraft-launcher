@@ -433,4 +433,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get createXboxAccount => 'Create Xbox Account';
+
+  @override
+  String get minecraftAccountNotFoundError =>
+      'Minecraft account was not found. Please ensure you are logged in with the correct Microsoft account.';
+
+  @override
+  String get minecraftOwnershipRequiredError =>
+      'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.';
 }

@@ -833,6 +833,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create Xbox Account'**
   String get createXboxAccount;
+
+  /// Shown when the user successfully logs in with a Microsoft account, but no associated Minecraft profile is found. This may happen if the user has not purchased or redeemed the game.
+  ///
+  /// In en, this message translates to:
+  /// **'Minecraft account was not found. Please ensure you are logged in with the correct Microsoft account.'**
+  String get minecraftAccountNotFoundError;
+
+  /// Shown when the Microsoft account is valid and a Minecraft profile may exist, but no active license for Minecraft is found. This may occur if the game has not been purchased or redeemed. Users can resolve this at https://www.minecraft.net/redeem or https://www.minecraft.net/store/minecraft-deluxe-collection-pc.
+  ///
+  /// In en, this message translates to:
+  /// **'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.'**
+  String get minecraftOwnershipRequiredError;
 }
 
 class _AppLocalizationsDelegate

@@ -11,3 +11,10 @@ abstract final class Constants {
       'v${Pubspec.version} (${Pubspec.versionBuildNumber})';
   static const licenseDisplayName = 'MIT';
 }
+
+abstract final class MinecraftConstants {
+  static const buyMinecraftLink =
+      'https://www.minecraft.net/store/minecraft-deluxe-collection-pc';
+  static const changeMinecraftUsernameLink =
+      'https://www.minecraft.net/msaprofile/mygames/editprofile';
+}

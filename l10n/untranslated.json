@@ -8,7 +8,9 @@
     "xstsAdultVerificationRequiredError",
     "xstsAgeVerificationRequiredError",
     "xstsRequiresAdultConsentRequiredError",
-    "createXboxAccount"
+    "createXboxAccount",
+    "minecraftAccountNotFoundError",
+    "minecraftOwnershipRequiredError"
   ],
 
   "de": [
@@ -20,7 +22,9 @@
     "xstsAdultVerificationRequiredError",
     "xstsAgeVerificationRequiredError",
     "xstsRequiresAdultConsentRequiredError",
-    "createXboxAccount"
+    "createXboxAccount",
+    "minecraftAccountNotFoundError",
+    "minecraftOwnershipRequiredError"
   ],
 
   "zh": [
@@ -32,6 +36,8 @@
     "xstsAdultVerificationRequiredError",
     "xstsAgeVerificationRequiredError",
     "xstsRequiresAdultConsentRequiredError",
-    "createXboxAccount"
+    "createXboxAccount",
+    "minecraftAccountNotFoundError",
+    "minecraftOwnershipRequiredError"
   ]
 }

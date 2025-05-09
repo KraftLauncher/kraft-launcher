@@ -18,6 +18,9 @@ sealed class MinecraftApiException implements Exception {
   factory MinecraftApiException.invalidSkinImageData() =>
       const InvalidSkinImageDataMinecraftApiException();
 
+  factory MinecraftApiException.accountNotFound() =>
+      const AccountNotFoundMinecraftApiException();
+
   final String message;
 
   @override
@@ -41,6 +44,13 @@ final class TooManyRequestsMinecraftApiException extends MinecraftApiException {
   const TooManyRequestsMinecraftApiException()
     : super(
         'Request limit reached while communicating with Minecraft API services.',
+      );
+}
+
+final class AccountNotFoundMinecraftApiException extends MinecraftApiException {
+  const AccountNotFoundMinecraftApiException()
+    : super(
+        'The Minecraft account was not found. Does the user have a valid Minecraft account?',
       );
 }
 

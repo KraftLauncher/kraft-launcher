@@ -159,6 +159,20 @@ void main() {
       () => minecraftApi.fetchMinecraftProfile(fakeMcAccessToken),
       isPostRequest: false,
     );
+
+    test(
+      'throws $AccountNotFoundMinecraftApiException when the API indicates the account does not exist',
+      () async {
+        mockDio.mockGetUriFailure<JsonObject>(
+          responseData: {'error': 'NOT_FOUND'},
+        );
+
+        await expectLater(
+          minecraftApi.fetchMinecraftProfile(''),
+          throwsA(isA<AccountNotFoundMinecraftApiException>()),
+        );
+      },
+    );
   });
   group('checkMinecraftJavaOwnership', () {
     test('uses expected request URI, passes Authorization header', () async {

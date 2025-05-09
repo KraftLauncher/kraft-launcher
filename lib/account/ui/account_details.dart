@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../common/constants/constants.dart';
 import '../../common/constants/microsoft_constants.dart';
 import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/utils/scaffold_messenger_ext.dart';
@@ -45,7 +46,7 @@ class AccountDetails extends StatelessWidget {
                       case AccountType.microsoft:
                         launchUrl(
                           Uri.parse(
-                            MicrosoftConstants.changeMinecraftUsernameLink,
+                            MinecraftConstants.changeMinecraftUsernameLink,
                           ),
                         );
                       case AccountType.offline:
