@@ -88,7 +88,7 @@ class MinecraftAccount {
       skins.firstWhereOrNull((skin) => skin.state == 'ACTIVE');
 
   // TODO: We probably won't make it to this point when user don't have a Microsoft account?
-  //  Handle the case where user don't have Minecraft, maybe need to remove this field if it's not needed.
+  //  Handle the case where user don't have Minecraft, maybe need to remove this field if it's not needed (need to decide whether we should support demo mode first).
   /// Not null if [accountType] is [AccountType.microsoft].
   final bool? ownsMinecraftJava;
 

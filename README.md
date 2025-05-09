@@ -12,8 +12,8 @@
 
 An unofficial, open-source launcher for [Minecraft Java](https://www.minecraft.net/en-us/store/minecraft-java-bedrock-edition-pc) that provides profile isolation, seamless profile sharing with other players, and installing mods with ease.
 
-> [!NOTE]
-> This project is in its early stages and not yet ready for general use. For updates and progress, see [#1](https://github.com/KraftLauncher/kraft-launcher/issues/1).
+> [!WARNING]
+> This project is in its early stages and not yet ready for general use. For updates and progress, see [#1 Kraft Launcher progress](https://github.com/KraftLauncher/kraft-launcher/issues/1). **Breaking changes** are likely to be introduced at this point, which means your data will be lost once the launcher is released.
 
 **Kraft Launcher is not affiliated
 with [Mojang](https://mojang.com/), [Microsoft](https://www.microsoft.com/), or any of their
@@ -24,6 +24,27 @@ subsidiaries.**
 **Kraft Launcher** addresses the same issue as [Kraft Sync](https://github.com/FreshKernel/kraft-sync) for sharing and syncing profiles (AKA instances). Due to limitations of the previous approach, a custom Minecraft launcher was developed to automate steps for a more user-friendly experience.
 
 Our goal is to support standard features across most launchers while enabling players to share profiles with others. This includes mods, resource packs, data packs, shaders, configs, key binds, and more, all kept in sync with automatic updates.
+
+## 🖼️ Screenshots
+
+<details>
+<summary>Tap to show/hide screenshots</summary>
+
+![Manage accounts screenshot](https://github.com/user-attachments/assets/c15745c3-999f-4407-b9b5-67b02654b430)
+
+![Error loading accounts screenshot](https://github.com/user-attachments/assets/364e76a3-97e7-4aae-8fc2-371ddd5f537f)
+
+![Add Microsoft account dialog screenshot](https://github.com/user-attachments/assets/a37f40c1-6186-4cfc-9561-96ce5b8e6464)
+
+![Settings general category screenshot](https://github.com/user-attachments/assets/a17740c7-8dc2-4ff7-9536-1ed2049e3b75)
+
+![Settings about category screenshot](https://github.com/user-attachments/assets/eb7bce4a-e9e4-4533-966c-b3a313c7f03e)
+
+![Logging in with Microsoft screenshot](https://github.com/user-attachments/assets/da9e08f9-63bb-40af-a087-224463ca3cc0)
+
+![Accounts tab screenshot](https://github.com/user-attachments/assets/4553eee0-ac39-481c-bb00-96cc74ae901c)
+
+</details>
 
 ## ✨ Features
 
@@ -41,7 +62,7 @@ Our goal is to support standard features across most launchers while enabling pl
 * ⚡ **Quick Play**: Automatically join a Minecraft server, world, or realm on launch.
 
 > [!IMPORTANT]
-> Currently, the project doesn't implement most of these features yet, they were added early in `README` as they are planned in [#1](https://github.com/KraftLauncher/kraft-launcher/issues/1), once they are available, this note will be removed.
+> Currently, the project doesn't implement most of these features yet, they were added early in `README` as they are planned in [#1 Kraft Launcher progress](https://github.com/KraftLauncher/kraft-launcher/issues/1), once they are available, this note will be removed.
 
 ## 🛠️ Build from Source
 
@@ -91,6 +112,10 @@ It is NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.**
 
 ## 📜 Acknowledgments
 
+We are incredibly grateful to many individuals and organizations who have played a role in the project. This includes the welcoming community, dedicated volunteers, talented developers and contributors, the creators of the open-source tools and the information we rely on.
+
+- [Flutter](https://flutter.dev/)
+- [Bloc](https://bloclibrary.dev/)
 - The app icon was created with the assistance of a generative design tool.
 - The following open-source launchers were referenced for implementing certain features:
     - [PrismLauncher](https://github.com/PrismLauncher/PrismLauncher)

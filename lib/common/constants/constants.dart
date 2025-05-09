@@ -13,8 +13,11 @@ abstract final class Constants {
 }
 
 abstract final class MinecraftConstants {
+  // TODO: This is not used yet.
   static const buyMinecraftLink =
       'https://www.minecraft.net/store/minecraft-deluxe-collection-pc';
   static const changeMinecraftUsernameLink =
       'https://www.minecraft.net/msaprofile/mygames/editprofile';
+  // TODO: Decide where to use this?
+  static const minecraftProfile = 'https://www.minecraft.net/msaprofile';
 }
