@@ -30,19 +30,19 @@ Our goal is to support standard features across most launchers while enabling pl
 <details>
 <summary>Tap to show/hide screenshots</summary>
 
-![Manage accounts screenshot](https://github.com/user-attachments/assets/c15745c3-999f-4407-b9b5-67b02654b430)
+![Manage accounts screenshot](https://github.com/KraftLauncher/screenshots/blob/main/manage_minecraft_accounts.png?raw=true)
 
-![Error loading accounts screenshot](https://github.com/user-attachments/assets/364e76a3-97e7-4aae-8fc2-371ddd5f537f)
+![Error loading accounts screenshot](https://github.com/KraftLauncher/screenshots/blob/main/error_loading_accounts.png?raw=true)
 
-![Add Microsoft account dialog screenshot](https://github.com/user-attachments/assets/a37f40c1-6186-4cfc-9561-96ce5b8e6464)
+![Add Microsoft account dialog screenshot](https://github.com/KraftLauncher/screenshots/blob/main/adding_microsoft_account_dialog.png?raw=true)
 
-![Settings general category screenshot](https://github.com/user-attachments/assets/a17740c7-8dc2-4ff7-9536-1ed2049e3b75)
+![Settings general category screenshot](https://github.com/KraftLauncher/screenshots/blob/main/settings_general_category.png?raw=true)
 
-![Settings about category screenshot](https://github.com/user-attachments/assets/eb7bce4a-e9e4-4533-966c-b3a313c7f03e)
+![Settings about category screenshot](https://raw.githubusercontent.com/KraftLauncher/screenshots/refs/heads/main/settings_about_category.png)
 
-![Logging in with Microsoft screenshot](https://github.com/user-attachments/assets/da9e08f9-63bb-40af-a087-224463ca3cc0)
+![Logging in with Microsoft screenshot](https://github.com/KraftLauncher/screenshots/blob/main/logging_with_microsoft_dialog.png?raw=true)
 
-![Accounts tab screenshot](https://github.com/user-attachments/assets/4553eee0-ac39-481c-bb00-96cc74ae901c)
+![Accounts tab screenshot](https://github.com/KraftLauncher/screenshots/blob/main/accounts_tab.png?raw=true)
 
 </details>
 
