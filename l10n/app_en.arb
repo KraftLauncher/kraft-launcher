@@ -69,7 +69,7 @@
     "@missingAuthCodeError": {
         "description": "Shown when the login process is redirected without a 'code' parameter, indicating that the Microsoft authorization code is missing or was manually accessed."
     },
-    "expiredAuthCodeError": "Auth code has expired. Restart sign-in process.",
+    "expiredAuthCodeError": "Auth code has expired. Please restart sign-in process.",
     "@expiredAuthCodeError": {
         "description": "Shown when the Microsoft authorization code is no longer valid due to timeout or reuse."
     },
@@ -196,5 +196,47 @@
     "invalidMinecraftSkinFile": "Invalid skin image. Please upload a valid Minecraft skin file.",
     "@invalidMinecraftSkinFile": {
         "description": "Shown when the user uploads an invalid Minecraft skin file."
-    }
+    },
+    "manageSkins": "Manage Skins",
+    "xstsUnknownError": "Xbox sign-in failed. Please try again.",
+    "@xstsUnknownError": {
+        "description": "Shown when the XSTS authentication fails for an unknown reason."
+    },
+    "xstsUnknownErrorWithDetails": "Xbox sign-in failed. Error code: {xErr}. Message: {apiMessage}. Please try again.",
+    "@xstsUnknownErrorWithDetails": {
+        "description": "Shown when the XSTS authentication fails for an unknown reason, including the error code and message from the API.",
+        "placeholders": {
+            "xErr": {
+                "type": "String",
+                "example": "2148916233",
+                "description": "The error code returned from the API during Xbox sign-in failure."
+            },
+            "apiMessage": {
+                "type": "String",
+                "example": "Internal server error.",
+                "description": "The message returned from the API describing the error."
+            }
+        }
+    },
+    "xstsAccountCreationRequiredError": "This account is not linked to Xbox services. Please sign in to Xbox to continue.",
+    "@xstsAccountCreationRequiredError": {
+        "description": "Shown when the user tries to log in but doesn't have an Xbox profile which is required for XSTS authorization. They need to visit https://start.ui.xboxlive.com/CreateAccount and sign in to create one."
+    },
+    "xstsRegionNotSupportedError": "Xbox Live isn't available in your Microsoft account's region.",
+    "@xstsRegionNotSupportedError": {
+        "description": "Shown when the Xbox Live service is not available in the user's region according to their Microsoft account."
+    },
+    "xstsAdultVerificationRequiredError": "Your Microsoft account needs adult verification.",
+    "@xstsAdultVerificationRequiredError": {
+        "description": "Shown when the account requires adult verification before proceeding with sign-in."
+    },
+    "xstsAgeVerificationRequiredError": "Your Microsoft account needs age verification.",
+    "@xstsAgeVerificationRequiredError": {
+        "description": "Shown when the account requires age verification before proceeding with sign-in."
+    },
+    "xstsRequiresAdultConsentRequiredError": "This account is under 18. An adult needs to add the account to a Microsoft family to continue.",
+    "@xstsRequiresAdultConsentRequiredError": {
+        "description": "Shown when the user needs to be added to a family group by an adult to access Xbox services. This is required for XSTS authorization due to age restrictions."
+    },
+    "createXboxAccount": "Create Xbox Account"
 }

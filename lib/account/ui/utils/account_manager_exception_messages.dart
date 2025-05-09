@@ -8,22 +8,42 @@ extension AccountManagerExceptionMessages on AccountManagerException {
     final exception = this;
     return switch (exception) {
       MissingAuthCodeAccountManagerException() => loc.missingAuthCodeError,
-      MicrosoftApiAccountManagerException() => switch (exception
-          .authApiException) {
-        UnknownMicrosoftAuthException() => loc.unexpectedMicrosoftApiError(
-          exception.message,
-        ),
+      MicrosoftApiAccountManagerException() => () {
+        final microsoftApiException = exception.authApiException;
+        return switch (microsoftApiException) {
+          UnknownMicrosoftAuthException() => loc.unexpectedMicrosoftApiError(
+            exception.message,
+          ),
+          AuthCodeExpiredMicrosoftAuthException() => loc.expiredAuthCodeError,
 
-        AuthCodeExpiredMicrosoftAuthException() => loc.expiredAuthCodeError,
+          XboxTokenRequestFailedDueToExpiredAccessTokenMicrosoftAuthException() =>
+            loc.expiredMicrosoftAccessTokenError,
 
-        XboxTokenRequestFailedDueToExpiredAccessTokenMicrosoftAuthException() =>
-          loc.expiredMicrosoftAccessTokenError,
-
-        ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException() =>
-          loc.sessionExpiredOrAccessRevoked,
-        TooManyRequestsMicrosoftAuthException() =>
-          loc.microsoftRequestLimitError,
-      },
+          ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException() =>
+            loc.sessionExpiredOrAccessRevoked,
+          TooManyRequestsMicrosoftAuthException() =>
+            loc.microsoftRequestLimitError,
+          XstsErrorMicrosoftAuthException() => switch (microsoftApiException
+              .xstsError) {
+            null =>
+              microsoftApiException.xErr != null
+                  ? loc.xstsUnknownErrorWithDetails(
+                    microsoftApiException.xErr.toString(),
+                    microsoftApiException.message,
+                  )
+                  : loc.xstsUnknownError,
+            XstsError.accountCreationRequired =>
+              loc.xstsAccountCreationRequiredError,
+            XstsError.regionUnavailable => loc.xstsRegionNotSupportedError,
+            XstsError.adultVerificationRequired =>
+              loc.xstsAdultVerificationRequiredError,
+            XstsError.ageVerificationRequired =>
+              loc.xstsAgeVerificationRequiredError,
+            XstsError.accountUnderAge =>
+              loc.xstsRequiresAdultConsentRequiredError,
+          },
+        };
+      }(),
       MinecraftApiAccountManagerException() => switch (exception
           .minecraftApiException) {
         UnknownMinecraftApiException() => loc.unexpectedMinecraftApiError(

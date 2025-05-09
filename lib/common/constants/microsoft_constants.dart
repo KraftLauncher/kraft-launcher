@@ -22,4 +22,7 @@ abstract final class MicrosoftConstants {
 
   // TODO: We could also provide a direct link of this app for easier access (e.g., https://account.live.com/consent/Edit?client_id=xxxxxxxxxx)
   static const revokeAccessLink = 'https://www.microsoft.com/consent';
+  static const createXboxAccountLink = 'https://www.xbox.com/live';
+  static const changeMinecraftUsernameLink =
+      'https://www.minecraft.net/msaprofile/mygames/editprofile';
 }

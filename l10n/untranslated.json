@@ -1,1 +1,37 @@
-{}
+{
+  "ar": [
+    "manageSkins",
+    "xstsUnknownError",
+    "xstsUnknownErrorWithDetails",
+    "xstsAccountCreationRequiredError",
+    "xstsRegionNotSupportedError",
+    "xstsAdultVerificationRequiredError",
+    "xstsAgeVerificationRequiredError",
+    "xstsRequiresAdultConsentRequiredError",
+    "createXboxAccount"
+  ],
+
+  "de": [
+    "manageSkins",
+    "xstsUnknownError",
+    "xstsUnknownErrorWithDetails",
+    "xstsAccountCreationRequiredError",
+    "xstsRegionNotSupportedError",
+    "xstsAdultVerificationRequiredError",
+    "xstsAgeVerificationRequiredError",
+    "xstsRequiresAdultConsentRequiredError",
+    "createXboxAccount"
+  ],
+
+  "zh": [
+    "manageSkins",
+    "xstsUnknownError",
+    "xstsUnknownErrorWithDetails",
+    "xstsAccountCreationRequiredError",
+    "xstsRegionNotSupportedError",
+    "xstsAdultVerificationRequiredError",
+    "xstsAgeVerificationRequiredError",
+    "xstsRequiresAdultConsentRequiredError",
+    "createXboxAccount"
+  ]
+}

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 
 import '../../../common/constants/microsoft_constants.dart';
@@ -31,7 +32,9 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       }
 
       // The error code and description are included in responses of requests
-      // that made to Microsoft, and not Xbox. Xbox API usually returns error details in the headers.
+      // that made to Microsoft, and not Xbox. Xbox APIs usually returns error details in the headers
+      // and additionally in the response data (XErr) when requesting XSTS. It's handled
+      // in requestXboxLiveToken() and requestXSTSToken().
       final errorBody = e.response?.data as JsonObject?;
       final code = errorBody?['error'] as String?;
       final errorDescription = errorBody?['error_description'] as String?;
@@ -162,6 +165,10 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
 
   @override
   Future<XboxLiveAuthTokenResponse> requestXboxLiveToken(
+    // The error code and description are included in responses of requests
+    // that made to Microsoft, and not Xbox. Xbox APIs usually returns error details in the headers
+    // and additionally in the response data (XErr) when requesting XSTS. It's handled
+    // in requestXboxLiveToken and requestXSTSToken.
     MicrosoftOauthTokenExchangeResponse microsoftOauthToken,
   ) async => _handleCommonFailures(
     () async {
@@ -203,28 +210,52 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   @override
   Future<XboxLiveAuthTokenResponse> requestXSTSToken(
     XboxLiveAuthTokenResponse xboxLiveToken,
-  ) => _handleCommonFailures(() async {
-    final response = await dio.postUri<JsonObject>(
-      Uri.https('xsts.auth.xboxlive.com', '/xsts/authorize'),
-      options: Options(
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+  ) => _handleCommonFailures(
+    () async {
+      final response = await dio.postUri<JsonObject>(
+        Uri.https('xsts.auth.xboxlive.com', '/xsts/authorize'),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+        data: {
+          'Properties': {
+            'SandboxId': 'RETAIL',
+            'UserTokens': [xboxLiveToken.xboxToken],
+          },
+          'RelyingParty': 'rp://api.minecraftservices.com/',
+          'TokenType': 'JWT',
         },
-      ),
-      data: {
-        'Properties': {
-          'SandboxId': 'RETAIL',
-          'UserTokens': [xboxLiveToken.xboxToken],
-        },
-        'RelyingParty': 'rp://api.minecraftservices.com/',
-        'TokenType': 'JWT',
-      },
-    );
-    return XboxLiveAuthTokenResponse.fromJson(response.dataOrThrow);
-  });
+      );
+      return XboxLiveAuthTokenResponse.fromJson(response.dataOrThrow);
+    },
+    customHandle: (e) {
+      final errorBody = e.response?.data as JsonObject?;
+      final message = errorBody?['Message'] as String?;
+      final xErr = errorBody?['XErr'] as int?;
+      final xstsError =
+          xErr != null
+              ? XstsError.values.firstWhereOrNull((e) => e.xErr == xErr)
+              : null;
 
-  // START: END
+      if (e.response?.statusCode != HttpStatus.unauthorized &&
+          xErr == null &&
+          message == null) {
+        return null;
+      }
+
+      throw MicrosoftAuthException.xstsError(
+        message ??
+            'An unknown error, Xbox API did not provided a message, headers: ${e.response?.headers}',
+        xErr: xErr,
+        xstsError: xstsError,
+      );
+    },
+  );
+
+  // START: Xbox
 
   @override
   Future<MicrosoftOauthTokenExchangeResponse> getNewTokensFromRefreshToken(

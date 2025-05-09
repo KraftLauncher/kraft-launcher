@@ -390,4 +390,38 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get invalidMinecraftSkinFile =>
       'صورة سكين غير صالحة. يرجى تحميل ملف سكين Minecraft صالح.';
+
+  @override
+  String get manageSkins => 'Manage Skins';
+
+  @override
+  String get xstsUnknownError => 'Xbox sign-in failed. Please try again.';
+
+  @override
+  String xstsUnknownErrorWithDetails(String xErr, String apiMessage) {
+    return 'Xbox sign-in failed. Error code: $xErr. Message: $apiMessage. Please try again.';
+  }
+
+  @override
+  String get xstsAccountCreationRequiredError =>
+      'This account is not linked to Xbox services. Please sign in to Xbox to continue.';
+
+  @override
+  String get xstsRegionNotSupportedError =>
+      'Xbox Live isn\'t available in your Microsoft account\'s region.';
+
+  @override
+  String get xstsAdultVerificationRequiredError =>
+      'Your Microsoft account needs adult verification.';
+
+  @override
+  String get xstsAgeVerificationRequiredError =>
+      'Your Microsoft account needs age verification.';
+
+  @override
+  String get xstsRequiresAdultConsentRequiredError =>
+      'This account is under 18. An adult needs to add the account to a Microsoft family to continue.';
+
+  @override
+  String get createXboxAccount => 'Create Xbox Account';
 }

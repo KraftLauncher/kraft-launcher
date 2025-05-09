@@ -513,6 +513,29 @@ void main() {
       () => mockDio,
       () => microsoftAuthApi.requestXSTSToken(xboxLiveTokenResponse()),
     );
+
+    test(
+      'throws $XstsErrorMicrosoftAuthException for Xbox specific errors',
+      () async {
+        for (final xstsError in XstsError.values) {
+          const message = 'An unknown error';
+          mockDio.mockPostUriFailure<JsonObject>(
+            statusCode: HttpStatus.unauthorized,
+            responseData: {'Message': message, 'XErr': xstsError.xErr},
+          );
+
+          await expectLater(
+            microsoftAuthApi.requestXSTSToken(xboxLiveTokenResponse()),
+            throwsA(
+              isA<XstsErrorMicrosoftAuthException>()
+                  .having((e) => e.message, 'message', message)
+                  .having((e) => e.xErr, 'xErr', xstsError.xErr)
+                  .having((e) => e.xstsError, 'xstsError', xstsError),
+            ),
+          );
+        }
+      },
+    );
   });
 
   // END: Xbox

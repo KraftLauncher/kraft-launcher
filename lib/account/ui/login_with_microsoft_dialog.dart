@@ -13,7 +13,9 @@ import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/utils/scaffold_messenger_ext.dart';
 import '../../common/ui/widgets/copy_code_block.dart';
 import '../../settings/logic/cubit/settings_cubit.dart';
+import '../data/microsoft_auth_api/microsoft_auth_exceptions.dart';
 import '../logic/account_manager/minecraft_account_manager.dart';
+import '../logic/account_manager/minecraft_account_manager_exceptions.dart';
 import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
 import 'utils/account_manager_exception_messages.dart';
 import 'utils/auth_progress_messages.dart';
@@ -62,11 +64,40 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                 context.pop();
                 return;
               }
+
               if (state.microsoftLoginStatus == MicrosoftLoginStatus.failure) {
                 final exception = state.exceptionOrThrow;
                 final message = exception.getMessage(context.loc);
-                context.scaffoldMessenger.showSnackBarText(message);
+                final scaffoldMessenger = context.scaffoldMessenger;
+
                 context.pop();
+
+                // Show SnackBar action for special errors.
+                if (exception is MicrosoftApiAccountManagerException) {
+                  final microsoftAuthException = exception.authApiException;
+                  if (microsoftAuthException
+                      is XstsErrorMicrosoftAuthException) {
+                    switch (microsoftAuthException.xstsError) {
+                      case XstsError.accountCreationRequired:
+                        scaffoldMessenger.showSnackBarText(
+                          message,
+                          snackBarAction: SnackBarAction(
+                            label: context.loc.createXboxAccount,
+                            onPressed:
+                                () => launchUrl(
+                                  Uri.parse(
+                                    MicrosoftConstants.createXboxAccountLink,
+                                  ),
+                                ),
+                          ),
+                        );
+                        return;
+                      case _:
+                    }
+                  }
+                }
+
+                scaffoldMessenger.showSnackBarText(message);
               }
             },
             builder: (context, state) {

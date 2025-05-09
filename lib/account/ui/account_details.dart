@@ -44,7 +44,9 @@ class AccountDetails extends StatelessWidget {
                     switch (account.accountType) {
                       case AccountType.microsoft:
                         launchUrl(
-                          Uri.parse('https://www.minecraft.net/msaprofile'),
+                          Uri.parse(
+                            MicrosoftConstants.changeMinecraftUsernameLink,
+                          ),
                         );
                       case AccountType.offline:
                         showDialog<void>(

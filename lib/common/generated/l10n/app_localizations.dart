@@ -303,7 +303,7 @@ abstract class AppLocalizations {
   /// Shown when the Microsoft authorization code is no longer valid due to timeout or reuse.
   ///
   /// In en, this message translates to:
-  /// **'Auth code has expired. Restart sign-in process.'**
+  /// **'Auth code has expired. Please restart sign-in process.'**
   String get expiredAuthCodeError;
 
   /// Shown when the Microsoft access token used to fetch Xbox token.
@@ -779,6 +779,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid skin image. Please upload a valid Minecraft skin file.'**
   String get invalidMinecraftSkinFile;
+
+  /// No description provided for @manageSkins.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Skins'**
+  String get manageSkins;
+
+  /// Shown when the XSTS authentication fails for an unknown reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Xbox sign-in failed. Please try again.'**
+  String get xstsUnknownError;
+
+  /// Shown when the XSTS authentication fails for an unknown reason, including the error code and message from the API.
+  ///
+  /// In en, this message translates to:
+  /// **'Xbox sign-in failed. Error code: {xErr}. Message: {apiMessage}. Please try again.'**
+  String xstsUnknownErrorWithDetails(String xErr, String apiMessage);
+
+  /// Shown when the user tries to log in but doesn't have an Xbox profile which is required for XSTS authorization. They need to visit https://start.ui.xboxlive.com/CreateAccount and sign in to create one.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is not linked to Xbox services. Please sign in to Xbox to continue.'**
+  String get xstsAccountCreationRequiredError;
+
+  /// Shown when the Xbox Live service is not available in the user's region according to their Microsoft account.
+  ///
+  /// In en, this message translates to:
+  /// **'Xbox Live isn\'t available in your Microsoft account\'s region.'**
+  String get xstsRegionNotSupportedError;
+
+  /// Shown when the account requires adult verification before proceeding with sign-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Microsoft account needs adult verification.'**
+  String get xstsAdultVerificationRequiredError;
+
+  /// Shown when the account requires age verification before proceeding with sign-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Microsoft account needs age verification.'**
+  String get xstsAgeVerificationRequiredError;
+
+  /// Shown when the user needs to be added to a family group by an adult to access Xbox services. This is required for XSTS authorization due to age restrictions.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is under 18. An adult needs to add the account to a Microsoft family to continue.'**
+  String get xstsRequiresAdultConsentRequiredError;
+
+  /// No description provided for @createXboxAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Xbox Account'**
+  String get createXboxAccount;
 }
 
 class _AppLocalizationsDelegate
