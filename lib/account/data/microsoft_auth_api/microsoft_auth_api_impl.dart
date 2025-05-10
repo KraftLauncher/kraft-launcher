@@ -140,7 +140,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
         },
       );
 
-      return MicrosoftDeviceCodeSuccess(
+      return MicrosoftDeviceCodeApproved(
         response: MicrosoftOauthTokenExchangeResponse.fromJson(
           response.dataOrThrow,
         ),
@@ -150,10 +150,13 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       final errorBody = e.response?.data as JsonObject?;
       final code = errorBody?['error'] as String?;
       if (code == 'authorization_pending') {
-        return const MicrosoftDeviceCodeAuthorizationPending();
+        return MicrosoftCheckDeviceCodeStatusResult.authorizationPending();
       }
       if (code == 'expired_token') {
-        return const MicrosoftDeviceCodeExpired();
+        return MicrosoftCheckDeviceCodeStatusResult.expired();
+      }
+      if (code == 'authorization_declined') {
+        return MicrosoftCheckDeviceCodeStatusResult.declined();
       }
 
       return null;

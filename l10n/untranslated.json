@@ -10,7 +10,8 @@
     "xstsRequiresAdultConsentRequiredError",
     "createXboxAccount",
     "minecraftAccountNotFoundError",
-    "minecraftOwnershipRequiredError"
+    "minecraftOwnershipRequiredError",
+    "loginDeviceCodeRejected"
   ],
 
   "de": [
@@ -24,7 +25,8 @@
     "xstsRequiresAdultConsentRequiredError",
     "createXboxAccount",
     "minecraftAccountNotFoundError",
-    "minecraftOwnershipRequiredError"
+    "minecraftOwnershipRequiredError",
+    "loginDeviceCodeRejected"
   ],
 
   "zh": [
@@ -38,6 +40,7 @@
     "xstsRequiresAdultConsentRequiredError",
     "createXboxAccount",
     "minecraftAccountNotFoundError",
-    "minecraftOwnershipRequiredError"
+    "minecraftOwnershipRequiredError",
+    "loginDeviceCodeRejected"
   ]
 }

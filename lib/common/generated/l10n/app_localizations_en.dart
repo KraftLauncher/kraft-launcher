@@ -257,7 +257,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get or => 'OR';
 
   @override
-  String get loginCodeExpired => 'Login code expired';
+  String get loginDeviceCodeExpired =>
+      'The login code has expired. Please try again.';
 
   @override
   String get tryAgain => 'Try Again';
@@ -437,4 +438,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get minecraftOwnershipRequiredError =>
       'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.';
+
+  @override
+  String get loginDeviceCodeRejected => 'The login attempt was rejected.';
 }

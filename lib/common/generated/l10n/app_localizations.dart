@@ -546,11 +546,11 @@ abstract class AppLocalizations {
   /// **'OR'**
   String get or;
 
-  /// No description provided for @loginCodeExpired.
+  /// No description provided for @loginDeviceCodeExpired.
   ///
   /// In en, this message translates to:
-  /// **'Login code expired'**
-  String get loginCodeExpired;
+  /// **'The login code has expired. Please try again.'**
+  String get loginDeviceCodeExpired;
 
   /// No description provided for @tryAgain.
   ///
@@ -845,6 +845,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.'**
   String get minecraftOwnershipRequiredError;
+
+  /// No description provided for @loginDeviceCodeRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The login attempt was rejected.'**
+  String get loginDeviceCodeRejected;
 }
 
 class _AppLocalizationsDelegate

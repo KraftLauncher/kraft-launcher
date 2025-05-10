@@ -113,7 +113,9 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
         state.copyWith(
           deviceCodeStatus: switch (closeReason) {
             DeviceCodeTimerCloseReason.codeExpired => DeviceCodeStatus.expired,
-            DeviceCodeTimerCloseReason.normal => DeviceCodeStatus.idle,
+            DeviceCodeTimerCloseReason.declined => DeviceCodeStatus.declined,
+            DeviceCodeTimerCloseReason.approved => DeviceCodeStatus.idle,
+            DeviceCodeTimerCloseReason.cancelledByUser => DeviceCodeStatus.idle,
           },
           requestedDeviceCode: const Wrapped.value(null),
         ),

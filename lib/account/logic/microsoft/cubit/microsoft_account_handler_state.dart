@@ -18,7 +18,7 @@ enum MicrosoftLoginStatus {
 enum MicrosoftRefreshAccountStatus { initial, loading, success, failure }
 
 // When the login dialog is opened, the device code will be automatically requested.
-enum DeviceCodeStatus { idle, requestingCode, polling, expired }
+enum DeviceCodeStatus { idle, requestingCode, polling, expired, declined }
 
 final class MicrosoftAccountHandlerState extends Equatable {
   const MicrosoftAccountHandlerState({

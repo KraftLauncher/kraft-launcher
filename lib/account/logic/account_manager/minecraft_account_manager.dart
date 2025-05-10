@@ -165,7 +165,7 @@ class MinecraftAccountManager {
   /// Set when [requestLoginWithMicrosoftDeviceCode] is called, and cleared
   /// after success or code expiration.
   @visibleForTesting
-  AsyncTimer<MicrosoftDeviceCodeSuccess?>? deviceCodePollingTimer;
+  AsyncTimer<MicrosoftDeviceCodeApproved?>? deviceCodePollingTimer;
 
   bool get isDeviceCodePollingTimerActive =>
       deviceCodePollingTimer?.isActive ?? false;
@@ -179,7 +179,7 @@ class MinecraftAccountManager {
 
   // Cancels the polling timer if active.
   // Returns whether the timer has been cancelled and was active.
-  bool cancelDeviceCodePollingTimer([MicrosoftDeviceCodeSuccess? result]) {
+  bool cancelDeviceCodePollingTimer([MicrosoftDeviceCodeApproved? result]) {
     final isActive = isDeviceCodePollingTimerActive;
     deviceCodePollingTimer?.cancel(result);
     deviceCodePollingTimer = null;
@@ -219,7 +219,7 @@ class MinecraftAccountManager {
     onDeviceCodeAvailable(deviceCodeResponse.userCode);
     onProgressUpdate(MicrosoftAuthProgress.waitingForUserLogin);
 
-    var closeReason = DeviceCodeTimerCloseReason.normal;
+    var closeReason = DeviceCodeTimerCloseReason.cancelledByUser;
 
     void cancelTimerOnExpiration() {
       closeReason = DeviceCodeTimerCloseReason.codeExpired;
@@ -252,8 +252,12 @@ class MinecraftAccountManager {
         final checkDeviceCodeResult = await microsoftAuthApi
             .checkDeviceCodeStatus(deviceCodeResponse);
         switch (checkDeviceCodeResult) {
-          case MicrosoftDeviceCodeSuccess():
+          case MicrosoftDeviceCodeApproved():
+            closeReason = DeviceCodeTimerCloseReason.approved;
             cancelDeviceCodePollingTimer(checkDeviceCodeResult);
+          case MicrosoftDeviceCodeDeclined():
+            closeReason = DeviceCodeTimerCloseReason.declined;
+            cancelDeviceCodePollingTimer();
           case MicrosoftDeviceCodeExpired():
             // The API indicates the device code has expired, which may happen
             // even though we check locally, handle it gracefully
@@ -607,8 +611,9 @@ enum MicrosoftAuthProgress {
 
 enum DeviceCodeTimerCloseReason {
   codeExpired,
-  normal, // Either the user requested to cancel the timer (i.e., login with auth code instead)
-  // or the user logged in.
+  approved,
+  declined,
+  cancelledByUser,
 }
 
 @visibleForTesting

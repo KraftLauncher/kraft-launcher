@@ -255,7 +255,24 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                           spacing: 8,
                           children: [
                             Text(
-                              context.loc.loginCodeExpired,
+                              context.loc.loginDeviceCodeExpired,
+                              style: context.theme.textTheme.titleMedium,
+                            ),
+                            ElevatedButton.icon(
+                              onPressed:
+                                  () =>
+                                      _microsoftAccountHandlerCubit
+                                          .requestLoginWithMicrosoftDeviceCode(),
+                              label: Text(context.loc.tryAgain),
+                              icon: const Icon(Icons.refresh),
+                            ),
+                          ],
+                        ),
+                        DeviceCodeStatus.declined => Column(
+                          spacing: 8,
+                          children: [
+                            Text(
+                              context.loc.loginDeviceCodeRejected,
                               style: context.theme.textTheme.titleMedium,
                             ),
                             ElevatedButton.icon(

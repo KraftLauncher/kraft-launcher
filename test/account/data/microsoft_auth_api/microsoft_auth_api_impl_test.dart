@@ -242,30 +242,48 @@ void main() {
       },
     );
 
-    test('returns $MicrosoftDeviceCodeSuccess on success', () async {
-      const accessToken = 'Example access token';
-      const refreshToken = 'Example refresh token';
-      const expiresIn = 3600;
-      mockDio.mockPostUriSuccess<JsonObject>(
-        responseData: {
-          'access_token': accessToken,
-          'refresh_token': refreshToken,
-          'expires_in': expiresIn,
-        },
-      );
+    test(
+      'returns $MicrosoftDeviceCodeApproved when the user approves the authorization request',
+      () async {
+        const accessToken = 'Example access token';
+        const refreshToken = 'Example refresh token';
+        const expiresIn = 3600;
+        mockDio.mockPostUriSuccess<JsonObject>(
+          responseData: {
+            'access_token': accessToken,
+            'refresh_token': refreshToken,
+            'expires_in': expiresIn,
+          },
+        );
 
-      const deviceCode = 'Example Device code';
-      final result = await microsoftAuthApi.checkDeviceCodeStatus(
-        requestDeviceCodeResponse(deviceCode: deviceCode),
-      );
+        const deviceCode = 'Example Device code';
+        final result = await microsoftAuthApi.checkDeviceCodeStatus(
+          requestDeviceCodeResponse(deviceCode: deviceCode),
+        );
 
-      expect(result, isA<MicrosoftDeviceCodeSuccess>());
+        expect(result, isA<MicrosoftDeviceCodeApproved>());
 
-      final successResponse = (result as MicrosoftDeviceCodeSuccess).response;
-      expect(successResponse.accessToken, accessToken);
-      expect(successResponse.refreshToken, refreshToken);
-      expect(successResponse.expiresIn, expiresIn);
-    });
+        final successResponse =
+            (result as MicrosoftDeviceCodeApproved).response;
+        expect(successResponse.accessToken, accessToken);
+        expect(successResponse.refreshToken, refreshToken);
+        expect(successResponse.expiresIn, expiresIn);
+      },
+    );
+
+    test(
+      'returns $MicrosoftDeviceCodeDeclined when the user declines the authorization request',
+      () async {
+        mockDio.mockPostUriFailure<JsonObject>(
+          responseData: {'error': 'authorization_declined'},
+        );
+
+        final result = await microsoftAuthApi.checkDeviceCodeStatus(
+          requestDeviceCodeResponse(deviceCode: 'any'),
+        );
+        expect(result, isA<MicrosoftCheckDeviceCodeStatusResult>());
+      },
+    );
 
     test(
       'returns $MicrosoftDeviceCodeAuthorizationPending when Microsoft awaiting the user',

@@ -261,7 +261,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get or => 'ODER';
 
   @override
-  String get loginCodeExpired => 'Anmeldecode abgelaufen';
+  String get loginDeviceCodeExpired =>
+      'Der Login-Code ist abgelaufen. Bitte versuche es erneut.';
 
   @override
   String get tryAgain => 'Erneut versuchen';
@@ -441,4 +442,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get minecraftOwnershipRequiredError =>
       'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.';
+
+  @override
+  String get loginDeviceCodeRejected => 'The login attempt was rejected.';
 }

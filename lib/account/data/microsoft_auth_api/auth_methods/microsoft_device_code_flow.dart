@@ -33,21 +33,35 @@ class MicrosoftRequestDeviceCodeResponse {
 @immutable
 sealed class MicrosoftCheckDeviceCodeStatusResult {
   const MicrosoftCheckDeviceCodeStatusResult();
+
+  factory MicrosoftCheckDeviceCodeStatusResult.approved(
+    MicrosoftOauthTokenExchangeResponse response,
+  ) => MicrosoftDeviceCodeApproved(response: response);
+  factory MicrosoftCheckDeviceCodeStatusResult.declined() =>
+      const MicrosoftDeviceCodeDeclined();
+  factory MicrosoftCheckDeviceCodeStatusResult.expired() =>
+      const MicrosoftDeviceCodeExpired();
+  factory MicrosoftCheckDeviceCodeStatusResult.authorizationPending() =>
+      const MicrosoftDeviceCodeAuthorizationPending();
 }
 
-class MicrosoftDeviceCodeSuccess extends MicrosoftCheckDeviceCodeStatusResult {
-  const MicrosoftDeviceCodeSuccess({required this.response});
+class MicrosoftDeviceCodeApproved extends MicrosoftCheckDeviceCodeStatusResult {
+  const MicrosoftDeviceCodeApproved({required this.response});
 
   final MicrosoftOauthTokenExchangeResponse response;
 }
 
-class MicrosoftDeviceCodeExpired extends MicrosoftCheckDeviceCodeStatusResult {
-  const MicrosoftDeviceCodeExpired();
+class MicrosoftDeviceCodeDeclined extends MicrosoftCheckDeviceCodeStatusResult {
+  const MicrosoftDeviceCodeDeclined();
 }
 
 class MicrosoftDeviceCodeAuthorizationPending
     extends MicrosoftCheckDeviceCodeStatusResult {
   const MicrosoftDeviceCodeAuthorizationPending();
+}
+
+class MicrosoftDeviceCodeExpired extends MicrosoftCheckDeviceCodeStatusResult {
+  const MicrosoftDeviceCodeExpired();
 }
 
 abstract class MicrosoftDeviceCodeFlow {

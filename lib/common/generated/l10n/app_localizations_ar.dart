@@ -253,7 +253,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get or => 'أو';
 
   @override
-  String get loginCodeExpired => 'انتهت صلاحية رمز الدخول';
+  String get loginDeviceCodeExpired =>
+      'رمز الدخول قد انتهت صلاحيته. يرجى المحاولة مرة أخرى.';
 
   @override
   String get tryAgain => 'حاول مرة أخرى';
@@ -432,4 +433,7 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get minecraftOwnershipRequiredError =>
       'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.';
+
+  @override
+  String get loginDeviceCodeRejected => 'The login attempt was rejected.';
 }

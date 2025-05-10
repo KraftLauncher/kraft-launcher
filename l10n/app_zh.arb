@@ -122,7 +122,7 @@
     "authProgressExchangingDeviceCode": "正在交换设备代码...",
     "authProgressRequestingDeviceCode": "正在请求设备代码...",
     "or": "或",
-    "loginCodeExpired": "登录码已过期",
+    "loginDeviceCodeExpired": "登录代码已过期。请再试一次。",
     "tryAgain": "请再试一次",
     "uiPreferences": "界面偏好设置",
     "defaultTab": "默认标签页",

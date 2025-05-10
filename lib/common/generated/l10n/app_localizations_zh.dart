@@ -240,7 +240,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get or => '或';
 
   @override
-  String get loginCodeExpired => '登录码已过期';
+  String get loginDeviceCodeExpired => '登录代码已过期。请再试一次。';
 
   @override
   String get tryAgain => '请再试一次';
@@ -410,4 +410,7 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get minecraftOwnershipRequiredError =>
       'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.';
+
+  @override
+  String get loginDeviceCodeRejected => 'The login attempt was rejected.';
 }

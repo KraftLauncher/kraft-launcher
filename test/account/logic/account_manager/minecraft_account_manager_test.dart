@@ -167,7 +167,7 @@ void main() {
     }
     if (isDeviceCode) {
       when(() => mockMicrosoftAuthApi.checkDeviceCodeStatus(any())).thenAnswer(
-        (_) async => MicrosoftDeviceCodeSuccess(response: response()),
+        (_) async => MicrosoftDeviceCodeApproved(response: response()),
       );
     }
     if (!isAuthCode && !isRefreshAccount && !isDeviceCode) {
@@ -748,7 +748,8 @@ void main() {
       },
     );
 
-    AsyncTimer<MicrosoftDeviceCodeSuccess?> dummyTimer() => AsyncTimer.periodic(
+    AsyncTimer<MicrosoftDeviceCodeApproved?>
+    dummyTimer() => AsyncTimer.periodic(
       // Dummy duration, this callback will not get invoked unless we call async.elapse().
       const Duration(seconds: 5),
       () => fail('Timer callback should not be called'),
@@ -941,7 +942,7 @@ void main() {
             when(
               () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
             ).thenAnswer(
-              (_) async => MicrosoftDeviceCodeSuccess(
+              (_) async => MicrosoftDeviceCodeApproved(
                 response:
                     mockCheckCodeResponse ??
                     const MicrosoftOauthTokenExchangeResponse(
@@ -1125,9 +1126,9 @@ void main() {
               expect(result.$1, null);
               expect(
                 result.$2,
-                DeviceCodeTimerCloseReason.normal,
+                DeviceCodeTimerCloseReason.cancelledByUser,
                 reason:
-                    'The close reason should be ${DeviceCodeTimerCloseReason.normal.name} because it was cancelled due to user request, not due to expiration.',
+                    'The close reason should be ${DeviceCodeTimerCloseReason.cancelledByUser.name} because it was cancelled due to user request.',
               );
               callbackCompleted = true;
             });
@@ -1357,48 +1358,138 @@ void main() {
         });
       });
 
-      test('cancels the timer as success when API responds with success', () {
-        when(() => mockMicrosoftAuthApi.requestDeviceCode()).thenAnswer(
-          (_) async => requestCodeResponse(expiresIn: 9000, interval: interval),
-        );
-        when(
-          () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
-        ).thenAnswer(
-          (_) async => const MicrosoftDeviceCodeSuccess(
-            response: MicrosoftOauthTokenExchangeResponse(
-              accessToken: '',
-              refreshToken: '',
-              expiresIn: -1,
-            ),
-          ),
-        );
-
-        fakeAsync((async) {
-          final future = requestLoginWithMicrosoftDeviceCode();
-
-          async.flushMicrotasks();
-          async.elapse(const Duration(seconds: interval));
-
-          bool callbackCompleted = false;
-          future.then((result) {
-            expect(result.$1, isNotNull);
-            expect(
-              result.$2,
-              DeviceCodeTimerCloseReason.normal,
-              reason:
-                  'The close reason should be ${DeviceCodeTimerCloseReason.normal.name} because it was cancelled due to a successful login.',
-            );
-            callbackCompleted = true;
-          });
-
-          async.flushMicrotasks();
-          expect(
-            callbackCompleted,
-            true,
-            reason: 'The then callback was not completed',
+      test(
+        'cancels the timer as ${DeviceCodeTimerCloseReason.approved} when API responds with success',
+        () {
+          when(() => mockMicrosoftAuthApi.requestDeviceCode()).thenAnswer(
+            (_) async =>
+                requestCodeResponse(expiresIn: 9000, interval: interval),
           );
-        });
-      });
+          when(
+            () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
+          ).thenAnswer(
+            (_) async => const MicrosoftDeviceCodeApproved(
+              response: MicrosoftOauthTokenExchangeResponse(
+                accessToken: '',
+                refreshToken: '',
+                expiresIn: -1,
+              ),
+            ),
+          );
+
+          fakeAsync((async) {
+            final future = requestLoginWithMicrosoftDeviceCode();
+
+            async.flushMicrotasks();
+            async.elapse(const Duration(seconds: interval));
+
+            bool callbackCompleted = false;
+            future.then((result) {
+              expect(result.$1, isNotNull);
+              expect(
+                result.$2,
+                DeviceCodeTimerCloseReason.approved,
+                reason:
+                    'The close reason should be ${DeviceCodeTimerCloseReason.approved.name} because it was cancelled due to a successful login.',
+              );
+              callbackCompleted = true;
+            });
+
+            async.flushMicrotasks();
+            expect(
+              callbackCompleted,
+              true,
+              reason: 'The then callback was not completed',
+            );
+          });
+        },
+      );
+
+      test(
+        'returns close reason ${DeviceCodeTimerCloseReason.cancelledByUser} when user cancels the operation',
+        () async {
+          when(() => mockMicrosoftAuthApi.requestDeviceCode()).thenAnswer(
+            (_) async => requestCodeResponse(
+              expiresIn: expiresInSeconds,
+              interval: interval,
+            ),
+          );
+
+          fakeAsync((async) {
+            final future = requestLoginWithMicrosoftDeviceCode();
+
+            async.flushMicrotasks();
+
+            async.elapse(const Duration(seconds: interval));
+
+            minecraftAccountManager.cancelDeviceCodePollingTimer();
+
+            bool callbackCompleted = true;
+            future.then((result) {
+              expect(result.$1, null);
+              expect(
+                result.$2,
+                DeviceCodeTimerCloseReason.cancelledByUser,
+                reason:
+                    'The close reason should be ${DeviceCodeTimerCloseReason.cancelledByUser.name} because it was cancelled due to user request.',
+              );
+              callbackCompleted = true;
+            });
+
+            async.flushMicrotasks();
+            expect(
+              callbackCompleted,
+              true,
+              reason: 'The then callback was not completed',
+            );
+          });
+        },
+      );
+
+      test(
+        'returns close reason ${DeviceCodeTimerCloseReason.declined} when user cancels the operation',
+        () async {
+          when(() => mockMicrosoftAuthApi.requestDeviceCode()).thenAnswer(
+            (_) async => requestCodeResponse(
+              expiresIn: expiresInSeconds,
+              interval: interval,
+            ),
+          );
+          when(
+            () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
+          ).thenAnswer(
+            (_) async => MicrosoftCheckDeviceCodeStatusResult.declined(),
+          );
+          fakeAsync((async) {
+            final future = requestLoginWithMicrosoftDeviceCode();
+
+            async.flushMicrotasks();
+
+            async.elapse(const Duration(seconds: interval));
+
+            minecraftAccountManager.cancelDeviceCodePollingTimer();
+
+            bool callbackCompleted = true;
+            future.then((result) {
+              expect(result.$1, null);
+              expect(
+                result.$2,
+                DeviceCodeTimerCloseReason.declined,
+                reason:
+                    'The close reason should be ${DeviceCodeTimerCloseReason.declined.name} because the user explicitly denied the authorization request, so the timer was cancelled as a result.',
+              );
+              callbackCompleted = true;
+            });
+
+            async.flushMicrotasks();
+            expect(
+              callbackCompleted,
+              true,
+              reason: 'The then callback was not completed',
+            );
+          });
+        },
+      );
 
       test(
         'calls APIs correctly in order from Microsoft OAuth access token to Minecraft profile',
