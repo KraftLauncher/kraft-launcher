@@ -167,7 +167,7 @@ void main() {
     }
     if (isDeviceCode) {
       when(() => mockMicrosoftAuthApi.checkDeviceCodeStatus(any())).thenAnswer(
-        (_) async => MicrosoftDeviceCodeApproved(response: response()),
+        (_) async => MicrosoftCheckDeviceCodeStatusResult.approved(response()),
       );
     }
     if (!isAuthCode && !isRefreshAccount && !isDeviceCode) {
@@ -852,7 +852,8 @@ void main() {
         when(
           () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
         ).thenAnswer(
-          (_) async => const MicrosoftDeviceCodeAuthorizationPending(),
+          (_) async =>
+              MicrosoftCheckDeviceCodeStatusResult.authorizationPending(),
         );
       });
 
@@ -892,7 +893,9 @@ void main() {
           // This will cause the timer to be cancelled the next time it triggers
           when(
             () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
-          ).thenAnswer((_) async => const MicrosoftDeviceCodeExpired());
+          ).thenAnswer(
+            (_) async => MicrosoftCheckDeviceCodeStatusResult.expired(),
+          );
 
           future
               .then((result) {
@@ -942,9 +945,8 @@ void main() {
             when(
               () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
             ).thenAnswer(
-              (_) async => MicrosoftDeviceCodeApproved(
-                response:
-                    mockCheckCodeResponse ??
+              (_) async => MicrosoftCheckDeviceCodeStatusResult.approved(
+                mockCheckCodeResponse ??
                     const MicrosoftOauthTokenExchangeResponse(
                       accessToken: '',
                       refreshToken: '',
@@ -1022,7 +1024,8 @@ void main() {
         when(
           () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
         ).thenAnswer(
-          (_) async => const MicrosoftDeviceCodeAuthorizationPending(),
+          (_) async =>
+              MicrosoftCheckDeviceCodeStatusResult.authorizationPending(),
         );
 
         fakeAsync((async) {
@@ -1155,7 +1158,8 @@ void main() {
           when(
             () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
           ).thenAnswer(
-            (_) async => const MicrosoftDeviceCodeAuthorizationPending(),
+            (_) async =>
+                MicrosoftCheckDeviceCodeStatusResult.authorizationPending(),
           );
 
           fakeAsync((async) {
@@ -1245,7 +1249,8 @@ void main() {
           when(
             () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
           ).thenAnswer(
-            (_) async => const MicrosoftDeviceCodeAuthorizationPending(),
+            (_) async =>
+                MicrosoftCheckDeviceCodeStatusResult.authorizationPending(),
           );
 
           fakeAsync((async) {
@@ -1282,7 +1287,9 @@ void main() {
       test('cancels timer as expired when API responds with expired', () async {
         when(
           () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
-        ).thenAnswer((_) async => const MicrosoftDeviceCodeExpired());
+        ).thenAnswer(
+          (_) async => MicrosoftCheckDeviceCodeStatusResult.expired(),
+        );
 
         fakeAsync((async) {
           final future = requestLoginWithMicrosoftDeviceCode();
@@ -1320,7 +1327,8 @@ void main() {
         when(
           () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
         ).thenAnswer(
-          (_) async => const MicrosoftDeviceCodeAuthorizationPending(),
+          (_) async =>
+              MicrosoftCheckDeviceCodeStatusResult.authorizationPending(),
         );
 
         fakeAsync((async) {
@@ -1368,8 +1376,8 @@ void main() {
           when(
             () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
           ).thenAnswer(
-            (_) async => const MicrosoftDeviceCodeApproved(
-              response: MicrosoftOauthTokenExchangeResponse(
+            (_) async => MicrosoftCheckDeviceCodeStatusResult.approved(
+              const MicrosoftOauthTokenExchangeResponse(
                 accessToken: '',
                 refreshToken: '',
                 expiresIn: -1,

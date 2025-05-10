@@ -140,10 +140,8 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
         },
       );
 
-      return MicrosoftDeviceCodeApproved(
-        response: MicrosoftOauthTokenExchangeResponse.fromJson(
-          response.dataOrThrow,
-        ),
+      return MicrosoftCheckDeviceCodeStatusResult.approved(
+        MicrosoftOauthTokenExchangeResponse.fromJson(response.dataOrThrow),
       );
     },
     customHandle: (e) {
