@@ -1,4 +1,4 @@
-import '../../../../common/constants/microsoft_constants.dart';
+import '../../../../common/constants/constants.dart';
 import '../microsoft_auth_api.dart';
 
 abstract class MicrosoftAuthCodeFlow {

@@ -21,3 +21,16 @@ abstract final class MinecraftConstants {
   // TODO: Decide where to use this?
   static const minecraftProfile = 'https://www.minecraft.net/msaprofile';
 }
+
+abstract final class MicrosoftConstants {
+  // Device code flow
+  static const microsoftDeviceCodeLink = 'https://www.microsoft.com/link';
+
+  static const createXboxAccountLink = 'https://www.xbox.com/live';
+
+  static const loginRedirectCodeQueryParamName = 'code';
+  static const loginScopes = 'XboxLive.signin offline_access';
+
+  static const loginRedirectUrl =
+      'http://127.0.0.1:${ProjectInfoConstants.microsoftLoginRedirectPort}';
+}

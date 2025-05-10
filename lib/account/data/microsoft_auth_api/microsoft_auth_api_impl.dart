@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 
-import '../../../common/constants/microsoft_constants.dart';
+import '../../../common/constants/constants.dart';
+import '../../../common/constants/project_info_constants.dart';
 import '../../../common/logic/dio_client.dart';
 import '../../../common/logic/json.dart';
 import 'auth_methods/microsoft_device_code_flow.dart';
@@ -60,7 +61,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   @override
   String userLoginUrlWithAuthCode() =>
       Uri.https('login.live.com', '/oauth20_authorize.srf', {
-        'client_id': MicrosoftConstants.loginClientId,
+        'client_id': ProjectInfoConstants.microsoftLoginClientId,
         'response_type': 'code',
         'redirect_uri': MicrosoftConstants.loginRedirectUrl,
         'scope': MicrosoftConstants.loginScopes,
@@ -77,7 +78,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         ),
         data: {
-          'client_id': MicrosoftConstants.loginClientId,
+          'client_id': ProjectInfoConstants.microsoftLoginClientId,
           'grant_type': 'authorization_code',
           'code': authCode,
           'redirect_uri': MicrosoftConstants.loginRedirectUrl,
@@ -113,7 +114,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
           ),
           data: {
-            'client_id': MicrosoftConstants.loginClientId,
+            'client_id': ProjectInfoConstants.microsoftLoginClientId,
             'scope': MicrosoftConstants.loginScopes,
           },
         );
@@ -133,7 +134,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         ),
         data: {
-          'client_id': MicrosoftConstants.loginClientId,
+          'client_id': ProjectInfoConstants.microsoftLoginClientId,
           'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
           'device_code': deviceCodeResponse.deviceCode,
         },
@@ -268,7 +269,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         ),
         data: {
-          'client_id': MicrosoftConstants.loginClientId,
+          'client_id': ProjectInfoConstants.microsoftLoginClientId,
           'grant_type': 'refresh_token',
           'refresh_token': microsoftRefreshToken,
         },

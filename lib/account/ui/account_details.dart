@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../common/constants/constants.dart';
-import '../../common/constants/microsoft_constants.dart';
+import '../../common/constants/project_info_constants.dart';
 import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/utils/scaffold_messenger_ext.dart';
 import '../data/minecraft_account.dart';
@@ -131,7 +131,9 @@ class AccountDetails extends StatelessWidget {
                     trailing: const Icon(Icons.open_in_new),
                     onTap:
                         () => launchUrl(
-                          Uri.parse(MicrosoftConstants.revokeAccessLink),
+                          Uri.parse(
+                            ProjectInfoConstants.microsoftRevokeAccessLink,
+                          ),
                         ),
                   ),
                 ListTile(

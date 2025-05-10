@@ -1,8 +1,8 @@
+# Run "dart ./scripts/generate_pubspec_dart_code.dart" when updating any of these values.
 name: kraft_launcher
 description: "An unofficial Minecraft Launcher"
 publish_to: 'none'
 repository: https://github.com/KraftLauncher/kraft-launcher
-# Run "dart ./scripts/generate_pubspec_dart_code.dart" when updating the version.
 version: 0.1.0+1
 
 environment:

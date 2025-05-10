@@ -6,7 +6,8 @@ import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../common/constants/microsoft_constants.dart';
+import '../../../common/constants/constants.dart';
+import '../../../common/constants/project_info_constants.dart';
 import '../../../common/logic/app_logger.dart';
 import '../../../common/logic/utils.dart';
 import '../../data/account_storage/account_storage.dart';
@@ -79,7 +80,7 @@ class MinecraftAccountManager {
     );
     httpServer = await HttpServer.bind(
       InternetAddress.loopbackIPv4,
-      MicrosoftConstants.loginRedirectPort,
+      ProjectInfoConstants.microsoftLoginRedirectPort,
     );
     AppLogger.i('Starting Microsoft Auth Redirect server');
     return requireServer;

@@ -5,7 +5,8 @@ import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_methods/micr
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_exceptions.dart';
-import 'package:kraft_launcher/common/constants/microsoft_constants.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -30,7 +31,7 @@ void main() {
   test('userLoginUrlWithAuthCode returns the URL correctly', () {
     expect(
       microsoftAuthApi.userLoginUrlWithAuthCode(),
-      'https://login.live.com/oauth20_authorize.srf?client_id=${MicrosoftConstants.loginClientId}&response_type=code&redirect_uri=${Uri.encodeComponent(MicrosoftConstants.loginRedirectUrl)}&scope=${MicrosoftConstants.loginScopes.split(' ').join('+')}',
+      'https://login.live.com/oauth20_authorize.srf?client_id=${ProjectInfoConstants.microsoftLoginClientId}&response_type=code&redirect_uri=${Uri.encodeComponent(MicrosoftConstants.loginRedirectUrl)}&scope=${MicrosoftConstants.loginScopes.split(' ').join('+')}',
     );
   });
 
@@ -61,7 +62,7 @@ void main() {
         expect(captured.requestData['code'], fakeAuthCode);
         expect(captured.uri, Uri.https('login.live.com', '/oauth20_token.srf'));
         expect(captured.requestData, {
-          'client_id': MicrosoftConstants.loginClientId,
+          'client_id': ProjectInfoConstants.microsoftLoginClientId,
           'grant_type': 'authorization_code',
           'code': fakeAuthCode,
           'redirect_uri': MicrosoftConstants.loginRedirectUrl,
@@ -152,7 +153,7 @@ void main() {
         ),
       );
       expect(captured.requestData, {
-        'client_id': MicrosoftConstants.loginClientId,
+        'client_id': ProjectInfoConstants.microsoftLoginClientId,
         'scope': MicrosoftConstants.loginScopes,
       });
     });
@@ -234,7 +235,7 @@ void main() {
         );
         expect(captured.requestData['device_code'], deviceCode);
         expect(captured.requestData, {
-          'client_id': MicrosoftConstants.loginClientId,
+          'client_id': ProjectInfoConstants.microsoftLoginClientId,
           'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
           'device_code': deviceCode,
         });
@@ -572,7 +573,7 @@ void main() {
         );
         expect(captured.uri, Uri.https('login.live.com', '/oauth20_token.srf'));
         expect(captured.requestData, {
-          'client_id': MicrosoftConstants.loginClientId,
+          'client_id': ProjectInfoConstants.microsoftLoginClientId,
           'grant_type': 'refresh_token',
           'refresh_token': microsoftOauthRefreshToken,
         });

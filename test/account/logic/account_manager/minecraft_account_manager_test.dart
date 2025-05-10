@@ -16,7 +16,7 @@ import 'package:kraft_launcher/account/logic/account_manager/image_cache_service
 import 'package:kraft_launcher/account/logic/account_manager/minecraft_account_manager.dart';
 import 'package:kraft_launcher/account/logic/account_manager/minecraft_account_manager_exceptions.dart';
 import 'package:kraft_launcher/account/logic/minecraft_skin_ext.dart';
-import 'package:kraft_launcher/common/constants/microsoft_constants.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/logic/dio_client.dart';
 import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:kraft_launcher/common/logic/utils.dart';

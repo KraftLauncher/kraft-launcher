@@ -87,18 +87,26 @@ Replace `<platform>` with `linux`, `macos` or `windows`.
 If you plan to fork or redistribute this project, please follow these guidelines:
 
 * Do not crack, pirate, or distribute builds that bypass Minecraft: Java Edition ownership checks. This is illegal and not supported. Offline mode is available, but users must own the game on at least one Microsoft account.
+* Replace all API keys with your own or use empty strings (`''`). This includes the [Microsoft Login Client ID and CurseForge API key](./lib/common/constants/project_info_constants.dart), located in `ProjectInfoConstants`.
 * Update all branding, including the launcher name, app IDs and assets:
     * All static fields in [`ProjectInfoConstants`](./lib/common/constants/project_info_constants.dart) should be updated, including the app name.
     * Update all files inside [assets/branding](./assets/branding). Also run `dart run flutter_launcher_icons:generate` to replace them in platform runners.
     * The package name in `pubspec.yaml` and also the app id in the platform runners `linux`, `macos` and `windows`. Also refer to [Platform Runner Modifications](./docs/PLATFORM_RUNNER_MODIFICATIONS.md).
 * Clearly state that your fork is not affiliated with or endorsed by **Kraft Launcher**.
-* Replace all API keys with your own or use empty strings (`''`). This includes the [Microsoft Login Client ID](./lib/common/constants/microsoft_constants.dart) and the CurseForge API key.
 
-This launcher depends on APIs and services that requires to accept the following terms and conditions:
+This launcher interacts with APIs and services that requires to review and accept the following terms and conditions:
 
-- [Microsoft Identity Platform Terms of Use](https://docs.microsoft.com/en-us/legal/microsoft-identity-platform/terms-of-use)
-- [Minecraft EULA and Usage Guidelines](https://www.minecraft.net/en-us/usage-guidelines)
-- [CurseForge 3rd Party API Terms and Conditions](https://support.curseforge.com/en/support/solutions/articles/9000207405-curse-forge-3rd-party-api-terms-and-conditions)
+- Microsoft
+    - [Microsoft Identity Platform Terms of Use](https://learn.microsoft.com/en-us/legal/microsoft-identity-platform/terms-of-use)
+    - [Microsoft APIs Terms of Use](https://learn.microsoft.com/legal/microsoft-apis/terms-of-use)
+    - [Microsoft Services Agreement](https://www.microsoft.com/servicesagreement)
+    - [Microsoft Trademark and Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks)
+- Minecraft:
+    - [Minecraft Usage Guidelines](https://www.minecraft.net/usage-guidelines)
+    - [Minecraft EULA](https://www.minecraft.net/eula)
+- Course Forge: 
+    - [CurseForge 3rd Party API Terms and Conditions](https://support.curseforge.com/en/support/solutions/articles/9000207405-curse-forge-3rd-party-api-terms-and-conditions)
+    - [CurseForge for Studios Terms of Use](https://docs.curseforge.com/docs/legal/terms-of-use/)
 
 ## 🌱 Contributing
 
