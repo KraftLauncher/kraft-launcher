@@ -254,7 +254,7 @@
         "placeholders": {
             "errorCode": {
                 "type": "String",
-                "example": "access_denied",
+                "example": "internal_server_error",
                 "description": "The error code returned from the API during Microsoft sign-in failure."
             },
             "errorDescription": {
