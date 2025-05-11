@@ -247,5 +247,21 @@
     "@minecraftOwnershipRequiredError": {
         "description": "Shown when the Microsoft account is valid and a Minecraft profile may exist, but no active license for Minecraft is found. This may occur if the game has not been purchased or redeemed. Users can resolve this at https://www.minecraft.net/redeem or https://www.minecraft.net/store/minecraft-deluxe-collection-pc."
     },
-    "loginDeviceCodeRejected": "The login attempt was rejected."
+    "loginAttemptRejected": "The login attempt was rejected.",
+    "authCodeLoginUnknownError": "An unknown error occurred while logging in: {errorCode}, {errorDescription}",
+    "@authCodeLoginUnknownError": {
+        "description": "Shown when an unknown error occurs while logging in with Microsoft via auth code. The user login using in the browser and then Microsoft redirects the user to a minimal and local HTTP server to handles the result. This message is used when the error code is unknown.",
+        "placeholders": {
+            "errorCode": {
+                "type": "String",
+                "example": "access_denied",
+                "description": "The error code returned from the API during Microsoft sign-in failure."
+            },
+            "errorDescription": {
+                "type": "String",
+                "example": "Internal server error.",
+                "description": "The message returned from the API describing the error."
+            }
+        }
+    }
 }

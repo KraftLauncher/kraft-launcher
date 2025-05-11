@@ -23,14 +23,19 @@ abstract final class MinecraftConstants {
 }
 
 abstract final class MicrosoftConstants {
-  // Device code flow
-  static const microsoftDeviceCodeLink = 'https://www.microsoft.com/link';
-
+  static const loginScopes = 'XboxLive.signin offline_access';
   static const createXboxAccountLink = 'https://www.xbox.com/live';
 
-  static const loginRedirectCodeQueryParamName = 'code';
-  static const loginScopes = 'XboxLive.signin offline_access';
+  // For device code flow
+  static const microsoftDeviceCodeLink = 'https://www.microsoft.com/link';
 
+  // For auth code flow
   static const loginRedirectUrl =
       'http://127.0.0.1:${ProjectInfoConstants.microsoftLoginRedirectPort}';
+
+  static const loginRedirectAuthCodeQueryParamName = 'code';
+  static const loginRedirectErrorQueryParamName = 'error';
+  static const loginRedirectErrorDescriptionQueryParamName =
+      'error_description';
+  static const loginRedirectAccessDeniedErrorCode = 'access_denied';
 }

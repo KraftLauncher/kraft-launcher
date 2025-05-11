@@ -444,5 +444,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.';
 
   @override
-  String get loginDeviceCodeRejected => 'The login attempt was rejected.';
+  String get loginAttemptRejected => 'The login attempt was rejected.';
+
+  @override
+  String authCodeLoginUnknownError(String errorCode, String errorDescription) {
+    return 'An unknown error occurred while logging in: $errorCode, $errorDescription';
+  }
 }

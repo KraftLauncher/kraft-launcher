@@ -6,11 +6,7 @@ import 'minecraft_account.dart';
 
 @immutable
 class MinecraftAccounts {
-  const MinecraftAccounts({
-    required this.all,
-    // TODO: Use id for both selected and default account instead of index?
-    required this.defaultAccountId,
-  });
+  const MinecraftAccounts({required this.all, required this.defaultAccountId});
 
   factory MinecraftAccounts.empty() =>
       const MinecraftAccounts(all: [], defaultAccountId: null);

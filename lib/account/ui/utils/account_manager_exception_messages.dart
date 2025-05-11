@@ -7,7 +7,8 @@ extension AccountManagerExceptionMessages on AccountManagerException {
   String getMessage(AppLocalizations loc) {
     final exception = this;
     return switch (exception) {
-      MissingAuthCodeAccountManagerException() => loc.missingAuthCodeError,
+      MicrosoftMissingAuthCodeAccountManagerException() =>
+        loc.missingAuthCodeError,
       MicrosoftApiAccountManagerException() => () {
         final microsoftApiException = exception.authApiException;
         return switch (microsoftApiException) {
@@ -62,6 +63,13 @@ extension AccountManagerExceptionMessages on AccountManagerException {
       UnknownAccountManagerException() => loc.unexpectedError(
         exception.message,
       ),
+      MicrosoftAuthCodeRedirectAccountManagerException() => loc
+          .authCodeLoginUnknownError(
+            exception.error,
+            exception.errorDescription,
+          ),
+      MicrosoftAuthCodeDeniedAccountManagerException() =>
+        loc.loginAttemptRejected,
     };
   }
 }

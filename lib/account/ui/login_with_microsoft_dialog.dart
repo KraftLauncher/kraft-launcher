@@ -162,10 +162,20 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                 children: [
                   const SizedBox(height: 6),
                   FilledButton.icon(
-                    onPressed:
-                        () => _microsoftAccountHandlerCubit.loginWithMicrosoftAuthCode(
-                          successLoginPageContent:
-                              AuthCodeSuccessLoginPageContent(
+                    onPressed: () {
+                      final pageDir = Directionality.of(context).name;
+                      final pageLangCode =
+                          context
+                              .read<SettingsCubit>()
+                              .state
+                              .settings
+                              .general
+                              .appLanguage
+                              .localeCode;
+                      _microsoftAccountHandlerCubit.loginWithMicrosoftAuthCode(
+                        authCodeResponsePageVariants:
+                            MicrosoftAuthCodeResponsePageVariants(
+                              approved: MicrosoftAuthCodeResponsePageContent(
                                 pageTitle:
                                     context
                                         .loc
@@ -178,17 +188,41 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                                     .authCodeRedirectPageLoginSuccessMessage(
                                       ProjectInfoConstants.displayName,
                                     ),
-                                pageDir: Directionality.of(context).name,
-                                pageLangCode:
-                                    context
-                                        .read<SettingsCubit>()
-                                        .state
-                                        .settings
-                                        .general
-                                        .appLanguage
-                                        .localeCode,
+                                pageDir: pageDir,
+                                pageLangCode: pageLangCode,
                               ),
-                        ),
+                              accessDenied:
+                                  MicrosoftAuthCodeResponsePageContent(
+                                    pageTitle: context.loc.errorOccurred,
+                                    title: context.loc.errorOccurred,
+                                    subtitle: context.loc.loginAttemptRejected,
+                                    pageLangCode: pageLangCode,
+                                    pageDir: pageDir,
+                                  ),
+                              missingAuthCode:
+                                  MicrosoftAuthCodeResponsePageContent(
+                                    pageTitle: context.loc.errorOccurred,
+                                    title: context.loc.errorOccurred,
+                                    subtitle: context.loc.missingAuthCodeError,
+                                    pageLangCode: pageLangCode,
+                                    pageDir: pageDir,
+                                  ),
+                              unknownError:
+                                  (errorCode, errorDescription) =>
+                                      MicrosoftAuthCodeResponsePageContent(
+                                        pageTitle: context.loc.errorOccurred,
+                                        title: context.loc.errorOccurred,
+                                        subtitle: context.loc
+                                            .authCodeLoginUnknownError(
+                                              errorCode,
+                                              errorDescription,
+                                            ),
+                                        pageLangCode: pageLangCode,
+                                        pageDir: pageDir,
+                                      ),
+                            ),
+                      );
+                    },
                     label: Text(context.loc.signInWithMicrosoft),
                     icon: const Icon(Icons.open_in_browser),
                   ),
@@ -272,7 +306,7 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                           spacing: 8,
                           children: [
                             Text(
-                              context.loc.loginDeviceCodeRejected,
+                              context.loc.loginAttemptRejected,
                               style: context.theme.textTheme.titleMedium,
                             ),
                             ElevatedButton.icon(

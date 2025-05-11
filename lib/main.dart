@@ -42,7 +42,7 @@ Future<void> main() async {
             : await getApplicationSupportDirectory(),
   );
   if (isDesktop) {
-    setWindowMinSize(const Size(850, 600));
+    setWindowMinSize(const Size(900, 600));
   }
   AppLogger.init();
 

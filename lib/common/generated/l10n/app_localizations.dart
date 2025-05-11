@@ -846,11 +846,17 @@ abstract class AppLocalizations {
   /// **'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.'**
   String get minecraftOwnershipRequiredError;
 
-  /// No description provided for @loginDeviceCodeRejected.
+  /// No description provided for @loginAttemptRejected.
   ///
   /// In en, this message translates to:
   /// **'The login attempt was rejected.'**
-  String get loginDeviceCodeRejected;
+  String get loginAttemptRejected;
+
+  /// Shown when an unknown error occurs while logging in with Microsoft via auth code. The user login using in the browser and then Microsoft redirects the user to a minimal and local HTTP server to handles the result. This message is used when the error code is unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred while logging in: {errorCode}, {errorDescription}'**
+  String authCodeLoginUnknownError(String errorCode, String errorDescription);
 }
 
 class _AppLocalizationsDelegate

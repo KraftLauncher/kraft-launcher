@@ -140,6 +140,8 @@ class MicrosoftAccountInfo {
         ),
       );
 
+  // TODO: Store more data related to Xbox and Microsoft just in case even if it's not needed?
+
   final ExpirableToken microsoftOAuthAccessToken;
 
   // It's unknown when the OAuth refresh token expires. See https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens#token-lifetime

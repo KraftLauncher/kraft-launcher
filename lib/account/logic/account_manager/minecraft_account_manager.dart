@@ -107,7 +107,7 @@ class MinecraftAccountManager {
   Future<AccountResult?> loginWithMicrosoftAuthCode({
     required OnAuthProgressUpdateAuthCodeCallback onProgressUpdate,
     // The page content is not hardcoded for localization.
-    required AuthCodeSuccessLoginPageContent successLoginPageContent,
+    required MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants,
   }) => _transformExceptions(() async {
     final server = httpServer ?? await startServer();
 
@@ -131,19 +131,66 @@ class MinecraftAccountManager {
       return null;
     }
 
+    Future<void> respondAndStopServer(String html) async {
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType.html
+        ..write(html);
+      await request.response.close();
+      await stopServer();
+    }
+
     final code =
         request.uri.queryParameters[MicrosoftConstants
-            .loginRedirectCodeQueryParamName];
-    if (code == null) {
-      await stopServer();
-      throw AccountManagerException.missingAuthCode();
+            .loginRedirectAuthCodeQueryParamName];
+
+    final error =
+        request.uri.queryParameters[MicrosoftConstants
+            .loginRedirectErrorQueryParamName];
+    final errorDescription =
+        request.uri.queryParameters[MicrosoftConstants
+            .loginRedirectErrorDescriptionQueryParamName];
+
+    if (error != null) {
+      if (error == MicrosoftConstants.loginRedirectAccessDeniedErrorCode) {
+        await respondAndStopServer(
+          buildAuthCodeResultHtmlPage(
+            authCodeResponsePageVariants.accessDenied,
+            isSuccess: false,
+          ),
+        );
+        throw AccountManagerException.microsoftAuthCodeDenied();
+      }
+
+      await respondAndStopServer(
+        buildAuthCodeResultHtmlPage(
+          authCodeResponsePageVariants.unknownError(
+            error,
+            errorDescription.toString(),
+          ),
+          isSuccess: false,
+        ),
+      );
+      throw AccountManagerException.microsoftAuthCodeRedirect(
+        error: error,
+        errorDescription: errorDescription.toString(),
+      );
     }
-    request.response
-      ..statusCode = HttpStatus.ok
-      ..headers.contentType = ContentType.html
-      ..write(buildAuthCodeSuccessPageHtml(successLoginPageContent));
-    await request.response.close();
-    await stopServer();
+    if (code == null) {
+      await respondAndStopServer(
+        buildAuthCodeResultHtmlPage(
+          authCodeResponsePageVariants.missingAuthCode,
+          isSuccess: false,
+        ),
+      );
+      throw AccountManagerException.microsoftMissingAuthCode();
+    }
+    await respondAndStopServer(
+      buildAuthCodeResultHtmlPage(
+        authCodeResponsePageVariants.approved,
+        isSuccess: true,
+      ),
+    );
 
     onProgressUpdate(MicrosoftAuthProgress.exchangingAuthCode);
 
@@ -518,8 +565,8 @@ class MinecraftAccountManager {
 }
 
 @immutable
-class AuthCodeSuccessLoginPageContent {
-  const AuthCodeSuccessLoginPageContent({
+class MicrosoftAuthCodeResponsePageContent {
+  const MicrosoftAuthCodeResponsePageContent({
     required this.pageTitle,
     required this.title,
     required this.subtitle,
@@ -533,12 +580,33 @@ class AuthCodeSuccessLoginPageContent {
   final String pageDir;
 }
 
+@immutable
+class MicrosoftAuthCodeResponsePageVariants {
+  const MicrosoftAuthCodeResponsePageVariants({
+    required this.approved,
+    required this.accessDenied,
+    required this.missingAuthCode,
+    required this.unknownError,
+  });
+
+  final MicrosoftAuthCodeResponsePageContent approved;
+  final MicrosoftAuthCodeResponsePageContent accessDenied;
+  final MicrosoftAuthCodeResponsePageContent missingAuthCode;
+  final MicrosoftAuthCodeResponsePageContent Function(
+    String errorCode,
+    String errorDescription,
+  )
+  unknownError;
+}
+
 // Since the authorization code flow requires a redirect URI,
 // the app temporarily starts a local server to handle the redirect request,
 // which contains the authorization code needed to complete login.
 @visibleForTesting
-String buildAuthCodeSuccessPageHtml(AuthCodeSuccessLoginPageContent content) =>
-    '''
+String buildAuthCodeResultHtmlPage(
+  MicrosoftAuthCodeResponsePageContent content, {
+  required bool isSuccess,
+}) => '''
 <!DOCTYPE html>
 <html lang="${content.pageLangCode}" dir="${content.pageDir}">
 <head>
@@ -575,7 +643,7 @@ String buildAuthCodeSuccessPageHtml(AuthCodeSuccessLoginPageContent content) =>
 </head>
 <body>
   <div class="box">
-    <h1>✅ ${content.title}</h1>
+    <h1>${isSuccess ? '✅' : '❌'} ${content.title}</h1>
     <p>${content.subtitle}</p>
   </div>
 </body>

@@ -43,7 +43,8 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
   }
 
   Future<void> loginWithMicrosoftAuthCode({
-    required AuthCodeSuccessLoginPageContent successLoginPageContent,
+    // The page content is not hardcoded for localization.
+    required MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants,
   }) => _handleErrors(() async {
     await minecraftAccountManager.startServer();
     final result = await minecraftAccountManager.loginWithMicrosoftAuthCode(
@@ -55,7 +56,7 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
               authCodeLoginUrl: authCodeLoginUrl,
             ),
           ),
-      successLoginPageContent: successLoginPageContent,
+      authCodeResponsePageVariants: authCodeResponsePageVariants,
     );
     if (result == null) {
       // The user closed the login dialog without completing the login.

@@ -247,11 +247,20 @@ void main() {
       minecraftAccountManager.requireServer.port,
     );
 
-    Uri serverUri({required String? codeCodeParam}) {
+    Uri serverUri({
+      required String? codeCodeParam,
+      String? errorCodeParam,
+      String? errorDescriptionParam,
+    }) {
       final (address, port) = addressAndPort();
       return Uri.http('$address:$port', '/', {
         if (codeCodeParam != null)
-          MicrosoftConstants.loginRedirectCodeQueryParamName: codeCodeParam,
+          MicrosoftConstants.loginRedirectAuthCodeQueryParamName: codeCodeParam,
+        if (errorCodeParam != null)
+          MicrosoftConstants.loginRedirectErrorQueryParamName: errorCodeParam,
+        if (errorDescriptionParam != null)
+          MicrosoftConstants.loginRedirectErrorDescriptionQueryParamName:
+              errorDescriptionParam,
       });
     }
 
@@ -281,20 +290,6 @@ void main() {
 
       late MockUrlLauncher mockUrlLauncher;
 
-      AuthCodeSuccessLoginPageContent successPageContent({
-        String pageTitle = '',
-        String title = '',
-        String subtitle = '',
-        String pageLangCode = '',
-        String pageDir = '',
-      }) => AuthCodeSuccessLoginPageContent(
-        pageTitle: pageTitle,
-        title: title,
-        subtitle: subtitle,
-        pageLangCode: pageLangCode,
-        pageDir: pageDir,
-      );
-
       setUpAll(() {
         registerFallbackValue(dummyLauncherOptions());
       });
@@ -319,15 +314,51 @@ void main() {
         );
       });
 
+      MicrosoftAuthCodeResponsePageContent authCodeResponsePageContent({
+        String pageTitle = '',
+        String title = '',
+        String subtitle = '',
+        String pageLangCode = '',
+        String pageDir = '',
+      }) => MicrosoftAuthCodeResponsePageContent(
+        pageTitle: pageTitle,
+        title: title,
+        subtitle: subtitle,
+        pageLangCode: pageLangCode,
+        pageDir: pageDir,
+      );
+
+      MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants({
+        MicrosoftAuthCodeResponsePageContent? approved,
+        MicrosoftAuthCodeResponsePageContent? accessDenied,
+        MicrosoftAuthCodeResponsePageContent? missingAuthCode,
+        MicrosoftAuthCodeResponsePageContent Function(
+          String errorCode,
+          String errorDescription,
+        )?
+        unknownError,
+      }) => MicrosoftAuthCodeResponsePageVariants(
+        accessDenied: accessDenied ?? authCodeResponsePageContent(),
+        approved: approved ?? authCodeResponsePageContent(),
+        missingAuthCode: missingAuthCode ?? authCodeResponsePageContent(),
+        unknownError:
+            unknownError ??
+            (errorCode, errorDescription) => authCodeResponsePageContent(),
+      );
+
+      Future<AccountResult?> loginWithMicrosoftAuthCode({
+        OnAuthProgressUpdateAuthCodeCallback? onProgressUpdate,
+        MicrosoftAuthCodeResponsePageVariants? responsePageVariants,
+      }) => minecraftAccountManager.loginWithMicrosoftAuthCode(
+        onProgressUpdate: onProgressUpdate ?? (_, {authCodeLoginUrl}) {},
+        authCodeResponsePageVariants:
+            responsePageVariants ?? authCodeResponsePageVariants(),
+      );
+
       test('starts server if not started already', () async {
         expect(minecraftAccountManager.isServerRunning, false);
 
-        unawaited(
-          minecraftAccountManager.loginWithMicrosoftAuthCode(
-            onProgressUpdate: (_, {authCodeLoginUrl}) {},
-            successLoginPageContent: successPageContent(),
-          ),
-        );
+        unawaited(loginWithMicrosoftAuthCode());
 
         // Waiting for the server to start
         await Future<void>.delayed(Duration.zero);
@@ -346,12 +377,7 @@ void main() {
           () => mockMicrosoftAuthApi.userLoginUrlWithAuthCode(),
         ).thenReturn(authCodeLoginUrl);
 
-        unawaited(
-          minecraftAccountManager.loginWithMicrosoftAuthCode(
-            onProgressUpdate: (_, {authCodeLoginUrl}) {},
-            successLoginPageContent: successPageContent(),
-          ),
-        );
+        unawaited(loginWithMicrosoftAuthCode());
 
         // Waiting for the server to start
         await Future<void>.delayed(Duration.zero);
@@ -375,7 +401,7 @@ void main() {
         ).thenReturn(authCodeLoginUrl);
 
         unawaited(
-          minecraftAccountManager.loginWithMicrosoftAuthCode(
+          loginWithMicrosoftAuthCode(
             onProgressUpdate: (progress, {authCodeLoginUrl}) {
               capturedLoginUrl = authCodeLoginUrl;
               if (progress != MicrosoftAuthProgress.waitingForUserLogin) {
@@ -384,7 +410,6 @@ void main() {
                 );
               }
             },
-            successLoginPageContent: successPageContent(),
           ),
         );
 
@@ -406,12 +431,7 @@ void main() {
         expect(minecraftAccountManager.isDeviceCodePollingTimerActive, true);
         expect(minecraftAccountManager.deviceCodePollingTimer, isNotNull);
 
-        unawaited(
-          minecraftAccountManager.loginWithMicrosoftAuthCode(
-            onProgressUpdate: (_, {authCodeLoginUrl}) {},
-            successLoginPageContent: successPageContent(),
-          ),
-        );
+        unawaited(loginWithMicrosoftAuthCode());
         // Waiting for the server to start
         await Future<void>.delayed(Duration.zero);
 
@@ -425,36 +445,22 @@ void main() {
         await minecraftAccountManager.stopServer();
       });
 
-      test(
-        'throws $MissingAuthCodeAccountManagerException when code query param is missing',
-        () async {
-          unawaited(
-            Future<void>.delayed(Duration.zero).then((_) async {
-              await DioTestClient.instance.getUri<String>(
-                serverUri(codeCodeParam: null),
-              );
-            }),
-          );
-          await expectLater(
-            minecraftAccountManager.loginWithMicrosoftAuthCode(
-              onProgressUpdate: (_, {authCodeLoginUrl}) {},
-              successLoginPageContent: successPageContent(),
-            ),
-            throwsA(isA<MissingAuthCodeAccountManagerException>()),
-          );
-          expect(minecraftAccountManager.isServerRunning, false);
-        },
-      );
-
       const fakeAuthCode = 'M1ddasdasdsadsadsadsadsq0idqwjiod';
 
       // Starts the redirect server, sends an HTTP request to it with the auth code
       // as if the Microsoft API had redirected the user, and then returns the result.
       Future<(AccountResult? result, String? redirectServerResponse)>
       simulateAuthCodeRedirect({
-        String authCode = fakeAuthCode,
+        String? authCode = fakeAuthCode,
+        String? errorCode,
+        String? errorDescription,
         OnAuthProgressUpdateAuthCodeCallback? onProgressUpdate,
-        AuthCodeSuccessLoginPageContent? successLoginPageContent,
+        MicrosoftAuthCodeResponsePageVariants? authCodeResponsePageVariants,
+
+        /// Whether to return null of [AccountResult] or
+        /// ignoring exceptions thrown by [loginWithMicrosoftAuthCode] to return
+        /// only the server response.
+        bool ignoreResultExceptions = false,
       }) async {
         final getRequestCompleter = Completer<String?>();
         unawaited(
@@ -462,7 +468,11 @@ void main() {
             try {
               final response =
                   (await DioTestClient.instance.getUri<String>(
-                    serverUri(codeCodeParam: fakeAuthCode),
+                    serverUri(
+                      codeCodeParam: authCode,
+                      errorCodeParam: errorCode,
+                      errorDescriptionParam: errorDescription,
+                    ),
                   )).dataOrThrow;
               getRequestCompleter.complete(response);
             } catch (e, stackTrace) {
@@ -471,46 +481,218 @@ void main() {
           }),
         );
 
-        final result = await minecraftAccountManager.loginWithMicrosoftAuthCode(
-          onProgressUpdate: onProgressUpdate ?? (_, {authCodeLoginUrl}) {},
-          successLoginPageContent:
-              successLoginPageContent ?? successPageContent(),
-        );
+        AccountResult? result;
+        if (ignoreResultExceptions) {
+          try {
+            result = await loginWithMicrosoftAuthCode(
+              onProgressUpdate: onProgressUpdate,
+              responsePageVariants: authCodeResponsePageVariants,
+            );
+          } on Exception catch (_) {}
+        } else {
+          result = await loginWithMicrosoftAuthCode(
+            onProgressUpdate: onProgressUpdate,
+            responsePageVariants: authCodeResponsePageVariants,
+          );
+        }
 
         final getRequestResponse = await getRequestCompleter.future.timeout(
-          const Duration(seconds: 5),
+          const Duration(seconds: 1),
         );
 
         return (result, getRequestResponse);
       }
 
-      test('responds with HTML page and closes server on success', () async {
-        final successLoginPageContent = successPageContent(
-          title: 'You are logged in now!',
-          pageDir: 'ltr',
-          pageLangCode: 'en',
-          pageTitle: 'Successful Login!',
-          subtitle:
-              'You can close this window now, the launcher is logging in...',
-        );
+      // START: Unknown redirect errors
+
+      test(
+        'responds with unknown error HTML page and closes server when redirect error code is unknown',
+        () async {
+          const fakeErrorCode = 'unknown_error';
+          const fakeErrorDescription = 'An internal server error';
+          final pageContent = authCodeResponsePageContent(
+            title: 'An error occurred',
+            pageDir: 'rtl',
+            pageLangCode: 'de',
+            pageTitle: 'An unknown error occurred',
+            subtitle:
+                'An unknown error occurred while logging in: $fakeErrorCode, $fakeErrorDescription',
+          );
+
+          final (_, response) = await simulateAuthCodeRedirect(
+            errorCode: fakeErrorCode,
+            errorDescription: fakeErrorDescription,
+            authCodeResponsePageVariants: authCodeResponsePageVariants(
+              unknownError: (errorCode, errorDescription) => pageContent,
+            ),
+            ignoreResultExceptions: true,
+          );
+
+          expect(minecraftAccountManager.isServerRunning, false);
+
+          expect(
+            response,
+            buildAuthCodeResultHtmlPage(pageContent, isSuccess: false),
+          );
+        },
+      );
+
+      test(
+        'throws $MicrosoftAuthCodeRedirectAccountManagerException when redirect error code is unknown',
+        () async {
+          const fakeErrorCode = 'unknown_error';
+          const fakeErrorDescription = 'An internal server error';
+          await expectLater(
+            simulateAuthCodeRedirect(
+              authCode: null,
+              errorCode: fakeErrorCode,
+              errorDescription: fakeErrorDescription,
+            ),
+            throwsA(
+              isA<MicrosoftAuthCodeRedirectAccountManagerException>()
+                  .having((e) => e.error, 'errorCode', fakeErrorCode)
+                  .having(
+                    (e) => e.errorDescription,
+                    'errorDescription',
+                    fakeErrorDescription,
+                  ),
+            ),
+          );
+          expect(minecraftAccountManager.isServerRunning, false);
+        },
+      );
+
+      // END: Unknown redirect errors
+
+      // START: Auth code missing redirect error
+
+      test(
+        'responds with auth code missing HTML page and closes server when redirect code query parameter is missing',
+        () async {
+          final pageContent = authCodeResponsePageContent(
+            title: 'The auth code query parameter is missing',
+            pageDir: 'ltr',
+            pageLangCode: 'zh',
+            pageTitle: 'Auth code is missing',
+            subtitle: 'Please restart the sign-in process.',
+          );
+
+          final (_, response) = await simulateAuthCodeRedirect(
+            authCode: null,
+            authCodeResponsePageVariants: authCodeResponsePageVariants(
+              missingAuthCode: pageContent,
+            ),
+            ignoreResultExceptions: true,
+          );
+
+          expect(minecraftAccountManager.isServerRunning, false);
+
+          expect(
+            response,
+            buildAuthCodeResultHtmlPage(pageContent, isSuccess: false),
+          );
+        },
+      );
+
+      test(
+        'throws $MicrosoftMissingAuthCodeAccountManagerException when redirect code query parameter is missing',
+        () async {
+          await expectLater(
+            simulateAuthCodeRedirect(authCode: null),
+            throwsA(isA<MicrosoftMissingAuthCodeAccountManagerException>()),
+          );
+          expect(minecraftAccountManager.isServerRunning, false);
+        },
+      );
+
+      // END: Auth code missing redirect error
+
+      // START: Access denied redirect error
+
+      test(
+        'responds with access denied HTML page and closes server when redirect error query parameter is ${MicrosoftConstants.loginRedirectAccessDeniedErrorCode}',
+        () async {
+          final pageContent = authCodeResponsePageContent(
+            title: 'The auth code query parameter is missing',
+            pageDir: 'ltr',
+            pageLangCode: 'zh',
+            pageTitle: 'Auth code is missing',
+            subtitle: 'Please restart the sign-in process.',
+          );
+
+          final (_, response) = await simulateAuthCodeRedirect(
+            authCode: null,
+            errorCode: MicrosoftConstants.loginRedirectAccessDeniedErrorCode,
+            authCodeResponsePageVariants: authCodeResponsePageVariants(
+              accessDenied: pageContent,
+            ),
+            ignoreResultExceptions: true,
+          );
+
+          expect(minecraftAccountManager.isServerRunning, false);
+
+          expect(
+            response,
+            buildAuthCodeResultHtmlPage(pageContent, isSuccess: false),
+          );
+        },
+      );
+
+      test(
+        'throws $MicrosoftAuthCodeDeniedAccountManagerException when redirect error query parameter is ${MicrosoftConstants.loginRedirectAccessDeniedErrorCode}',
+        () async {
+          await expectLater(
+            simulateAuthCodeRedirect(
+              authCode: null,
+              errorCode: MicrosoftConstants.loginRedirectAccessDeniedErrorCode,
+            ),
+            throwsA(isA<MicrosoftAuthCodeDeniedAccountManagerException>()),
+          );
+          expect(minecraftAccountManager.isServerRunning, false);
+        },
+      );
+
+      // END: Access denied redirect error
+
+      test(
+        'responds with success HTML page and closes server on success',
+        () async {
+          final pageContent = authCodeResponsePageContent(
+            title: 'You are logged in now!',
+            pageDir: 'ltr',
+            pageLangCode: 'en',
+            pageTitle: 'Successful Login!',
+            subtitle:
+                'You can close this window now, the launcher is logging in...',
+          );
+
+          final (_, response) = await simulateAuthCodeRedirect(
+            authCode: fakeAuthCode,
+            authCodeResponsePageVariants: authCodeResponsePageVariants(
+              approved: pageContent,
+            ),
+          );
+
+          expect(minecraftAccountManager.isServerRunning, false);
+
+          expect(
+            response,
+            buildAuthCodeResultHtmlPage(pageContent, isSuccess: true),
+          );
+        },
+      );
+
+      test('passes auth code correctly to exchangeAuthCodeForTokens', () async {
         bool reachedExchangingAuthCodeProgress = false;
-        final (
-          AccountResult? result,
-          String? response,
-        ) = await simulateAuthCodeRedirect(
-          authCode: fakeAuthCode,
+        final (_, _) = await simulateAuthCodeRedirect(
           onProgressUpdate: (newProgress, {authCodeLoginUrl}) {
             if (newProgress == MicrosoftAuthProgress.exchangingAuthCode) {
               reachedExchangingAuthCodeProgress = true;
             }
           },
-          successLoginPageContent: successLoginPageContent,
         );
 
         expect(reachedExchangingAuthCodeProgress, true);
-        expect(minecraftAccountManager.isServerRunning, false);
-
-        expect(response, buildAuthCodeSuccessPageHtml(successLoginPageContent));
 
         // Passes auth code correctly to Microsoft API
         verify(

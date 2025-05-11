@@ -7,8 +7,19 @@ import '../../data/minecraft_api/minecraft_api_exceptions.dart';
 sealed class AccountManagerException implements Exception {
   const AccountManagerException(this.message);
 
-  factory AccountManagerException.missingAuthCode() =>
-      const MissingAuthCodeAccountManagerException();
+  factory AccountManagerException.microsoftMissingAuthCode() =>
+      const MicrosoftMissingAuthCodeAccountManagerException();
+
+  factory AccountManagerException.microsoftAuthCodeRedirect({
+    required String error,
+    required String errorDescription,
+  }) => MicrosoftAuthCodeRedirectAccountManagerException(
+    error: error,
+    errorDescription: errorDescription,
+  );
+
+  factory AccountManagerException.microsoftAuthCodeDenied() =>
+      const MicrosoftAuthCodeDeniedAccountManagerException();
 
   factory AccountManagerException.microsoftAuthApiException(
     MicrosoftAuthException authApiException,
@@ -29,11 +40,32 @@ sealed class AccountManagerException implements Exception {
   String toString() => message;
 }
 
-final class MissingAuthCodeAccountManagerException
+final class MicrosoftMissingAuthCodeAccountManagerException
     extends AccountManagerException {
-  const MissingAuthCodeAccountManagerException()
+  const MicrosoftMissingAuthCodeAccountManagerException()
     : super(
-        'The auth code query parameter should be passed to the redirect URL but was not found.',
+        'The Microsoft auth code query parameter should be passed to the redirect URL but was not found.',
+      );
+}
+
+final class MicrosoftAuthCodeRedirectAccountManagerException
+    extends AccountManagerException {
+  const MicrosoftAuthCodeRedirectAccountManagerException({
+    required this.error,
+    required this.errorDescription,
+  }) : super(
+         'While logging via auth code, Microsoft redirected the result which is an unknown error: "$error", description: "$errorDescription".',
+       );
+
+  final String error;
+  final String errorDescription;
+}
+
+final class MicrosoftAuthCodeDeniedAccountManagerException
+    extends AccountManagerException {
+  const MicrosoftAuthCodeDeniedAccountManagerException()
+    : super(
+        'While logging with Microsoft via auth code, the user has denied the authorization request.',
       );
 }
 
