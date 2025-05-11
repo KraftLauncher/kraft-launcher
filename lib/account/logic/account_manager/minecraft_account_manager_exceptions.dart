@@ -21,6 +21,9 @@ sealed class AccountManagerException implements Exception {
   factory AccountManagerException.microsoftAuthCodeDenied() =>
       const MicrosoftAuthCodeDeniedAccountManagerException();
 
+  factory AccountManagerException.minecraftEntitlementAbsent() =>
+      const MinecraftEntitlementAbsentAccountManagerException();
+
   factory AccountManagerException.microsoftAuthApiException(
     MicrosoftAuthException authApiException,
   ) => MicrosoftApiAccountManagerException(authApiException);
@@ -66,6 +69,14 @@ final class MicrosoftAuthCodeDeniedAccountManagerException
   const MicrosoftAuthCodeDeniedAccountManagerException()
     : super(
         'While logging with Microsoft via auth code, the user has denied the authorization request.',
+      );
+}
+
+final class MinecraftEntitlementAbsentAccountManagerException
+    extends AccountManagerException {
+  const MinecraftEntitlementAbsentAccountManagerException()
+    : super(
+        'The user does not possess the required Minecraft Java Edition entitlement for this account.',
       );
 }
 

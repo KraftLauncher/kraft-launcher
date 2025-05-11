@@ -17,6 +17,7 @@ import '../data/microsoft_auth_api/microsoft_auth_exceptions.dart';
 import '../logic/account_manager/minecraft_account_manager.dart';
 import '../logic/account_manager/minecraft_account_manager_exceptions.dart';
 import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
+import 'minecraft_java_entitlement_absent_dialog.dart';
 import 'utils/account_manager_exception_messages.dart';
 import 'utils/auth_progress_messages.dart';
 
@@ -72,32 +73,42 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
 
                 context.pop();
 
-                // Show SnackBar action for special errors.
-                if (exception is MicrosoftApiAccountManagerException) {
-                  final microsoftAuthException = exception.authApiException;
-                  if (microsoftAuthException
-                      is XstsErrorMicrosoftAuthException) {
-                    switch (microsoftAuthException.xstsError) {
-                      case XstsError.accountCreationRequired:
-                        scaffoldMessenger.showSnackBarText(
-                          message,
-                          snackBarAction: SnackBarAction(
-                            label: context.loc.createXboxAccount,
-                            onPressed:
-                                () => launchUrl(
-                                  Uri.parse(
-                                    MicrosoftConstants.createXboxAccountLink,
+                // Handle special errors
+                switch (exception) {
+                  case MicrosoftApiAccountManagerException():
+                    final microsoftAuthException = exception.authApiException;
+                    if (microsoftAuthException
+                        is XstsErrorMicrosoftAuthException) {
+                      switch (microsoftAuthException.xstsError) {
+                        case XstsError.accountCreationRequired:
+                          scaffoldMessenger.showSnackBarText(
+                            message,
+                            snackBarAction: SnackBarAction(
+                              label: context.loc.createXboxAccount,
+                              onPressed:
+                                  () => launchUrl(
+                                    Uri.parse(
+                                      MicrosoftConstants.createXboxAccountLink,
+                                    ),
                                   ),
-                                ),
-                          ),
-                        );
-                        return;
-                      case _:
-                    }
-                  }
-                }
+                            ),
+                          );
 
-                scaffoldMessenger.showSnackBarText(message);
+                        case _:
+                      }
+                    }
+
+                  case MinecraftEntitlementAbsentAccountManagerException():
+                    showDialog<void>(
+                      context: context,
+                      builder:
+                          (context) =>
+                              const MinecraftJavaEntitlementAbsentDialog(),
+                    );
+
+                  case _:
+                    scaffoldMessenger.showSnackBarText(message);
+                }
               }
             },
             builder: (context, state) {

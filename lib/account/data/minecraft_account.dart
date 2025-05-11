@@ -51,6 +51,7 @@ class MinecraftAccount {
               ),
             )
             .toList(),
+    // TODO: Store the capes too.
     ownsMinecraftJava: ownsMinecraftJava,
   );
 
@@ -87,10 +88,12 @@ class MinecraftAccount {
   MinecraftSkin? get activeSkin =>
       skins.firstWhereOrNull((skin) => skin.state == 'ACTIVE');
 
-  // TODO: We probably won't make it to this point when user don't have a Microsoft account?
-  //  Handle the case where user don't have Minecraft, maybe need to remove this field if it's not needed (need to decide whether we should support demo mode first).
+  // Currently, this is always true and will never be false, but it will be useful
+  // if we add support for demo mode at some point.
   /// Not null if [accountType] is [AccountType.microsoft].
   final bool? ownsMinecraftJava;
+
+  // TODO: Add field when user need to login again, if refresh token was expired or access was revoked.
 
   bool get isMicrosoft => accountType == AccountType.microsoft;
 

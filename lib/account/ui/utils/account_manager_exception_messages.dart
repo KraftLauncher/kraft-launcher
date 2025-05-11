@@ -70,6 +70,8 @@ extension AccountManagerExceptionMessages on AccountManagerException {
           ),
       MicrosoftAuthCodeDeniedAccountManagerException() =>
         loc.loginAttemptRejected,
+      MinecraftEntitlementAbsentAccountManagerException() =>
+        loc.minecraftOwnershipRequiredError,
     };
   }
 }

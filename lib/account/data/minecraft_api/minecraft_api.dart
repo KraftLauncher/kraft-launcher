@@ -118,6 +118,9 @@ class MinecraftProfileCape {
   final String alias;
 }
 
+// TODO: We probably need to rename this to MinecraftAccountApi (everywhere, even in tests),
+//  since there is also Minecraft APIs for downloading the game, runtimes, news and more.
+
 abstract class MinecraftApi {
   Future<MinecraftLoginResponse> loginToMinecraftWithXbox(
     microsoft_api.XboxLiveAuthTokenResponse xsts,

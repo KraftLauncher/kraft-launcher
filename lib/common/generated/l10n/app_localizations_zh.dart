@@ -409,7 +409,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get minecraftOwnershipRequiredError =>
-      'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.';
+      'This Microsoft account does not have a valid Minecraft: Java Edition license. Please purchase or redeem the game to continue.';
 
   @override
   String get loginAttemptRejected => 'The login attempt was rejected.';
@@ -418,4 +418,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String authCodeLoginUnknownError(String errorCode, String errorDescription) {
     return 'An unknown error occurred while logging in: $errorCode, $errorDescription';
   }
+
+  @override
+  String get minecraftJavaNotOwnedTitle => 'Minecraft: Java Edition Not Owned';
+
+  @override
+  String get visitMinecraftStore => 'Visit Store';
+
+  @override
+  String get redeemCode => 'Redeem';
 }

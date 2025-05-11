@@ -843,7 +843,7 @@ abstract class AppLocalizations {
   /// Shown when the Microsoft account is valid and a Minecraft profile may exist, but no active license for Minecraft is found. This may occur if the game has not been purchased or redeemed. Users can resolve this at https://www.minecraft.net/redeem or https://www.minecraft.net/store/minecraft-deluxe-collection-pc.
   ///
   /// In en, this message translates to:
-  /// **'This Microsoft account does not have a valid Minecraft license. Please purchase or redeem the game to continue.'**
+  /// **'This Microsoft account does not have a valid Minecraft: Java Edition license. Please purchase or redeem the game to continue.'**
   String get minecraftOwnershipRequiredError;
 
   /// No description provided for @loginAttemptRejected.
@@ -857,6 +857,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An unknown error occurred while logging in: {errorCode}, {errorDescription}'**
   String authCodeLoginUnknownError(String errorCode, String errorDescription);
+
+  /// No description provided for @minecraftJavaNotOwnedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Minecraft: Java Edition Not Owned'**
+  String get minecraftJavaNotOwnedTitle;
+
+  /// No description provided for @visitMinecraftStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit Store'**
+  String get visitMinecraftStore;
+
+  /// No description provided for @redeemCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Redeem'**
+  String get redeemCode;
 }
 
 class _AppLocalizationsDelegate

@@ -12,7 +12,10 @@
     "minecraftAccountNotFoundError",
     "minecraftOwnershipRequiredError",
     "loginAttemptRejected",
-    "authCodeLoginUnknownError"
+    "authCodeLoginUnknownError",
+    "minecraftJavaNotOwnedTitle",
+    "visitMinecraftStore",
+    "redeemCode"
   ],
 
   "de": [
@@ -28,7 +31,10 @@
     "minecraftAccountNotFoundError",
     "minecraftOwnershipRequiredError",
     "loginAttemptRejected",
-    "authCodeLoginUnknownError"
+    "authCodeLoginUnknownError",
+    "minecraftJavaNotOwnedTitle",
+    "visitMinecraftStore",
+    "redeemCode"
   ],
 
   "zh": [
@@ -44,6 +50,9 @@
     "minecraftAccountNotFoundError",
     "minecraftOwnershipRequiredError",
     "loginAttemptRejected",
-    "authCodeLoginUnknownError"
+    "authCodeLoginUnknownError",
+    "minecraftJavaNotOwnedTitle",
+    "visitMinecraftStore",
+    "redeemCode"
   ]
 }

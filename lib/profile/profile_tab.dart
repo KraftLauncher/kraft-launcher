@@ -444,6 +444,8 @@ class _ProfileTabState extends State<ProfileTab> {
     };
     final runtimes =
         javaRuntimesResponseData[javaSystemRuntimeKey]! as JsonObject;
+    // This will throw Bad state when there is no supported Java version on this machine,
+    // for example, jre-legacy is required for Minecraft 1.16.5 but unsupported on macOS arm64.
     final runtimeDetails =
         (runtimes[requiredJavaVersionComponent]! as List<dynamic>).first
             as JsonObject;

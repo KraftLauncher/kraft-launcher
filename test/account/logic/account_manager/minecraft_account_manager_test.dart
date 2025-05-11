@@ -65,9 +65,10 @@ void main() {
     when(() => mockMicrosoftAuthApi.requestXSTSToken(any())).thenAnswer(
       (_) async => const XboxLiveAuthTokenResponse(xboxToken: '', userHash: ''),
     );
+    // TODO: Should default of this false or true?
     when(
       () => mockMinecraftApi.checkMinecraftJavaOwnership(any()),
-    ).thenAnswer((_) async => false);
+    ).thenAnswer((_) async => true);
     when(() => mockMinecraftApi.fetchMinecraftProfile(any())).thenAnswer(
       (_) async => const MinecraftProfileResponse(
         id: '',
@@ -754,8 +755,8 @@ void main() {
             MicrosoftAuthProgress.requestingXboxToken,
             MicrosoftAuthProgress.requestingXstsToken,
             MicrosoftAuthProgress.loggingIntoMinecraft,
-            MicrosoftAuthProgress.fetchingProfile,
             MicrosoftAuthProgress.checkingMinecraftJavaOwnership,
+            MicrosoftAuthProgress.fetchingProfile,
           ]);
           verifyInOrder([
             () => mockMicrosoftAuthApi.userLoginUrlWithAuthCode(),
@@ -769,10 +770,10 @@ void main() {
             () => mockMinecraftApi.loginToMinecraftWithXbox(
               requestXstsTokenResponse,
             ),
-            () => mockMinecraftApi.fetchMinecraftProfile(
+            () => mockMinecraftApi.checkMinecraftJavaOwnership(
               minecraftLoginResponse.accessToken,
             ),
-            () => mockMinecraftApi.checkMinecraftJavaOwnership(
+            () => mockMinecraftApi.fetchMinecraftProfile(
               minecraftLoginResponse.accessToken,
             ),
           ]);
@@ -855,19 +856,13 @@ void main() {
         },
       );
 
-      for (final ownsMinecraft in {true, false}) {
-        test(
-          'ownsMinecraft is $ownsMinecraft when the user ${ownsMinecraft ? 'have a valid copy of the game' : 'dont have a valid copy of the game'}',
-          () async {
-            when(
-              () => mockMinecraftApi.checkMinecraftJavaOwnership(any()),
-            ).thenAnswer((_) async => ownsMinecraft);
-
-            final (result, _) = await simulateAuthCodeRedirect();
-            expect(result?.newAccount.ownsMinecraftJava, ownsMinecraft);
-          },
-        );
-      }
+      _minecraftOwnershipTests(
+        mockMinecraftApiProvider: () => mockMinecraftApi,
+        performAuthAction: () async {
+          final (result, _) = await simulateAuthCodeRedirect();
+          return result;
+        },
+      );
       _transformExceptionCommonTests(
         () => mockMinecraftApi,
         () => mockMicrosoftAuthApi,
@@ -1739,8 +1734,8 @@ void main() {
             MicrosoftAuthProgress.requestingXboxToken,
             MicrosoftAuthProgress.requestingXstsToken,
             MicrosoftAuthProgress.loggingIntoMinecraft,
-            MicrosoftAuthProgress.fetchingProfile,
             MicrosoftAuthProgress.checkingMinecraftJavaOwnership,
+            MicrosoftAuthProgress.fetchingProfile,
           ]);
           verifyInOrder([
             () => mockMicrosoftAuthApi.requestDeviceCode(),
@@ -1756,10 +1751,10 @@ void main() {
             () => mockMinecraftApi.loginToMinecraftWithXbox(
               requestXstsTokenResponse,
             ),
-            () => mockMinecraftApi.fetchMinecraftProfile(
+            () => mockMinecraftApi.checkMinecraftJavaOwnership(
               minecraftLoginResponse.accessToken,
             ),
-            () => mockMinecraftApi.checkMinecraftJavaOwnership(
+            () => mockMinecraftApi.fetchMinecraftProfile(
               minecraftLoginResponse.accessToken,
             ),
           ]);
@@ -1840,19 +1835,13 @@ void main() {
         },
       );
 
-      for (final ownsMinecraft in {true, false}) {
-        test(
-          'ownsMinecraft is $ownsMinecraft when the user ${ownsMinecraft ? 'have a valid copy of the game' : 'dont have a valid copy of the game'}',
-          () async {
-            when(
-              () => mockMinecraftApi.checkMinecraftJavaOwnership(any()),
-            ).thenAnswer((_) async => ownsMinecraft);
-
-            final (result, _) = await simulateSuccess();
-            expect(result?.newAccount.ownsMinecraftJava, ownsMinecraft);
-          },
-        );
-      }
+      _minecraftOwnershipTests(
+        mockMinecraftApiProvider: () => mockMinecraftApi,
+        performAuthAction: () async {
+          final (result, _) = await simulateSuccess();
+          return result;
+        },
+      );
 
       _transformExceptionCommonTests(
         () => mockMinecraftApi,
@@ -2128,7 +2117,7 @@ void main() {
           accountType: AccountType.offline,
           microsoftAccountInfo: null,
           skins: [],
-          ownsMinecraftJava: false,
+          ownsMinecraftJava: null,
         ),
         MinecraftAccount(
           id: currentDefaultAccountId,
@@ -2136,7 +2125,7 @@ void main() {
           accountType: AccountType.offline,
           microsoftAccountInfo: null,
           skins: [],
-          ownsMinecraftJava: false,
+          ownsMinecraftJava: null,
         ),
       ],
       defaultAccountId: currentDefaultAccountId,
@@ -2469,7 +2458,7 @@ void main() {
                   ),
                 ),
         skins: skinsBeforeRefresh ?? const [],
-        ownsMinecraftJava: false,
+        ownsMinecraftJava: true,
       );
       final refreshResult = await minecraftAccountManager
           .refreshMicrosoftAccount(
@@ -2578,8 +2567,8 @@ void main() {
           MicrosoftAuthProgress.requestingXboxToken,
           MicrosoftAuthProgress.requestingXstsToken,
           MicrosoftAuthProgress.loggingIntoMinecraft,
-          MicrosoftAuthProgress.fetchingProfile,
           MicrosoftAuthProgress.checkingMinecraftJavaOwnership,
+          MicrosoftAuthProgress.fetchingProfile,
         ]);
         verifyInOrder([
           () => mockMicrosoftAuthApi.getNewTokensFromRefreshToken(
@@ -2593,10 +2582,10 @@ void main() {
           () => mockMinecraftApi.loginToMinecraftWithXbox(
             requestXstsTokenResponse,
           ),
-          () => mockMinecraftApi.fetchMinecraftProfile(
+          () => mockMinecraftApi.checkMinecraftJavaOwnership(
             minecraftLoginResponse.accessToken,
           ),
-          () => mockMinecraftApi.checkMinecraftJavaOwnership(
+          () => mockMinecraftApi.fetchMinecraftProfile(
             minecraftLoginResponse.accessToken,
           ),
         ]);
@@ -2679,19 +2668,13 @@ void main() {
       },
     );
 
-    for (final ownsMinecraft in {true, false}) {
-      test(
-        'ownsMinecraft is $ownsMinecraft when the user ${ownsMinecraft ? 'have a valid copy of the game' : 'dont have a valid copy of the game'}',
-        () async {
-          when(
-            () => mockMinecraftApi.checkMinecraftJavaOwnership(any()),
-          ).thenAnswer((_) async => ownsMinecraft);
-
-          final (result, _) = await refreshAccount();
-          expect(result.newAccount.ownsMinecraftJava, ownsMinecraft);
-        },
-      );
-    }
+    _minecraftOwnershipTests(
+      mockMinecraftApiProvider: () => mockMinecraftApi,
+      performAuthAction: () async {
+        final (result, _) = await refreshAccount();
+        return result;
+      },
+    );
 
     _transformExceptionCommonTests(
       () => mockMinecraftApi,
@@ -2746,7 +2729,7 @@ void main() {
               accountType: AccountType.offline,
               microsoftAccountInfo: null,
               skins: [],
-              ownsMinecraftJava: false,
+              ownsMinecraftJava: null,
             ),
             const MinecraftAccount(
               id: 'account-id3',
@@ -3074,7 +3057,7 @@ void _commonLoginMicrosoftTests({
             accountType: AccountType.offline,
             microsoftAccountInfo: null,
             skins: [],
-            ownsMinecraftJava: true,
+            ownsMinecraftJava: false,
           ),
           MinecraftAccount(
             id: 'player-id',
@@ -3141,7 +3124,7 @@ void _commonLoginMicrosoftTests({
             variant: MinecraftSkinVariant.slim,
           ),
         ],
-        ownsMinecraftJava: false,
+        ownsMinecraftJava: true,
       );
 
       mockMinecraftAccountCallback(newAccount);
@@ -3201,7 +3184,7 @@ void _commonLoginMicrosoftTests({
               ),
             ),
             skins: const [],
-            ownsMinecraftJava: false,
+            ownsMinecraftJava: true,
           ),
           const MinecraftAccount(
             id: 'dsaiodjosajdoiska',
@@ -3209,7 +3192,7 @@ void _commonLoginMicrosoftTests({
             accountType: AccountType.offline,
             microsoftAccountInfo: null,
             skins: [],
-            ownsMinecraftJava: true,
+            ownsMinecraftJava: null,
           ),
         ],
         defaultAccountId: 'default-account-id',
@@ -3282,4 +3265,39 @@ extension _MinecraftAccountListExt on List<MinecraftAccount> {
     final newAccounts = List<MinecraftAccount>.from(this)..[index] = newAccount;
     return newAccounts;
   }
+}
+
+void _minecraftOwnershipTests({
+  required MockMinecraftApi Function() mockMinecraftApiProvider,
+  required Future<AccountResult?> Function() performAuthAction,
+}) {
+  test(
+    'ownsMinecraft is true when the user have a valid copy of the game',
+    () async {
+      const ownsMinecraft = true;
+      final mockMinecraftApi = mockMinecraftApiProvider();
+      when(
+        () => mockMinecraftApi.checkMinecraftJavaOwnership(any()),
+      ).thenAnswer((_) async => ownsMinecraft);
+
+      final result = await performAuthAction();
+      expect(result?.newAccount.ownsMinecraftJava, ownsMinecraft);
+    },
+  );
+
+  test(
+    'throws $MinecraftEntitlementAbsentAccountManagerException when the user dont have a valid copy of the game',
+    () async {
+      const ownsMinecraft = false;
+      final mockMinecraftApi = mockMinecraftApiProvider();
+      when(
+        () => mockMinecraftApi.checkMinecraftJavaOwnership(any()),
+      ).thenAnswer((_) async => ownsMinecraft);
+
+      await expectLater(
+        performAuthAction(),
+        throwsA(isA<MinecraftEntitlementAbsentAccountManagerException>()),
+      );
+    },
+  );
 }
