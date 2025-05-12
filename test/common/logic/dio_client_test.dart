@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/generated/pubspec.g.dart';
 import 'package:kraft_launcher/common/logic/dio_client.dart';
 import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:mocktail/mocktail.dart';
@@ -58,6 +62,13 @@ void main() {
           reason: '$TalkerDioLogger should be added in debug mode',
         );
       }
+    });
+
+    test('adds User-Agent to all requests', () {
+      expect(
+        DioClient.instance.options.headers['User-Agent'],
+        '${ProjectInfoConstants.userAgentAppName}/${Pubspec.fullVersion} (${Platform.operatingSystem} ${Platform.operatingSystemVersion.split(' ')[1]}) ${ProjectInfoConstants.website}',
+      );
     });
   });
 

@@ -5,6 +5,7 @@ import 'constants.dart';
 /// and should always be updated when forking, especially [microsoftLoginClientId].
 abstract final class ProjectInfoConstants {
   static const displayName = 'Kraft Launcher';
+  static const userAgentAppName = 'KraftLauncher';
   static const website = 'https://kraftlauncher.org';
   static const contactEmail = 'kraftlauncher@gmail.com';
 

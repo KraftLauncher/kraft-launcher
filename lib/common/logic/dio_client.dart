@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:talker_dio_logger/talker_dio_logger_interceptor.dart';
 import 'package:talker_dio_logger/talker_dio_logger_settings.dart';
+
+import '../constants/project_info_constants.dart';
+import '../generated/pubspec.g.dart';
 
 abstract final class DioClient {
   static Dio _instance = _createDio();
@@ -45,6 +50,8 @@ abstract final class DioClient {
         ),
       );
     }
+    dio.options.headers['User-Agent'] =
+        '${ProjectInfoConstants.userAgentAppName}/${Pubspec.fullVersion} (${Platform.operatingSystem} ${Platform.operatingSystemVersion.split(' ')[1]}) ${ProjectInfoConstants.website}';
     return dio;
   }
 }
