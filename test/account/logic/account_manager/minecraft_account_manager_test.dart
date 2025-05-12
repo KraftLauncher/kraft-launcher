@@ -65,7 +65,6 @@ void main() {
     when(() => mockMicrosoftAuthApi.requestXSTSToken(any())).thenAnswer(
       (_) async => const XboxLiveAuthTokenResponse(xboxToken: '', userHash: ''),
     );
-    // TODO: Should default of this false or true?
     when(
       () => mockMinecraftApi.checkMinecraftJavaOwnership(any()),
     ).thenAnswer((_) async => true);

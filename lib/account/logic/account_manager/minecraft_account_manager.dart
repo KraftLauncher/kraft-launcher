@@ -439,6 +439,7 @@ class MinecraftAccountManager {
     );
 
     // TODO: Do we need to check whether the refresh token was expired? Or handle it if access has been revoked.
+    //  Also add expiresAt field for Microsoft refresh token, it's 90 days and fixed (not sent by the server).
     final microsoftRefreshToken = requireNotNull(
       account.microsoftAccountInfo?.microsoftOAuthRefreshToken,
       name: 'microsoftRefreshToken',
