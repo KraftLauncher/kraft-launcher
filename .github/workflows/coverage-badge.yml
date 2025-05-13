@@ -51,7 +51,7 @@ jobs:
         with:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: 48575fd9d18dc33989ab0eb602af3b53 # https://gist.github.com/EchoEllet/48575fd9d18dc33989ab0eb602af3b53
-          filename: kraft-launcher-coverage-badge.json 
+          filename: kraft-launcher-coverage-badge.json
           label: coverage
           message: ${{ steps.coverage-extractor.outputs.COVERAGE }}%
           valColorRange: ${{ steps.coverage-extractor.outputs.COVERAGE }}
