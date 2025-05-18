@@ -130,6 +130,9 @@
     "search": "Search",
     "refreshAccount": "Refresh Account",
     "sessionExpiredOrAccessRevoked": "The account session has expired or access was revoked. Please log in again to continue.",
+    "@sessionExpiredOrAccessRevoked": {
+        "description": "Shown when a request to Microsoft API was sent but then server responds with invalid_grant because either the refresh token was expired or access revoked by the user."
+    },
     "accountRefreshedMessage": "Account for {username} has been refreshed successfully.",
     "@accountRefreshedMessage": {
         "description": "Message shown when the user refreshes an account. Includes the username.",
@@ -250,7 +253,7 @@
     "loginAttemptRejected": "The login attempt was rejected.",
     "authCodeLoginUnknownError": "An unknown error occurred while logging in: {errorCode}, {errorDescription}",
     "@authCodeLoginUnknownError": {
-        "description": "Shown when an unknown error occurs while logging in with Microsoft via auth code. The user login using in the browser and then Microsoft redirects the user to a minimal and local HTTP server to handles the result. This message is used when the error code is unknown.",
+        "description": "Shown when an unknown error occurs while logging in with Microsoft via an auth code. The user logs in using the browser, and then Microsoft redirects the user to a minimal and local HTTP server to handle the result. This message is used when the error code is unknown.",
         "placeholders": {
             "errorCode": {
                 "type": "String",
@@ -266,5 +269,17 @@
     },
     "minecraftJavaNotOwnedTitle": "Minecraft: Java Edition Not Owned",
     "visitMinecraftStore": "Visit Store",
-    "redeemCode": "Redeem"
+    "redeemCode": "Redeem",
+    "sessionExpired": "The account session has expired. Please log in again to continue.",
+    "@sessionExpired": {
+        "description": "Shown when the app detects that the Microsoft refresh token has expired (90 days since issuance) before making an HTTP request."
+    },
+    "expired": "Expired",
+    "@expired": {
+        "description": "Shown in the account list tile as a badge when the Microsoft refresh token has expired."
+    },
+    "revoked": "Revoked",
+    "@revoked": {
+        "description": "Shown in the account list tile as a badge when the Microsoft refresh token access has been revoked."
+    }
 }

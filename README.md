@@ -130,3 +130,14 @@ We are incredibly grateful to many individuals and organizations who have played
     - [ATLauncher](https://github.com/ATLauncher/ATLauncher/)
     - [Pencil](https://github.com/Dreta/Pencil)
 - [mojang-meta-urls](https://gist.github.com/skyrising/95a8e6a7287634e097ecafa2f21c240f) gist.
+- The following Minecraft wikis:
+    - [Mojang API](https://minecraft.wiki/w/Mojang_API)
+    - [Microsoft authentication](https://minecraft.wiki/w/Microsoft_authentication)
+    - [Version_manifest.json](https://minecraft.wiki/w/Version_manifest.json)
+    - [Version.json](https://minecraft.wiki/w/Version.json)
+    - [Client.jar](https://minecraft.wiki/w/Client.jar)
+    - [Client.json](https://minecraft.wiki/w/Client.json)
+    - [Launcher_profiles.json](https://minecraft.wiki/w/Launcher_profiles.json)
+    - [Options.txt](https://minecraft.wiki/w/Options.txt)
+    - [Servers.dat_format](https://minecraft.wiki/w/Servers.dat_format)
+    - [Quick Play](https://minecraft.wiki/w/Quick_Play)

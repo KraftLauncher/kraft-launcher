@@ -1,6 +1,8 @@
+import 'package:clock/clock.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
+import '../../common/constants/constants.dart';
 import '../../common/logic/json.dart';
 import '../../common/logic/utils.dart';
 import 'microsoft_auth_api/microsoft_auth_api.dart';
@@ -33,11 +35,17 @@ class MinecraftAccount {
         value: oauthTokenResponse.accessToken,
         expiresAt: expiresInToExpiresAt(oauthTokenResponse.expiresIn),
       ),
-      microsoftOAuthRefreshToken: oauthTokenResponse.refreshToken,
+      microsoftOAuthRefreshToken: ExpirableToken(
+        value: oauthTokenResponse.refreshToken,
+        expiresAt: clock.now().add(
+          const Duration(days: MicrosoftConstants.refreshTokenExpiresInDays),
+        ),
+      ),
       minecraftAccessToken: ExpirableToken(
         value: loginResponse.accessToken,
         expiresAt: expiresInToExpiresAt(loginResponse.expiresIn),
       ),
+      needsReAuthentication: false,
     ),
     skins:
         profileResponse.skins
@@ -88,12 +96,10 @@ class MinecraftAccount {
   MinecraftSkin? get activeSkin =>
       skins.firstWhereOrNull((skin) => skin.state == 'ACTIVE');
 
-  // Currently, this is always true and will never be false, but it will be useful
-  // if we add support for demo mode at some point.
   /// Not null if [accountType] is [AccountType.microsoft].
+  // Currently, this is always true and will never be false, but it will be useful
+  // when adding support for demo mode.
   final bool? ownsMinecraftJava;
-
-  // TODO: Add field when user need to login again, if refresh token was expired or access was revoked.
 
   bool get isMicrosoft => accountType == AccountType.microsoft;
 
@@ -129,6 +135,7 @@ class MicrosoftAccountInfo {
     required this.microsoftOAuthAccessToken,
     required this.microsoftOAuthRefreshToken,
     required this.minecraftAccessToken,
+    required this.needsReAuthentication,
   });
 
   factory MicrosoftAccountInfo.fromJson(JsonObject json) =>
@@ -136,32 +143,39 @@ class MicrosoftAccountInfo {
         microsoftOAuthAccessToken: ExpirableToken.fromJson(
           json['microsoftOAuthAccessToken']! as JsonObject,
         ),
-        microsoftOAuthRefreshToken:
-            json['microsoftOAuthRefreshToken']! as String,
+        microsoftOAuthRefreshToken: ExpirableToken.fromJson(
+          json['microsoftOAuthRefreshToken']! as JsonObject,
+        ),
         minecraftAccessToken: ExpirableToken.fromJson(
           json['minecraftAccessToken']! as JsonObject,
         ),
+        needsReAuthentication: json['needsReAuthentication']! as bool,
       );
-
-  // TODO: Store more data related to Xbox and Microsoft just in case even if it's not needed?
 
   final ExpirableToken microsoftOAuthAccessToken;
 
-  // It's unknown when the OAuth refresh token expires. See https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens#token-lifetime
-  final String microsoftOAuthRefreshToken;
+  // NOTE: The Microsoft API doesn't provide the expiration date for the refresh token,
+  // it's 90 days according to https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens#token-lifetime.
+  // The app will always need to handle the case where it's expired or access is revoked when sending the request.
+  final ExpirableToken microsoftOAuthRefreshToken;
 
   final ExpirableToken minecraftAccessToken;
 
+  // Whether the Microsoft refresh token has expired, or access was revoked.
+  final bool needsReAuthentication;
+
   JsonObject toJson() => {
     'microsoftOAuthAccessToken': microsoftOAuthAccessToken.toJson(),
-    'microsoftOAuthRefreshToken': microsoftOAuthRefreshToken,
+    'microsoftOAuthRefreshToken': microsoftOAuthRefreshToken.toJson(),
     'minecraftAccessToken': minecraftAccessToken.toJson(),
+    'needsReAuthentication': needsReAuthentication,
   };
 
   MicrosoftAccountInfo copyWith({
     ExpirableToken? microsoftOAuthAccessToken,
-    String? microsoftOAuthRefreshToken,
+    ExpirableToken? microsoftOAuthRefreshToken,
     ExpirableToken? minecraftAccessToken,
+    bool? needsReAuthentication,
   }) {
     return MicrosoftAccountInfo(
       microsoftOAuthAccessToken:
@@ -169,6 +183,8 @@ class MicrosoftAccountInfo {
       microsoftOAuthRefreshToken:
           microsoftOAuthRefreshToken ?? this.microsoftOAuthRefreshToken,
       minecraftAccessToken: minecraftAccessToken ?? this.minecraftAccessToken,
+      needsReAuthentication:
+          needsReAuthentication ?? this.needsReAuthentication,
     );
   }
 }
@@ -190,7 +206,7 @@ class ExpirableToken {
     'expiresAt': expiresAt.toIso8601String(),
   };
 
-  bool get hasExpired => expiresAt.isBefore(DateTime.now());
+  bool get hasExpired => expiresAt.isBefore(clock.now());
 
   ExpirableToken copyWith({String? value, DateTime? expiresAt}) {
     return ExpirableToken(

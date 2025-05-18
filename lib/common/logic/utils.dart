@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:clock/clock.dart';
 import 'package:meta/meta.dart';
 
 // A wrapper used in copyWith functions, allowing to update a property to a null
@@ -68,4 +69,4 @@ T requireNotNull<T>(T? value, {required String name}) {
 }
 
 DateTime expiresInToExpiresAt(int expiresIn) =>
-    DateTime.now().add(Duration(seconds: expiresIn));
+    clock.now().add(Duration(seconds: expiresIn));

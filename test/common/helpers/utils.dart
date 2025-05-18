@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clock/clock.dart';
 import 'package:mocktail/mocktail.dart';
 
 extension WhenAsyncExt on When<Future<void>> {
@@ -27,7 +28,7 @@ Future<bool> isPortOpen(
 extension DateTimeExt on DateTime {
   DateTime trimSeconds() => DateTime(year, month, day, hour, minute);
   int get covertToExpiresIn {
-    final now = DateTime.now();
+    final now = clock.now();
     final normalizedNow = DateTime(
       now.year,
       now.month,

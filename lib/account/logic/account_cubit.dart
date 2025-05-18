@@ -77,6 +77,10 @@ class AccountCubit extends Cubit<AccountState> {
     );
   }
 
+  void setAccounts(MinecraftAccounts accounts) {
+    emit(state.copyWith(accounts: accounts));
+  }
+
   void createOfflineAccount({required String username}) {
     final loginResult = minecraftAccountManager.createOfflineAccount(
       username: username,

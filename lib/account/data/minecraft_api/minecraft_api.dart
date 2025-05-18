@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 import '../../../common/logic/json.dart';
 import '../microsoft_auth_api/microsoft_auth_api.dart'
     as microsoft_api
-    show XboxLiveAuthTokenResponse;
+    show MicrosoftAuthApi, XboxLiveAuthTokenResponse;
 import '../minecraft_account.dart';
 
 @immutable
@@ -121,6 +121,9 @@ class MinecraftProfileCape {
 // TODO: We probably need to rename this to MinecraftAccountApi (everywhere, even in tests),
 //  since there is also Minecraft APIs for downloading the game, runtimes, news and more.
 
+/// See also:
+///  * https://minecraft.wiki/w/Mojang_API
+///  * [microsoft_api.MicrosoftAuthApi]
 abstract class MinecraftApi {
   Future<MinecraftLoginResponse> loginToMinecraftWithXbox(
     microsoft_api.XboxLiveAuthTokenResponse xsts,

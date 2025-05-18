@@ -15,7 +15,10 @@
     "authCodeLoginUnknownError",
     "minecraftJavaNotOwnedTitle",
     "visitMinecraftStore",
-    "redeemCode"
+    "redeemCode",
+    "sessionExpired",
+    "expired",
+    "revoked"
   ],
 
   "de": [
@@ -34,7 +37,10 @@
     "authCodeLoginUnknownError",
     "minecraftJavaNotOwnedTitle",
     "visitMinecraftStore",
-    "redeemCode"
+    "redeemCode",
+    "sessionExpired",
+    "expired",
+    "revoked"
   ],
 
   "zh": [
@@ -53,6 +59,9 @@
     "authCodeLoginUnknownError",
     "minecraftJavaNotOwnedTitle",
     "visitMinecraftStore",
-    "redeemCode"
+    "redeemCode",
+    "sessionExpired",
+    "expired",
+    "revoked"
   ]
 }

@@ -450,4 +450,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get redeemCode => 'Redeem';
+
+  @override
+  String get sessionExpired =>
+      'The account session has expired. Please log in again to continue.';
+
+  @override
+  String get expired => 'Expired';
+
+  @override
+  String get revoked => 'Revoked';
 }

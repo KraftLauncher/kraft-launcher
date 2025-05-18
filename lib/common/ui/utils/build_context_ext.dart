@@ -11,4 +11,7 @@ extension BuildContextExt on BuildContext {
 
   ThemeData get theme => Theme.of(this);
   ScaffoldMessengerState get scaffoldMessenger => ScaffoldMessenger.of(this);
+
+  // TODO: Unit test?
+  bool get isDark => theme.brightness == Brightness.dark;
 }

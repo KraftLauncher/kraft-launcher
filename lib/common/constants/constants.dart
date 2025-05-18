@@ -38,4 +38,9 @@ abstract final class MicrosoftConstants {
   static const loginRedirectErrorDescriptionQueryParamName =
       'error_description';
   static const loginRedirectAccessDeniedErrorCode = 'access_denied';
+
+  // Microsoft API doesn't provides the expiration date of refresh token,
+  // it's 90 days per: https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens#token-lifetime.
+  // The app will always need to handle the case where it's expired or access is revoked when sending the request.
+  static const refreshTokenExpiresInDays = 90;
 }

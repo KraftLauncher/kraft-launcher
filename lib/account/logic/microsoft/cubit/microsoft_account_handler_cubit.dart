@@ -1,16 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../common/logic/app_logger.dart';
 import '../../../../common/logic/utils.dart';
 import '../../../data/minecraft_account.dart';
 import '../../account_cubit.dart';
 import '../../account_manager/minecraft_account_manager.dart';
 import '../../account_manager/minecraft_account_manager_exceptions.dart';
+import '../../account_utils.dart';
 
 part 'microsoft_account_handler_state.dart';
 
-// Mainly focused on Microsoft account operations, including login, skin upload,
+// Focused on Microsoft account operations, including login, skin upload,
 // refresh, but doesn't store the accounts state, which is in AccountCubit.
 class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
   MicrosoftAccountHandlerCubit({
@@ -29,9 +29,16 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
   }) async {
     try {
       await run();
-    } on AccountManagerException catch (e, stackTrace) {
-      // TODO: We probably need better design for logging errors? We may need to remove this _handleErrors entirely?
-      AppLogger.e(e.toString(), e, stackTrace);
+    } on AccountManagerException catch (e) {
+      if (e
+          is MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException) {
+        accountCubit.setAccounts(
+          accountCubit.state.accounts.updateById(
+            e.updatedAccount.id,
+            (_) => e.updatedAccount,
+          ),
+        );
+      }
       emit(
         state.copyWith(
           microsoftLoginStatus: microsoftLoginStatus,

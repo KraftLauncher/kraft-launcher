@@ -588,7 +588,7 @@ abstract class AppLocalizations {
   /// **'Refresh Account'**
   String get refreshAccount;
 
-  /// No description provided for @sessionExpiredOrAccessRevoked.
+  /// Shown when a request to Microsoft API was sent but then server responds with invalid_grant because either the refresh token was expired or access revoked by the user.
   ///
   /// In en, this message translates to:
   /// **'The account session has expired or access was revoked. Please log in again to continue.'**
@@ -852,7 +852,7 @@ abstract class AppLocalizations {
   /// **'The login attempt was rejected.'**
   String get loginAttemptRejected;
 
-  /// Shown when an unknown error occurs while logging in with Microsoft via auth code. The user login using in the browser and then Microsoft redirects the user to a minimal and local HTTP server to handles the result. This message is used when the error code is unknown.
+  /// Shown when an unknown error occurs while logging in with Microsoft via an auth code. The user logs in using the browser, and then Microsoft redirects the user to a minimal and local HTTP server to handle the result. This message is used when the error code is unknown.
   ///
   /// In en, this message translates to:
   /// **'An unknown error occurred while logging in: {errorCode}, {errorDescription}'**
@@ -875,6 +875,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Redeem'**
   String get redeemCode;
+
+  /// Shown when the app detects that the Microsoft refresh token has expired (90 days since issuance) before making an HTTP request.
+  ///
+  /// In en, this message translates to:
+  /// **'The account session has expired. Please log in again to continue.'**
+  String get sessionExpired;
+
+  /// Shown in the account list tile as a badge when the Microsoft refresh token has expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get expired;
+
+  /// Shown in the account list tile as a badge when the Microsoft refresh token access has been revoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoked'**
+  String get revoked;
 }
 
 class _AppLocalizationsDelegate

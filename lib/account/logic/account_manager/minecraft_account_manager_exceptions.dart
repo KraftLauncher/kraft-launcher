@@ -1,7 +1,11 @@
 import 'package:meta/meta.dart';
 
+import '../../../common/constants/constants.dart';
+import '../../data/microsoft_auth_api/microsoft_auth_api.dart';
 import '../../data/microsoft_auth_api/microsoft_auth_exceptions.dart';
+import '../../data/minecraft_account.dart';
 import '../../data/minecraft_api/minecraft_api_exceptions.dart';
+import 'minecraft_account_manager.dart';
 
 @immutable
 sealed class AccountManagerException implements Exception {
@@ -23,6 +27,15 @@ sealed class AccountManagerException implements Exception {
 
   factory AccountManagerException.minecraftEntitlementAbsent() =>
       const MinecraftEntitlementAbsentAccountManagerException();
+
+  factory AccountManagerException.microsoftRefreshTokenExpired() =>
+      const MicrosoftRefreshTokenExpiredAccountManagerException();
+
+  factory AccountManagerException.microsoftExpiredOrUnauthorizedRefreshToken(
+    MinecraftAccount updatedAccount,
+  ) => MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException(
+    updatedAccount,
+  );
 
   factory AccountManagerException.microsoftAuthApiException(
     MicrosoftAuthException authApiException,
@@ -78,6 +91,31 @@ final class MinecraftEntitlementAbsentAccountManagerException
     : super(
         'The user does not possess the required Minecraft Java Edition entitlement for this account.',
       );
+}
+
+final class MicrosoftRefreshTokenExpiredAccountManagerException
+    extends AccountManagerException {
+  const MicrosoftRefreshTokenExpiredAccountManagerException()
+    : super(
+        'The Microsoft refresh token has expired: ${MicrosoftConstants.refreshTokenExpiresInDays} days have passed since it was issued.',
+      );
+}
+
+/// The exception [ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException] will be
+/// caught in [MinecraftAccountManager] and transformed into this exception,
+/// which includes the updated account that indicates it needs re-authentication.
+/// The exception [ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException] originates from [MicrosoftAuthApi],
+/// and this transformation is specific to [MinecraftAccountManager].
+final class MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException
+    extends AccountManagerException {
+  MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException(
+    this.updatedAccount,
+  ) : super(
+        'Microsoft OAuth Refresh token expired or access revoked. The account ${updatedAccount.id} needs re-authentication.',
+      );
+
+  /// The updated account that indicates it needs re-authentication.
+  final MinecraftAccount updatedAccount;
 }
 
 final class MicrosoftApiAccountManagerException

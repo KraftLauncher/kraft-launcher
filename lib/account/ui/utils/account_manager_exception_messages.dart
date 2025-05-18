@@ -4,6 +4,9 @@ import '../../data/minecraft_api/minecraft_api_exceptions.dart';
 import '../../logic/account_manager/minecraft_account_manager_exceptions.dart';
 
 extension AccountManagerExceptionMessages on AccountManagerException {
+  // TODO: Need to review this function and it's usages, should we throw Exception for special
+  //  errors that needs to be handled and use the special error in there or use getMessage instead
+  //  but always ensure to use the message from here directly.
   String getMessage(AppLocalizations loc) {
     final exception = this;
     return switch (exception) {
@@ -21,7 +24,9 @@ extension AccountManagerExceptionMessages on AccountManagerException {
             loc.expiredMicrosoftAccessTokenError,
 
           ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException() =>
-            loc.sessionExpiredOrAccessRevoked,
+            throw Exception(
+              'Expected $ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException to be transformed into $MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException. $ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException should be caught and handled so this is likely a bug',
+            ),
           TooManyRequestsMicrosoftAuthException() =>
             loc.microsoftRequestLimitError,
           XstsErrorMicrosoftAuthException() => switch (microsoftApiException
@@ -72,6 +77,10 @@ extension AccountManagerExceptionMessages on AccountManagerException {
         loc.loginAttemptRejected,
       MinecraftEntitlementAbsentAccountManagerException() =>
         loc.minecraftOwnershipRequiredError,
+      MicrosoftRefreshTokenExpiredAccountManagerException() =>
+        loc.sessionExpired,
+      MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException() =>
+        loc.sessionExpiredOrAccessRevoked,
     };
   }
 }

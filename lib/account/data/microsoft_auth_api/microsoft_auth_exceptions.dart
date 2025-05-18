@@ -73,7 +73,9 @@ final class TooManyRequestsMicrosoftAuthException
       );
 }
 
-// See https://learn.microsoft.com/en-us/answers/questions/583869/what-kind-of-xerr-is-displayed-during-xsts-authent
+// See also:
+//  * https://learn.microsoft.com/en-us/answers/questions/583869/what-kind-of-xerr-is-displayed-during-xsts-authent
+//  * https://minecraft.wiki/w/Microsoft_authentication
 enum XstsError {
   // Microsoft account does not have an Xbox account.
   accountCreationRequired(xErr: 2148916233),

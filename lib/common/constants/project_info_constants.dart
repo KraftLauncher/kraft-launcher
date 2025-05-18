@@ -26,7 +26,9 @@ abstract final class ProjectInfoConstants {
   /// 10. Add `offline_access` under API permissions.
   /// 11. Finally, submit the form to request access to the Minecraft APIs: https://help.minecraft.net/hc/en-us/articles/16254801392141.
   ///
-  /// See also: [MicrosoftConstants.loginRedirectUrl]
+  /// See also:
+  ///  * [MicrosoftConstants.loginRedirectUrl]
+  ///  * [Microsoft authentication](https://minecraft.wiki/w/Microsoft_authentication)
   static const microsoftLoginClientId = 'ec68d4a9-72ca-404a-a19d-c34ddf1459a2';
 
   /// This is used to temporarily start a web server to handle the redirect when logging

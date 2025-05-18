@@ -7,6 +7,8 @@ import 'package:test/test.dart';
 
 import '../../../common/helpers/temp_file_utils.dart';
 
+// TODO: Avoid creating MinecraftAccount directlt (use createMinecraftAccount() instead), avoid IO operations.
+
 void main() {
   late AppDataPaths appDataPaths;
   late AccountStorage accountStorage;
@@ -65,16 +67,28 @@ void main() {
           microsoftAccountInfo: MicrosoftAccountInfo(
             microsoftOAuthAccessToken: ExpirableToken(
               value: 'ewdadwadwadwewaeadsadwadwadwawda',
-              expiresAt: DateTime.now().add(const Duration(days: 1)),
+              expiresAt: DateTime(2030, 5, 20, 14, 9),
             ),
-            microsoftOAuthRefreshToken: 'microsoftOAuthRefreshToken',
+            microsoftOAuthRefreshToken: ExpirableToken(
+              value: 'microsoftOAuthRefreshToken2',
+              expiresAt: DateTime(2020, 4, 18, 14, 9),
+            ),
             minecraftAccessToken: ExpirableToken(
               value: 'dsadsadsadasewaedadwda',
-              expiresAt: DateTime.now(),
+              expiresAt: DateTime(2015, 3, 18, 14, 9),
             ),
+            needsReAuthentication: true,
           ),
           skins: const [],
           ownsMinecraftJava: false,
+        ),
+        const MinecraftAccount(
+          id: 'id2',
+          username: 'Steve2',
+          accountType: AccountType.offline,
+          microsoftAccountInfo: null,
+          skins: [],
+          ownsMinecraftJava: null,
         ),
         MinecraftAccount(
           id: 'id',
@@ -83,13 +97,17 @@ void main() {
           microsoftAccountInfo: MicrosoftAccountInfo(
             microsoftOAuthAccessToken: ExpirableToken(
               value: 'ewdadwadwadwewaeadsadwadwadwawda',
-              expiresAt: DateTime.now().add(const Duration(hours: 12)),
+              expiresAt: DateTime(2014, 3, 18, 14, 9),
             ),
-            microsoftOAuthRefreshToken: 'microsoftOAuthRefreshToken',
+            microsoftOAuthRefreshToken: ExpirableToken(
+              value: 'microsoftOAuthRefreshToken',
+              expiresAt: DateTime(2015, 3, 18, 14, 9),
+            ),
             minecraftAccessToken: ExpirableToken(
               value: 'dsadsadsadasewaedadwdadfasdsadsa',
-              expiresAt: DateTime.now().add(const Duration(days: 3)),
+              expiresAt: DateTime(2077, 11, 18, 14, 9),
             ),
+            needsReAuthentication: false,
           ),
           skins: const [
             MinecraftSkin(
@@ -113,6 +131,14 @@ void main() {
   test('saveAccounts writes accounts correctly to disk', () {
     final expectedAccounts = MinecraftAccounts(
       all: [
+        const MinecraftAccount(
+          id: 'id2',
+          username: 'Steve2',
+          accountType: AccountType.offline,
+          microsoftAccountInfo: null,
+          skins: [],
+          ownsMinecraftJava: null,
+        ),
         MinecraftAccount(
           id: 'id',
           username: 'Steve',
@@ -120,13 +146,17 @@ void main() {
           microsoftAccountInfo: MicrosoftAccountInfo(
             microsoftOAuthAccessToken: ExpirableToken(
               value: 'ewdadwadwadwewaeadsadwadwadwawda',
-              expiresAt: DateTime.now().add(const Duration(days: 1)),
+              expiresAt: DateTime(2019, 7, 18, 14, 9),
             ),
-            microsoftOAuthRefreshToken: 'microsoftOAuthRefreshToken',
+            microsoftOAuthRefreshToken: ExpirableToken(
+              value: 'ewdadwadwadwewaeadsadwadadsdawadwawda',
+              expiresAt: DateTime(2017, 2, 16, 14, 9),
+            ),
             minecraftAccessToken: ExpirableToken(
               value: 'dsadsadsadasewaedadwda',
-              expiresAt: DateTime.now(),
+              expiresAt: DateTime(2013, 3, 12, 14, 9),
             ),
+            needsReAuthentication: true,
           ),
           skins: const [],
           ownsMinecraftJava: false,
@@ -138,13 +168,17 @@ void main() {
           microsoftAccountInfo: MicrosoftAccountInfo(
             microsoftOAuthAccessToken: ExpirableToken(
               value: 'ewdadwadwadwewaeadsadwadwadwawda',
-              expiresAt: DateTime.now().add(const Duration(hours: 12)),
+              expiresAt: DateTime(2020, 3, 28, 14, 9),
             ),
-            microsoftOAuthRefreshToken: 'microsoftOAuthRefreshToken',
+            microsoftOAuthRefreshToken: ExpirableToken(
+              value: 'ewdadwadwadwewaeadsadwadadsadsdsdawadwawda',
+              expiresAt: DateTime(2019, 4, 18, 14, 9),
+            ),
             minecraftAccessToken: ExpirableToken(
               value: 'dsadsadsadasewaedadwdadfasdsadsa',
-              expiresAt: DateTime.now().add(const Duration(days: 3)),
+              expiresAt: DateTime(2014, 4, 18, 14, 9),
             ),
+            needsReAuthentication: false,
           ),
           skins: const [
             MinecraftSkin(

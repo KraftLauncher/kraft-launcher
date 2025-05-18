@@ -29,6 +29,8 @@ abstract final class DioClient {
         'piston-data.mojang.com',
         'launchermeta.mojang.com',
       ];
+      // TODO: Obscure the account tokens
+      // TODO: If TalkerDioLogger was also used in production, then add tests for ignoreHosts
       dio.interceptors.add(
         TalkerDioLogger(
           settings: TalkerDioLoggerSettings(

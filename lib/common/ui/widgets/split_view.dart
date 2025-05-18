@@ -61,6 +61,7 @@ class PrimaryTilePane extends StatelessWidget {
     required this.selected,
     required this.title,
     required this.leading,
+    this.trailing,
     required this.onTap,
     this.contentPadding,
   });
@@ -68,6 +69,7 @@ class PrimaryTilePane extends StatelessWidget {
   final bool selected;
   final Widget title;
   final Widget leading;
+  final Widget? trailing;
   final GestureTapCallback onTap;
   final EdgeInsets? contentPadding;
 
@@ -91,6 +93,7 @@ class PrimaryTilePane extends StatelessWidget {
       selectedColor: context.theme.textTheme.bodyMedium!.color,
       contentPadding: contentPadding ?? const EdgeInsets.all(8),
       titleTextStyle: context.theme.textTheme.titleMedium,
+      trailing: trailing,
     ),
   );
 

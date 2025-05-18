@@ -18,6 +18,7 @@ import '../../data/minecraft_account.dart';
 import '../../data/minecraft_accounts.dart';
 import '../../data/minecraft_api/minecraft_api.dart';
 import '../../data/minecraft_api/minecraft_api_exceptions.dart';
+import '../account_utils.dart';
 import '../minecraft_skin_ext.dart';
 import 'async_timer.dart';
 import 'http_server_ext.dart';
@@ -43,10 +44,14 @@ class MinecraftAccountManager {
   @visibleForTesting
   final ImageCacheService imageCacheService;
 
-  Future<T> _transformExceptions<T>(Future<T> Function() run) async {
+  Future<T> _transformExceptions<T>(
+    Future<T> Function() run, {
+    void Function(MicrosoftAuthException e)? onMicrosoftAuthException,
+  }) async {
     try {
       return await run();
     } on MicrosoftAuthException catch (e) {
+      onMicrosoftAuthException?.call(e);
       throw AccountManagerException.microsoftAuthApiException(e);
     } on MinecraftApiException catch (e) {
       throw AccountManagerException.minecraftApiException(e);
@@ -290,7 +295,10 @@ class MinecraftAccountManager {
           // and will be set to false on the next run.
           return;
         }
-        // Check if the device code has expired before making the API call
+        // Check if the device code has expired before making the API call.
+        // NOTE: When using DateTime.now() instead of clock.now(), the related test
+        // will still succeed, but due to the Future.delayed() callback, commenting it out
+        // will cause the test to fail and require clock.now().
         final hasDeviceCodeExpired = clock.now().isAfter(deviceCodeExpiresAt);
         if (hasDeviceCodeExpired) {
           cancelTimerOnExpiration();
@@ -399,7 +407,7 @@ class MinecraftAccountManager {
       ownsMinecraftJava: ownsMinecraftJava,
     );
 
-    final existingAccounts = loadAccounts();
+    final existingAccounts = accountStorage.loadAccounts();
 
     final existingAccountIndex = existingAccounts.all.indexWhere(
       (account) => account.id == newAccount.id,
@@ -408,16 +416,12 @@ class MinecraftAccountManager {
 
     final updatedAccounts =
         isAccountAlreadyAdded
-            ? existingAccounts.copyWith(
-              all: [
-                ...existingAccounts.all..[existingAccountIndex] = newAccount,
-              ],
-              defaultAccountId: Wrapped.value(
-                existingAccounts.defaultAccountId ?? newAccount.id,
-              ),
+            ? _getUpdatedAccountsOnUpdate(
+              updatedAccount: newAccount,
+              existingAccounts: existingAccounts,
+              existingAccountIndex: existingAccountIndex,
             )
             : _getUpdatedAccountsOnCreate(
-              currentDefaultAccount: existingAccounts.defaultAccount,
               newAccount: newAccount,
               existingAccounts: existingAccounts,
             );
@@ -432,38 +436,67 @@ class MinecraftAccountManager {
   Future<AccountResult> refreshMicrosoftAccount(
     MinecraftAccount account, {
     required OnAuthProgressUpdateCallback onProgressUpdate,
-  }) => _transformExceptions(() async {
-    assert(
-      account.accountType == AccountType.microsoft,
-      'Expected the account type to be Microsoft, but received: ${account.accountType.name}',
-    );
+  }) => _transformExceptions(
+    () async {
+      assert(
+        account.accountType == AccountType.microsoft,
+        'Expected the account type to be Microsoft, but received: ${account.accountType.name}',
+      );
 
-    // TODO: Do we need to check whether the refresh token was expired? Or handle it if access has been revoked.
-    //  Also add expiresAt field for Microsoft refresh token, it's 90 days and fixed (not sent by the server).
-    final microsoftRefreshToken = requireNotNull(
-      account.microsoftAccountInfo?.microsoftOAuthRefreshToken,
-      name: 'microsoftRefreshToken',
-    );
-    onProgressUpdate(MicrosoftAuthProgress.refreshingMicrosoftTokens);
-    final oauthTokenResponse = await microsoftAuthApi
-        .getNewTokensFromRefreshToken(microsoftRefreshToken);
+      final microsoftRefreshToken = requireNotNull(
+        account.microsoftAccountInfo?.microsoftOAuthRefreshToken,
+        name: 'microsoftRefreshToken',
+      );
 
-    // Delete current cached skin images.
-    await imageCacheService.evictFromCache(account.headSkinImageUrl);
-    await imageCacheService.evictFromCache(account.fullSkinImageUrl);
+      _requireUnexpiredMicrosoftRefreshToken(account);
 
-    return _commonLoginWithMicrosoft(
-      oauthTokenResponse: oauthTokenResponse,
-      onProgressUpdate: onProgressUpdate,
-    );
-  });
+      onProgressUpdate(MicrosoftAuthProgress.refreshingMicrosoftTokens);
+      final oauthTokenResponse = await microsoftAuthApi
+          .getNewTokensFromRefreshToken(microsoftRefreshToken.value);
+
+      // Delete current cached skin images.
+      await imageCacheService.evictFromCache(account.headSkinImageUrl);
+      await imageCacheService.evictFromCache(account.fullSkinImageUrl);
+
+      return _commonLoginWithMicrosoft(
+        oauthTokenResponse: oauthTokenResponse,
+        onProgressUpdate: onProgressUpdate,
+      );
+    },
+    onMicrosoftAuthException: (e) {
+      if (e is ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException) {
+        final existingAccounts = accountStorage.loadAccounts();
+        final updatedAccount = _markNeedsReAuthentication(account);
+        final accountsReAuthUpdated = existingAccounts.updateById(
+          account.id,
+          (_) => updatedAccount,
+        );
+        accountStorage.saveAccounts(accountsReAuthUpdated);
+        throw AccountManagerException.microsoftExpiredOrUnauthorizedRefreshToken(
+          updatedAccount,
+        );
+      }
+    },
+  );
+
+  MinecraftAccounts _getUpdatedAccountsOnUpdate({
+    required MinecraftAccount updatedAccount,
+    required MinecraftAccounts existingAccounts,
+    required int existingAccountIndex,
+  }) => existingAccounts.copyWith(
+    all: List<MinecraftAccount>.from(existingAccounts.all)
+      ..[existingAccountIndex] = updatedAccount,
+    defaultAccountId: Wrapped.value(
+      existingAccounts.defaultAccountId ?? updatedAccount.id,
+    ),
+  );
 
   MinecraftAccounts _getUpdatedAccountsOnCreate({
-    required MinecraftAccount? currentDefaultAccount,
     required MinecraftAccount newAccount,
     required MinecraftAccounts existingAccounts,
   }) {
     final updatedAccountsList = [newAccount, ...existingAccounts.all];
+    final currentDefaultAccount = existingAccounts.defaultAccount;
     return existingAccounts.copyWith(
       all: updatedAccountsList,
       defaultAccountId: Wrapped.value(
@@ -486,11 +519,10 @@ class MinecraftAccountManager {
       ownsMinecraftJava: null,
     );
 
-    final existingAccounts = loadAccounts();
+    final existingAccounts = accountStorage.loadAccounts();
 
     final updatedAccounts = _getUpdatedAccountsOnCreate(
       newAccount: newAccount,
-      currentDefaultAccount: existingAccounts.defaultAccount,
       existingAccounts: existingAccounts,
     );
     accountStorage.saveAccounts(updatedAccounts);
@@ -505,7 +537,7 @@ class MinecraftAccountManager {
     required String accountId,
     required String username,
   }) {
-    final existingAccounts = loadAccounts();
+    final existingAccounts = accountStorage.loadAccounts();
     final index = existingAccounts.all.indexWhere(
       (account) => account.id == accountId,
     );
@@ -526,7 +558,7 @@ class MinecraftAccountManager {
   }
 
   MinecraftAccounts removeAccount(String accountId) {
-    final existingAccounts = loadAccounts();
+    final existingAccounts = accountStorage.loadAccounts();
     final removedAccountIndex = existingAccounts.all.indexWhere(
       (account) => account.id == accountId,
     );
@@ -546,9 +578,49 @@ class MinecraftAccountManager {
     return updatedAccounts;
   }
 
+  void _requireUnexpiredMicrosoftRefreshToken(MinecraftAccount account) {
+    if (account.microsoftAccountInfo?.needsReAuthentication ?? false) {
+      throw AccountManagerException.microsoftRefreshTokenExpired();
+    }
+  }
+
+  MinecraftAccount _markNeedsReAuthentication(
+    MinecraftAccount existingAccount,
+  ) {
+    final updatedAccount = existingAccount.copyWith(
+      microsoftAccountInfo: existingAccount.microsoftAccountInfo?.copyWith(
+        needsReAuthentication: true,
+      ),
+    );
+    return updatedAccount;
+  }
+
   MinecraftAccounts loadAccounts() {
     try {
-      return accountStorage.loadAccounts();
+      final loadedAccounts = accountStorage.loadAccounts();
+
+      bool hasUpdates = false;
+      final accountsReauthUpdated = loadedAccounts.copyWith(
+        all:
+            loadedAccounts.all.map((account) {
+              final microsoftAccountInfo = account.microsoftAccountInfo;
+
+              if (microsoftAccountInfo != null &&
+                  microsoftAccountInfo.microsoftOAuthRefreshToken.hasExpired) {
+                final newAccount = _markNeedsReAuthentication(account);
+                hasUpdates = true;
+
+                return newAccount;
+              }
+              return account;
+            }).toList(),
+      );
+      if (hasUpdates) {
+        accountStorage.saveAccounts(accountsReauthUpdated);
+        return accountsReauthUpdated;
+      }
+
+      return loadedAccounts;
     } on Exception catch (e, stackTrace) {
       throw AccountManagerException.unknown(e.toString(), stackTrace);
     }

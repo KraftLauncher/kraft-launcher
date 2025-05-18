@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 
 import '../../../common/logic/json.dart';
+import '../minecraft_api/minecraft_api.dart';
 import 'auth_methods/microsoft_auth_code_flow.dart';
 import 'auth_methods/microsoft_device_code_flow.dart';
 
@@ -56,6 +57,9 @@ class XboxLiveAuthTokenResponse {
       'XboxLiveAuthTokenResponse(xboxToken: $xboxToken, userHash: $userHash)';
 }
 
+/// See also:
+///  * https://minecraft.wiki/w/Microsoft_authentication
+///  * [MinecraftApi]
 abstract class MicrosoftAuthApi
     implements MicrosoftAuthCodeFlow, MicrosoftDeviceCodeFlow {
   Future<XboxLiveAuthTokenResponse> requestXboxLiveToken(

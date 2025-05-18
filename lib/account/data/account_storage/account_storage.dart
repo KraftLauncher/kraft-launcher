@@ -29,6 +29,7 @@ class AccountStorage {
     );
   }
 
+  // TODO: Avoid writeAsStringSync, read: https://dart.dev/tools/linter-rules/avoid_slow_async_io
   void saveAccounts(MinecraftAccounts accounts) {
     accountsFile.writeAsStringSync(jsonEncodePretty(accounts.toJson()));
   }

@@ -27,6 +27,11 @@ class LoginWithMicrosoftDialog extends StatefulWidget {
   @override
   State<LoginWithMicrosoftDialog> createState() =>
       _LoginWithMicrosoftDialogState();
+
+  static void show(BuildContext context) => showDialog<void>(
+    context: context,
+    builder: (context) => const LoginWithMicrosoftDialog(),
+  );
 }
 
 class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
@@ -77,25 +82,29 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                 switch (exception) {
                   case MicrosoftApiAccountManagerException():
                     final microsoftAuthException = exception.authApiException;
-                    if (microsoftAuthException
-                        is XstsErrorMicrosoftAuthException) {
-                      switch (microsoftAuthException.xstsError) {
-                        case XstsError.accountCreationRequired:
-                          scaffoldMessenger.showSnackBarText(
-                            message,
-                            snackBarAction: SnackBarAction(
-                              label: context.loc.createXboxAccount,
-                              onPressed:
-                                  () => launchUrl(
-                                    Uri.parse(
-                                      MicrosoftConstants.createXboxAccountLink,
+                    switch (microsoftAuthException) {
+                      case XstsErrorMicrosoftAuthException():
+                        switch (microsoftAuthException.xstsError) {
+                          case XstsError.accountCreationRequired:
+                            scaffoldMessenger.showSnackBarText(
+                              message,
+                              snackBarAction: SnackBarAction(
+                                label: context.loc.createXboxAccount,
+                                onPressed:
+                                    () => launchUrl(
+                                      Uri.parse(
+                                        MicrosoftConstants
+                                            .createXboxAccountLink,
+                                      ),
                                     ),
-                                  ),
-                            ),
-                          );
+                              ),
+                            );
 
-                        case _:
-                      }
+                          case _:
+                            scaffoldMessenger.showSnackBarText(message);
+                        }
+                      case _:
+                        scaffoldMessenger.showSnackBarText(message);
                     }
 
                   case MinecraftEntitlementAbsentAccountManagerException():

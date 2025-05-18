@@ -10,6 +10,7 @@ import '../../common/ui/widgets/split_view.dart';
 import '../../common/ui/widgets/unknown_error.dart';
 import '../data/minecraft_account.dart';
 import '../logic/account_cubit.dart';
+import '../logic/account_manager/minecraft_account_manager_exceptions.dart';
 import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
 import 'account_details.dart';
 import 'account_list_tile.dart';
@@ -99,12 +100,7 @@ class _AddAccountButton extends StatelessWidget {
                       AccountType.microsoft => MenuItemButton(
                         leadingIcon: const Icon(Icons.cloud),
                         child: Text(context.loc.microsoft),
-                        onPressed:
-                            () => showDialog<void>(
-                              context: context,
-                              builder:
-                                  (context) => const LoginWithMicrosoftDialog(),
-                            ),
+                        onPressed: () => LoginWithMicrosoftDialog.show(context),
                       ),
 
                       AccountType.offline => MenuItemButton(
@@ -142,9 +138,34 @@ class _AddAccountButton extends StatelessWidget {
                   if (state.microsoftRefreshAccountStatus ==
                       MicrosoftRefreshAccountStatus.failure) {
                     final exception = state.exceptionOrThrow;
-                    final String message = exception.getMessage(context.loc);
+                    final message = exception.getMessage(context.loc);
+                    final scaffoldMessenger = context.scaffoldMessenger;
 
-                    context.scaffoldMessenger.showSnackBarText(message);
+                    // Handle special errors
+
+                    switch (exception) {
+                      case MicrosoftRefreshTokenExpiredAccountManagerException():
+                        scaffoldMessenger.showSnackBarText(
+                          context.loc.sessionExpired,
+                          snackBarAction: SnackBarAction(
+                            label: context.loc.signInWithMicrosoft,
+                            onPressed:
+                                () => LoginWithMicrosoftDialog.show(context),
+                          ),
+                        );
+                      case MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException():
+                        scaffoldMessenger.showSnackBarText(
+                          context.loc.sessionExpiredOrAccessRevoked,
+                          snackBarAction: SnackBarAction(
+                            label: context.loc.signInWithMicrosoft,
+                            onPressed:
+                                () => LoginWithMicrosoftDialog.show(context),
+                          ),
+                        );
+                      case _:
+                        scaffoldMessenger.showSnackBarText(message);
+                    }
+
                     context
                         .read<MicrosoftAccountHandlerCubit>()
                         .resetRefreshStatus();
