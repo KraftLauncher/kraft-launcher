@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:window_size/window_size.dart';
 
 import 'account/data/account_storage/account_storage.dart';
 import 'account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
@@ -21,7 +20,6 @@ import 'common/generated/l10n/app_localizations.dart';
 import 'common/logic/app_data_paths.dart';
 import 'common/logic/app_logger.dart';
 import 'common/logic/dio_client.dart';
-import 'common/logic/platform_check.dart';
 import 'common/ui/utils/build_context_ext.dart';
 import 'common/ui/utils/home_screen_tab_ext.dart';
 import 'common/ui/widgets/optional_dynamic_color_builder.dart';
@@ -41,9 +39,6 @@ Future<void> main() async {
             ? (Directory('devWorkingDirectory')..createSync(recursive: true))
             : await getApplicationSupportDirectory(),
   );
-  if (isDesktop) {
-    setWindowMinSize(const Size(850, 600));
-  }
   AppLogger.init();
 
   FlutterError.onError = (details) {
