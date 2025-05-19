@@ -15,6 +15,8 @@ final class AccountState extends Equatable {
   const AccountState({
     this.selectedAccountId,
     this.accounts = const MinecraftAccounts(all: [], defaultAccountId: null),
+    this.searchedAccounts,
+    this.searchQuery,
     this.status = AccountStatus.initial,
     this.exceptionWithStackTrace,
   });
@@ -35,6 +37,12 @@ final class AccountState extends Equatable {
 
   final MinecraftAccounts accounts;
 
+  final List<MinecraftAccount>? searchedAccounts;
+  final String? searchQuery;
+
+  List<MinecraftAccount> get displayAccounts =>
+      searchedAccounts != null ? searchedAccounts! : accounts.all;
+
   final AccountStatus status;
 
   // There are no specific errors that could be encountered with this state.
@@ -45,6 +53,8 @@ final class AccountState extends Equatable {
   List<Object?> get props => [
     selectedAccountId,
     accounts,
+    searchedAccounts,
+    searchQuery,
     status,
     exceptionWithStackTrace,
   ];
@@ -52,6 +62,8 @@ final class AccountState extends Equatable {
   AccountState copyWith({
     Wrapped<String?>? selectedAccountId,
     MinecraftAccounts? accounts,
+    Wrapped<List<MinecraftAccount>?>? searchedAccounts,
+    Wrapped<String?>? searchQuery,
     AccountStatus? status,
     ExceptionWithStacktrace<AccountManagerException>? exceptionWithStackTrace,
   }) => AccountState(
@@ -60,6 +72,11 @@ final class AccountState extends Equatable {
             ? selectedAccountId.value
             : this.selectedAccountId,
     accounts: accounts ?? this.accounts,
+    searchedAccounts:
+        searchedAccounts != null
+            ? searchedAccounts.value
+            : this.searchedAccounts,
+    searchQuery: searchQuery != null ? searchQuery.value : this.searchQuery,
     status: status ?? this.status,
     exceptionWithStackTrace:
         exceptionWithStackTrace ?? this.exceptionWithStackTrace,

@@ -41,8 +41,16 @@ class AccountsTab extends StatelessWidget {
             height: MediaQuery.sizeOf(context).height * 0.85,
             child: Column(
               children: [
-                // TODO: Add accounts search?
-                SearchField(onSubmitted: (a) {}, onChanged: (a) {}),
+                SearchField(
+                  onSubmitted:
+                      (searchQuery) => context
+                          .read<AccountCubit>()
+                          .searchAccounts(searchQuery),
+                  onChanged:
+                      (searchQuery) => context
+                          .read<AccountCubit>()
+                          .searchAccounts(searchQuery),
+                ),
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
@@ -51,7 +59,7 @@ class AccountsTab extends StatelessWidget {
                       horizontal: 8,
                     ),
                     itemBuilder: (context, index) {
-                      final account = state.accounts.all[index];
+                      final account = state.displayAccounts[index];
                       return Padding(
                         key: ValueKey('${account.id}/$index'),
                         padding: const EdgeInsets.only(top: 8),
@@ -62,7 +70,7 @@ class AccountsTab extends StatelessWidget {
                         ),
                       );
                     },
-                    itemCount: state.accounts.all.length,
+                    itemCount: state.displayAccounts.length,
                   ),
                 ),
 

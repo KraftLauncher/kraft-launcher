@@ -72,6 +72,7 @@ class AccountCubit extends Cubit<AccountState> {
               .firstWhere((account) => account.id == newAccount.id)
               .id,
         ),
+        searchedAccounts: _getUpdatedSearchedAccounts(updatedAccounts),
         status: accountStatus,
       ),
     );
@@ -121,7 +122,59 @@ class AccountCubit extends Cubit<AccountState> {
               .getReplacementElementAfterRemoval(removedAccountIndex)
               ?.id,
         ),
+        searchedAccounts: _getUpdatedSearchedAccounts(updatedAccounts),
         status: AccountStatus.accountRemoved,
+      ),
+    );
+  }
+
+  // Returns the updated filtered accounts if the search query is set; used when updating, adding, or removing an account.
+  Wrapped<List<MinecraftAccount>?>? _getUpdatedSearchedAccounts(
+    MinecraftAccounts updatedAccounts,
+  ) =>
+      state.searchQuery != null
+          ? Wrapped.value(
+            _filterAccountsByUsername(
+              state.searchQuery!,
+              accounts: updatedAccounts.all,
+            ),
+          )
+          : null;
+
+  List<MinecraftAccount> _filterAccountsByUsername(
+    String searchQuery, {
+    required List<MinecraftAccount> accounts,
+  }) {
+    final filteredAccounts =
+        accounts
+            .where(
+              (account) => account.username.trim().toLowerCase().contains(
+                searchQuery.trim().toLowerCase(),
+              ),
+            )
+            .toList();
+    return filteredAccounts;
+  }
+
+  void searchAccounts(String searchQuery) {
+    if (searchQuery.trim().isEmpty) {
+      emit(
+        state.copyWith(
+          searchedAccounts: const Wrapped.value(null),
+          searchQuery: const Wrapped.value(null),
+        ),
+      );
+      return;
+    }
+    final filteredAccounts = _filterAccountsByUsername(
+      searchQuery,
+      accounts: state.accounts.all,
+    );
+
+    emit(
+      state.copyWith(
+        searchedAccounts: Wrapped.value(filteredAccounts),
+        searchQuery: Wrapped.value(searchQuery),
       ),
     );
   }
