@@ -243,7 +243,7 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                             ),
                       );
                     },
-                    label: Text(context.loc.signInWithMicrosoft),
+                    label: Text(context.loc.signInViaBrowser),
                     icon: const Icon(Icons.open_in_browser),
                   ),
                   const SizedBox(height: 16),

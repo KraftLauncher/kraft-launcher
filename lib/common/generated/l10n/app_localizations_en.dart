@@ -482,4 +482,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get reAuthenticationRequiredDueToAccessRevoked =>
       'Access to your account has been revoked. Please sign in again to continue.';
+
+  @override
+  String get signInViaBrowser => 'Sign in via Browser';
 }

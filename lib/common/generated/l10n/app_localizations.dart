@@ -917,6 +917,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Access to your account has been revoked. Please sign in again to continue.'**
   String get reAuthenticationRequiredDueToAccessRevoked;
+
+  /// No description provided for @signInViaBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in via Browser'**
+  String get signInViaBrowser;
 }
 
 class _AppLocalizationsDelegate

@@ -304,5 +304,6 @@
     "reAuthenticationRequiredDueToAccessRevoked": "Access to your account has been revoked. Please sign in again to continue.",
     "@reAuthenticationRequiredDueToAccessRevoked": {
         "description": "Shown when access to the user's account has been explicitly revoked, such as by an administrator or by the user from account settings. The user must re-authenticate to continue."
-    }
+    },
+    "signInViaBrowser": "Sign in via Browser"
 }
