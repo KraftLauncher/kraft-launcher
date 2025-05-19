@@ -20,3 +20,4 @@ This document list all modification made to the default platform runner template
 
 - Changed app id to `org.kraftlauncher.launcher`.
 - Changed window title to `Kraft Launcher`.
+- Changed window minimum size to `850×600`.
