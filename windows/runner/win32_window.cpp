@@ -207,6 +207,14 @@ Win32Window::MessageHandler(HWND hwnd,
       return 0;
     }
 
+    // https://reddit.com/r/flutterhelp/comments/13vkp86/comment/jm7blok/
+    case WM_GETMINMAXINFO: {
+      MINMAXINFO* mmi = reinterpret_cast<MINMAXINFO*>(lparam);
+      mmi->ptMinTrackSize.x = 850;  // Minimum width
+      mmi->ptMinTrackSize.y = 650;  // Minimum height
+      return 0;
+    }
+
     case WM_ACTIVATE:
       if (child_content_ != nullptr) {
         SetFocus(child_content_);
