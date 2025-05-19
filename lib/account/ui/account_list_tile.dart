@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/constants/constants.dart';
 import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/widgets/split_view.dart';
 import '../data/minecraft_account.dart';
@@ -40,8 +41,12 @@ class AccountListTile extends StatelessWidget {
                     constraints: const BoxConstraints(maxWidth: 250),
                     child: Text(
                       microsoftRefreshTokenExpired
-                          ? context.loc.sessionExpired
-                          : context.loc.sessionExpiredOrAccessRevoked,
+                          ? context.loc.reAuthenticationRequiredDueToInactivity(
+                            MicrosoftConstants.refreshTokenExpiresInDays,
+                          )
+                          : context
+                              .loc
+                              .reAuthenticationRequiredDueToAccessRevoked,
                       style: TextStyle(
                         color: context.isDark ? Colors.black : Colors.white,
                       ),

@@ -893,6 +893,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Revoked'**
   String get revoked;
+
+  /// Shown when the user has not signed in or used the account for a long time and the session has expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired after {daysInactive} days of inactivity. Please sign in again to continue.'**
+  String reAuthenticationRequiredDueToInactivity(int daysInactive);
+
+  /// Shown when access to the user's account has been explicitly revoked, such as by an administrator or by the user from account settings. The user must re-authenticate to continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Access to your account has been revoked. Please sign in again to continue.'**
+  String get reAuthenticationRequiredDueToAccessRevoked;
 }
 
 class _AppLocalizationsDelegate

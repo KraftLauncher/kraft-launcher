@@ -469,4 +469,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get revoked => 'Revoked';
+
+  @override
+  String reAuthenticationRequiredDueToInactivity(int daysInactive) {
+    return 'Your session has expired after $daysInactive days of inactivity. Please sign in again to continue.';
+  }
+
+  @override
+  String get reAuthenticationRequiredDueToAccessRevoked =>
+      'Access to your account has been revoked. Please sign in again to continue.';
 }

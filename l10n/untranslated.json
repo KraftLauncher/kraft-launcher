@@ -18,7 +18,9 @@
     "redeemCode",
     "sessionExpired",
     "expired",
-    "revoked"
+    "revoked",
+    "reAuthenticationRequiredDueToInactivity",
+    "reAuthenticationRequiredDueToAccessRevoked"
   ],
 
   "de": [
@@ -40,7 +42,9 @@
     "redeemCode",
     "sessionExpired",
     "expired",
-    "revoked"
+    "revoked",
+    "reAuthenticationRequiredDueToInactivity",
+    "reAuthenticationRequiredDueToAccessRevoked"
   ],
 
   "zh": [
@@ -62,6 +66,8 @@
     "redeemCode",
     "sessionExpired",
     "expired",
-    "revoked"
+    "revoked",
+    "reAuthenticationRequiredDueToInactivity",
+    "reAuthenticationRequiredDueToAccessRevoked"
   ]
 }

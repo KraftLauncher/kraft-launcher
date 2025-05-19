@@ -281,5 +281,20 @@
     "revoked": "Revoked",
     "@revoked": {
         "description": "Shown in the account list tile as a badge when the Microsoft refresh token access has been revoked."
+    },
+    "reAuthenticationRequiredDueToInactivity": "Your session has expired after {daysInactive} days of inactivity. Please sign in again to continue.",
+    "@reAuthenticationRequiredDueToInactivity": {
+        "description": "Shown when the user has not signed in or used the account for a long time and the session has expired.",
+        "placeholders": {
+            "daysInactive": {
+                "type": "int",
+                "example": "90",
+                "description": "The number of days since the user's session was last refreshed or used."
+            }
+        }
+    },
+    "reAuthenticationRequiredDueToAccessRevoked": "Access to your account has been revoked. Please sign in again to continue.",
+    "@reAuthenticationRequiredDueToAccessRevoked": {
+        "description": "Shown when access to the user's account has been explicitly revoked, such as by an administrator or by the user from account settings. The user must re-authenticate to continue."
     }
 }
