@@ -237,9 +237,17 @@
     "@xstsAgeVerificationRequiredError": {
         "description": "Shown when the account requires age verification before proceeding with sign-in."
     },
-    "xstsRequiresAdultConsentRequiredError": "This account is under 18. An adult needs to add the account to a Microsoft family to continue.",
+    "xstsRequiresAdultConsentRequiredError": "This account is under 18. An adult needs to add the account to a Microsoft family group to continue.",
     "@xstsRequiresAdultConsentRequiredError": {
         "description": "Shown when the user needs to be added to a family group by an adult to access Xbox services. This is required for XSTS authorization due to age restrictions."
+    },
+    "xstsAccountBannedError": "This Xbox account is permanently banned for violating community standards.",
+    "@xstsAccountBannedError": {
+        "description": "Shown when the user's Xbox account is permanently banned for violating community standards."
+    },
+    "xstsTermsNotAcceptedError": "This Microsoft account has not accepted the Xbox Terms of Service.",
+    "@xstsTermsNotAcceptedError": {
+        "description": "Shown when the user's Microsoft account has not accepted the Xbox Terms of Service, which prevents access to Xbox services through XSTS."
     },
     "createXboxAccount": "Create Xbox Account",
     "minecraftAccountNotFoundError": "Minecraft account was not found. Please ensure you are logged in with the correct Microsoft account.",

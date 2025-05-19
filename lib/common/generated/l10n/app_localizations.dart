@@ -825,8 +825,20 @@ abstract class AppLocalizations {
   /// Shown when the user needs to be added to a family group by an adult to access Xbox services. This is required for XSTS authorization due to age restrictions.
   ///
   /// In en, this message translates to:
-  /// **'This account is under 18. An adult needs to add the account to a Microsoft family to continue.'**
+  /// **'This account is under 18. An adult needs to add the account to a Microsoft family group to continue.'**
   String get xstsRequiresAdultConsentRequiredError;
+
+  /// Shown when the user's Xbox account is permanently banned for violating community standards.
+  ///
+  /// In en, this message translates to:
+  /// **'This Xbox account is permanently banned for violating community standards.'**
+  String get xstsAccountBannedError;
+
+  /// Shown when the user's Microsoft account has not accepted the Xbox Terms of Service, which prevents access to Xbox services through XSTS.
+  ///
+  /// In en, this message translates to:
+  /// **'This Microsoft account has not accepted the Xbox Terms of Service.'**
+  String get xstsTermsNotAcceptedError;
 
   /// No description provided for @createXboxAccount.
   ///

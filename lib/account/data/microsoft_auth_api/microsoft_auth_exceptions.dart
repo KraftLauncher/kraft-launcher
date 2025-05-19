@@ -85,8 +85,12 @@ enum XstsError {
   adultVerificationRequired(xErr: 2148916236),
   // Age verification must be completed on the Xbox homepage. (South Korea)
   ageVerificationRequired(xErr: 2148916237),
-  // The account is under the age of 18, an adult must add the account to the family.
-  accountUnderAge(xErr: 2148916238);
+  // The account is under the age of 18, an adult must add the account to the family group.
+  accountUnderAge(xErr: 2148916238),
+  // This Xbox account is permanently banned for violating community standards.
+  accountBanned(xErr: 2148916227),
+  // This Microsoft account has not accepted Xbox's Terms of Service.
+  termsNotAccepted(xErr: 2148916234);
 
   const XstsError({required this.xErr});
 

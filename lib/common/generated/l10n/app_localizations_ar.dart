@@ -421,7 +421,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get xstsRequiresAdultConsentRequiredError =>
-      'This account is under 18. An adult needs to add the account to a Microsoft family to continue.';
+      'This account is under 18. An adult needs to add the account to a Microsoft family group to continue.';
+
+  @override
+  String get xstsAccountBannedError =>
+      'This Xbox account is permanently banned for violating community standards.';
+
+  @override
+  String get xstsTermsNotAcceptedError =>
+      'This Microsoft account has not accepted the Xbox Terms of Service.';
 
   @override
   String get createXboxAccount => 'Create Xbox Account';

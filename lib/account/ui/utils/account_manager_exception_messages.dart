@@ -47,6 +47,8 @@ extension AccountManagerExceptionMessages on AccountManagerException {
               loc.xstsAgeVerificationRequiredError,
             XstsError.accountUnderAge =>
               loc.xstsRequiresAdultConsentRequiredError,
+            XstsError.accountBanned => loc.xstsAccountBannedError,
+            XstsError.termsNotAccepted => loc.xstsTermsNotAcceptedError,
           },
         };
       }(),
