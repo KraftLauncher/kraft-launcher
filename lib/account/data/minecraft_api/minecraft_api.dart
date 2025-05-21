@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../../common/logic/json.dart';
@@ -68,7 +69,7 @@ class MinecraftProfileResponse {
 }
 
 @immutable
-class MinecraftProfileSkin {
+class MinecraftProfileSkin extends Equatable {
   const MinecraftProfileSkin({
     required this.id,
     required this.state,
@@ -80,23 +81,24 @@ class MinecraftProfileSkin {
   factory MinecraftProfileSkin.fromJson(JsonObject json) =>
       MinecraftProfileSkin(
         id: json['id']! as String,
-        state: json['state']! as String,
+        state: MinecraftCosmeticState.fromJson(json['state']! as String),
         url: json['url']! as String,
         textureKey: json['textureKey']! as String,
         variant: MinecraftSkinVariant.fromJson(json['variant']! as String),
       );
 
   final String id;
-  // TODO: Store this as enum since, it's duplicated in MinecraftProfileCape, values are either ACTIVE or INACTIVE
-  //  and do the same in MinecraftAccount
-  final String state;
+  final MinecraftCosmeticState state;
   final String url;
   final String textureKey;
   final MinecraftSkinVariant variant;
+
+  @override
+  List<Object?> get props => [id, state, url, textureKey, variant];
 }
 
 @immutable
-class MinecraftProfileCape {
+class MinecraftProfileCape extends Equatable {
   const MinecraftProfileCape({
     required this.id,
     required this.state,
@@ -107,15 +109,18 @@ class MinecraftProfileCape {
   factory MinecraftProfileCape.fromJson(JsonObject json) =>
       MinecraftProfileCape(
         id: json['id']! as String,
-        state: json['state']! as String,
+        state: MinecraftCosmeticState.fromJson(json['state']! as String),
         url: json['url']! as String,
         alias: json['alias']! as String,
       );
 
   final String id;
-  final String state;
+  final MinecraftCosmeticState state;
   final String url;
   final String alias;
+
+  @override
+  List<Object?> get props => [id, state, url, alias];
 }
 
 // TODO: We probably need to rename this to MinecraftAccountApi (everywhere, even in tests),

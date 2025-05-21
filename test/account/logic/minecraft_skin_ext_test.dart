@@ -57,21 +57,21 @@ void _commonTests({
         skins: [
           const MinecraftSkin(
             id: currentActiveSkinId,
-            state: 'ACTIVE',
+            state: MinecraftCosmeticState.active,
             url: 'http://skin.png',
             textureKey: 'dasdsadasad',
             variant: MinecraftSkinVariant.slim,
           ),
           const MinecraftSkin(
             id: 'id2',
-            state: 'INACTIVE',
+            state: MinecraftCosmeticState.inactive,
             url: 'http://skin.png',
             textureKey: 'dasdsadasad',
             variant: MinecraftSkinVariant.slim,
           ),
           const MinecraftSkin(
             id: 'id3',
-            state: 'INACTIVE',
+            state: MinecraftCosmeticState.inactive,
             url: 'http://skin.png',
             textureKey: 'dasdsadasad',
             variant: MinecraftSkinVariant.slim,

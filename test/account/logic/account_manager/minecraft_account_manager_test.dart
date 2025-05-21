@@ -2245,14 +2245,14 @@ void main() {
             skins: const [
               MinecraftSkin(
                 id: 'id',
-                state: 'ACTIVE',
+                state: MinecraftCosmeticState.active,
                 url: 'http://dasdsas',
                 textureKey: 'dasdsadsadsa',
                 variant: MinecraftSkinVariant.classic,
               ),
               MinecraftSkin(
                 id: 'iadsadasd',
-                state: 'INACTIVE',
+                state: MinecraftCosmeticState.inactive,
                 url: 'http://dasddsadsasas',
                 textureKey: 'dsad2sadsadsa',
                 variant: MinecraftSkinVariant.slim,
@@ -2355,14 +2355,14 @@ void main() {
           skins: const [
             MinecraftSkin(
               id: 'id',
-              state: 'ACTIVE',
+              state: MinecraftCosmeticState.active,
               url: 'http://dasdsas',
               textureKey: 'dasdsadsadsa',
               variant: MinecraftSkinVariant.classic,
             ),
             MinecraftSkin(
               id: 'iadsadasd',
-              state: 'INACTIVE',
+              state: MinecraftCosmeticState.inactive,
               url: 'http://dasddsadsasas',
               textureKey: 'dsad2sadsadsa',
               variant: MinecraftSkinVariant.slim,
@@ -2676,14 +2676,14 @@ void main() {
           skins: const [
             MinecraftSkin(
               id: 'id',
-              state: 'ACTIVE',
+              state: MinecraftCosmeticState.active,
               url: 'http://dasdsas',
               textureKey: 'dasdsadsadsa',
               variant: MinecraftSkinVariant.classic,
             ),
             MinecraftSkin(
               id: 'iadsadasd',
-              state: 'INACTIVE',
+              state: MinecraftCosmeticState.inactive,
               url: 'http://dasddsadsasas',
               textureKey: 'dsad2sadsadsa',
               variant: MinecraftSkinVariant.slim,
@@ -2724,7 +2724,7 @@ void main() {
           skins: [
             const MinecraftSkin(
               id: 'refreshed-skin',
-              state: 'ACTIVE',
+              state: MinecraftCosmeticState.active,
               url: 'http://dasdsasdsadsa',
               textureKey: 'dasdsadsadsadsadsa',
               variant: MinecraftSkinVariant.slim,
@@ -3101,14 +3101,14 @@ void _commonLoginMicrosoftTests({
         skins: const [
           MinecraftSkin(
             id: 'id',
-            state: 'ACTIVE',
+            state: MinecraftCosmeticState.active,
             url: 'http://dasdsas',
             textureKey: 'dasdsadsadsa',
             variant: MinecraftSkinVariant.classic,
           ),
           MinecraftSkin(
             id: 'iadsadasd',
-            state: 'INACTIVE',
+            state: MinecraftCosmeticState.inactive,
             url: 'http://dasddsadsasas',
             textureKey: 'dsad2sadsadsa',
             variant: MinecraftSkinVariant.slim,
@@ -3182,14 +3182,14 @@ void _commonLoginMicrosoftTests({
             skins: const [
               MinecraftSkin(
                 id: 'id',
-                state: 'ACTIVE',
+                state: MinecraftCosmeticState.active,
                 url: 'http://dasdsas',
                 textureKey: 'dasdsadsadsa',
                 variant: MinecraftSkinVariant.classic,
               ),
               MinecraftSkin(
                 id: 'iadsadasd',
-                state: 'INACTIVE',
+                state: MinecraftCosmeticState.inactive,
                 url: 'http://dasddsadsasas',
                 textureKey: 'dsad2sadsadsa',
                 variant: MinecraftSkinVariant.slim,
@@ -3227,7 +3227,7 @@ void _commonLoginMicrosoftTests({
         skins: const [
           MinecraftSkin(
             id: 'iadsadasd',
-            state: 'INACTIVE',
+            state: MinecraftCosmeticState.inactive,
             url: 'http://dasddsadsasas',
             textureKey: 'dsad2sadsadsa',
             variant: MinecraftSkinVariant.slim,
@@ -3430,14 +3430,14 @@ void _minecraftAccountCreationFromApiResponsesTest(
       skins: [
         MinecraftProfileSkin(
           id: 'id',
-          state: 'INACTIVE',
+          state: MinecraftCosmeticState.inactive,
           url: 'http://edsadsaxample',
           textureKey: 'dsadsadsasdsads',
           variant: MinecraftSkinVariant.slim,
         ),
         MinecraftProfileSkin(
           id: 'id2',
-          state: 'ACTIVE',
+          state: MinecraftCosmeticState.active,
           url: 'http://exdsadsaample2',
           textureKey: 'dsadsadsads',
           variant: MinecraftSkinVariant.classic,
@@ -3446,7 +3446,7 @@ void _minecraftAccountCreationFromApiResponsesTest(
       capes: [
         MinecraftProfileCape(
           id: 'id',
-          state: 'ACTIVE',
+          state: MinecraftCosmeticState.active,
           url: 'http://example',
           alias: 'dasdsadas',
         ),

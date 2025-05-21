@@ -129,8 +129,49 @@ void main() {
     test('returns parsed $MinecraftProfileResponse on success', () async {
       const id = 'Minecraft ID';
       const name = 'Steve';
-      const skins = <JsonObject>[];
-      const capes = <JsonObject>[];
+      const skins = <JsonObject>[
+        {
+          'id': '6baa3a08-0e6d-4067-b056-52abb5b2e913',
+          'state': 'ACTIVE',
+          'url':
+              'http://textures.minecraft.net/texture/b56acf72e21992071218ba95ad42b70507628aa6ac13f08476dd601d96902b7c',
+          'textureKey':
+              'b56acf72e21996071218ba95ad42b70507628aa6ac13f08476dd601d96902b7c',
+          'variant': 'CLASSIC',
+        },
+        {
+          'id': '6baa3a08-0e6d-4067-b056-52abb5b2e913',
+          'state': 'INACTIVE',
+          'url':
+              'http://textures.minecraft.net/texture/b36acf72e21996071218ba95ad42b70507628aa6ac13f08476dd601d96902b7c',
+          'textureKey':
+              'b56acf72e21996071218ba95ad42b70507628aa6ac13f08476dd601d96902b7c',
+          'variant': 'CLASSIC',
+        },
+      ];
+      const capes = <JsonObject>[
+        {
+          'id': '1ed5269a-076e-4a3c-834a-2837d5b578f2',
+          'state': 'INACTIVE',
+          'url':
+              'http://textures.minecraft.net/texture/28de4a81688ad18b49e735a273e486c18f1e3966956123ccb574034c06f5d336',
+          'alias': 'Pan',
+        },
+        {
+          'id': '4af20372-79e0-4e1f-80f8-6bd8e3135995',
+          'state': 'ACTIVE',
+          'url':
+              'http://textures.minecraft.net/texture/2340c0e03dd24a11b15a8b33c2a7e1e32abb2051b2481d0ba7defd635ca7a933',
+          'alias': 'Migrator',
+        },
+        {
+          'id': 'a9d4f2e0-6109-43f7-97aa-84250ce3c1dd',
+          'state': 'INACTIVE',
+          'url':
+              'http://textures.minecraft.net/texture/5ec930cdd2629c8771655c60eebeb887b4b6559b0e6d3bc71c40c96347fa03f0',
+          'alias': 'Common',
+        },
+      ];
       mockDio.mockGetUriSuccess<JsonObject>(
         responseData: {'id': id, 'name': name, 'skins': skins, 'capes': capes},
       );
@@ -141,8 +182,14 @@ void main() {
 
       expect(response.id, id);
       expect(response.name, name);
-      expect(response.skins, skins);
-      expect(response.capes, capes);
+      expect(
+        response.skins,
+        skins.map((skin) => MinecraftProfileSkin.fromJson(skin)),
+      );
+      expect(
+        response.capes,
+        capes.map((cape) => MinecraftProfileCape.fromJson(cape)),
+      );
     });
     _tooManyRequestsTest(
       () => mockDio,
@@ -298,11 +345,11 @@ void main() {
       const name = 'Steve';
       final skins = <JsonObject>[
         {
-          'id': '',
-          'state': '',
-          'url': '',
-          'textureKey': '',
-          'variant': MinecraftSkinVariant.classic.name,
+          'id': '432',
+          'state': MinecraftCosmeticState.inactive.name.toUpperCase(),
+          'url': 'https://',
+          'textureKey': '123',
+          'variant': MinecraftSkinVariant.classic.name.toUpperCase(),
         },
       ];
       const capes = <MinecraftProfileCape>[];

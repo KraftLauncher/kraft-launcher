@@ -112,7 +112,7 @@ void main() {
           skins: const [
             MinecraftSkin(
               id: 'id',
-              state: 'ACTIVE',
+              state: MinecraftCosmeticState.active,
               url: 'url',
               textureKey: 'textureKey',
               variant: MinecraftSkinVariant.slim,
@@ -183,7 +183,7 @@ void main() {
           skins: const [
             MinecraftSkin(
               id: 'id',
-              state: 'ACTIVE',
+              state: MinecraftCosmeticState.inactive,
               url: 'url',
               textureKey: 'textureKey',
               variant: MinecraftSkinVariant.slim,

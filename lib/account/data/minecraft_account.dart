@@ -93,9 +93,11 @@ class MinecraftAccount {
 
   final List<MinecraftSkin> skins;
 
-  MinecraftSkin? get activeSkin =>
-      skins.firstWhereOrNull((skin) => skin.state == 'ACTIVE');
+  MinecraftSkin? get activeSkin => skins.firstWhereOrNull(
+    (skin) => skin.state == MinecraftCosmeticState.active,
+  );
 
+  // TODO: Move to MicrosoftAccountInfo instead?
   /// Not null if [accountType] is [AccountType.microsoft].
   // Currently, this is always true and will never be false, but it will be useful
   // when adding support for demo mode.
@@ -225,6 +227,16 @@ enum MinecraftSkinVariant {
   );
 }
 
+// For both skins and capes.
+enum MinecraftCosmeticState {
+  active,
+  inactive;
+
+  static MinecraftCosmeticState fromJson(String json) => values.firstWhere(
+    (state) => json.toLowerCase() == state.name.toLowerCase(),
+  );
+}
+
 @immutable
 class MinecraftSkin {
   const MinecraftSkin({
@@ -237,14 +249,14 @@ class MinecraftSkin {
 
   factory MinecraftSkin.fromJson(JsonObject json) => MinecraftSkin(
     id: json['id']! as String,
-    state: json['state']! as String,
+    state: MinecraftCosmeticState.fromJson(json['state']! as String),
     textureKey: json['textureKey']! as String,
     url: json['url']! as String,
     variant: MinecraftSkinVariant.fromJson(json['variant']! as String),
   );
 
   final String id;
-  final String state;
+  final MinecraftCosmeticState state;
   final String url;
   final String textureKey;
 
@@ -252,7 +264,7 @@ class MinecraftSkin {
 
   JsonObject toJson() => {
     'id': id,
-    'state': state,
+    'state': state.name,
     'url': url,
     'textureKey': textureKey,
     'variant': variant.name,
