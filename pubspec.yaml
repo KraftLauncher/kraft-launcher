@@ -66,6 +66,7 @@ dependency_overrides:
       path: packages/dynamic_color
 
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - assets/lottie/errors/

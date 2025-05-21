@@ -1,4 +1,5 @@
-import 'dart:convert' show JsonEncoder hide json;
+// Avoid showing the "json" property; otherwise, a bug will be introduced silently.
+import 'dart:convert' show JsonEncoder;
 
 typedef JsonObject = Map<String, Object?>;
 
