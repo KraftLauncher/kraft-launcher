@@ -3,7 +3,7 @@ import 'package:kraft_launcher/account/data/minecraft_accounts.dart';
 
 MinecraftAccounts createMinecraftAccounts({
   List<MinecraftAccount> all = const [],
-  String defaultAccountId = '',
+  String? defaultAccountId,
 }) => MinecraftAccounts(all: all, defaultAccountId: defaultAccountId);
 
 MinecraftAccount createMinecraftAccount({

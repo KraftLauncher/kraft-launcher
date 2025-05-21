@@ -39,17 +39,42 @@ void main() {
         home: Builder(
           builder: (context) {
             buildContext = context;
-            return const Text('Hi');
+            return const SizedBox.shrink();
           },
         ),
       ),
     );
 
-    expect(buildContext, isNotNull);
+    if (buildContext == null) {
+      fail('The $BuildContext should not be null');
+    }
     expect(buildContext!.theme, Theme.of(buildContext!));
     expect(
       buildContext!.scaffoldMessenger,
       ScaffoldMessenger.of(buildContext!),
     );
   });
+
+  for (final isDark in {true, false}) {
+    final brightness = isDark ? Brightness.dark : Brightness.light;
+    testWidgets(
+      'isDark returns $isDark when $Brightness is ${brightness.name}',
+      (tester) async {
+        BuildContext? buildContext;
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(brightness: brightness),
+            builder: (context, child) {
+              buildContext = context;
+              return const SizedBox.shrink();
+            },
+          ),
+        );
+        if (buildContext == null) {
+          fail('The $BuildContext should not be null');
+        }
+        expect(buildContext!.isDark, isDark);
+      },
+    );
+  }
 }
