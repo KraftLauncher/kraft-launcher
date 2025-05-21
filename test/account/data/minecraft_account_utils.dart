@@ -1,4 +1,10 @@
 import 'package:kraft_launcher/account/data/minecraft_account.dart';
+import 'package:kraft_launcher/account/data/minecraft_accounts.dart';
+
+MinecraftAccounts createMinecraftAccounts({
+  List<MinecraftAccount> all = const [],
+  String defaultAccountId = '',
+}) => MinecraftAccounts(all: all, defaultAccountId: defaultAccountId);
 
 MinecraftAccount createMinecraftAccount({
   String id = '',
@@ -7,17 +13,27 @@ MinecraftAccount createMinecraftAccount({
   MicrosoftAccountInfo? microsoftAccountInfo,
   bool isMicrosoftAccountInfoNull = false,
   List<MinecraftSkin> skins = const [],
+  List<MinecraftCape> capes = const [],
   bool ownsMinecraftJava = false,
 }) => MinecraftAccount(
   id: id,
   username: username,
   accountType: accountType,
-  microsoftAccountInfo:
-      isMicrosoftAccountInfoNull
-          ? null
-          : (microsoftAccountInfo ?? createMicrosoftAccountInfo()),
+  microsoftAccountInfo: () {
+    return switch (accountType) {
+      AccountType.microsoft =>
+        isMicrosoftAccountInfoNull
+            ? null
+            : (microsoftAccountInfo ?? createMicrosoftAccountInfo()),
+      AccountType.offline => null,
+    };
+  }(),
   skins: skins,
-  ownsMinecraftJava: ownsMinecraftJava,
+  capes: capes,
+  ownsMinecraftJava: switch (accountType) {
+    AccountType.microsoft => ownsMinecraftJava,
+    AccountType.offline => null,
+  },
 );
 
 MicrosoftAccountInfo createMicrosoftAccountInfo({
@@ -36,3 +52,24 @@ MicrosoftAccountInfo createMicrosoftAccountInfo({
 
 ExpirableToken createExpirableToken({String? value, DateTime? expiresAt}) =>
     ExpirableToken(value: value ?? '', expiresAt: expiresAt ?? DateTime(2017));
+
+MinecraftSkin createMinecraftSkin({
+  String id = '',
+  MinecraftCosmeticState state = MinecraftCosmeticState.inactive,
+  String url = '',
+  String textureKey = '',
+  MinecraftSkinVariant variant = MinecraftSkinVariant.classic,
+}) => MinecraftSkin(
+  id: id,
+  state: state,
+  url: url,
+  textureKey: textureKey,
+  variant: variant,
+);
+
+MinecraftCape createMinecraftCape({
+  String id = '',
+  MinecraftCosmeticState state = MinecraftCosmeticState.inactive,
+  String url = '',
+  String alias = '',
+}) => MinecraftCape(id: id, state: state, url: url, alias: alias);

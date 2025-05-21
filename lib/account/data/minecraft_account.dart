@@ -18,6 +18,7 @@ class MinecraftAccount {
     required this.accountType,
     required this.microsoftAccountInfo,
     required this.skins,
+    required this.capes,
     required this.ownsMinecraftJava,
   });
 
@@ -59,7 +60,17 @@ class MinecraftAccount {
               ),
             )
             .toList(),
-    // TODO: Store the capes too.
+    capes:
+        profileResponse.capes
+            .map(
+              (cape) => MinecraftCape(
+                id: cape.id,
+                state: cape.state,
+                url: cape.url,
+                alias: cape.alias,
+              ),
+            )
+            .toList(),
     ownsMinecraftJava: ownsMinecraftJava,
   );
 
@@ -81,6 +92,11 @@ class MinecraftAccount {
             .cast<JsonObject>()
             .map((jsonObject) => MinecraftSkin.fromJson(jsonObject))
             .toList(),
+    capes:
+        (json['capes']! as List<dynamic>)
+            .cast<JsonObject>()
+            .map((jsonObject) => MinecraftCape.fromJson(jsonObject))
+            .toList(),
     ownsMinecraftJava: json['ownsMinecraftJava'] as bool?,
   );
 
@@ -91,13 +107,14 @@ class MinecraftAccount {
   /// Not null if [accountType] is [AccountType.microsoft].
   final MicrosoftAccountInfo? microsoftAccountInfo;
 
+  // Skins and capes are always empty for offline accounts
   final List<MinecraftSkin> skins;
+  final List<MinecraftCape> capes;
 
   MinecraftSkin? get activeSkin => skins.firstWhereOrNull(
     (skin) => skin.state == MinecraftCosmeticState.active,
   );
 
-  // TODO: Move to MicrosoftAccountInfo instead?
   /// Not null if [accountType] is [AccountType.microsoft].
   // Currently, this is always true and will never be false, but it will be useful
   // when adding support for demo mode.
@@ -111,6 +128,7 @@ class MinecraftAccount {
     'accountType': accountType.name,
     'microsoftAccountInfo': microsoftAccountInfo?.toJson(),
     'skins': skins.map((skin) => skin.toJson()).toList(),
+    'capes': capes.map((cape) => cape.toJson()).toList(),
     'ownsMinecraftJava': ownsMinecraftJava,
   };
 
@@ -120,6 +138,7 @@ class MinecraftAccount {
     AccountType? accountType,
     MicrosoftAccountInfo? microsoftAccountInfo,
     List<MinecraftSkin>? skins,
+    List<MinecraftCape>? capes,
     bool? ownsMinecraftJava,
   }) => MinecraftAccount(
     id: id ?? this.id,
@@ -127,6 +146,7 @@ class MinecraftAccount {
     accountType: accountType ?? this.accountType,
     microsoftAccountInfo: microsoftAccountInfo ?? this.microsoftAccountInfo,
     skins: skins ?? this.skins,
+    capes: capes ?? this.capes,
     ownsMinecraftJava: ownsMinecraftJava ?? this.ownsMinecraftJava,
   );
 }
@@ -268,5 +288,34 @@ class MinecraftSkin {
     'url': url,
     'textureKey': textureKey,
     'variant': variant.name,
+  };
+}
+
+@immutable
+class MinecraftCape {
+  const MinecraftCape({
+    required this.id,
+    required this.state,
+    required this.url,
+    required this.alias,
+  });
+
+  factory MinecraftCape.fromJson(JsonObject json) => MinecraftCape(
+    id: json['id']! as String,
+    state: MinecraftCosmeticState.fromJson(json['state']! as String),
+    url: json['url']! as String,
+    alias: json['alias']! as String,
+  );
+
+  final String id;
+  final MinecraftCosmeticState state;
+  final String url;
+  final String alias;
+
+  JsonObject toJson() => {
+    'id': id,
+    'state': state.name,
+    'url': url,
+    'alias': alias,
   };
 }

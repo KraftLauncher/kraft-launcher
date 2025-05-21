@@ -516,6 +516,7 @@ class MinecraftAccountManager {
       username: username,
       microsoftAccountInfo: null,
       skins: List.unmodifiable([]),
+      capes: List.unmodifiable([]),
       ownsMinecraftJava: null,
     );
 
@@ -545,8 +546,10 @@ class MinecraftAccountManager {
     final updatedAccount = existingAccounts.all[index].copyWith(
       username: username,
     );
+
     final updatedAccounts = existingAccounts.copyWith(
-      all: [...existingAccounts.all..[index] = updatedAccount],
+      all: List<MinecraftAccount>.from(existingAccounts.all)
+        ..[index] = updatedAccount,
     );
 
     accountStorage.saveAccounts(updatedAccounts);
@@ -563,8 +566,9 @@ class MinecraftAccountManager {
       (account) => account.id == accountId,
     );
 
-    final updatedAccountsList = [...existingAccounts.all]
-      ..removeWhere((account) => account.id == accountId);
+    final updatedAccountsList = List<MinecraftAccount>.from(
+      existingAccounts.all,
+    )..removeWhere((account) => account.id == accountId);
 
     final updatedAccounts = existingAccounts.copyWith(
       all: updatedAccountsList,

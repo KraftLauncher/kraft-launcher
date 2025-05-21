@@ -28,6 +28,7 @@ import '../../../common/helpers/dio_utils.dart';
 import '../../../common/helpers/url_launcher_utils.dart';
 import '../../../common/helpers/utils.dart';
 import '../../data/minecraft_account_utils.dart';
+import '../../data/minecraft_dummy_accounts.dart';
 
 class MockMicrosoftAuthApi extends Mock implements MicrosoftAuthApi {}
 
@@ -41,13 +42,11 @@ late MockAccountStorage _mockAccountStorage;
 late MockImageCacheService _mockImageCacheService;
 
 // TODO: This test file is a total mess, should we refactor it fully? Make refactoring to existing production code to improve testability first.
-//  Also avoid duplicating dummy accounts in here and in Account storage tests.
 // TODO: Improve CI performance by avoiding all IO and Network operations in unit tests,
 //  move them to integration_test and depend on mocking instead:
 //  1. Avoid starting HttpServer and sending http requests to the local server in auth code flow in this file.
 //  2. Avoid creating files temporarily in unit tests, to track them, see usages of functions inside temp_file_utils.dart
-//  3. Avoid creating a Minecraft account over and over again, this requires a lot of changes when adding new properties. Add dummy values and make use of createMinecraftAccount() when possible
-//  4. We compare the accounts before and after to ensure the action applied the modification correctly, and that's done using toJson() to avoid the need for overriding hashCode and == or equatable,
+//  3. We compare the accounts before and after to ensure the action applied the modification correctly, and that's done using toJson() to avoid the need for overriding hashCode and == or equatable,
 //     however, the comparison between expiration dates could be improved or we might need to refactor this approach to solve it in a better way.
 
 void main() {
@@ -122,8 +121,17 @@ void main() {
                   ),
                 )
                 .toList(),
-        // TODO: The launcher doesn't support managing capes yet.
-        capes: const [],
+        capes:
+            account.capes
+                .map(
+                  (cape) => MinecraftProfileCape(
+                    id: cape.id,
+                    state: cape.state,
+                    url: cape.url,
+                    alias: cape.alias,
+                  ),
+                )
+                .toList(),
       ),
     );
 
@@ -1750,23 +1758,17 @@ void main() {
   group('removeAccount', () {
     test('removes account from the list correctly', () {
       const id = 'minecraft-user-id';
-      const initialAccounts = MinecraftAccounts(
+      final initialAccounts = createMinecraftAccounts(
         all: [
-          MinecraftAccount(
+          createMinecraftAccount(
             id: id,
             username: 'minecraft_username',
             accountType: AccountType.offline,
-            microsoftAccountInfo: null,
-            skins: [],
-            ownsMinecraftJava: null,
           ),
-          MinecraftAccount(
+          createMinecraftAccount(
             id: 'minecraft-user-id-2',
             username: 'minecraft_username_2',
             accountType: AccountType.offline,
-            microsoftAccountInfo: null,
-            skins: [],
-            ownsMinecraftJava: null,
           ),
         ],
         defaultAccountId: 'minecraft-user-id-2',
@@ -1783,15 +1785,15 @@ void main() {
         reason:
             'Keeps defaultAccountId unchanged if the default account was not removed.',
       );
-      expect(
-        newAccounts.toComparableJson(),
-        initialAccounts
-            .copyWith(
-              all: [...initialAccounts.all]
-                ..removeWhere((account) => account.id == id),
-            )
-            .toComparableJson(),
-      );
+
+      final expectedAccounts =
+          initialAccounts
+              .copyWith(
+                all: List<MinecraftAccount>.from(initialAccounts.all)
+                  ..removeWhere((account) => account.id == id),
+              )
+              .toComparableJson();
+      expect(newAccounts.toComparableJson(), expectedAccounts);
 
       verifyInOrder([
         () => _mockAccountStorage.loadAccounts(),
@@ -1805,17 +1807,9 @@ void main() {
 
     test('sets defaultAccountId to null when the only account is removed', () {
       const id = 'minecraft-user-id';
-      const initialAccounts = MinecraftAccounts(
-        all: [
-          MinecraftAccount(
-            id: id,
-            username: 'minecraft_username',
-            accountType: AccountType.offline,
-            microsoftAccountInfo: null,
-            skins: [],
-            ownsMinecraftJava: null,
-          ),
-        ],
+
+      final initialAccounts = createMinecraftAccounts(
+        all: [createMinecraftAccount(id: id)],
         defaultAccountId: id,
       );
 
@@ -1839,27 +1833,14 @@ void main() {
     });
 
     test(
-      'sets defaultAccountId to next element when current default account is removed',
+      'sets defaultAccountId to next account when current default account is removed',
       () {
         const id = 'minecraft-account-id';
-        const initialAccounts = MinecraftAccounts(
+        const nextId = 'minecraft-next-account-id';
+        final initialAccounts = createMinecraftAccounts(
           all: [
-            MinecraftAccount(
-              id: id,
-              username: 'minecraft_username',
-              accountType: AccountType.offline,
-              microsoftAccountInfo: null,
-              skins: [],
-              ownsMinecraftJava: null,
-            ),
-            MinecraftAccount(
-              id: 'minecraft-next-account-id',
-              username: 'minecraft_username_2',
-              accountType: AccountType.offline,
-              microsoftAccountInfo: null,
-              skins: [],
-              ownsMinecraftJava: null,
-            ),
+            createMinecraftAccount(id: id),
+            createMinecraftAccount(id: nextId),
           ],
           defaultAccountId: id,
         );
@@ -1877,7 +1858,7 @@ void main() {
         );
         expect(
           newAccounts.defaultAccountId,
-          initialAccounts.all.last.id,
+          nextId,
           reason: 'defaultAccountId should change to the next account',
         );
       },
@@ -1887,25 +1868,11 @@ void main() {
       'sets defaultAccountId to the previous account when the default account is removed and it is the last account',
       () {
         const id = 'minecraft-account-id';
-        const initialAccounts = MinecraftAccounts(
+        const previousId = 'minecraft-previous-account-id';
+        final initialAccounts = createMinecraftAccounts(
           all: [
-            MinecraftAccount(
-              id: 'minecraft-next-account-id',
-              username: 'minecraft_username_2',
-              accountType: AccountType.offline,
-              microsoftAccountInfo: null,
-              skins: [],
-              ownsMinecraftJava: null,
-            ),
-
-            MinecraftAccount(
-              id: id,
-              username: 'minecraft_username',
-              accountType: AccountType.offline,
-              microsoftAccountInfo: null,
-              skins: [],
-              ownsMinecraftJava: null,
-            ),
+            createMinecraftAccount(id: previousId),
+            createMinecraftAccount(id: id),
           ],
           defaultAccountId: id,
         );
@@ -1923,7 +1890,7 @@ void main() {
         );
         expect(
           newAccounts.defaultAccountId,
-          initialAccounts.all.first.id,
+          previousId,
           reason: 'defaultAccountId should be set to the previous account',
         );
       },
@@ -1942,18 +1909,14 @@ void main() {
 
       verify(() => _mockAccountStorage.loadAccounts()).called(1);
 
-      const accounts2 = MinecraftAccounts(
+      final accounts2 = createMinecraftAccounts(
         all: [
-          MinecraftAccount(
-            id: 'id',
-            username: 'username',
+          createMinecraftAccount(
+            id: 'example-id',
+            username: 'Steve',
             accountType: AccountType.offline,
-            microsoftAccountInfo: null,
-            skins: [],
-            ownsMinecraftJava: null,
           ),
         ],
-        defaultAccountId: 'defaultAccountId',
       );
 
       when(() => _mockAccountStorage.loadAccounts()).thenReturn(accounts2);
@@ -1991,88 +1954,42 @@ void main() {
     });
 
     test(
-      'sets needsReAuthentication to true for accounts with expired refresh tokens',
+      'sets needsReAuthentication to true for accounts with expired refresh tokens on load',
       () {
         final currentDate = DateTime(2030);
+
         withClock(Clock.fixed(currentDate), () {
-          final loadedAccounts = MinecraftAccounts(
+          final loadedAccounts = createMinecraftAccounts(
             all: [
-              MinecraftAccount(
-                id: 'id',
-                username: 'username',
+              createMinecraftAccount(
                 accountType: AccountType.microsoft,
-                microsoftAccountInfo: MicrosoftAccountInfo(
-                  microsoftOAuthAccessToken: ExpirableToken(
-                    value: 'value',
-                    expiresAt: DateTime(2025),
-                  ),
-                  microsoftOAuthRefreshToken: ExpirableToken(
-                    value: 'value',
+                microsoftAccountInfo: createMicrosoftAccountInfo(
+                  microsoftOAuthRefreshToken: createExpirableToken(
                     expiresAt: currentDate.add(const Duration(seconds: 3)),
                   ),
-                  minecraftAccessToken: ExpirableToken(
-                    value: 'value',
-                    expiresAt: DateTime(2025),
-                  ),
                   needsReAuthentication: false,
                 ),
-                skins: const [],
-                ownsMinecraftJava: true,
               ),
-              MinecraftAccount(
-                id: 'id',
-                username: 'username',
+              createMinecraftAccount(
                 accountType: AccountType.microsoft,
-                microsoftAccountInfo: MicrosoftAccountInfo(
-                  microsoftOAuthAccessToken: ExpirableToken(
-                    value: 'value',
-                    expiresAt: DateTime(2025),
-                  ),
-                  microsoftOAuthRefreshToken: ExpirableToken(
-                    value: 'value',
+                microsoftAccountInfo: createMicrosoftAccountInfo(
+                  microsoftOAuthRefreshToken: createExpirableToken(
                     expiresAt: currentDate.subtract(const Duration(seconds: 3)),
                   ),
-                  minecraftAccessToken: ExpirableToken(
-                    value: 'value',
-                    expiresAt: DateTime(2025),
-                  ),
                   needsReAuthentication: false,
                 ),
-                skins: const [],
-                ownsMinecraftJava: true,
               ),
-              MinecraftAccount(
-                id: 'id',
-                username: 'username',
+              createMinecraftAccount(
                 accountType: AccountType.microsoft,
-                microsoftAccountInfo: MicrosoftAccountInfo(
-                  microsoftOAuthAccessToken: ExpirableToken(
-                    value: 'value',
-                    expiresAt: DateTime(2025),
-                  ),
-                  microsoftOAuthRefreshToken: ExpirableToken(
-                    value: 'value',
+                microsoftAccountInfo: createMicrosoftAccountInfo(
+                  microsoftOAuthRefreshToken: createExpirableToken(
                     expiresAt: currentDate.add(const Duration(days: 90)),
-                  ),
-                  minecraftAccessToken: ExpirableToken(
-                    value: 'value',
-                    expiresAt: DateTime(2025),
                   ),
                   needsReAuthentication: true,
                 ),
-                skins: const [],
-                ownsMinecraftJava: true,
               ),
-              const MinecraftAccount(
-                id: 'id',
-                username: 'username',
-                accountType: AccountType.offline,
-                microsoftAccountInfo: null,
-                skins: [],
-                ownsMinecraftJava: true,
-              ),
+              createMinecraftAccount(accountType: AccountType.offline),
             ],
-            defaultAccountId: null,
           );
           when(
             () => _mockAccountStorage.loadAccounts(),
@@ -2098,11 +2015,11 @@ void main() {
                 }).toList(),
           );
 
-          final accounts = minecraftAccountManager.loadAccounts();
-          expect(accounts.toJson(), expectedAccounts.toJson());
+          final newAccounts = minecraftAccountManager.loadAccounts();
+          expect(newAccounts.toJson(), expectedAccounts.toJson());
 
           verify(() => _mockAccountStorage.loadAccounts()).called(1);
-          verify(() => _mockAccountStorage.saveAccounts(accounts)).called(1);
+          verify(() => _mockAccountStorage.saveAccounts(newAccounts)).called(1);
           verifyNoMoreInteractions(_mockAccountStorage);
         });
       },
@@ -2113,24 +2030,10 @@ void main() {
     const currentDefaultAccountId = 'id2';
     const newDefaultAccountId = 'id1';
 
-    const initialAccounts = MinecraftAccounts(
+    final initialAccounts = createMinecraftAccounts(
       all: [
-        MinecraftAccount(
-          id: newDefaultAccountId,
-          username: 'username',
-          accountType: AccountType.offline,
-          microsoftAccountInfo: null,
-          skins: [],
-          ownsMinecraftJava: null,
-        ),
-        MinecraftAccount(
-          id: currentDefaultAccountId,
-          username: 'username',
-          accountType: AccountType.offline,
-          microsoftAccountInfo: null,
-          skins: [],
-          ownsMinecraftJava: null,
-        ),
+        createMinecraftAccount(id: newDefaultAccountId),
+        createMinecraftAccount(id: currentDefaultAccountId),
       ],
       defaultAccountId: currentDefaultAccountId,
     );
@@ -2167,8 +2070,16 @@ void main() {
       expect(newAccount.isMicrosoft, false);
       expect(newAccount.username, username);
       expect(newAccount.ownsMinecraftJava, null);
-      expect(newAccount.skins, <MinecraftSkin>[]);
-      expect(newAccount.ownsMinecraftJava, null);
+      expect(
+        newAccount.skins,
+        <MinecraftSkin>[],
+        reason: 'Skins are not supported on offline accounts',
+      );
+      expect(
+        newAccount.capes,
+        <MinecraftCape>[],
+        reason: 'Capes are not supported on offline accounts',
+      );
 
       final uuidV4Regex = RegExp(
         r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
@@ -2212,57 +2123,10 @@ void main() {
     });
 
     test('saves and adds the account to the list when there are accounts', () {
-      const currentDefaultAccountId = 'player-id2';
-      final existingAccounts = MinecraftAccounts(
-        all: [
-          const MinecraftAccount(
-            id: currentDefaultAccountId,
-            username: 'player_username2',
-            accountType: AccountType.offline,
-            microsoftAccountInfo: null,
-            skins: [],
-            ownsMinecraftJava: null,
-          ),
-          MinecraftAccount(
-            id: 'player-id',
-            username: 'player_username',
-            accountType: AccountType.microsoft,
-            microsoftAccountInfo: MicrosoftAccountInfo(
-              microsoftOAuthAccessToken: ExpirableToken(
-                value: 'microsoft-access-token',
-                expiresAt: DateTime(2020, 1, 20, 15, 40),
-              ),
-              microsoftOAuthRefreshToken: ExpirableToken(
-                value: 'microsoft-refresh-token',
-                expiresAt: DateTime(2016, 1, 20, 15),
-              ),
-              minecraftAccessToken: ExpirableToken(
-                value: 'minecraft-access-token',
-                expiresAt: DateTime(2015, 1, 20, 15, 40),
-              ),
-              needsReAuthentication: false,
-            ),
-            skins: const [
-              MinecraftSkin(
-                id: 'id',
-                state: MinecraftCosmeticState.active,
-                url: 'http://dasdsas',
-                textureKey: 'dasdsadsadsa',
-                variant: MinecraftSkinVariant.classic,
-              ),
-              MinecraftSkin(
-                id: 'iadsadasd',
-                state: MinecraftCosmeticState.inactive,
-                url: 'http://dasddsadsasas',
-                textureKey: 'dsad2sadsadsa',
-                variant: MinecraftSkinVariant.slim,
-              ),
-            ],
-            ownsMinecraftJava: true,
-          ),
-        ],
-        defaultAccountId: currentDefaultAccountId,
-      );
+      final currentDefaultAccountId =
+          MinecraftDummyAccounts.accounts.defaultAccountId;
+
+      final existingAccounts = MinecraftDummyAccounts.accounts;
       when(
         () => _mockAccountStorage.loadAccounts(),
       ).thenReturn(existingAccounts);
@@ -2321,69 +2185,25 @@ void main() {
   });
 
   test('updateOfflineAccount updates the account correctly', () {
-    const accountId = 'player-id2';
-    const originalAccount = MinecraftAccount(
-      id: accountId,
-      username: 'player_username2',
-      accountType: AccountType.offline,
-      microsoftAccountInfo: null,
-      skins: [],
-      ownsMinecraftJava: true,
-    );
-    final initialAccounts = MinecraftAccounts(
-      all: [
-        originalAccount,
-        MinecraftAccount(
-          id: 'player-id',
-          username: 'player_username',
-          accountType: AccountType.microsoft,
-          microsoftAccountInfo: MicrosoftAccountInfo(
-            microsoftOAuthAccessToken: ExpirableToken(
-              value: 'microsoft-access-token',
-              expiresAt: DateTime(2009, 1, 20, 15, 40),
-            ),
-            microsoftOAuthRefreshToken: ExpirableToken(
-              value: 'microsoft-refresh-token',
-              expiresAt: DateTime(2005, 1, 20, 15, 40),
-            ),
-            minecraftAccessToken: ExpirableToken(
-              value: 'minecraft-access-token',
-              expiresAt: DateTime(1995, 1, 20, 15, 40),
-            ),
-            needsReAuthentication: false,
-          ),
-          skins: const [
-            MinecraftSkin(
-              id: 'id',
-              state: MinecraftCosmeticState.active,
-              url: 'http://dasdsas',
-              textureKey: 'dasdsadsadsa',
-              variant: MinecraftSkinVariant.classic,
-            ),
-            MinecraftSkin(
-              id: 'iadsadasd',
-              state: MinecraftCosmeticState.inactive,
-              url: 'http://dasddsadsasas',
-              textureKey: 'dsad2sadsadsa',
-              variant: MinecraftSkinVariant.slim,
-            ),
-          ],
-          ownsMinecraftJava: true,
-        ),
-      ],
-      defaultAccountId: accountId,
+    final initialAccounts = MinecraftDummyAccounts.accounts;
+    final originalAccount = initialAccounts.all.firstWhere(
+      (account) => account.accountType == AccountType.offline,
     );
 
     when(() => _mockAccountStorage.loadAccounts()).thenReturn(initialAccounts);
 
     const newUsername = 'new_player_username4';
     final result = minecraftAccountManager.updateOfflineAccount(
-      accountId: accountId,
+      accountId: originalAccount.id,
       username: newUsername,
     );
     final updatedAccount = result.newAccount;
 
-    expect(updatedAccount.id, originalAccount.id);
+    expect(
+      updatedAccount.id,
+      originalAccount.id,
+      reason: 'The account ID should remain unchanged.',
+    );
     expect(updatedAccount.accountType, AccountType.offline);
     expect(updatedAccount.isMicrosoft, false);
     expect(updatedAccount.microsoftAccountInfo, null);
@@ -2401,13 +2221,13 @@ void main() {
     final originalAccountIndex = initialAccounts.all.indexWhere(
       (account) => account.id == originalAccount.id,
     );
+
     expect(
       result.updatedAccounts.toComparableJson(),
       initialAccounts
           .copyWith(
-            all:
-                (initialAccounts..all[originalAccountIndex] = updatedAccount)
-                    .all,
+            all: List<MinecraftAccount>.from(initialAccounts.all)
+              ..[originalAccountIndex] = updatedAccount,
           )
           .toComparableJson(),
     );
@@ -2654,61 +2474,27 @@ void main() {
       'saves and returns the refreshed account correctly without modifying other accounts',
       () async {
         const refreshAccountId = 'player-id';
-        final accountBeforeRefresh = MinecraftAccount(
+
+        final accountBeforeRefresh = MinecraftDummyAccount.account.copyWith(
           id: refreshAccountId,
-          username: 'player_name_before_refresh',
           accountType: AccountType.microsoft,
-          microsoftAccountInfo: MicrosoftAccountInfo(
-            microsoftOAuthAccessToken: ExpirableToken(
-              value: 'microsoft-access-token',
-              expiresAt: DateTime(2029, 5, 20, 15),
-            ),
-            microsoftOAuthRefreshToken: ExpirableToken(
-              value: 'microsoft-refresh-token-before-refresh',
-              expiresAt: DateTime(2024),
-            ),
-            minecraftAccessToken: ExpirableToken(
-              value: 'minecraft-access-token',
-              expiresAt: DateTime(2014, 3, 15, 28),
-            ),
-            needsReAuthentication: false,
-          ),
-          skins: const [
-            MinecraftSkin(
-              id: 'id',
-              state: MinecraftCosmeticState.active,
-              url: 'http://dasdsas',
-              textureKey: 'dasdsadsadsa',
-              variant: MinecraftSkinVariant.classic,
-            ),
-            MinecraftSkin(
-              id: 'iadsadasd',
-              state: MinecraftCosmeticState.inactive,
-              url: 'http://dasddsadsasas',
-              textureKey: 'dsad2sadsadsa',
-              variant: MinecraftSkinVariant.slim,
-            ),
-          ],
-          ownsMinecraftJava: true,
+          microsoftAccountInfo: MinecraftDummyAccount
+              .account
+              .microsoftAccountInfo!
+              .copyWith(needsReAuthentication: false),
         );
         const currentDefaultAccountId = 'current-default-account-id';
-        final existingAccounts = MinecraftAccounts(
+        final existingAccounts = createMinecraftAccounts(
           all: [
-            const MinecraftAccount(
+            createMinecraftAccount(
               id: currentDefaultAccountId,
               username: 'player_username2',
               accountType: AccountType.offline,
-              microsoftAccountInfo: null,
-              skins: [],
-              ownsMinecraftJava: null,
             ),
-            const MinecraftAccount(
+            createMinecraftAccount(
               id: 'account-id3',
               username: 'player_username3',
               accountType: AccountType.offline,
-              microsoftAccountInfo: null,
-              skins: [],
-              ownsMinecraftJava: false,
             ),
             accountBeforeRefresh,
           ],
@@ -2806,63 +2592,17 @@ void main() {
       'sets needsReAuthentication to true for the account on $ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException and throws $MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException',
       () async {
         const refreshAccountId = 'id';
-        final accountBeforeRefresh = MinecraftAccount(
+
+        final accountBeforeRefresh = MinecraftDummyAccount.account.copyWith(
           id: refreshAccountId,
-          username: 'username',
-          accountType: AccountType.microsoft,
-          microsoftAccountInfo: MicrosoftAccountInfo(
-            microsoftOAuthAccessToken: ExpirableToken(
-              value: 'value',
-              expiresAt: DateTime(2030),
-            ),
-            microsoftOAuthRefreshToken: ExpirableToken(
-              value: 'value',
-              expiresAt: DateTime(2019),
-            ),
-            minecraftAccessToken: ExpirableToken(
-              value: 'value',
-              expiresAt: DateTime(2012),
-            ),
-            needsReAuthentication: false,
-          ),
-          skins: const [],
-          ownsMinecraftJava: true,
+          microsoftAccountInfo: MinecraftDummyAccount
+              .account
+              .microsoftAccountInfo!
+              .copyWith(needsReAuthentication: false),
         );
-        final existingAccounts = MinecraftAccounts(
-          all: [
-            accountBeforeRefresh,
-            MinecraftAccount(
-              id: 'id2',
-              username: 'username',
-              accountType: AccountType.microsoft,
-              microsoftAccountInfo: MicrosoftAccountInfo(
-                microsoftOAuthAccessToken: ExpirableToken(
-                  value: 'value',
-                  expiresAt: DateTime(2030),
-                ),
-                microsoftOAuthRefreshToken: ExpirableToken(
-                  value: 'value',
-                  expiresAt: DateTime(2019),
-                ),
-                minecraftAccessToken: ExpirableToken(
-                  value: 'value',
-                  expiresAt: DateTime(2012),
-                ),
-                needsReAuthentication: true,
-              ),
-              skins: const [],
-              ownsMinecraftJava: true,
-            ),
-            const MinecraftAccount(
-              id: refreshAccountId,
-              username: 'username',
-              accountType: AccountType.offline,
-              microsoftAccountInfo: null,
-              skins: [],
-              ownsMinecraftJava: null,
-            ),
-          ],
-          defaultAccountId: null,
+
+        final existingAccounts = MinecraftDummyAccounts.accounts.copyWith(
+          all: [accountBeforeRefresh, ...MinecraftDummyAccounts.accounts.all],
         );
 
         when(
@@ -3079,43 +2819,7 @@ void _commonLoginMicrosoftTests({
         () => _mockAccountStorage.loadAccounts(),
       ).thenReturn(MinecraftAccounts.empty());
 
-      final newAccount = MinecraftAccount(
-        id: 'player-id',
-        username: 'player_username',
-        accountType: AccountType.microsoft,
-        microsoftAccountInfo: MicrosoftAccountInfo(
-          microsoftOAuthAccessToken: ExpirableToken(
-            value: 'microsoft-access-token',
-            expiresAt: DateTime(2025, 1, 20, 15, 40),
-          ),
-          microsoftOAuthRefreshToken: ExpirableToken(
-            value: 'microsoft-refresh-token',
-            expiresAt: DateTime(2090),
-          ),
-          minecraftAccessToken: ExpirableToken(
-            value: 'minecraft-access-token',
-            expiresAt: DateTime(2022, 1, 20, 15, 40),
-          ),
-          needsReAuthentication: false,
-        ),
-        skins: const [
-          MinecraftSkin(
-            id: 'id',
-            state: MinecraftCosmeticState.active,
-            url: 'http://dasdsas',
-            textureKey: 'dasdsadsadsa',
-            variant: MinecraftSkinVariant.classic,
-          ),
-          MinecraftSkin(
-            id: 'iadsadasd',
-            state: MinecraftCosmeticState.inactive,
-            url: 'http://dasddsadsasas',
-            textureKey: 'dsad2sadsadsa',
-            variant: MinecraftSkinVariant.slim,
-          ),
-        ],
-        ownsMinecraftJava: true,
-      );
+      final newAccount = MinecraftDummyAccount.account;
 
       mockMinecraftAccountCallback(newAccount);
 
@@ -3149,92 +2853,16 @@ void _commonLoginMicrosoftTests({
   test(
     'saves and returns the account correctly on success when there are accounts previously',
     () async {
-      const currentDefaultAccountId = 'player-id2';
-      final existingAccounts = MinecraftAccounts(
-        all: [
-          const MinecraftAccount(
-            id: 'player-id2',
-            username: 'player_username2',
-            accountType: AccountType.offline,
-            microsoftAccountInfo: null,
-            skins: [],
-            ownsMinecraftJava: false,
-          ),
-          MinecraftAccount(
-            id: 'player-id',
-            username: 'player_username',
-            accountType: AccountType.microsoft,
-            microsoftAccountInfo: MicrosoftAccountInfo(
-              microsoftOAuthAccessToken: ExpirableToken(
-                value: 'microsoft-access-token',
-                expiresAt: DateTime(2099, 1, 20, 15, 40),
-              ),
-              microsoftOAuthRefreshToken: ExpirableToken(
-                value: 'microsoft-refresh-token',
-                expiresAt: DateTime(2050, 1, 20, 15, 40),
-              ),
-              minecraftAccessToken: ExpirableToken(
-                value: 'minecraft-access-token',
-                expiresAt: DateTime(2022, 1, 25, 15, 40),
-              ),
-              needsReAuthentication: false,
-            ),
-            skins: const [
-              MinecraftSkin(
-                id: 'id',
-                state: MinecraftCosmeticState.active,
-                url: 'http://dasdsas',
-                textureKey: 'dasdsadsadsa',
-                variant: MinecraftSkinVariant.classic,
-              ),
-              MinecraftSkin(
-                id: 'iadsadasd',
-                state: MinecraftCosmeticState.inactive,
-                url: 'http://dasddsadsasas',
-                textureKey: 'dsad2sadsadsa',
-                variant: MinecraftSkinVariant.slim,
-              ),
-            ],
-            ownsMinecraftJava: true,
-          ),
-        ],
-        defaultAccountId: currentDefaultAccountId,
-      );
+      final currentDefaultAccountId =
+          MinecraftDummyAccounts.accounts.defaultAccountId!;
+
+      final existingAccounts = MinecraftDummyAccounts.accounts;
 
       when(
         () => _mockAccountStorage.loadAccounts(),
       ).thenReturn(existingAccounts);
 
-      final newAccount = MinecraftAccount(
-        id: 'player-id3',
-        username: 'player_username3',
-        accountType: AccountType.microsoft,
-        microsoftAccountInfo: MicrosoftAccountInfo(
-          microsoftOAuthAccessToken: ExpirableToken(
-            value: 'dsadsadsamicrosoft-access-token',
-            expiresAt: DateTime(2024, 1, 20, 15, 40),
-          ),
-          microsoftOAuthRefreshToken: ExpirableToken(
-            value: 'microsoftdsadsa-refresh-token',
-            expiresAt: DateTime(2023, 1, 20, 15, 40),
-          ),
-          minecraftAccessToken: ExpirableToken(
-            value: 'midsadsanecraft-access-token',
-            expiresAt: DateTime(2023, 1, 21, 15, 40),
-          ),
-          needsReAuthentication: false,
-        ),
-        skins: const [
-          MinecraftSkin(
-            id: 'iadsadasd',
-            state: MinecraftCosmeticState.inactive,
-            url: 'http://dasddsadsasas',
-            textureKey: 'dsad2sadsadsa',
-            variant: MinecraftSkinVariant.slim,
-          ),
-        ],
-        ownsMinecraftJava: true,
-      );
+      final newAccount = MinecraftDummyAccount.account;
 
       mockMinecraftAccountCallback(newAccount);
 
@@ -3272,68 +2900,16 @@ void _commonLoginMicrosoftTests({
   test(
     'updates and returns the existing account on success when there are accounts previously',
     () async {
-      const existingAccountId = 'minecraft-id';
-      final existingAccounts = MinecraftAccounts(
-        all: [
-          MinecraftAccount(
-            id: existingAccountId,
-            username: 'username',
-            accountType: AccountType.microsoft,
-            microsoftAccountInfo: MicrosoftAccountInfo(
-              microsoftOAuthAccessToken: ExpirableToken(
-                value: 'value',
-                expiresAt: DateTime(2050, 2, 1, 12, 20, 0),
-              ),
-              microsoftOAuthRefreshToken: ExpirableToken(
-                value: '',
-                expiresAt: DateTime(2017, 2, 1, 12, 20, 0),
-              ),
-              minecraftAccessToken: ExpirableToken(
-                value: 'value',
-                expiresAt: DateTime(2077, 1, 1, 12, 20, 0),
-              ),
-              needsReAuthentication: false,
-            ),
-            skins: const [],
-            ownsMinecraftJava: true,
-          ),
-          const MinecraftAccount(
-            id: 'dsaiodjosajdoiska',
-            username: 'username_2',
-            accountType: AccountType.offline,
-            microsoftAccountInfo: null,
-            skins: [],
-            ownsMinecraftJava: null,
-          ),
-        ],
-        defaultAccountId: 'default-account-id',
-      );
+      const existingAccountId = MinecraftDummyAccounts.targetAccountId;
+
+      final existingAccounts = MinecraftDummyAccounts.accounts;
 
       when(
         () => _mockAccountStorage.loadAccounts(),
       ).thenReturn(existingAccounts);
 
-      final newAccount = MinecraftAccount(
+      final newAccount = MinecraftDummyAccount.account.copyWith(
         id: existingAccountId,
-        username: 'username',
-        accountType: AccountType.microsoft,
-        microsoftAccountInfo: MicrosoftAccountInfo(
-          microsoftOAuthAccessToken: ExpirableToken(
-            value: 'value2',
-            expiresAt: DateTime(2013, 1, 1, 20, 20, 0),
-          ),
-          microsoftOAuthRefreshToken: ExpirableToken(
-            value: 'value2',
-            expiresAt: DateTime(2013, 1, 1, 20, 10, 10),
-          ),
-          minecraftAccessToken: ExpirableToken(
-            value: 'asvalue11',
-            expiresAt: DateTime(2006, 3, 28, 0, 0, 0),
-          ),
-          needsReAuthentication: false,
-        ),
-        skins: const [],
-        ownsMinecraftJava: true,
       );
 
       mockMinecraftAccountCallback(newAccount);
@@ -3360,7 +2936,8 @@ void _commonLoginMicrosoftTests({
         result.updatedAccounts.toComparableJson(),
         existingAccounts
             .copyWith(
-              all: existingAccounts.all..[existingAccountIndex] = newAccount,
+              all: List.from(existingAccounts.all)
+                ..[existingAccountIndex] = newAccount,
             )
             .toComparableJson(),
       );

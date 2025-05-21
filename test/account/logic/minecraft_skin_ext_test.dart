@@ -2,6 +2,8 @@ import 'package:kraft_launcher/account/data/minecraft_account.dart';
 import 'package:kraft_launcher/account/logic/minecraft_skin_ext.dart';
 import 'package:test/test.dart';
 
+import '../data/minecraft_account_utils.dart';
+
 const _steveUserId = 'f498513c-e8c8-3773-be26-ecfc7ed5185d';
 
 void main() {
@@ -91,11 +93,9 @@ MinecraftAccount _account({
   MicrosoftAccountInfo? microsoftAccountInfo,
   List<MinecraftSkin> skins = const [],
   String accountId = '',
-}) => MinecraftAccount(
+}) => createMinecraftAccount(
   accountType: accountType,
   id: accountId,
   microsoftAccountInfo: microsoftAccountInfo,
-  ownsMinecraftJava: null,
   skins: skins,
-  username: '',
 );
