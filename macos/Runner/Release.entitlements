@@ -3,8 +3,12 @@
 <plist version="1.0">
 <dict>
 	<!-- Sandbox is disabled because it prevents launching Minecraft Java -->
-	<!-- <key>com.apple.security.app-sandbox</key>
-	<true/> -->
+	<key>com.apple.security.app-sandbox</key>
+	<false/>
+	<!-- Required to run a local HTTP server to handle the auth code callback -->
+	<!-- See also: https://docs.flutter.dev/platform-integration/macos/building#setting-up-entitlements -->
+	<key>com.apple.security.network.server</key>
+	<true/>
 	<key>com.apple.security.network.client</key>
 	<true/>
 </dict>
