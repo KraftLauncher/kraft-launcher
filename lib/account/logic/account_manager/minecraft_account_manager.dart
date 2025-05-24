@@ -400,7 +400,7 @@ class MinecraftAccountManager {
       minecraftLoginResponse.accessToken,
     );
 
-    final newAccount = MinecraftAccount.fromMinecraftProfileResponse(
+    final newAccount = accountFromResponses(
       profileResponse: minecraftProfileResponse,
       oauthTokenResponse: oauthTokenResponse,
       loginResponse: minecraftLoginResponse,
@@ -443,10 +443,17 @@ class MinecraftAccountManager {
         'Expected the account type to be Microsoft, but received: ${account.accountType.name}',
       );
 
-      final microsoftRefreshToken = requireNotNull(
-        account.microsoftAccountInfo?.microsoftOAuthRefreshToken,
-        name: 'microsoftRefreshToken',
-      );
+      final microsoftAccountInfo = account.microsoftAccountInfo;
+      if (microsoftAccountInfo == null) {
+        throw ArgumentError.value(
+          account,
+          'account',
+          'The $MicrosoftAccountInfo must not be null when refreshing'
+              ' the Microsoft account. Account Type: ${account.accountType.name}',
+        );
+      }
+      final microsoftRefreshToken =
+          microsoftAccountInfo.microsoftOAuthRefreshToken;
 
       _requireUnexpiredMicrosoftRefreshToken(account);
 
@@ -586,6 +593,8 @@ class MinecraftAccountManager {
     if (account.microsoftAccountInfo?.needsReAuthentication ?? false) {
       throw AccountManagerException.microsoftRefreshTokenExpired();
     }
+    // TODO: Do we also need to check the expiresAt? The expiresAt will be updated
+    //  when loading the accounts but it might expire after loading them while using the launcher (rare case since it expires in 90 days). Also handle update from UI if done, review this fully and update tests
   }
 
   MinecraftAccount _markNeedsReAuthentication(
@@ -640,6 +649,127 @@ class MinecraftAccountManager {
     accountStorage.saveAccounts(updatedAccounts);
     return updatedAccounts;
   }
+
+  // Refreshes a Microsoft account if the Minecraft access token is expired.
+  @visibleForTesting
+  @experimental // TODO: More consideration is needed, test it with skin update feature first
+  Future<MinecraftAccount> refreshMinecraftAccessTokenIfExpired(
+    MinecraftAccount account, {
+    required OnAuthProgressUpdateCallback onRefreshProgressUpdate,
+  }) async {
+    final microsoftAccountInfo = account.microsoftAccountInfo;
+    if (microsoftAccountInfo == null) {
+      throw ArgumentError.value(
+        account,
+        'account',
+        'The $MicrosoftAccountInfo must not be null when validating the '
+            'Minecraft access token. Account Type: ${account.accountType.name}',
+      );
+    }
+    final hasExpired = microsoftAccountInfo.minecraftAccessToken.hasExpired;
+    if (hasExpired) {
+      // TODO: Test the handling of Microsoft refresh token expiration?
+
+      _requireUnexpiredMicrosoftRefreshToken(account);
+
+      onRefreshProgressUpdate(MicrosoftAuthProgress.refreshingMicrosoftTokens);
+      final response = await microsoftAuthApi.getNewTokensFromRefreshToken(
+        microsoftAccountInfo.microsoftOAuthRefreshToken.value,
+      );
+
+      onRefreshProgressUpdate(MicrosoftAuthProgress.requestingXboxToken);
+      final xboxResponse = await microsoftAuthApi.requestXboxLiveToken(
+        response,
+      );
+
+      onRefreshProgressUpdate(MicrosoftAuthProgress.requestingXstsToken);
+      final xstsResponse = await microsoftAuthApi.requestXSTSToken(
+        xboxResponse,
+      );
+
+      onRefreshProgressUpdate(MicrosoftAuthProgress.loggingIntoMinecraft);
+      final loginResponse = await minecraftApi.loginToMinecraftWithXbox(
+        xstsResponse,
+      );
+      final refreshedAccount = account.copyWith(
+        microsoftAccountInfo: microsoftAccountInfo.copyWith(
+          minecraftAccessToken: ExpirableToken(
+            value: loginResponse.accessToken,
+            expiresAt: expiresInToExpiresAt(loginResponse.expiresIn),
+          ),
+          microsoftOAuthAccessToken: ExpirableToken(
+            value: response.accessToken,
+            expiresAt: expiresInToExpiresAt(loginResponse.expiresIn),
+          ),
+          microsoftOAuthRefreshToken: ExpirableToken(
+            value: response.refreshToken,
+            expiresAt: _microsoftRefreshTokenExpiresAt(),
+          ),
+        ),
+      );
+
+      return refreshedAccount;
+    }
+    return account;
+  }
+
+  // NOTE: The Microsoft API doesn't provide the expiration date for the refresh token,
+  // it's 90 days according to https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens#token-lifetime.
+  // The app will always need to handle the case where it's expired or access is revoked when sending the request.
+  DateTime _microsoftRefreshTokenExpiresAt() => clock.now().add(
+    const Duration(days: MicrosoftConstants.refreshTokenExpiresInDays),
+  );
+
+  @visibleForTesting
+  MinecraftAccount accountFromResponses({
+    required MinecraftProfileResponse profileResponse,
+    required MicrosoftOauthTokenExchangeResponse oauthTokenResponse,
+    required MinecraftLoginResponse loginResponse,
+    required bool ownsMinecraftJava,
+  }) => MinecraftAccount(
+    id: profileResponse.id,
+    username: profileResponse.name,
+    accountType: AccountType.microsoft,
+    microsoftAccountInfo: MicrosoftAccountInfo(
+      microsoftOAuthAccessToken: ExpirableToken(
+        value: oauthTokenResponse.accessToken,
+        expiresAt: expiresInToExpiresAt(oauthTokenResponse.expiresIn),
+      ),
+      microsoftOAuthRefreshToken: ExpirableToken(
+        value: oauthTokenResponse.refreshToken,
+        expiresAt: _microsoftRefreshTokenExpiresAt(),
+      ),
+      minecraftAccessToken: ExpirableToken(
+        value: loginResponse.accessToken,
+        expiresAt: expiresInToExpiresAt(loginResponse.expiresIn),
+      ),
+      needsReAuthentication: false,
+    ),
+    skins:
+        profileResponse.skins
+            .map(
+              (skin) => MinecraftSkin(
+                id: skin.id,
+                state: skin.state,
+                url: skin.url,
+                textureKey: skin.textureKey,
+                variant: skin.variant,
+              ),
+            )
+            .toList(),
+    capes:
+        profileResponse.capes
+            .map(
+              (cape) => MinecraftCape(
+                id: cape.id,
+                state: cape.state,
+                url: cape.url,
+                alias: cape.alias,
+              ),
+            )
+            .toList(),
+    ownsMinecraftJava: ownsMinecraftJava,
+  );
 }
 
 @immutable
@@ -767,6 +897,7 @@ typedef OnAuthProgressUpdateAuthCodeCallback =
     void Function(
       MicrosoftAuthProgress newProgress, {
 
+      // TODO: Maybe move authCodeLoginUrl in a separate callback (like OnDeviceCodeAvailableCallback) and use OnAuthProgressUpdateCallback instead? Also update tests
       /// Not null if [newProgress] is [MicrosoftAuthProgress.waitingForUserLogin]
       String? authCodeLoginUrl,
     });

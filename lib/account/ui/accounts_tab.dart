@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../common/generated/assets.gen.dart';
 import '../../common/ui/utils/build_context_ext.dart';
@@ -80,7 +81,10 @@ class AccountsTab extends StatelessWidget {
           ),
           secondaryPane:
               state.selectedAccountId != null
-                  ? AccountDetails(account: state.selectedAccountOrThrow)
+                  ? AccountDetails(
+                    account: state.selectedAccountOrThrow,
+                    imagePicker: context.read<ImagePicker>(),
+                  )
                   : null,
         );
       },

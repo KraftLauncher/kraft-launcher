@@ -167,10 +167,6 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
 
   @override
   Future<XboxLiveAuthTokenResponse> requestXboxLiveToken(
-    // The error code and description are included in responses of requests
-    // that made to Microsoft, and not Xbox. Xbox APIs usually returns error details in the headers
-    // and additionally in the response data (XErr) when requesting XSTS. It's handled
-    // in requestXboxLiveToken and requestXSTSToken.
     MicrosoftOauthTokenExchangeResponse microsoftOauthToken,
   ) async => _handleCommonFailures(
     () async {

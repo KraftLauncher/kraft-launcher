@@ -1,5 +1,7 @@
 import 'package:meta/meta.dart';
 
+// TODO: We need proper naming convnetion for the exceptions before moving forward, refactor all exceptions to follow it.
+
 @immutable
 sealed class MinecraftApiException implements Exception {
   const MinecraftApiException(this.message);

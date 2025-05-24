@@ -51,7 +51,7 @@ MicrosoftAccountInfo createMicrosoftAccountInfo({
 );
 
 ExpirableToken createExpirableToken({String? value, DateTime? expiresAt}) =>
-    ExpirableToken(value: value ?? '', expiresAt: expiresAt ?? DateTime(2017));
+    ExpirableToken(value: value ?? '', expiresAt: expiresAt ?? DateTime(2099));
 
 MinecraftSkin createMinecraftSkin({
   String id = '',

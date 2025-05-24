@@ -41,6 +41,8 @@ late MockMinecraftApi _mockMinecraftApi;
 late MockAccountStorage _mockAccountStorage;
 late MockImageCacheService _mockImageCacheService;
 
+late MinecraftAccountManager _minecraftAccountManager;
+
 // TODO: This test file is a total mess, should we refactor it fully? Make refactoring to existing production code to improve testability first.
 // TODO: Improve CI performance by avoiding all IO and Network operations in unit tests,
 //  move them to integration_test and depend on mocking instead:
@@ -50,14 +52,12 @@ late MockImageCacheService _mockImageCacheService;
 //     however, the comparison between expiration dates could be improved or we might need to refactor this approach to solve it in a better way.
 
 void main() {
-  late MinecraftAccountManager minecraftAccountManager;
-
   setUp(() {
     _mockMicrosoftAuthApi = MockMicrosoftAuthApi();
     _mockMinecraftApi = MockMinecraftApi();
     _mockAccountStorage = MockAccountStorage();
     _mockImageCacheService = MockImageCacheService();
-    minecraftAccountManager = MinecraftAccountManager(
+    _minecraftAccountManager = MinecraftAccountManager(
       minecraftApi: _mockMinecraftApi,
       microsoftAuthApi: _mockMicrosoftAuthApi,
       accountStorage: _mockAccountStorage,
@@ -213,58 +213,58 @@ void main() {
 
   group('auth code flow', () {
     tearDown(() async {
-      if (minecraftAccountManager.isServerRunning) {
-        await minecraftAccountManager.stopServer();
+      if (_minecraftAccountManager.isServerRunning) {
+        await _minecraftAccountManager.stopServer();
       }
     });
 
     test('requireServer throws $StateError if null', () {
-      expect(() => minecraftAccountManager.requireServer, throwsStateError);
+      expect(() => _minecraftAccountManager.requireServer, throwsStateError);
     });
 
     test('requireServer returns httpServer if not null', () async {
-      final server = await minecraftAccountManager.startServer();
-      expect(minecraftAccountManager.requireServer, server);
+      final server = await _minecraftAccountManager.startServer();
+      expect(_minecraftAccountManager.requireServer, server);
     });
 
     test('isServerRunning returns correctly', () async {
-      await minecraftAccountManager.startServer();
-      expect(minecraftAccountManager.isServerRunning, true);
+      await _minecraftAccountManager.startServer();
+      expect(_minecraftAccountManager.isServerRunning, true);
 
-      await minecraftAccountManager.stopServer();
-      expect(minecraftAccountManager.isServerRunning, false);
+      await _minecraftAccountManager.stopServer();
+      expect(_minecraftAccountManager.isServerRunning, false);
     });
 
     test(
       'httpServer initially null',
-      () => expect(minecraftAccountManager.httpServer, null),
+      () => expect(_minecraftAccountManager.httpServer, null),
     );
 
     test('startServer sets httpServer to not null', () async {
       expect(
-        await minecraftAccountManager.startServer(),
-        minecraftAccountManager.httpServer,
+        await _minecraftAccountManager.startServer(),
+        _minecraftAccountManager.httpServer,
       );
-      expect(minecraftAccountManager.httpServer, isNotNull);
+      expect(_minecraftAccountManager.httpServer, isNotNull);
     });
 
     test('stopServer sets httpServer to null', () async {
-      await minecraftAccountManager.startServer();
-      await minecraftAccountManager.stopServer();
-      expect(minecraftAccountManager.httpServer, null);
+      await _minecraftAccountManager.startServer();
+      await _minecraftAccountManager.stopServer();
+      expect(_minecraftAccountManager.httpServer, null);
     });
     test('stopServerIfRunning stops the server if it is running', () async {
-      await minecraftAccountManager.startServer();
+      await _minecraftAccountManager.startServer();
 
-      expect(await minecraftAccountManager.stopServerIfRunning(), true);
+      expect(await _minecraftAccountManager.stopServerIfRunning(), true);
     });
     test('stopServerIfRunning do thing if', () async {
-      expect(await minecraftAccountManager.stopServerIfRunning(), false);
+      expect(await _minecraftAccountManager.stopServerIfRunning(), false);
     });
 
     (String, int) addressAndPort() => (
-      minecraftAccountManager.requireServer.address.address,
-      minecraftAccountManager.requireServer.port,
+      _minecraftAccountManager.requireServer.address.address,
+      _minecraftAccountManager.requireServer.port,
     );
 
     Uri serverUri({
@@ -285,21 +285,21 @@ void main() {
     }
 
     test('server is reachable when started', () async {
-      await minecraftAccountManager.startServer();
-      expect(minecraftAccountManager.isServerRunning, true);
+      await _minecraftAccountManager.startServer();
+      expect(_minecraftAccountManager.isServerRunning, true);
 
       final (address, port) = addressAndPort();
       expect(await isPortOpen(address, port), true);
-      await minecraftAccountManager.stopServer();
+      await _minecraftAccountManager.stopServer();
     });
 
     test('server is not reachable when stopped', () async {
-      await minecraftAccountManager.startServer();
+      await _minecraftAccountManager.startServer();
 
       final (address, port) = addressAndPort();
 
-      await minecraftAccountManager.stopServer();
-      expect(minecraftAccountManager.isServerRunning, false);
+      await _minecraftAccountManager.stopServer();
+      expect(_minecraftAccountManager.isServerRunning, false);
 
       expect(await isPortOpen(address, port), false);
     });
@@ -369,22 +369,22 @@ void main() {
       Future<AccountResult?> loginWithMicrosoftAuthCode({
         OnAuthProgressUpdateAuthCodeCallback? onProgressUpdate,
         MicrosoftAuthCodeResponsePageVariants? responsePageVariants,
-      }) => minecraftAccountManager.loginWithMicrosoftAuthCode(
+      }) => _minecraftAccountManager.loginWithMicrosoftAuthCode(
         onProgressUpdate: onProgressUpdate ?? (_, {authCodeLoginUrl}) {},
         authCodeResponsePageVariants:
             responsePageVariants ?? authCodeResponsePageVariants(),
       );
 
       test('starts server if not started already', () async {
-        expect(minecraftAccountManager.isServerRunning, false);
+        expect(_minecraftAccountManager.isServerRunning, false);
 
         unawaited(loginWithMicrosoftAuthCode());
 
         // Waiting for the server to start
         await Future<void>.delayed(Duration.zero);
-        expect(minecraftAccountManager.isServerRunning, true);
+        expect(_minecraftAccountManager.isServerRunning, true);
 
-        await minecraftAccountManager.stopServer();
+        await _minecraftAccountManager.stopServer();
       });
 
       test('opens the correct URL after starting the server', () async {
@@ -411,7 +411,7 @@ void main() {
         ).called(1);
         verifyNoMoreInteractions(_mockMicrosoftAuthApi);
 
-        await minecraftAccountManager.stopServer();
+        await _minecraftAccountManager.stopServer();
       });
 
       test('calls onProgressUpdate with the login URL', () async {
@@ -441,30 +441,30 @@ void main() {
         expect(capturedLoginUrl, isNotNull);
         expect(capturedLoginUrl, authCodeLoginUrl);
 
-        await minecraftAccountManager.stopServer();
+        await _minecraftAccountManager.stopServer();
       });
 
       test('cancels device code polling timer', () async {
-        minecraftAccountManager.deviceCodePollingTimer = AsyncTimer.periodic(
+        _minecraftAccountManager.deviceCodePollingTimer = AsyncTimer.periodic(
           // This duration is a dummy value
           const Duration(seconds: 10),
           () {},
         );
-        expect(minecraftAccountManager.isDeviceCodePollingTimerActive, true);
-        expect(minecraftAccountManager.deviceCodePollingTimer, isNotNull);
+        expect(_minecraftAccountManager.isDeviceCodePollingTimerActive, true);
+        expect(_minecraftAccountManager.deviceCodePollingTimer, isNotNull);
 
         unawaited(loginWithMicrosoftAuthCode());
         // Waiting for the server to start
         await Future<void>.delayed(Duration.zero);
 
-        expect(minecraftAccountManager.isDeviceCodePollingTimerActive, false);
-        expect(minecraftAccountManager.deviceCodePollingTimer, isNull);
+        expect(_minecraftAccountManager.isDeviceCodePollingTimerActive, false);
+        expect(_minecraftAccountManager.deviceCodePollingTimer, isNull);
         expect(
-          minecraftAccountManager.requestCancelDeviceCodePollingTimer,
+          _minecraftAccountManager.requestCancelDeviceCodePollingTimer,
           true,
         );
 
-        await minecraftAccountManager.stopServer();
+        await _minecraftAccountManager.stopServer();
       });
 
       const fakeAuthCode = 'M1ddasdasdsadsadsadsadsq0idqwjiod';
@@ -550,7 +550,7 @@ void main() {
             ignoreResultExceptions: true,
           );
 
-          expect(minecraftAccountManager.isServerRunning, false);
+          expect(_minecraftAccountManager.isServerRunning, false);
 
           expect(
             response,
@@ -580,7 +580,7 @@ void main() {
                   ),
             ),
           );
-          expect(minecraftAccountManager.isServerRunning, false);
+          expect(_minecraftAccountManager.isServerRunning, false);
         },
       );
 
@@ -607,7 +607,7 @@ void main() {
             ignoreResultExceptions: true,
           );
 
-          expect(minecraftAccountManager.isServerRunning, false);
+          expect(_minecraftAccountManager.isServerRunning, false);
 
           expect(
             response,
@@ -623,7 +623,7 @@ void main() {
             simulateAuthCodeRedirect(authCode: null),
             throwsA(isA<MicrosoftMissingAuthCodeAccountManagerException>()),
           );
-          expect(minecraftAccountManager.isServerRunning, false);
+          expect(_minecraftAccountManager.isServerRunning, false);
         },
       );
 
@@ -651,7 +651,7 @@ void main() {
             ignoreResultExceptions: true,
           );
 
-          expect(minecraftAccountManager.isServerRunning, false);
+          expect(_minecraftAccountManager.isServerRunning, false);
 
           expect(
             response,
@@ -670,7 +670,7 @@ void main() {
             ),
             throwsA(isA<MicrosoftAuthCodeDeniedAccountManagerException>()),
           );
-          expect(minecraftAccountManager.isServerRunning, false);
+          expect(_minecraftAccountManager.isServerRunning, false);
         },
       );
 
@@ -695,7 +695,7 @@ void main() {
             ),
           );
 
-          expect(minecraftAccountManager.isServerRunning, false);
+          expect(_minecraftAccountManager.isServerRunning, false);
 
           expect(
             response,
@@ -762,15 +762,15 @@ void main() {
             () => _mockMinecraftApi.checkMinecraftJavaOwnership(any()),
           ).thenAnswer((_) async => ownsMinecraftJava);
 
-          final progressList = <MicrosoftAuthProgress>[];
+          final progressEvents = <MicrosoftAuthProgress>[];
 
           await simulateAuthCodeRedirect(
             authCode: fakeAuthCode,
             onProgressUpdate:
-                (progress, {authCodeLoginUrl}) => progressList.add(progress),
+                (progress, {authCodeLoginUrl}) => progressEvents.add(progress),
           );
 
-          expect(progressList, [
+          expect(progressEvents, [
             MicrosoftAuthProgress.waitingForUserLogin,
             MicrosoftAuthProgress.exchangingAuthCode,
             MicrosoftAuthProgress.requestingXboxToken,
@@ -838,7 +838,7 @@ void main() {
 
   group('device code flow', () {
     test('deviceCodePollingTimer defaults to null', () {
-      expect(minecraftAccountManager.deviceCodePollingTimer, null);
+      expect(_minecraftAccountManager.deviceCodePollingTimer, null);
     });
 
     test('deviceCodePollingTimer the timer works correctly', () {
@@ -847,7 +847,7 @@ void main() {
         int timerCallbackInvocationCount = 0;
 
         const duration = Duration(seconds: 5);
-        minecraftAccountManager.deviceCodePollingTimer = AsyncTimer.periodic(
+        _minecraftAccountManager.deviceCodePollingTimer = AsyncTimer.periodic(
           const Duration(seconds: 5),
           () {
             callbackCalled = true;
@@ -875,7 +875,7 @@ void main() {
     test(
       'isDeviceCodePollingTimerActive returns false when timer is not active',
       () {
-        expect(minecraftAccountManager.isDeviceCodePollingTimerActive, false);
+        expect(_minecraftAccountManager.isDeviceCodePollingTimerActive, false);
       },
     );
 
@@ -890,21 +890,24 @@ void main() {
       'isDeviceCodePollingTimerActive returns true when timer is active',
       () {
         fakeAsync((async) {
-          minecraftAccountManager.deviceCodePollingTimer = dummyTimer();
+          _minecraftAccountManager.deviceCodePollingTimer = dummyTimer();
 
-          expect(minecraftAccountManager.isDeviceCodePollingTimerActive, true);
-          minecraftAccountManager.cancelDeviceCodePollingTimer();
+          expect(_minecraftAccountManager.isDeviceCodePollingTimerActive, true);
+          _minecraftAccountManager.cancelDeviceCodePollingTimer();
 
           // Ensure cancellation
-          expect(minecraftAccountManager.isDeviceCodePollingTimerActive, false);
-          expect(minecraftAccountManager.deviceCodePollingTimer, null);
+          expect(
+            _minecraftAccountManager.isDeviceCodePollingTimerActive,
+            false,
+          );
+          expect(_minecraftAccountManager.deviceCodePollingTimer, null);
         });
       },
     );
 
     test('requestCancelDeviceCodePollingTimer defaults to false', () {
       expect(
-        minecraftAccountManager.requestCancelDeviceCodePollingTimer,
+        _minecraftAccountManager.requestCancelDeviceCodePollingTimer,
         false,
       );
     });
@@ -912,18 +915,18 @@ void main() {
     test('cancelDeviceCodePollingTimer cancels the timer correctly', () {
       fakeAsync((async) {
         // Assuming false to confirm the timer sets it to true.
-        minecraftAccountManager.requestCancelDeviceCodePollingTimer = false;
+        _minecraftAccountManager.requestCancelDeviceCodePollingTimer = false;
 
         int timerCallbackInvocationCount = 0;
         const duration = Duration(seconds: 5);
-        minecraftAccountManager.deviceCodePollingTimer = AsyncTimer.periodic(
+        _minecraftAccountManager.deviceCodePollingTimer = AsyncTimer.periodic(
           duration,
           () => timerCallbackInvocationCount++,
         );
 
         // Ensure the timer is currently active
-        expect(minecraftAccountManager.isDeviceCodePollingTimerActive, true);
-        expect(minecraftAccountManager.deviceCodePollingTimer, isNotNull);
+        expect(_minecraftAccountManager.isDeviceCodePollingTimerActive, true);
+        expect(_minecraftAccountManager.deviceCodePollingTimer, isNotNull);
 
         async.elapse(duration);
         expect(
@@ -932,7 +935,7 @@ void main() {
           reason: 'The timer is likely not working properly',
         );
 
-        minecraftAccountManager.cancelDeviceCodePollingTimer();
+        _minecraftAccountManager.cancelDeviceCodePollingTimer();
 
         async.elapse(duration);
         expect(
@@ -943,12 +946,12 @@ void main() {
         );
 
         expect(
-          minecraftAccountManager.requestCancelDeviceCodePollingTimer,
+          _minecraftAccountManager.requestCancelDeviceCodePollingTimer,
           true,
           reason:
               'Calling cancelDeviceCodePollingTimer should set requestCancelDeviceCodePollingTimer to false',
         );
-        expect(minecraftAccountManager.deviceCodePollingTimer, isNull);
+        expect(_minecraftAccountManager.deviceCodePollingTimer, isNull);
       });
     });
 
@@ -956,7 +959,7 @@ void main() {
     requestLoginWithMicrosoftDeviceCode({
       OnAuthProgressUpdateCallback? onProgressUpdate,
       OnDeviceCodeAvailableCallback? onDeviceCodeAvailable,
-    }) => minecraftAccountManager.requestLoginWithMicrosoftDeviceCode(
+    }) => _minecraftAccountManager.requestLoginWithMicrosoftDeviceCode(
       onDeviceCodeAvailable: onDeviceCodeAvailable ?? (_) {},
       onProgressUpdate: onProgressUpdate ?? (_) {},
     );
@@ -999,10 +1002,10 @@ void main() {
         );
       });
       test('sets requestCancelDeviceCodePollingTimer to false', () {
-        minecraftAccountManager.requestCancelDeviceCodePollingTimer = true;
+        _minecraftAccountManager.requestCancelDeviceCodePollingTimer = true;
         requestLoginWithMicrosoftDeviceCode();
         expect(
-          minecraftAccountManager.requestCancelDeviceCodePollingTimer,
+          _minecraftAccountManager.requestCancelDeviceCodePollingTimer,
           false,
         );
       });
@@ -1117,11 +1120,11 @@ void main() {
         ).thenAnswer((_) async => requestDeviceCodeResponse);
 
         String? capturedUserDeviceCode;
-        final progressList = <MicrosoftAuthProgress>[];
+        final progressEvents = <MicrosoftAuthProgress>[];
         await simulateExpiration(
           onDeviceCodeAvailable:
               (deviceCode) => capturedUserDeviceCode = deviceCode,
-          onProgressUpdate: (newProgress) => progressList.add(newProgress),
+          onProgressUpdate: (newProgress) => progressEvents.add(newProgress),
         );
 
         verify(
@@ -1136,10 +1139,10 @@ void main() {
 
         expect(capturedUserDeviceCode, userDeviceCode);
         expect(
-          progressList.first,
+          progressEvents.first,
           MicrosoftAuthProgress.waitingForUserLogin,
           reason:
-              'onProgressUpdate should be called with ${MicrosoftAuthProgress.waitingForUserLogin.name} first. Progress list: $progressList',
+              'onProgressUpdate should be called with ${MicrosoftAuthProgress.waitingForUserLogin.name} first. Progress list: $progressEvents',
         );
       });
 
@@ -1164,20 +1167,29 @@ void main() {
 
           async.flushMicrotasks();
 
-          expect(minecraftAccountManager.deviceCodePollingTimer?.timer.tick, 0);
+          expect(
+            _minecraftAccountManager.deviceCodePollingTimer?.timer.tick,
+            0,
+          );
 
           const duration = Duration(seconds: fakeInterval);
 
           async.elapse(duration);
 
-          expect(minecraftAccountManager.deviceCodePollingTimer?.timer.tick, 1);
+          expect(
+            _minecraftAccountManager.deviceCodePollingTimer?.timer.tick,
+            1,
+          );
 
           async.elapse(duration);
 
-          expect(minecraftAccountManager.deviceCodePollingTimer?.timer.tick, 2);
+          expect(
+            _minecraftAccountManager.deviceCodePollingTimer?.timer.tick,
+            2,
+          );
 
           final currentTicks =
-              minecraftAccountManager.deviceCodePollingTimer!.timer.tick;
+              _minecraftAccountManager.deviceCodePollingTimer!.timer.tick;
 
           const additionalTicks = 500;
           for (int i = 0; i < additionalTicks; i++) {
@@ -1185,11 +1197,11 @@ void main() {
           }
 
           expect(
-            minecraftAccountManager.deviceCodePollingTimer!.timer.tick,
+            _minecraftAccountManager.deviceCodePollingTimer!.timer.tick,
             currentTicks + additionalTicks,
           );
 
-          minecraftAccountManager.cancelDeviceCodePollingTimer();
+          _minecraftAccountManager.cancelDeviceCodePollingTimer();
         });
       });
 
@@ -1225,10 +1237,10 @@ void main() {
 
             // Users might want to login with auth code instead before requestDeviceCode finishes,
             // cancelling the device code polling.
-            minecraftAccountManager.cancelDeviceCodePollingTimer();
+            _minecraftAccountManager.cancelDeviceCodePollingTimer();
 
             expect(
-              minecraftAccountManager.requestCancelDeviceCodePollingTimer,
+              _minecraftAccountManager.requestCancelDeviceCodePollingTimer,
               true,
               reason:
                   'The requestCancelDeviceCodePollingTimer flag should be true when cancelDeviceCodePollingTimer is called',
@@ -1237,7 +1249,7 @@ void main() {
             async.elapse(requestDeviceCodeDuration);
 
             expect(
-              minecraftAccountManager.deviceCodePollingTimer,
+              _minecraftAccountManager.deviceCodePollingTimer,
               null,
               reason:
                   'The timer should be cancelled and null when it was requested to be cancelled before it got initialized',
@@ -1299,7 +1311,7 @@ void main() {
 
             async.flushMicrotasks();
             expect(
-              minecraftAccountManager.deviceCodePollingTimer,
+              _minecraftAccountManager.deviceCodePollingTimer,
               isNotNull,
               reason: 'The timer should be not null when it started',
             );
@@ -1308,7 +1320,7 @@ void main() {
             async.elapse(intervalDuration);
 
             expect(
-              minecraftAccountManager.deviceCodePollingTimer,
+              _minecraftAccountManager.deviceCodePollingTimer,
               isNotNull,
               reason:
                   'The code is still not expired after first timer invocation',
@@ -1325,7 +1337,7 @@ void main() {
             }
 
             expect(
-              minecraftAccountManager.deviceCodePollingTimer,
+              _minecraftAccountManager.deviceCodePollingTimer,
               isNotNull,
               reason:
                   'The code is still not expired before the last timer invocation',
@@ -1334,7 +1346,7 @@ void main() {
             async.elapse(intervalDuration);
 
             expect(
-              minecraftAccountManager.deviceCodePollingTimer,
+              _minecraftAccountManager.deviceCodePollingTimer,
               isNull,
               reason:
                   'The timer should be cancelled after $totalCheckUntilExpired invocations where each invocation runs every ${intervalDuration.inSeconds}s since code expires in ${expiresIn}s',
@@ -1389,10 +1401,10 @@ void main() {
             final future = requestLoginWithMicrosoftDeviceCode();
 
             async.flushMicrotasks();
-            expect(minecraftAccountManager.deviceCodePollingTimer, isNotNull);
+            expect(_minecraftAccountManager.deviceCodePollingTimer, isNotNull);
             async.elapse(const Duration(seconds: expiresIn));
             async.elapse(const Duration(seconds: interval));
-            expect(minecraftAccountManager.deviceCodePollingTimer, null);
+            expect(_minecraftAccountManager.deviceCodePollingTimer, null);
 
             bool callbackCompleted = false;
             future.then((result) {
@@ -1430,7 +1442,7 @@ void main() {
 
           async.elapse(const Duration(seconds: interval));
 
-          expect(minecraftAccountManager.deviceCodePollingTimer, null);
+          expect(_minecraftAccountManager.deviceCodePollingTimer, null);
 
           bool callbackCompleted = false;
           future.then((result) {
@@ -1470,14 +1482,17 @@ void main() {
 
           verify(() => _mockMicrosoftAuthApi.requestDeviceCode()).called(1);
 
-          expect(minecraftAccountManager.deviceCodePollingTimer?.timer.tick, 0);
+          expect(
+            _minecraftAccountManager.deviceCodePollingTimer?.timer.tick,
+            0,
+          );
 
           const duration = Duration(seconds: interval);
 
           for (int i = 1; i <= 50; i++) {
             async.elapse(duration);
             expect(
-              minecraftAccountManager.deviceCodePollingTimer?.timer.tick,
+              _minecraftAccountManager.deviceCodePollingTimer?.timer.tick,
               i,
             );
             verify(
@@ -1487,11 +1502,11 @@ void main() {
             ).called(1);
           }
 
-          minecraftAccountManager.cancelDeviceCodePollingTimer();
+          _minecraftAccountManager.cancelDeviceCodePollingTimer();
 
           async.elapse(duration);
           expect(
-            minecraftAccountManager.deviceCodePollingTimer?.timer.tick,
+            _minecraftAccountManager.deviceCodePollingTimer?.timer.tick,
             null,
           );
           verifyNoMoreInteractions(_mockMicrosoftAuthApi);
@@ -1562,7 +1577,7 @@ void main() {
 
             async.elapse(const Duration(seconds: interval));
 
-            minecraftAccountManager.cancelDeviceCodePollingTimer();
+            _minecraftAccountManager.cancelDeviceCodePollingTimer();
 
             bool callbackCompleted = true;
             future.then((result) {
@@ -1607,7 +1622,7 @@ void main() {
 
             async.elapse(const Duration(seconds: interval));
 
-            minecraftAccountManager.cancelDeviceCodePollingTimer();
+            _minecraftAccountManager.cancelDeviceCodePollingTimer();
 
             bool callbackCompleted = true;
             future.then((result) {
@@ -1674,16 +1689,16 @@ void main() {
             () => _mockMinecraftApi.checkMinecraftJavaOwnership(any()),
           ).thenAnswer((_) async => ownsMinecraftJava);
 
-          final progressList = <MicrosoftAuthProgress>[];
+          final progressEvents = <MicrosoftAuthProgress>[];
 
           await simulateSuccess(
             mockRequestCodeResponse: requestDeviceCodeResponse,
             mockCheckCodeResponse: microsoftOauthResponse,
             onProgressUpdate:
-                (progress, {authCodeLoginUrl}) => progressList.add(progress),
+                (progress, {authCodeLoginUrl}) => progressEvents.add(progress),
           );
 
-          expect(progressList, [
+          expect(progressEvents, [
             MicrosoftAuthProgress.waitingForUserLogin,
             MicrosoftAuthProgress.exchangingDeviceCode,
             MicrosoftAuthProgress.requestingXboxToken,
@@ -1778,7 +1793,7 @@ void main() {
         () => _mockAccountStorage.loadAccounts(),
       ).thenReturn(initialAccounts);
 
-      final newAccounts = minecraftAccountManager.removeAccount(id);
+      final newAccounts = _minecraftAccountManager.removeAccount(id);
       expect(
         newAccounts.defaultAccountId,
         initialAccounts.defaultAccountId,
@@ -1817,7 +1832,7 @@ void main() {
         () => _mockAccountStorage.loadAccounts(),
       ).thenReturn(initialAccounts);
 
-      final newAccounts = minecraftAccountManager.removeAccount(id);
+      final newAccounts = _minecraftAccountManager.removeAccount(id);
       expect(
         newAccounts.defaultAccountId,
         isNull,
@@ -1849,7 +1864,7 @@ void main() {
           () => _mockAccountStorage.loadAccounts(),
         ).thenReturn(initialAccounts);
 
-        final newAccounts = minecraftAccountManager.removeAccount(id);
+        final newAccounts = _minecraftAccountManager.removeAccount(id);
         expect(
           newAccounts.defaultAccountId,
           isNot(equals(id)),
@@ -1881,7 +1896,7 @@ void main() {
           () => _mockAccountStorage.loadAccounts(),
         ).thenReturn(initialAccounts);
 
-        final newAccounts = minecraftAccountManager.removeAccount(id);
+        final newAccounts = _minecraftAccountManager.removeAccount(id);
         expect(
           newAccounts.defaultAccountId,
           isNot(equals(id)),
@@ -1903,7 +1918,7 @@ void main() {
       when(() => _mockAccountStorage.loadAccounts()).thenReturn(accounts1);
 
       expect(
-        minecraftAccountManager.loadAccounts().toComparableJson(),
+        _minecraftAccountManager.loadAccounts().toComparableJson(),
         accounts1.toComparableJson(),
       );
 
@@ -1922,7 +1937,7 @@ void main() {
       when(() => _mockAccountStorage.loadAccounts()).thenReturn(accounts2);
 
       expect(
-        minecraftAccountManager.loadAccounts().toComparableJson(),
+        _minecraftAccountManager.loadAccounts().toComparableJson(),
         accounts2.toComparableJson(),
       );
 
@@ -1939,7 +1954,7 @@ void main() {
       when(() => _mockAccountStorage.loadAccounts()).thenThrow(exception);
 
       expect(
-        () => minecraftAccountManager.loadAccounts(),
+        () => _minecraftAccountManager.loadAccounts(),
         throwsA(
           isA<UnknownAccountManagerException>().having(
             (e) => e.message,
@@ -1956,16 +1971,16 @@ void main() {
     test(
       'sets needsReAuthentication to true for accounts with expired refresh tokens on load',
       () {
-        final currentDate = DateTime(2030);
+        final fixedDateTime = DateTime(2030, 5, 15, 10, 6);
 
-        withClock(Clock.fixed(currentDate), () {
+        withClock(Clock.fixed(fixedDateTime), () {
           final loadedAccounts = createMinecraftAccounts(
             all: [
               createMinecraftAccount(
                 accountType: AccountType.microsoft,
                 microsoftAccountInfo: createMicrosoftAccountInfo(
                   microsoftOAuthRefreshToken: createExpirableToken(
-                    expiresAt: currentDate.add(const Duration(seconds: 3)),
+                    expiresAt: fixedDateTime.add(const Duration(seconds: 3)),
                   ),
                   needsReAuthentication: false,
                 ),
@@ -1974,7 +1989,9 @@ void main() {
                 accountType: AccountType.microsoft,
                 microsoftAccountInfo: createMicrosoftAccountInfo(
                   microsoftOAuthRefreshToken: createExpirableToken(
-                    expiresAt: currentDate.subtract(const Duration(seconds: 3)),
+                    expiresAt: fixedDateTime.subtract(
+                      const Duration(seconds: 3),
+                    ),
                   ),
                   needsReAuthentication: false,
                 ),
@@ -1983,7 +2000,7 @@ void main() {
                 accountType: AccountType.microsoft,
                 microsoftAccountInfo: createMicrosoftAccountInfo(
                   microsoftOAuthRefreshToken: createExpirableToken(
-                    expiresAt: currentDate.add(const Duration(days: 90)),
+                    expiresAt: fixedDateTime.add(const Duration(days: 90)),
                   ),
                   needsReAuthentication: true,
                 ),
@@ -2015,7 +2032,7 @@ void main() {
                 }).toList(),
           );
 
-          final newAccounts = minecraftAccountManager.loadAccounts();
+          final newAccounts = _minecraftAccountManager.loadAccounts();
           expect(newAccounts.toJson(), expectedAccounts.toJson());
 
           verify(() => _mockAccountStorage.loadAccounts()).called(1);
@@ -2039,7 +2056,7 @@ void main() {
     );
     when(() => _mockAccountStorage.loadAccounts()).thenReturn(initialAccounts);
 
-    final accounts = minecraftAccountManager.updateDefaultAccount(
+    final accounts = _minecraftAccountManager.updateDefaultAccount(
       newDefaultAccountId: newDefaultAccountId,
     );
 
@@ -2062,7 +2079,7 @@ void main() {
   group('createOfflineAccount', () {
     test('creates the account details correctly', () {
       const username = 'example_username';
-      final result = minecraftAccountManager.createOfflineAccount(
+      final result = _minecraftAccountManager.createOfflineAccount(
         username: username,
       );
       final newAccount = result.newAccount;
@@ -2094,7 +2111,9 @@ void main() {
         () => _mockAccountStorage.loadAccounts(),
       ).thenReturn(MinecraftAccounts.empty());
 
-      final result = minecraftAccountManager.createOfflineAccount(username: '');
+      final result = _minecraftAccountManager.createOfflineAccount(
+        username: '',
+      );
       final newAccount = result.newAccount;
 
       expect(
@@ -2131,7 +2150,9 @@ void main() {
         () => _mockAccountStorage.loadAccounts(),
       ).thenReturn(existingAccounts);
 
-      final result = minecraftAccountManager.createOfflineAccount(username: '');
+      final result = _minecraftAccountManager.createOfflineAccount(
+        username: '',
+      );
       final newAccount = result.newAccount;
 
       expect(
@@ -2164,17 +2185,17 @@ void main() {
 
     test('creates unique id', () {
       final id1 =
-          minecraftAccountManager
+          _minecraftAccountManager
               .createOfflineAccount(username: '')
               .newAccount
               .id;
       final id2 =
-          minecraftAccountManager
+          _minecraftAccountManager
               .createOfflineAccount(username: '')
               .newAccount
               .id;
       final id3 =
-          minecraftAccountManager
+          _minecraftAccountManager
               .createOfflineAccount(username: '')
               .newAccount
               .id;
@@ -2193,7 +2214,7 @@ void main() {
     when(() => _mockAccountStorage.loadAccounts()).thenReturn(initialAccounts);
 
     const newUsername = 'new_player_username4';
-    final result = minecraftAccountManager.updateOfflineAccount(
+    final result = _minecraftAccountManager.updateOfflineAccount(
       accountId: originalAccount.id,
       username: newUsername,
     );
@@ -2270,7 +2291,7 @@ void main() {
             accountType: AccountType.microsoft,
             microsoftAccountInfo: createMicrosoftAccountInfo(),
           );
-      final refreshResult = await minecraftAccountManager
+      final refreshResult = await _minecraftAccountManager
           .refreshMicrosoftAccount(
             existingAccount,
             onProgressUpdate: onProgressUpdate ?? (_) {},
@@ -2278,39 +2299,27 @@ void main() {
       return (refreshResult, existingAccount);
     }
 
-    test('throws $Exception when Microsoft refresh token is null', () async {
+    test('throws $ArgumentError when $MicrosoftAccountInfo is null', () async {
       await expectLater(
         refreshAccount(
           accountBeforeRefresh: createMinecraftAccount(
             isMicrosoftAccountInfoNull: true,
           ),
         ),
-        throwsException,
+        throwsArgumentError,
       );
     });
 
-    test(
-      'throws $MicrosoftRefreshTokenExpiredAccountManagerException when account needs refresh due to expiration or revoked access',
-      () async {
-        await expectLater(
-          refreshAccount(
-            accountBeforeRefresh: createMinecraftAccount(
-              microsoftAccountInfo: createMicrosoftAccountInfo(
-                needsReAuthentication: true,
-              ),
-            ),
-          ),
-          throwsA(isA<MicrosoftRefreshTokenExpiredAccountManagerException>()),
-        );
-      },
+    _testRefreshAccountWithExpiredOrRevokedMicrosoftAccount(
+      (account) => refreshAccount(accountBeforeRefresh: account),
     );
 
     test('updates progress and passes refresh token correctly', () async {
-      final progressList = <MicrosoftAuthProgress>[];
+      final progressEvents = <MicrosoftAuthProgress>[];
 
       final refreshToken = ExpirableToken(value: '', expiresAt: DateTime(2030));
       await refreshAccount(
-        onProgressUpdate: (newProgress) => progressList.add(newProgress),
+        onProgressUpdate: (newProgress) => progressEvents.add(newProgress),
         accountBeforeRefresh: createMinecraftAccount(
           microsoftAccountInfo: createMicrosoftAccountInfo(
             microsoftOAuthRefreshToken: refreshToken,
@@ -2319,10 +2328,10 @@ void main() {
       );
 
       expect(
-        progressList.first,
+        progressEvents.first,
         MicrosoftAuthProgress.refreshingMicrosoftTokens,
         reason:
-            'onProgressUpdate should be called with ${MicrosoftAuthProgress.refreshingMicrosoftTokens.name} first. Progress list: $progressList',
+            'onProgressUpdate should be called with ${MicrosoftAuthProgress.refreshingMicrosoftTokens.name} first. Progress list: $progressEvents',
       );
       final verificationResult = verify(
         () => _mockMicrosoftAuthApi.getNewTokensFromRefreshToken(captureAny()),
@@ -2395,7 +2404,7 @@ void main() {
           () => _mockMinecraftApi.checkMinecraftJavaOwnership(any()),
         ).thenAnswer((_) async => ownsMinecraftJava);
 
-        final progressList = <MicrosoftAuthProgress>[];
+        final progressEvents = <MicrosoftAuthProgress>[];
 
         final inputRefreshToken = ExpirableToken(
           value: 'example-microsoft-refresh-token',
@@ -2406,7 +2415,7 @@ void main() {
         );
         await refreshAccount(
           onProgressUpdate:
-              (progress, {authCodeLoginUrl}) => progressList.add(progress),
+              (progress, {authCodeLoginUrl}) => progressEvents.add(progress),
           accountBeforeRefresh: createMinecraftAccount(
             microsoftAccountInfo: createMicrosoftAccountInfo(
               microsoftOAuthRefreshToken: inputRefreshToken,
@@ -2414,7 +2423,7 @@ void main() {
           ),
         );
 
-        expect(progressList, [
+        expect(progressEvents, [
           MicrosoftAuthProgress.refreshingMicrosoftTokens,
           MicrosoftAuthProgress.requestingXboxToken,
           MicrosoftAuthProgress.requestingXstsToken,
@@ -2616,7 +2625,7 @@ void main() {
         );
 
         await expectLater(
-          minecraftAccountManager.refreshMicrosoftAccount(
+          _minecraftAccountManager.refreshMicrosoftAccount(
             accountBeforeRefresh,
             onProgressUpdate: (_) {},
           ),
@@ -2665,6 +2674,264 @@ void main() {
         verifyZeroInteractions(_mockMinecraftApi);
       },
     );
+  });
+
+  group('refreshMinecraftAccessTokenIfExpired', () {
+    Future<MinecraftAccount> refreshMinecraftAccessTokenIfExpired(
+      MinecraftAccount account, {
+      OnAuthProgressUpdateCallback? onRefreshProgressUpdate,
+    }) => _minecraftAccountManager.refreshMinecraftAccessTokenIfExpired(
+      account,
+      onRefreshProgressUpdate: onRefreshProgressUpdate ?? (_) {},
+    );
+    Future<MinecraftAccount> refreshWithExpiredMinecraftAccessToken(
+      MinecraftAccount account, {
+      OnAuthProgressUpdateCallback? onRefreshProgressUpdate,
+      DateTime? fixedDateTime,
+    }) {
+      final clockTime = fixedDateTime ?? DateTime(2025, 5, 23, 10, 16);
+
+      final expiredAccount = account.copyWith(
+        microsoftAccountInfo: account.microsoftAccountInfo!.copyWith(
+          minecraftAccessToken: account
+              .microsoftAccountInfo!
+              .minecraftAccessToken
+              .copyWith(
+                // Simulate expiration
+                expiresAt: clockTime.subtract(const Duration(days: 1)),
+              ),
+        ),
+      );
+
+      return withClock(Clock.fixed(clockTime), () {
+        return _minecraftAccountManager.refreshMinecraftAccessTokenIfExpired(
+          expiredAccount,
+          onRefreshProgressUpdate: onRefreshProgressUpdate ?? (_) {},
+        );
+      });
+    }
+
+    test('throws $ArgumentError when $MicrosoftAccountInfo is null', () async {
+      await expectLater(
+        refreshMinecraftAccessTokenIfExpired(
+          createMinecraftAccount(accountType: AccountType.offline),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    group('when Minecraft access token is expired', () {
+      _testRefreshAccountWithExpiredOrRevokedMicrosoftAccount(
+        (account) => refreshWithExpiredMinecraftAccessToken(account),
+      );
+
+      test(
+        'calls APIs correctly in order from Microsoft OAuth refresh token to Minecraft access token',
+        () async {
+          const microsoftOauthResponse = MicrosoftOauthTokenExchangeResponse(
+            accessToken: 'example-access-token',
+            refreshToken: 'example-refresh-token',
+            expiresIn: 4500,
+          );
+          const requestXboxLiveTokenResponse = XboxLiveAuthTokenResponse(
+            xboxToken: 'example-token',
+            userHash: 'example-user-hash',
+          );
+          const requestXstsTokenResponse = XboxLiveAuthTokenResponse(
+            xboxToken: 'example-xsts-token',
+            userHash: 'example-xsts-user-hash',
+          );
+          const minecraftLoginResponse = MinecraftLoginResponse(
+            username: '7b1ff0da-a75b-507f-5c39-7262la7dl1f2',
+            accessToken: 'example-access-token',
+            expiresIn: -1,
+          );
+
+          when(
+            () => _mockMicrosoftAuthApi.getNewTokensFromRefreshToken(any()),
+          ).thenAnswer((_) async => microsoftOauthResponse);
+          when(
+            () => _mockMicrosoftAuthApi.requestXboxLiveToken(any()),
+          ).thenAnswer((_) async => requestXboxLiveTokenResponse);
+          when(
+            () => _mockMicrosoftAuthApi.requestXSTSToken(any()),
+          ).thenAnswer((_) async => requestXstsTokenResponse);
+          when(
+            () => _mockMinecraftApi.loginToMinecraftWithXbox(any()),
+          ).thenAnswer((_) async => minecraftLoginResponse);
+
+          final progressEvents = <MicrosoftAuthProgress>[];
+
+          final account = createMinecraftAccount();
+
+          await refreshWithExpiredMinecraftAccessToken(
+            account,
+            onRefreshProgressUpdate:
+                (newProgress) => progressEvents.add(newProgress),
+          );
+
+          expect(progressEvents, [
+            MicrosoftAuthProgress.refreshingMicrosoftTokens,
+            MicrosoftAuthProgress.requestingXboxToken,
+            MicrosoftAuthProgress.requestingXstsToken,
+            MicrosoftAuthProgress.loggingIntoMinecraft,
+          ]);
+          verifyInOrder([
+            () => _mockMicrosoftAuthApi.getNewTokensFromRefreshToken(
+              account.microsoftAccountInfo!.microsoftOAuthRefreshToken.value,
+            ),
+            () => _mockMicrosoftAuthApi.requestXboxLiveToken(
+              microsoftOauthResponse,
+            ),
+            () => _mockMicrosoftAuthApi.requestXSTSToken(
+              requestXboxLiveTokenResponse,
+            ),
+            () => _mockMinecraftApi.loginToMinecraftWithXbox(
+              requestXstsTokenResponse,
+            ),
+          ]);
+
+          verifyNoMoreInteractions(_mockMicrosoftAuthApi);
+          verifyNoMoreInteractions(_mockMinecraftApi);
+        },
+      );
+
+      test('returns a new account instance with updated tokens', () async {
+        const microsoftOauthResponse = MicrosoftOauthTokenExchangeResponse(
+          accessToken: 'example-access-token',
+          refreshToken: 'example-refresh-token',
+          expiresIn: 4500,
+        );
+
+        const minecraftLoginResponse = MinecraftLoginResponse(
+          username: '7b1ff0da-a75b-507f-5c39-7262la7dl1f2',
+          accessToken: 'example-minecraft-access-token',
+          expiresIn: 9600,
+        );
+
+        when(
+          () => _mockMicrosoftAuthApi.getNewTokensFromRefreshToken(any()),
+        ).thenAnswer((_) async => microsoftOauthResponse);
+        when(
+          () => _mockMicrosoftAuthApi.requestXboxLiveToken(any()),
+        ).thenAnswer(
+          (_) async => const XboxLiveAuthTokenResponse(
+            xboxToken: 'example-token',
+            userHash: 'example-user-hash',
+          ),
+        );
+        when(() => _mockMicrosoftAuthApi.requestXSTSToken(any())).thenAnswer(
+          (_) async => const XboxLiveAuthTokenResponse(
+            xboxToken: 'example-xsts-token',
+            userHash: 'example-xsts-user-hash',
+          ),
+        );
+        when(
+          () => _mockMinecraftApi.loginToMinecraftWithXbox(any()),
+        ).thenAnswer((_) async => minecraftLoginResponse);
+
+        final expiredAccount = MinecraftDummyAccount.account;
+        final fixedDateTime = DateTime(2030, 10, 5, 10);
+        final refreshedAccount = await refreshWithExpiredMinecraftAccessToken(
+          expiredAccount,
+          fixedDateTime: fixedDateTime,
+        );
+        expect(refreshedAccount, isNot(same(expiredAccount)));
+
+        final expectedMicrosoftRefreshTokenExpiresAt = fixedDateTime.add(
+          const Duration(days: MicrosoftConstants.refreshTokenExpiresInDays),
+        );
+        final expectedMicrosoftAccessTokenExpiresAt = fixedDateTime.add(
+          Duration(seconds: minecraftLoginResponse.expiresIn),
+        );
+        final expectedMinecraftAccessTokenExpiresAt = fixedDateTime.add(
+          Duration(seconds: minecraftLoginResponse.expiresIn),
+        );
+        expect(
+          refreshedAccount
+              .microsoftAccountInfo
+              ?.microsoftOAuthRefreshToken
+              .expiresAt,
+          expectedMicrosoftRefreshTokenExpiresAt,
+        );
+        expect(
+          refreshedAccount
+              .microsoftAccountInfo
+              ?.microsoftOAuthAccessToken
+              .expiresAt,
+          expectedMicrosoftAccessTokenExpiresAt,
+        );
+        expect(
+          refreshedAccount.microsoftAccountInfo?.minecraftAccessToken.expiresAt,
+          expectedMinecraftAccessTokenExpiresAt,
+        );
+
+        final expiredMicrosoftAccountInfo =
+            expiredAccount.microsoftAccountInfo!;
+
+        expect(
+          refreshedAccount.toJson(),
+          expiredAccount
+              .copyWith(
+                microsoftAccountInfo: expiredMicrosoftAccountInfo.copyWith(
+                  microsoftOAuthRefreshToken: expiredMicrosoftAccountInfo
+                      .microsoftOAuthRefreshToken
+                      .copyWith(
+                        expiresAt: expectedMicrosoftRefreshTokenExpiresAt,
+                        value: microsoftOauthResponse.refreshToken,
+                      ),
+                  microsoftOAuthAccessToken: expiredMicrosoftAccountInfo
+                      .microsoftOAuthRefreshToken
+                      .copyWith(
+                        expiresAt: expectedMicrosoftAccessTokenExpiresAt,
+                        value: microsoftOauthResponse.accessToken,
+                      ),
+                  minecraftAccessToken: expiredMicrosoftAccountInfo
+                      .minecraftAccessToken
+                      .copyWith(
+                        expiresAt: expectedMinecraftAccessTokenExpiresAt,
+                        value: minecraftLoginResponse.accessToken,
+                      ),
+                ),
+              )
+              .toJson(),
+          reason:
+              'Should copy the expired account with the new tokens without any other changes',
+        );
+
+        verifyZeroInteractions(_mockAccountStorage);
+      });
+    });
+
+    test('returns same account if access token has not expired', () async {
+      final fixedDateTime = DateTime(2090, 3, 17, 10);
+      await withClock(Clock.fixed(fixedDateTime), () async {
+        final account = createMinecraftAccount(
+          microsoftAccountInfo: createMicrosoftAccountInfo(
+            minecraftAccessToken: createExpirableToken(
+              expiresAt: fixedDateTime.add(const Duration(days: 1)),
+            ),
+          ),
+        );
+        expect(
+          await refreshMinecraftAccessTokenIfExpired(
+            account,
+            onRefreshProgressUpdate:
+                (_) => fail(
+                  'Should not refresh the account when the Minecraft access token has not expired.',
+                ),
+          ),
+          same(account),
+          reason:
+              'Should return the original account if the Minecraft access token has not expired',
+        );
+
+        verifyZeroInteractions(_mockAccountStorage);
+        verifyZeroInteractions(_mockMinecraftApi);
+        verifyZeroInteractions(_mockMicrosoftAuthApi);
+        verifyZeroInteractions(_mockImageCacheService);
+      });
+    });
   });
 }
 
@@ -3042,14 +3309,14 @@ void _minecraftAccountCreationFromApiResponsesTest(
       () => _mockMinecraftApi.checkMinecraftJavaOwnership(any()),
     ).thenAnswer((_) async => ownsMinecraftJava);
 
-    final currentDate = DateTime(2080, 8, 3, 10);
-    await withClock(Clock.fixed(currentDate), () async {
+    final fixedDateTime = DateTime(2080, 8, 3, 10);
+    await withClock(Clock.fixed(fixedDateTime), () async {
       final result = await performAuthAction(microsoftOauthResponse);
       final microsoftAccountInfo = result?.newAccount.microsoftAccountInfo;
 
       expect(
         microsoftAccountInfo?.microsoftOAuthAccessToken.expiresAt,
-        currentDate
+        fixedDateTime
             .add(Duration(seconds: microsoftOauthResponse.expiresIn))
             .add(elapsed),
         reason:
@@ -3057,7 +3324,7 @@ void _minecraftAccountCreationFromApiResponsesTest(
       );
       expect(
         microsoftAccountInfo?.minecraftAccessToken.expiresAt,
-        currentDate
+        fixedDateTime
             .add(Duration(seconds: minecraftLoginResponse.expiresIn))
             .add(elapsed),
         reason:
@@ -3065,7 +3332,7 @@ void _minecraftAccountCreationFromApiResponsesTest(
       );
       expect(
         microsoftAccountInfo?.microsoftOAuthRefreshToken.expiresAt,
-        currentDate
+        fixedDateTime
             .add(
               const Duration(
                 days: MicrosoftConstants.refreshTokenExpiresInDays,
@@ -3078,13 +3345,35 @@ void _minecraftAccountCreationFromApiResponsesTest(
 
       expect(
         result?.newAccount.toComparableJson(),
-        MinecraftAccount.fromMinecraftProfileResponse(
-          profileResponse: minecraftProfileResponse,
-          oauthTokenResponse: microsoftOauthResponse,
-          loginResponse: minecraftLoginResponse,
-          ownsMinecraftJava: ownsMinecraftJava,
-        ).toComparableJson(),
+        _minecraftAccountManager
+            .accountFromResponses(
+              profileResponse: minecraftProfileResponse,
+              oauthTokenResponse: microsoftOauthResponse,
+              loginResponse: minecraftLoginResponse,
+              ownsMinecraftJava: ownsMinecraftJava,
+            )
+            .toComparableJson(),
       );
     });
   });
+}
+
+void _testRefreshAccountWithExpiredOrRevokedMicrosoftAccount(
+  Future<void> Function(MinecraftAccount account) performRefresh,
+) {
+  test(
+    'throws $MicrosoftRefreshTokenExpiredAccountManagerException when account needs refresh due to expiration or revoked access',
+    () async {
+      await expectLater(
+        performRefresh(
+          createMinecraftAccount(
+            microsoftAccountInfo: createMicrosoftAccountInfo(
+              needsReAuthentication: true,
+            ),
+          ),
+        ),
+        throwsA(isA<MicrosoftRefreshTokenExpiredAccountManagerException>()),
+      );
+    },
+  );
 }

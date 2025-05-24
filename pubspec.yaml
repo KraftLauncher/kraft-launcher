@@ -39,6 +39,8 @@ dependencies:
   collection: ^1.19.1
   clock: ^1.1.2
   pool: ^1.5.1
+  file: ^7.0.1
+  process: ^5.0.3
 
 dev_dependencies:
   flutter_test:

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'account/data/account_storage/account_storage.dart';
@@ -75,6 +76,7 @@ class MainApp extends StatelessWidget {
             imageCacheService: DefaultImageCacheService(),
           ),
         ),
+        RepositoryProvider.value(value: ImagePicker()),
       ],
       child: MultiBlocProvider(
         providers: [

@@ -2,11 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
-import '../../common/constants/constants.dart';
 import '../../common/logic/json.dart';
-import '../../common/logic/utils.dart';
-import 'microsoft_auth_api/microsoft_auth_api.dart';
-import 'minecraft_api/minecraft_api.dart';
 
 enum AccountType { microsoft, offline }
 
@@ -21,58 +17,6 @@ class MinecraftAccount {
     required this.capes,
     required this.ownsMinecraftJava,
   });
-
-  factory MinecraftAccount.fromMinecraftProfileResponse({
-    required MinecraftProfileResponse profileResponse,
-    required MicrosoftOauthTokenExchangeResponse oauthTokenResponse,
-    required MinecraftLoginResponse loginResponse,
-    required bool ownsMinecraftJava,
-  }) => MinecraftAccount(
-    id: profileResponse.id,
-    username: profileResponse.name,
-    accountType: AccountType.microsoft,
-    microsoftAccountInfo: MicrosoftAccountInfo(
-      microsoftOAuthAccessToken: ExpirableToken(
-        value: oauthTokenResponse.accessToken,
-        expiresAt: expiresInToExpiresAt(oauthTokenResponse.expiresIn),
-      ),
-      microsoftOAuthRefreshToken: ExpirableToken(
-        value: oauthTokenResponse.refreshToken,
-        expiresAt: clock.now().add(
-          const Duration(days: MicrosoftConstants.refreshTokenExpiresInDays),
-        ),
-      ),
-      minecraftAccessToken: ExpirableToken(
-        value: loginResponse.accessToken,
-        expiresAt: expiresInToExpiresAt(loginResponse.expiresIn),
-      ),
-      needsReAuthentication: false,
-    ),
-    skins:
-        profileResponse.skins
-            .map(
-              (skin) => MinecraftSkin(
-                id: skin.id,
-                state: skin.state,
-                url: skin.url,
-                textureKey: skin.textureKey,
-                variant: skin.variant,
-              ),
-            )
-            .toList(),
-    capes:
-        profileResponse.capes
-            .map(
-              (cape) => MinecraftCape(
-                id: cape.id,
-                state: cape.state,
-                url: cape.url,
-                alias: cape.alias,
-              ),
-            )
-            .toList(),
-    ownsMinecraftJava: ownsMinecraftJava,
-  );
 
   factory MinecraftAccount.fromJson(JsonObject json) => MinecraftAccount(
     id: json['id']! as String,
@@ -174,6 +118,7 @@ class MicrosoftAccountInfo {
         needsReAuthentication: json['needsReAuthentication']! as bool,
       );
 
+  // TODO: We probably don't need to store this
   final ExpirableToken microsoftOAuthAccessToken;
 
   // NOTE: The Microsoft API doesn't provide the expiration date for the refresh token,

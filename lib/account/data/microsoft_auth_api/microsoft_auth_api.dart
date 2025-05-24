@@ -62,6 +62,7 @@ class XboxLiveAuthTokenResponse {
 ///  * [MinecraftApi]
 abstract class MicrosoftAuthApi
     implements MicrosoftAuthCodeFlow, MicrosoftDeviceCodeFlow {
+  // TODO: It's probably better to require the token only instead of the full response to avoid confusion, make the same change to MinecraftApi
   Future<XboxLiveAuthTokenResponse> requestXboxLiveToken(
     MicrosoftOauthTokenExchangeResponse microsoftOauthToken,
   );

@@ -315,7 +315,7 @@ packages:
     source: hosted
     version: "2.1.4"
   file:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: file
       sha256: a3b4f84adafef897088c160faf7dfffb7696046cb13ae90b508c2cbc95d3b8d4
@@ -870,7 +870,7 @@ packages:
     source: hosted
     version: "6.0.2"
   process:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: process
       sha256: "107d8be718f120bbba9dcd1e95e3bd325b1b4a4f07db64154635ba03f2567a0d"

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../common/constants/constants.dart';
@@ -15,9 +16,14 @@ import 'upsert_offline_account_dialog.dart';
 import 'utils/auth_progress_messages.dart';
 
 class AccountDetails extends StatelessWidget {
-  const AccountDetails({super.key, required this.account});
+  const AccountDetails({
+    super.key,
+    required this.account,
+    required this.imagePicker,
+  });
 
   final MinecraftAccount account;
+  final ImagePicker imagePicker;
 
   @override
   Widget build(BuildContext context) => Column(
