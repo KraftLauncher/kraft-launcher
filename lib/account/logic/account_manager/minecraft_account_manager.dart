@@ -38,6 +38,7 @@ class MinecraftAccountManager {
   @visibleForTesting
   final MinecraftApi minecraftApi;
 
+  // TODO: Avoid loading the accounts everytime when removing, updating or adding an account? Track: accountStorage.loadAccounts() and see https://bloclibrary.dev/architecture/#connecting-blocs-through-domain
   @visibleForTesting
   final AccountStorage accountStorage;
 
