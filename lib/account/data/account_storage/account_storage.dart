@@ -14,25 +14,25 @@ class AccountStorage {
   final File file;
 
   MinecraftAccounts loadAccounts() {
-    MinecraftAccounts saveEmptyAccounts() {
+    MinecraftAccounts saveEmpty() {
       final emptyAccounts = MinecraftAccounts.empty();
       saveAccounts(emptyAccounts);
       return emptyAccounts;
     }
 
     if (!file.existsSync()) {
-      return saveEmptyAccounts();
+      return saveEmpty();
     }
 
     final fileContent = file.readAsStringSync().trim();
     if (fileContent.isEmpty) {
-      return saveEmptyAccounts();
+      return saveEmpty();
     }
 
     return MinecraftAccounts.fromJson(jsonDecode(fileContent) as JsonObject);
   }
 
-  // TODO: Avoid writeAsStringSync, read: https://dart.dev/tools/linter-rules/avoid_slow_async_io
+  // TODO: Avoid writeAsStringSync, read: https://dart.dev/tools/linter-rules/avoid_slow_async_io, also adapt SettingsStorage
   void saveAccounts(MinecraftAccounts accounts) {
     file.writeAsStringSync(jsonEncodePretty(accounts.toJson()));
   }

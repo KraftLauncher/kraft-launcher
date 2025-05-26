@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 import '../../../common/helpers/temp_file_utils.dart';
 import '../minecraft_dummy_accounts.dart';
 
-// TODO: Avoid IO operations.
+// TODO: Avoid IO operations. In SettingsStorage tests too.
 
 void main() {
   late AppDataPaths appDataPaths;
@@ -36,21 +36,18 @@ void main() {
     });
 
     test('overwrites file if file exists but is empty', () {
-      final accountsFile = appDataPaths.accounts;
-      accountsFile.createSync();
-      expect(accountsFile.existsSync(), true);
-      expect(accountsFile.readAsStringSync(), '');
+      final file = appDataPaths.accounts;
+      file.createSync();
+      expect(file.existsSync(), true);
+      expect(file.readAsStringSync(), '');
 
       final accounts = accountStorage.loadAccounts();
       expect(accounts.list, isEmpty);
       expect(accounts.defaultAccountId, isNull);
 
+      expect(accounts.toJson(), MinecraftAccounts.empty().toJson());
       expect(
-        accountStorage.loadAccounts().toJson(),
-        MinecraftAccounts.empty().toJson(),
-      );
-      expect(
-        accountsFile.readAsStringSync(),
+        file.readAsStringSync(),
         jsonEncodePretty(MinecraftAccounts.empty().toJson()),
       );
     });

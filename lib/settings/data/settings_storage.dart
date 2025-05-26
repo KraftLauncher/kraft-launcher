@@ -9,25 +9,32 @@ import 'settings.dart';
 
 @immutable
 class SettingsStorage {
-  const SettingsStorage({required this.settingsFile});
+  const SettingsStorage({required this.file});
 
   factory SettingsStorage.fromAppDataPaths(AppDataPaths appDataPaths) =>
-      SettingsStorage(settingsFile: appDataPaths.settings);
+      SettingsStorage(file: appDataPaths.settings);
 
-  final File settingsFile;
+  final File file;
 
   Settings loadSettings() {
-    Settings? settings;
-    if (!settingsFile.existsSync()) {
-      settings = const Settings();
-      saveSettings(settings);
+    Settings saveDefault() {
+      const defaultSettings = Settings();
+      saveSettings(defaultSettings);
+      return defaultSettings;
     }
-    return settings ??= Settings.fromJson(
-      jsonDecode(settingsFile.readAsStringSync()) as JsonObject,
-    );
+
+    if (!file.existsSync()) {
+      return saveDefault();
+    }
+
+    final fileContent = file.readAsStringSync().trim();
+    if (fileContent.isEmpty) {
+      return saveDefault();
+    }
+    return Settings.fromJson(jsonDecode(file.readAsStringSync()) as JsonObject);
   }
 
   void saveSettings(Settings settings) {
-    settingsFile.writeAsStringSync(jsonEncodePretty(settings.toJson()));
+    file.writeAsStringSync(jsonEncodePretty(settings.toJson()));
   }
 }
