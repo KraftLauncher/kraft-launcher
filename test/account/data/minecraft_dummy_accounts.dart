@@ -114,7 +114,7 @@ abstract final class MinecraftDummyAccounts {
   ]);
 
   static final MinecraftAccounts accounts = MinecraftAccounts(
-    all: _list,
+    list: _list,
     defaultAccountId: _defaultAccountId,
   );
 }

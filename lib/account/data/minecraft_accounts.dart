@@ -6,27 +6,27 @@ import 'minecraft_account.dart';
 
 @immutable
 class MinecraftAccounts {
-  const MinecraftAccounts({required this.all, required this.defaultAccountId});
+  const MinecraftAccounts({required this.list, required this.defaultAccountId});
 
   factory MinecraftAccounts.empty() =>
-      const MinecraftAccounts(all: [], defaultAccountId: null);
+      const MinecraftAccounts(list: [], defaultAccountId: null);
 
   factory MinecraftAccounts.fromJson(JsonObject json) => MinecraftAccounts(
     defaultAccountId: json['defaultAccountId'] as String?,
-    all:
+    list:
         (json['accounts']! as List<dynamic>)
             .cast<JsonObject>()
             .map((jsonObject) => MinecraftAccount.fromJson(jsonObject))
             .toList(),
   );
 
-  final List<MinecraftAccount> all;
+  final List<MinecraftAccount> list;
   final String? defaultAccountId;
 
   MinecraftAccount? get defaultAccount =>
       defaultAccountId == null
           ? null
-          : all.firstWhere((account) => account.id == defaultAccountId);
+          : list.firstWhere((account) => account.id == defaultAccountId);
 
   MinecraftAccount get defaultAccountOrThrow =>
       defaultAccount ??
@@ -35,7 +35,7 @@ class MinecraftAccounts {
       ));
 
   JsonObject toJson() => {
-    'accounts': all.map((account) => account.toJson()).toList(),
+    'accounts': list.map((account) => account.toJson()).toList(),
     'defaultAccountId': defaultAccountId,
   };
 
@@ -43,7 +43,7 @@ class MinecraftAccounts {
     List<MinecraftAccount>? all,
     Wrapped<String?>? defaultAccountId,
   }) => MinecraftAccounts(
-    all: all ?? this.all,
+    list: all ?? list,
     defaultAccountId:
         defaultAccountId != null
             ? defaultAccountId.value

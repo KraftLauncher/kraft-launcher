@@ -28,7 +28,7 @@ class AccountCubit extends Cubit<AccountState> {
           status: AccountStatus.loadSuccess,
           accounts: accounts,
           selectedAccountId: Wrapped.value(
-            accounts.all.isNotEmpty ? accounts.all.first.id : null,
+            accounts.list.isNotEmpty ? accounts.list.first.id : null,
           ),
         ),
       );
@@ -68,7 +68,7 @@ class AccountCubit extends Cubit<AccountState> {
       state.copyWith(
         accounts: updatedAccounts,
         selectedAccountId: Wrapped.value(
-          updatedAccounts.all
+          updatedAccounts.list
               .firstWhere((account) => account.id == newAccount.id)
               .id,
         ),
@@ -109,7 +109,7 @@ class AccountCubit extends Cubit<AccountState> {
   }
 
   void removeAccount(String accountId) {
-    final removedAccountIndex = state.accounts.all.indexWhere(
+    final removedAccountIndex = state.accounts.list.indexWhere(
       (account) => account.id == accountId,
     );
     final updatedAccounts = minecraftAccountManager.removeAccount(accountId);
@@ -118,7 +118,7 @@ class AccountCubit extends Cubit<AccountState> {
       state.copyWith(
         accounts: updatedAccounts,
         selectedAccountId: Wrapped.value(
-          updatedAccounts.all
+          updatedAccounts.list
               .getReplacementElementAfterRemoval(removedAccountIndex)
               ?.id,
         ),
@@ -136,7 +136,7 @@ class AccountCubit extends Cubit<AccountState> {
           ? Wrapped.value(
             _filterAccountsByUsername(
               state.searchQuery!,
-              accounts: updatedAccounts.all,
+              accounts: updatedAccounts.list,
             ),
           )
           : null;
@@ -168,7 +168,7 @@ class AccountCubit extends Cubit<AccountState> {
     }
     final filteredAccounts = _filterAccountsByUsername(
       searchQuery,
-      accounts: state.accounts.all,
+      accounts: state.accounts.list,
     );
 
     emit(

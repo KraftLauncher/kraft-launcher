@@ -20,9 +20,8 @@ void main() {
 
   tearDown(() => appDataPaths.workingDirectory.deleteSync(recursive: true));
 
-  test(
-    'loadAccounts creates and returns empty accounts if file does not exist',
-    () {
+  group('loadAccounts', () {
+    test('creates and returns empty accounts if file does not exist', () {
       final accountsFile = appDataPaths.accounts;
       expect(accountsFile.existsSync(), false);
 
@@ -30,38 +29,38 @@ void main() {
 
       expect(accountsFile.existsSync(), true);
 
-      expect(accounts.all, isEmpty);
+      expect(accounts.list, isEmpty);
       expect(accounts.defaultAccountId, isNull);
 
       expect(accounts.toJson(), MinecraftAccounts.empty().toJson());
-    },
-  );
+    });
 
-  test('loadAccounts overwrites file if file exists but is empty', () {
-    final accountsFile = appDataPaths.accounts;
-    accountsFile.createSync();
-    expect(accountsFile.existsSync(), true);
-    expect(accountsFile.readAsStringSync(), '');
+    test('overwrites file if file exists but is empty', () {
+      final accountsFile = appDataPaths.accounts;
+      accountsFile.createSync();
+      expect(accountsFile.existsSync(), true);
+      expect(accountsFile.readAsStringSync(), '');
 
-    final accounts = accountStorage.loadAccounts();
-    expect(accounts.all, isEmpty);
-    expect(accounts.defaultAccountId, isNull);
+      final accounts = accountStorage.loadAccounts();
+      expect(accounts.list, isEmpty);
+      expect(accounts.defaultAccountId, isNull);
 
-    expect(
-      accountStorage.loadAccounts().toJson(),
-      MinecraftAccounts.empty().toJson(),
-    );
-    expect(
-      accountsFile.readAsStringSync(),
-      jsonEncodePretty(MinecraftAccounts.empty().toJson()),
-    );
-  });
+      expect(
+        accountStorage.loadAccounts().toJson(),
+        MinecraftAccounts.empty().toJson(),
+      );
+      expect(
+        accountsFile.readAsStringSync(),
+        jsonEncodePretty(MinecraftAccounts.empty().toJson()),
+      );
+    });
 
-  test('loadAccounts parses saved accounts correctly', () {
-    final savedAccounts = MinecraftDummyAccounts.accounts;
-    accountStorage.saveAccounts(savedAccounts);
+    test('parses saved accounts correctly', () {
+      final savedAccounts = MinecraftDummyAccounts.accounts;
+      accountStorage.saveAccounts(savedAccounts);
 
-    expect(accountStorage.loadAccounts().toJson(), savedAccounts.toJson());
+      expect(accountStorage.loadAccounts().toJson(), savedAccounts.toJson());
+    });
   });
 
   test('saveAccounts writes accounts correctly to disk', () {

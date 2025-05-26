@@ -33,7 +33,7 @@ class AccountsTab extends StatelessWidget {
             exceptionWithStackTrace: state.exceptionWithStackTrace!,
           );
         }
-        if (state.accounts.all.isEmpty) {
+        if (state.accounts.list.isEmpty) {
           return const _EmptyAccounts();
         }
         return SplitView(

@@ -6,31 +6,34 @@ import '../../../common/logic/json.dart';
 import '../minecraft_accounts.dart';
 
 class AccountStorage {
-  AccountStorage({required this.accountsFile});
+  AccountStorage({required this.file});
 
   factory AccountStorage.fromAppDataPaths(AppDataPaths appDataPaths) =>
-      AccountStorage(accountsFile: appDataPaths.accounts);
+      AccountStorage(file: appDataPaths.accounts);
 
-  final File accountsFile;
+  final File file;
 
   MinecraftAccounts loadAccounts() {
-    MinecraftAccounts? minecraftAccounts;
-    if (!accountsFile.existsSync()) {
-      minecraftAccounts = MinecraftAccounts.empty();
-      saveAccounts(minecraftAccounts);
+    MinecraftAccounts saveEmptyAccounts() {
+      final emptyAccounts = MinecraftAccounts.empty();
+      saveAccounts(emptyAccounts);
+      return emptyAccounts;
     }
-    final fileContent = accountsFile.readAsStringSync();
-    if (fileContent.trim().isEmpty) {
-      minecraftAccounts = MinecraftAccounts.empty();
-      saveAccounts(minecraftAccounts);
+
+    if (!file.existsSync()) {
+      return saveEmptyAccounts();
     }
-    return minecraftAccounts ??= MinecraftAccounts.fromJson(
-      jsonDecode(fileContent) as JsonObject,
-    );
+
+    final fileContent = file.readAsStringSync().trim();
+    if (fileContent.isEmpty) {
+      return saveEmptyAccounts();
+    }
+
+    return MinecraftAccounts.fromJson(jsonDecode(fileContent) as JsonObject);
   }
 
   // TODO: Avoid writeAsStringSync, read: https://dart.dev/tools/linter-rules/avoid_slow_async_io
   void saveAccounts(MinecraftAccounts accounts) {
-    accountsFile.writeAsStringSync(jsonEncodePretty(accounts.toJson()));
+    file.writeAsStringSync(jsonEncodePretty(accounts.toJson()));
   }
 }

@@ -2,9 +2,9 @@ import 'package:kraft_launcher/account/data/minecraft_account.dart';
 import 'package:kraft_launcher/account/data/minecraft_accounts.dart';
 
 MinecraftAccounts createMinecraftAccounts({
-  List<MinecraftAccount> all = const [],
+  List<MinecraftAccount> list = const [],
   String? defaultAccountId,
-}) => MinecraftAccounts(all: all, defaultAccountId: defaultAccountId);
+}) => MinecraftAccounts(list: list, defaultAccountId: defaultAccountId);
 
 MinecraftAccount createMinecraftAccount({
   String id = '',

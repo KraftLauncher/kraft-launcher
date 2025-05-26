@@ -1774,7 +1774,7 @@ void main() {
     test('removes account from the list correctly', () {
       const id = 'minecraft-user-id';
       final initialAccounts = createMinecraftAccounts(
-        all: [
+        list: [
           createMinecraftAccount(
             id: id,
             username: 'minecraft_username',
@@ -1804,7 +1804,7 @@ void main() {
       final expectedAccounts =
           initialAccounts
               .copyWith(
-                all: List<MinecraftAccount>.from(initialAccounts.all)
+                all: List<MinecraftAccount>.from(initialAccounts.list)
                   ..removeWhere((account) => account.id == id),
               )
               .toComparableJson();
@@ -1824,7 +1824,7 @@ void main() {
       const id = 'minecraft-user-id';
 
       final initialAccounts = createMinecraftAccounts(
-        all: [createMinecraftAccount(id: id)],
+        list: [createMinecraftAccount(id: id)],
         defaultAccountId: id,
       );
 
@@ -1853,7 +1853,7 @@ void main() {
         const id = 'minecraft-account-id';
         const nextId = 'minecraft-next-account-id';
         final initialAccounts = createMinecraftAccounts(
-          all: [
+          list: [
             createMinecraftAccount(id: id),
             createMinecraftAccount(id: nextId),
           ],
@@ -1885,7 +1885,7 @@ void main() {
         const id = 'minecraft-account-id';
         const previousId = 'minecraft-previous-account-id';
         final initialAccounts = createMinecraftAccounts(
-          all: [
+          list: [
             createMinecraftAccount(id: previousId),
             createMinecraftAccount(id: id),
           ],
@@ -1925,7 +1925,7 @@ void main() {
       verify(() => _mockAccountStorage.loadAccounts()).called(1);
 
       final accounts2 = createMinecraftAccounts(
-        all: [
+        list: [
           createMinecraftAccount(
             id: 'example-id',
             username: 'Steve',
@@ -1975,7 +1975,7 @@ void main() {
 
         withClock(Clock.fixed(fixedDateTime), () {
           final loadedAccounts = createMinecraftAccounts(
-            all: [
+            list: [
               createMinecraftAccount(
                 accountType: AccountType.microsoft,
                 microsoftAccountInfo: createMicrosoftAccountInfo(
@@ -2014,7 +2014,7 @@ void main() {
 
           final expectedAccounts = loadedAccounts.copyWith(
             all:
-                loadedAccounts.all.map((account) {
+                loadedAccounts.list.map((account) {
                   final microsoftAccountInfo = account.microsoftAccountInfo;
 
                   if (microsoftAccountInfo != null &&
@@ -2048,7 +2048,7 @@ void main() {
     const newDefaultAccountId = 'id1';
 
     final initialAccounts = createMinecraftAccounts(
-      all: [
+      list: [
         createMinecraftAccount(id: newDefaultAccountId),
         createMinecraftAccount(id: currentDefaultAccountId),
       ],
@@ -2125,11 +2125,11 @@ void main() {
       expect(
         result.updatedAccounts.toComparableJson(),
         MinecraftAccounts(
-          all: [newAccount],
+          list: [newAccount],
           defaultAccountId: newAccount.id,
         ).toComparableJson(),
       );
-      expect(result.updatedAccounts.all.length, 1);
+      expect(result.updatedAccounts.list.length, 1);
 
       verifyInOrder([
         () => _mockAccountStorage.loadAccounts(),
@@ -2164,13 +2164,13 @@ void main() {
       expect(
         result.updatedAccounts.toComparableJson(),
         MinecraftAccounts(
-          all: [newAccount, ...existingAccounts.all],
+          list: [newAccount, ...existingAccounts.list],
           defaultAccountId: currentDefaultAccountId,
         ).toComparableJson(),
       );
       expect(
-        result.updatedAccounts.all.length,
-        existingAccounts.all.length + 1,
+        result.updatedAccounts.list.length,
+        existingAccounts.list.length + 1,
       );
 
       verifyInOrder([
@@ -2207,7 +2207,7 @@ void main() {
 
   test('updateOfflineAccount updates the account correctly', () {
     final initialAccounts = MinecraftDummyAccounts.accounts;
-    final originalAccount = initialAccounts.all.firstWhere(
+    final originalAccount = initialAccounts.list.firstWhere(
       (account) => account.accountType == AccountType.offline,
     );
 
@@ -2239,7 +2239,7 @@ void main() {
       initialAccounts.defaultAccountId,
     );
 
-    final originalAccountIndex = initialAccounts.all.indexWhere(
+    final originalAccountIndex = initialAccounts.list.indexWhere(
       (account) => account.id == originalAccount.id,
     );
 
@@ -2247,7 +2247,7 @@ void main() {
       result.updatedAccounts.toComparableJson(),
       initialAccounts
           .copyWith(
-            all: List<MinecraftAccount>.from(initialAccounts.all)
+            all: List<MinecraftAccount>.from(initialAccounts.list)
               ..[originalAccountIndex] = updatedAccount,
           )
           .toComparableJson(),
@@ -2494,7 +2494,7 @@ void main() {
         );
         const currentDefaultAccountId = 'current-default-account-id';
         final existingAccounts = createMinecraftAccounts(
-          all: [
+          list: [
             createMinecraftAccount(
               id: currentDefaultAccountId,
               username: 'player_username2',
@@ -2572,8 +2572,8 @@ void main() {
           expectedRefreshedAccount.toComparableJson(),
         );
         expect(
-          result.updatedAccounts.all.length,
-          existingAccounts.all.length,
+          result.updatedAccounts.list.length,
+          existingAccounts.list.length,
           reason: 'Refreshing an account should not add or remove accounts.',
         );
 
@@ -2581,7 +2581,7 @@ void main() {
           result.updatedAccounts.toComparableJson(),
           existingAccounts
               .copyWith(
-                all: result.updatedAccounts.all.updateById(
+                all: result.updatedAccounts.list.updateById(
                   refreshAccountId,
                   (_) => expectedRefreshedAccount,
                 ),
@@ -2611,7 +2611,7 @@ void main() {
         );
 
         final existingAccounts = MinecraftDummyAccounts.accounts.copyWith(
-          all: [accountBeforeRefresh, ...MinecraftDummyAccounts.accounts.all],
+          all: [accountBeforeRefresh, ...MinecraftDummyAccounts.accounts.list],
         );
 
         when(
@@ -2978,7 +2978,7 @@ extension _MinecraftAccountsExt on MinecraftAccounts {
     MinecraftAccounts accounts,
   ) => accounts.copyWith(
     all:
-        accounts.all
+        accounts.list
             .map((account) => _trimSecondsFromAccountExpireAtDateTimes(account))
             .toList(),
   );
@@ -3102,11 +3102,11 @@ void _commonLoginMicrosoftTests({
       ).called(1);
       verifyNoMoreInteractions(_mockAccountStorage);
 
-      expect(result.updatedAccounts.all.length, 1);
+      expect(result.updatedAccounts.list.length, 1);
       expect(
         result.updatedAccounts.toComparableJson(),
         MinecraftAccounts(
-          all: [newAccount],
+          list: [newAccount],
           defaultAccountId: newAccount.id,
         ).toComparableJson(),
       );
@@ -3146,14 +3146,14 @@ void _commonLoginMicrosoftTests({
       verifyNoMoreInteractions(_mockAccountStorage);
 
       expect(
-        result.updatedAccounts.all.length,
-        existingAccounts.all.length + 1,
+        result.updatedAccounts.list.length,
+        existingAccounts.list.length + 1,
       );
 
       expect(
         result.updatedAccounts.toComparableJson(),
         MinecraftAccounts(
-          all: [newAccount, ...existingAccounts.all],
+          list: [newAccount, ...existingAccounts.list],
           defaultAccountId: currentDefaultAccountId,
         ).toComparableJson(),
       );
@@ -3193,9 +3193,9 @@ void _commonLoginMicrosoftTests({
       ).called(1);
       verifyNoMoreInteractions(_mockAccountStorage);
 
-      expect(result.updatedAccounts.all.length, existingAccounts.all.length);
+      expect(result.updatedAccounts.list.length, existingAccounts.list.length);
 
-      final existingAccountIndex = existingAccounts.all.indexWhere(
+      final existingAccountIndex = existingAccounts.list.indexWhere(
         (account) => account.id == existingAccountId,
       );
 
@@ -3203,7 +3203,7 @@ void _commonLoginMicrosoftTests({
         result.updatedAccounts.toComparableJson(),
         existingAccounts
             .copyWith(
-              all: List.from(existingAccounts.all)
+              all: List.from(existingAccounts.list)
                 ..[existingAccountIndex] = newAccount,
             )
             .toComparableJson(),

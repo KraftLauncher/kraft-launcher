@@ -14,7 +14,7 @@ enum AccountStatus {
 final class AccountState extends Equatable {
   const AccountState({
     this.selectedAccountId,
-    this.accounts = const MinecraftAccounts(all: [], defaultAccountId: null),
+    this.accounts = const MinecraftAccounts(list: [], defaultAccountId: null),
     this.searchedAccounts,
     this.searchQuery,
     this.status = AccountStatus.initial,
@@ -31,7 +31,7 @@ final class AccountState extends Equatable {
         'Expected the current selected Minecraft account to be not null',
       ));
 
-  MinecraftAccount get selectedAccountOrThrow => accounts.all.firstWhere(
+  MinecraftAccount get selectedAccountOrThrow => accounts.list.firstWhere(
     (account) => account.id == selectedAccountIdOrThrow,
   );
 
@@ -41,7 +41,7 @@ final class AccountState extends Equatable {
   final String? searchQuery;
 
   List<MinecraftAccount> get displayAccounts =>
-      searchedAccounts != null ? searchedAccounts! : accounts.all;
+      searchedAccounts != null ? searchedAccounts! : accounts.list;
 
   final AccountStatus status;
 

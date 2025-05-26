@@ -13,7 +13,7 @@ class AccountSwitcherIconButton extends StatelessWidget {
     builder:
         (context, state) => MenuAnchor(
           menuChildren:
-              state.accounts.all.indexed.map((entry) {
+              state.accounts.list.indexed.map((entry) {
                 final account = entry.$2;
 
                 return MenuItemButton(

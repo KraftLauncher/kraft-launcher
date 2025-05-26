@@ -24,6 +24,6 @@ extension AccountsUpdater on MinecraftAccounts {
     String id,
     MinecraftAccount Function(MinecraftAccount account) update,
   ) {
-    return copyWith(all: all.updateById(id, update));
+    return copyWith(all: list.updateById(id, update));
   }
 }
