@@ -34,6 +34,7 @@ class SettingsStorage {
     return Settings.fromJson(jsonDecode(file.readAsStringSync()) as JsonObject);
   }
 
+  // TODO: Avoid writeAsStringSync, read: https://dart.dev/tools/linter-rules/avoid_slow_async_io, review all usages of file sync operations
   void saveSettings(Settings settings) {
     file.writeAsStringSync(jsonEncodePretty(settings.toJson()));
   }

@@ -7,7 +7,6 @@ import '../../../common/logic/json.dart';
 import '../microsoft_auth_api/microsoft_auth_api.dart'
     as microsoft_api
     show MicrosoftAuthApi, XboxLiveAuthTokenResponse;
-import '../minecraft_account.dart';
 
 @immutable
 class MinecraftLoginResponse {
@@ -81,17 +80,17 @@ class MinecraftProfileSkin extends Equatable {
   factory MinecraftProfileSkin.fromJson(JsonObject json) =>
       MinecraftProfileSkin(
         id: json['id']! as String,
-        state: MinecraftCosmeticState.fromJson(json['state']! as String),
+        state: MinecraftApiCosmeticState.fromJson(json['state']! as String),
         url: json['url']! as String,
         textureKey: json['textureKey']! as String,
-        variant: MinecraftSkinVariant.fromJson(json['variant']! as String),
+        variant: MinecraftApiSkinVariant.fromJson(json['variant']! as String),
       );
 
   final String id;
-  final MinecraftCosmeticState state;
+  final MinecraftApiCosmeticState state;
   final String url;
   final String textureKey;
-  final MinecraftSkinVariant variant;
+  final MinecraftApiSkinVariant variant;
 
   @override
   List<Object?> get props => [id, state, url, textureKey, variant];
@@ -109,18 +108,46 @@ class MinecraftProfileCape extends Equatable {
   factory MinecraftProfileCape.fromJson(JsonObject json) =>
       MinecraftProfileCape(
         id: json['id']! as String,
-        state: MinecraftCosmeticState.fromJson(json['state']! as String),
+        state: MinecraftApiCosmeticState.fromJson(json['state']! as String),
         url: json['url']! as String,
         alias: json['alias']! as String,
       );
 
   final String id;
-  final MinecraftCosmeticState state;
+  final MinecraftApiCosmeticState state;
   final String url;
   final String alias;
 
   @override
   List<Object?> get props => [id, state, url, alias];
+}
+
+enum MinecraftApiSkinVariant {
+  classic,
+  slim;
+
+  static MinecraftApiSkinVariant fromJson(String json) => switch (json) {
+    'CLASSIC' => classic,
+    'SLIM' => slim,
+    String() =>
+      throw UnsupportedError(
+        'Unknown Minecraft skin variant from the API: $json',
+      ),
+  };
+}
+
+enum MinecraftApiCosmeticState {
+  active,
+  inactive;
+
+  static MinecraftApiCosmeticState fromJson(String json) => switch (json) {
+    'ACTIVE' => active,
+    'INACTIVE' => inactive,
+    String() =>
+      throw UnsupportedError(
+        'Unknown Minecraft cosmetic state from the API: $json',
+      ),
+  };
 }
 
 // TODO: We probably need to rename this to MinecraftAccountApi (everywhere, even in tests),
@@ -143,7 +170,7 @@ abstract class MinecraftApi {
 
   Future<MinecraftProfileResponse> uploadSkin(
     File skinFile, {
-    required MinecraftSkinVariant skinVariant,
+    required MinecraftApiSkinVariant skinVariant,
     required String minecraftAccessToken,
   });
 }

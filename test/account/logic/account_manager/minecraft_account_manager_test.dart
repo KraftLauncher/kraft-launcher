@@ -2,18 +2,18 @@ import 'dart:async';
 
 import 'package:clock/clock.dart';
 import 'package:fake_async/fake_async.dart';
-import 'package:kraft_launcher/account/data/account_storage/account_storage.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_methods/microsoft_device_code_flow.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_exceptions.dart';
-import 'package:kraft_launcher/account/data/minecraft_account.dart';
-import 'package:kraft_launcher/account/data/minecraft_accounts.dart';
+import 'package:kraft_launcher/account/data/minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/data/minecraft_account/minecraft_accounts.dart';
 import 'package:kraft_launcher/account/data/minecraft_api/minecraft_api.dart';
 import 'package:kraft_launcher/account/data/minecraft_api/minecraft_api_exceptions.dart';
 import 'package:kraft_launcher/account/logic/account_manager/async_timer.dart';
 import 'package:kraft_launcher/account/logic/account_manager/image_cache_service/image_cache_service.dart';
 import 'package:kraft_launcher/account/logic/account_manager/minecraft_account_manager.dart';
 import 'package:kraft_launcher/account/logic/account_manager/minecraft_account_manager_exceptions.dart';
+import 'package:kraft_launcher/account/logic/account_repository.dart';
 import 'package:kraft_launcher/account/logic/account_utils.dart';
 import 'package:kraft_launcher/account/logic/minecraft_skin_ext.dart';
 import 'package:kraft_launcher/common/constants/constants.dart';
@@ -30,15 +30,15 @@ import '../../../common/helpers/utils.dart';
 import '../../data/minecraft_account_utils.dart';
 import '../../data/minecraft_dummy_accounts.dart';
 
-class MockMicrosoftAuthApi extends Mock implements MicrosoftAuthApi {}
+class _MockMicrosoftAuthApi extends Mock implements MicrosoftAuthApi {}
 
-class MockMinecraftApi extends Mock implements MinecraftApi {}
+class _MockMinecraftApi extends Mock implements MinecraftApi {}
 
-class MockAccountStorage extends Mock implements AccountStorage {}
+class _MockAccountRepository extends Mock implements AccountRepository {}
 
-late MockMicrosoftAuthApi _mockMicrosoftAuthApi;
-late MockMinecraftApi _mockMinecraftApi;
-late MockAccountStorage _mockAccountStorage;
+late _MockMicrosoftAuthApi _mockMicrosoftAuthApi;
+late _MockMinecraftApi _mockMinecraftApi;
+late _MockAccountRepository _mockAccountRepository;
 late MockImageCacheService _mockImageCacheService;
 
 late MinecraftAccountManager _minecraftAccountManager;
@@ -53,22 +53,40 @@ late MinecraftAccountManager _minecraftAccountManager;
 
 void main() {
   setUp(() {
-    _mockMicrosoftAuthApi = MockMicrosoftAuthApi();
-    _mockMinecraftApi = MockMinecraftApi();
-    _mockAccountStorage = MockAccountStorage();
+    _mockMicrosoftAuthApi = _MockMicrosoftAuthApi();
+    _mockMinecraftApi = _MockMinecraftApi();
+    _mockAccountRepository = _MockAccountRepository();
     _mockImageCacheService = MockImageCacheService();
     _minecraftAccountManager = MinecraftAccountManager(
       minecraftApi: _mockMinecraftApi,
       microsoftAuthApi: _mockMicrosoftAuthApi,
-      accountStorage: _mockAccountStorage,
+      accountRepository: _mockAccountRepository,
       imageCacheService: _mockImageCacheService,
     );
 
     when(
-      () => _mockAccountStorage.loadAccounts(),
-    ).thenReturn(MinecraftAccounts.empty());
+      () => _mockAccountRepository.loadAccounts(),
+    ).thenAnswer((_) async => MinecraftAccounts.empty());
 
-    when(() => _mockAccountStorage.saveAccounts(any())).thenDoNothing();
+    when(
+      () => _mockAccountRepository.addAccount(any()),
+    ).thenAnswer((_) async {});
+
+    when(
+      () => _mockAccountRepository.updateAccount(any()),
+    ).thenAnswer((_) async {});
+
+    when(
+      () => _mockAccountRepository.removeAccount(any()),
+    ).thenAnswer((_) async {});
+
+    when(
+      () => _mockAccountRepository.updateDefaultAccount(any()),
+    ).thenAnswer((_) async {});
+
+    when(
+      () => _mockAccountRepository.accountExists(any()),
+    ).thenAnswer((_) => true);
 
     when(() => _mockMicrosoftAuthApi.requestXboxLiveToken(any())).thenAnswer(
       (_) async => const XboxLiveAuthTokenResponse(xboxToken: '', userHash: ''),
@@ -101,10 +119,15 @@ void main() {
   // responses that are used to build the Minecraft account and always assumes success.
   void mockLoginResult(
     MinecraftAccount account, {
-    bool isAuthCode = false,
-    bool isDeviceCode = false,
-    bool isRefreshAccount = false,
+    required _TestAuthAction authAction,
+    required ExpirableToken microsoftAccessToken,
   }) {
+    MinecraftApiCosmeticState cosmeticStateToApi(
+      MinecraftCosmeticState state,
+    ) => switch (state) {
+      MinecraftCosmeticState.active => MinecraftApiCosmeticState.active,
+      MinecraftCosmeticState.inactive => MinecraftApiCosmeticState.inactive,
+    };
     when(() => _mockMinecraftApi.fetchMinecraftProfile(any())).thenAnswer(
       (_) async => MinecraftProfileResponse(
         id: account.id,
@@ -114,10 +137,14 @@ void main() {
                 .map(
                   (skin) => MinecraftProfileSkin(
                     id: skin.id,
-                    state: skin.state,
+                    state: cosmeticStateToApi(skin.state),
                     textureKey: skin.textureKey,
                     url: skin.url,
-                    variant: skin.variant,
+                    variant: switch (skin.variant) {
+                      MinecraftSkinVariant.classic =>
+                        MinecraftApiSkinVariant.classic,
+                      MinecraftSkinVariant.slim => MinecraftApiSkinVariant.slim,
+                    },
                   ),
                 )
                 .toList(),
@@ -126,7 +153,7 @@ void main() {
                 .map(
                   (cape) => MinecraftProfileCape(
                     id: cape.id,
-                    state: cape.state,
+                    state: cosmeticStateToApi(cape.state),
                     url: cape.url,
                     alias: cape.alias,
                   ),
@@ -156,44 +183,34 @@ void main() {
       ),
     );
 
-    MicrosoftOauthTokenExchangeResponse
-    response() => MicrosoftOauthTokenExchangeResponse(
-      accessToken:
-          account.microsoftAccountInfo?.microsoftOAuthAccessToken.value ??
-          (fail('Please provide a value for Microsoft OAuth access token')),
-      refreshToken:
-          account.microsoftAccountInfo?.microsoftOAuthRefreshToken.value ??
-          (fail('Please provide a value for Microsoft OAuth refresh token')),
-      expiresIn:
-          account
-              .microsoftAccountInfo
-              ?.microsoftOAuthAccessToken
-              .expiresAt
-              .covertToExpiresIn ??
-          (fail(
-            'Please provide a value for Microsoft OAuth access token expires in',
-          )),
-    );
-    if (isAuthCode) {
-      when(
-        () => _mockMicrosoftAuthApi.exchangeAuthCodeForTokens(any()),
-      ).thenAnswer((_) async => response());
-    }
-
-    if (isRefreshAccount) {
-      when(
-        () => _mockMicrosoftAuthApi.getNewTokensFromRefreshToken(any()),
-      ).thenAnswer((_) async => response());
-    }
-    if (isDeviceCode) {
-      when(() => _mockMicrosoftAuthApi.checkDeviceCodeStatus(any())).thenAnswer(
-        (_) async => MicrosoftCheckDeviceCodeStatusResult.approved(response()),
-      );
-    }
-    if (!isAuthCode && !isRefreshAccount && !isDeviceCode) {
-      fail(
-        'Callers of `mockLoginResult` should declare whether this is for refreshing the account, login with auth code or device code.',
-      );
+    MicrosoftOauthTokenExchangeResponse response() =>
+        MicrosoftOauthTokenExchangeResponse(
+          accessToken:
+              microsoftAccessToken.value ??
+              (fail('Please provide a value for Microsoft OAuth access token')),
+          refreshToken:
+              account.microsoftAccountInfo?.microsoftOAuthRefreshToken.value ??
+              (fail(
+                'Please provide a value for Microsoft OAuth refresh token',
+              )),
+          expiresIn: microsoftAccessToken.expiresAt.covertToExpiresIn,
+        );
+    switch (authAction) {
+      case _TestAuthAction.refreshAccount:
+        when(
+          () => _mockMicrosoftAuthApi.getNewTokensFromRefreshToken(any()),
+        ).thenAnswer((_) async => response());
+      case _TestAuthAction.loginWithAuthCode:
+        when(
+          () => _mockMicrosoftAuthApi.exchangeAuthCodeForTokens(any()),
+        ).thenAnswer((_) async => response());
+      case _TestAuthAction.loginWithDeviceCode:
+        when(
+          () => _mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
+        ).thenAnswer(
+          (_) async =>
+              MicrosoftCheckDeviceCodeStatusResult.approved(response()),
+        );
     }
   }
 
@@ -831,7 +848,10 @@ void main() {
           return result;
         },
         mockMinecraftAccountCallback:
-            (newAccount) => mockLoginResult(newAccount, isAuthCode: true),
+            (newAccount) => mockLoginResult(
+              newAccount,
+              authAction: _TestAuthAction.loginWithAuthCode,
+            ),
       );
     });
   });
@@ -1135,7 +1155,7 @@ void main() {
 
         verifyNoMoreInteractions(_mockMicrosoftAuthApi);
         verifyZeroInteractions(_mockMinecraftApi);
-        verifyZeroInteractions(_mockAccountStorage);
+        verifyZeroInteractions(_mockAccountRepository);
 
         expect(capturedUserDeviceCode, userDeviceCode);
         expect(
@@ -1313,7 +1333,7 @@ void main() {
             expect(
               _minecraftAccountManager.deviceCodePollingTimer,
               isNotNull,
-              reason: 'The timer should be not null when it started',
+              reason: 'The timer should not be null when it started',
             );
 
             const intervalDuration = Duration(seconds: interval);
@@ -1765,7 +1785,10 @@ void main() {
           return result;
         },
         mockMinecraftAccountCallback:
-            (newAccount) => mockLoginResult(newAccount, isDeviceCode: true),
+            (newAccount) => mockLoginResult(
+              newAccount,
+              authAction: _TestAuthAction.loginWithDeviceCode,
+            ),
       );
     });
   });
@@ -1804,7 +1827,7 @@ void main() {
       final expectedAccounts =
           initialAccounts
               .copyWith(
-                all: List<MinecraftAccount>.from(initialAccounts.list)
+                list: List<MinecraftAccount>.from(initialAccounts.list)
                   ..removeWhere((account) => account.id == id),
               )
               .toComparableJson();
@@ -1842,7 +1865,7 @@ void main() {
       expect(
         newAccounts.toComparableJson(),
         initialAccounts
-            .copyWith(all: [], defaultAccountId: const Wrapped.value(null))
+            .copyWith(list: [], defaultAccountId: const Wrapped.value(null))
             .toComparableJson(),
       );
     });
@@ -1967,80 +1990,6 @@ void main() {
       verify(() => _mockAccountStorage.loadAccounts()).called(1);
       verifyNoMoreInteractions(_mockAccountStorage);
     });
-
-    test(
-      'sets needsReAuthentication to true for accounts with expired refresh tokens on load',
-      () {
-        final fixedDateTime = DateTime(2030, 5, 15, 10, 6);
-
-        withClock(Clock.fixed(fixedDateTime), () {
-          final loadedAccounts = createMinecraftAccounts(
-            list: [
-              createMinecraftAccount(
-                accountType: AccountType.microsoft,
-                microsoftAccountInfo: createMicrosoftAccountInfo(
-                  microsoftOAuthRefreshToken: createExpirableToken(
-                    expiresAt: fixedDateTime.add(const Duration(seconds: 3)),
-                  ),
-                  needsReAuthentication: false,
-                ),
-              ),
-              createMinecraftAccount(
-                accountType: AccountType.microsoft,
-                microsoftAccountInfo: createMicrosoftAccountInfo(
-                  microsoftOAuthRefreshToken: createExpirableToken(
-                    expiresAt: fixedDateTime.subtract(
-                      const Duration(seconds: 3),
-                    ),
-                  ),
-                  needsReAuthentication: false,
-                ),
-              ),
-              createMinecraftAccount(
-                accountType: AccountType.microsoft,
-                microsoftAccountInfo: createMicrosoftAccountInfo(
-                  microsoftOAuthRefreshToken: createExpirableToken(
-                    expiresAt: fixedDateTime.add(const Duration(days: 90)),
-                  ),
-                  needsReAuthentication: true,
-                ),
-              ),
-              createMinecraftAccount(accountType: AccountType.offline),
-            ],
-          );
-          when(
-            () => _mockAccountStorage.loadAccounts(),
-          ).thenAnswer((_) => loadedAccounts);
-
-          final expectedAccounts = loadedAccounts.copyWith(
-            all:
-                loadedAccounts.list.map((account) {
-                  final microsoftAccountInfo = account.microsoftAccountInfo;
-
-                  if (microsoftAccountInfo != null &&
-                      microsoftAccountInfo
-                          .microsoftOAuthRefreshToken
-                          .hasExpired) {
-                    final newAccount = account.copyWith(
-                      microsoftAccountInfo: account.microsoftAccountInfo
-                          ?.copyWith(needsReAuthentication: true),
-                    );
-
-                    return newAccount;
-                  }
-                  return account;
-                }).toList(),
-          );
-
-          final newAccounts = _minecraftAccountManager.loadAccounts();
-          expect(newAccounts.toJson(), expectedAccounts.toJson());
-
-          verify(() => _mockAccountStorage.loadAccounts()).called(1);
-          verify(() => _mockAccountStorage.saveAccounts(newAccounts)).called(1);
-          verifyNoMoreInteractions(_mockAccountStorage);
-        });
-      },
-    );
   });
 
   test('updateDefaultAccount updates defaultAccountId correctly', () {
@@ -2077,9 +2026,9 @@ void main() {
   });
 
   group('createOfflineAccount', () {
-    test('creates the account details correctly', () {
+    test('creates the account details correctly', () async {
       const username = 'example_username';
-      final result = _minecraftAccountManager.createOfflineAccount(
+      final result = await _minecraftAccountManager.createOfflineAccount(
         username: username,
       );
       final newAccount = result.newAccount;
@@ -2183,22 +2132,19 @@ void main() {
       verifyZeroInteractions(_mockMinecraftApi);
     });
 
-    test('creates unique id', () {
+    test('creates unique id', () async {
       final id1 =
-          _minecraftAccountManager
-              .createOfflineAccount(username: '')
-              .newAccount
-              .id;
+          (await _minecraftAccountManager.createOfflineAccount(
+            username: '',
+          )).newAccount.id;
       final id2 =
-          _minecraftAccountManager
-              .createOfflineAccount(username: '')
-              .newAccount
-              .id;
+          (await _minecraftAccountManager.createOfflineAccount(
+            username: '',
+          )).newAccount.id;
       final id3 =
-          _minecraftAccountManager
-              .createOfflineAccount(username: '')
-              .newAccount
-              .id;
+          (await _minecraftAccountManager.createOfflineAccount(
+            username: '',
+          )).newAccount.id;
       expect(id1, isNot(equals(id2)));
       expect(id2, isNot(equals(id3)));
       expect(id3, isNot(equals(id1)));
@@ -2247,7 +2193,7 @@ void main() {
       result.updatedAccounts.toComparableJson(),
       initialAccounts
           .copyWith(
-            all: List<MinecraftAccount>.from(initialAccounts.list)
+            list: List<MinecraftAccount>.from(initialAccounts.list)
               ..[originalAccountIndex] = updatedAccount,
           )
           .toComparableJson(),
@@ -2541,7 +2487,10 @@ void main() {
             needsReAuthentication: false,
           ),
         );
-        mockLoginResult(expectedRefreshedAccount, isRefreshAccount: true);
+        mockLoginResult(
+          expectedRefreshedAccount,
+          authAction: _TestAuthAction.refreshAccount,
+        );
 
         final ((result), _) = await refreshAccount(
           accountBeforeRefresh: accountBeforeRefresh,
@@ -2581,7 +2530,7 @@ void main() {
           result.updatedAccounts.toComparableJson(),
           existingAccounts
               .copyWith(
-                all: result.updatedAccounts.list.updateById(
+                list: result.updatedAccounts.list.updateById(
                   refreshAccountId,
                   (_) => expectedRefreshedAccount,
                 ),
@@ -2611,7 +2560,7 @@ void main() {
         );
 
         final existingAccounts = MinecraftDummyAccounts.accounts.copyWith(
-          all: [accountBeforeRefresh, ...MinecraftDummyAccounts.accounts.list],
+          list: [accountBeforeRefresh, ...MinecraftDummyAccounts.accounts.list],
         );
 
         when(
@@ -2977,7 +2926,7 @@ extension _MinecraftAccountsExt on MinecraftAccounts {
   MinecraftAccounts _trimSecondsFromAccountsExpireAtDateTimes(
     MinecraftAccounts accounts,
   ) => accounts.copyWith(
-    all:
+    list:
         accounts.list
             .map((account) => _trimSecondsFromAccountExpireAtDateTimes(account))
             .toList(),
@@ -2989,8 +2938,8 @@ extension _MinecraftAccountsExt on MinecraftAccounts {
 
 // Tests for all functions that uses _transformExceptions
 void _transformExceptionCommonTests(
-  MockMinecraftApi Function() mockMinecraftApi,
-  MockMicrosoftAuthApi Function() mockMicrosoftAuthApi,
+  _MockMinecraftApi Function() mockMinecraftApi,
+  _MockMicrosoftAuthApi Function() mockMicrosoftAuthApi,
   Future<void> Function() action,
 ) {
   test(
@@ -3203,7 +3152,7 @@ void _commonLoginMicrosoftTests({
         result.updatedAccounts.toComparableJson(),
         existingAccounts
             .copyWith(
-              all: List.from(existingAccounts.list)
+              list: List.from(existingAccounts.list)
                 ..[existingAccountIndex] = newAccount,
             )
             .toComparableJson(),
@@ -3315,14 +3264,6 @@ void _minecraftAccountCreationFromApiResponsesTest(
       final microsoftAccountInfo = result?.newAccount.microsoftAccountInfo;
 
       expect(
-        microsoftAccountInfo?.microsoftOAuthAccessToken.expiresAt,
-        fixedDateTime
-            .add(Duration(seconds: microsoftOauthResponse.expiresIn))
-            .add(elapsed),
-        reason:
-            'The microsoftOAuthAccessToken should be: current date + ${microsoftOauthResponse.expiresIn}s which is the expiresIn from the API response',
-      );
-      expect(
         microsoftAccountInfo?.minecraftAccessToken.expiresAt,
         fixedDateTime
             .add(Duration(seconds: minecraftLoginResponse.expiresIn))
@@ -3358,6 +3299,7 @@ void _minecraftAccountCreationFromApiResponsesTest(
   });
 }
 
+// TODO: This should be Microsoft account re-auth with the correct reason. This is outdated with the production code
 void _testRefreshAccountWithExpiredOrRevokedMicrosoftAccount(
   Future<void> Function(MinecraftAccount account) performRefresh,
 ) {
@@ -3377,3 +3319,5 @@ void _testRefreshAccountWithExpiredOrRevokedMicrosoftAccount(
     },
   );
 }
+
+enum _TestAuthAction { refreshAccount, loginWithAuthCode, loginWithDeviceCode }

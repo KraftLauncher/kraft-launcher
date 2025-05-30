@@ -61,7 +61,7 @@ extension ListX<T> on List<T> {
 
 T requireNotNull<T>(T? value, {required String name}) {
   if (value == null) {
-    throw Exception(
+    throw StateError(
       'Expected $name to be not null at this state but was null.',
     );
   }
@@ -70,3 +70,8 @@ T requireNotNull<T>(T? value, {required String name}) {
 
 DateTime expiresInToExpiresAt(int expiresIn) =>
     clock.now().add(Duration(seconds: expiresIn));
+
+// TODO: Unit test
+extension DateTimeExt on DateTime {
+  bool get hasExpired => isBefore(clock.now());
+}

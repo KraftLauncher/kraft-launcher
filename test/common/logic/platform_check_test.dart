@@ -49,7 +49,7 @@ void main() {
   group('currentDesktopPlatform', () {
     for (final desktopPlatform in desktopPlatforms) {
       test(
-        'returns "DesktopPlatform.${desktopPlatform.name}" on "${desktopPlatform.name}" target platform',
+        'returns "$DesktopPlatform.${desktopPlatform.name}" on "${desktopPlatform.name}" target platform',
         () {
           debugDefaultTargetPlatformOverride = desktopPlatform;
 

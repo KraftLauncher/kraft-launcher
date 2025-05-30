@@ -40,6 +40,7 @@ linter:
     - unnecessary_breaks
     - unnecessary_await_in_return
     - unawaited_futures
+    # - discarded_futures
     - type_annotate_public_apis
     - tighten_type_of_initializing_formals
     - throw_in_finally

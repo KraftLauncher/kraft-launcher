@@ -31,12 +31,12 @@ sealed class Result<V, F extends BaseFailure> {
 
   V get valueOrThrow =>
       valueOrNull ??
-      (throw Exception(
+      (throw StateError(
         'Expected the result to be in success state but was $runtimeType',
       ));
   F get failureOrThrow =>
       failureOrNull ??
-      (throw Exception(
+      (throw StateError(
         'Expected the result to be in failure state but was $runtimeType',
       ));
 

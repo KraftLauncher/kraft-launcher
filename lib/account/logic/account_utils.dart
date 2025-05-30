@@ -1,29 +1,41 @@
-import '../data/minecraft_account.dart';
-import '../data/minecraft_accounts.dart';
+import '../../common/logic/utils.dart';
+import '../data/minecraft_account/minecraft_account.dart';
+import '../data/minecraft_account/minecraft_accounts.dart';
 
-// TODO: Add tests, and make use of updateById when possible
+// TODO: Add tests, and make use of them when possible
 
-extension AccountsListUpdater on List<MinecraftAccount> {
+extension AccountsListExt on List<MinecraftAccount> {
   List<MinecraftAccount> updateById(
     String id,
     MinecraftAccount Function(MinecraftAccount account) update,
   ) {
-    final index = indexWhere((account) => account.id == id);
-    if (index == -1) {
-      throw Exception(
+    final index = accountIndexById(id);
+    final existingAccount = this[index];
+    return List<MinecraftAccount>.unmodifiable(
+      List.from(this)..[index] = update(existingAccount),
+    );
+  }
+
+  int accountIndexById(String id) {
+    final index = indexWhereOrNull((account) => account.id == id);
+    if (index == null) {
+      throw StateError(
         'Account with id $id was not found in the list: ${toString()}',
       );
     }
-    final existingAccount = this[index];
-    return List<MinecraftAccount>.from(this)..[index] = update(existingAccount);
+    return index;
+  }
+
+  MinecraftAccount accountById(String id) {
+    return this[accountIndexById(id)];
   }
 }
 
-extension AccountsUpdater on MinecraftAccounts {
+extension AccountsExt on MinecraftAccounts {
   MinecraftAccounts updateById(
     String id,
     MinecraftAccount Function(MinecraftAccount account) update,
   ) {
-    return copyWith(all: list.updateById(id, update));
+    return copyWith(list: list.updateById(id, update));
   }
 }

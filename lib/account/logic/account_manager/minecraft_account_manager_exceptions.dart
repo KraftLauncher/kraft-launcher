@@ -1,9 +1,8 @@
 import 'package:meta/meta.dart';
 
-import '../../../common/constants/constants.dart';
 import '../../data/microsoft_auth_api/microsoft_auth_api.dart';
 import '../../data/microsoft_auth_api/microsoft_auth_exceptions.dart';
-import '../../data/minecraft_account.dart';
+import '../../data/minecraft_account/minecraft_account.dart';
 import '../../data/minecraft_api/minecraft_api_exceptions.dart';
 import 'minecraft_account_manager.dart';
 
@@ -28,8 +27,9 @@ sealed class AccountManagerException implements Exception {
   factory AccountManagerException.minecraftEntitlementAbsent() =>
       const MinecraftEntitlementAbsentAccountManagerException();
 
-  factory AccountManagerException.microsoftRefreshTokenExpired() =>
-      const MicrosoftRefreshTokenExpiredAccountManagerException();
+  factory AccountManagerException.microsoftReAuthRequired(
+    MicrosoftReauthRequiredReason reason,
+  ) => MicrosoftReAuthRequiredAccountManagerException(reason);
 
   factory AccountManagerException.microsoftExpiredOrUnauthorizedRefreshToken(
     MinecraftAccount updatedAccount,
@@ -93,12 +93,12 @@ final class MinecraftEntitlementAbsentAccountManagerException
       );
 }
 
-final class MicrosoftRefreshTokenExpiredAccountManagerException
+final class MicrosoftReAuthRequiredAccountManagerException
     extends AccountManagerException {
-  const MicrosoftRefreshTokenExpiredAccountManagerException()
-    : super(
-        'The Microsoft refresh token has expired: ${MicrosoftConstants.refreshTokenExpiresInDays} days have passed since it was issued.',
-      );
+  MicrosoftReAuthRequiredAccountManagerException(this.reason)
+    : super('Microsoft Re-authentication is required. Reason: ${reason.name}');
+
+  final MicrosoftReauthRequiredReason reason;
 }
 
 /// The exception [ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException] will be

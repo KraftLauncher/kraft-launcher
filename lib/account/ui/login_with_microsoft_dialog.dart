@@ -147,8 +147,8 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                         () {
                           final authCodeLoginUrl =
                               state.authCodeLoginUrl ??
-                              (throw Exception(
-                                'Expected the auth code login URL to be not null for stats: ${MicrosoftAuthProgress.waitingForUserLogin}',
+                              (throw StateError(
+                                'Expected the auth code login URL to be not null for status: ${MicrosoftAuthProgress.waitingForUserLogin}',
                               ));
                           return GestureDetector(
                             onTap: () => launchUrl(Uri.parse(authCodeLoginUrl)),

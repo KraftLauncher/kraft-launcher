@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart'
     as microsoft_api
     show XboxLiveAuthTokenResponse;
-import 'package:kraft_launcher/account/data/minecraft_account.dart';
+import 'package:kraft_launcher/account/data/minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/data/minecraft_api/minecraft_api.dart';
 import 'package:kraft_launcher/account/data/minecraft_api/minecraft_api_exceptions.dart';
 import 'package:kraft_launcher/account/data/minecraft_api/minecraft_api_impl.dart';
@@ -281,6 +281,7 @@ void main() {
     late Directory tempTestDir;
 
     setUp(() {
+      // TODO: Avoid IO operations in unit tests, track all usages of createTempTestDir and createFileInsideDir. Use file package instead
       tempTestDir = createTempTestDir();
       skinFile = createFileInsideDir(
         tempTestDir,
@@ -301,7 +302,7 @@ void main() {
 
         const skinFileContent = 'Raw Skin Image content';
         skinFile.writeAsStringSync(skinFileContent);
-        const skinVariant = MinecraftSkinVariant.classic;
+        const skinVariant = MinecraftApiSkinVariant.classic;
         await minecraftApi.uploadSkin(
           skinFile,
           skinVariant: skinVariant,
@@ -359,7 +360,7 @@ void main() {
 
       final response = await minecraftApi.uploadSkin(
         skinFile,
-        skinVariant: MinecraftSkinVariant.slim,
+        skinVariant: MinecraftApiSkinVariant.slim,
         minecraftAccessToken: fakeMcAccessToken,
       );
 
@@ -373,7 +374,7 @@ void main() {
       () => mockDio,
       () => minecraftApi.uploadSkin(
         skinFile,
-        skinVariant: MinecraftSkinVariant.slim,
+        skinVariant: MinecraftApiSkinVariant.slim,
         minecraftAccessToken: fakeMcAccessToken,
       ),
       isPostRequest: true,
@@ -382,7 +383,7 @@ void main() {
       () => mockDio,
       () => minecraftApi.uploadSkin(
         skinFile,
-        skinVariant: MinecraftSkinVariant.classic,
+        skinVariant: MinecraftApiSkinVariant.classic,
         minecraftAccessToken: fakeMcAccessToken,
       ),
       isPostRequest: true,
@@ -391,7 +392,7 @@ void main() {
       () => mockDio,
       () => minecraftApi.uploadSkin(
         skinFile,
-        skinVariant: MinecraftSkinVariant.slim,
+        skinVariant: MinecraftApiSkinVariant.slim,
         minecraftAccessToken: fakeMcAccessToken,
       ),
       isPostRequest: true,
@@ -411,7 +412,7 @@ void main() {
         await expectLater(
           minecraftApi.uploadSkin(
             skinFile,
-            skinVariant: MinecraftSkinVariant.slim,
+            skinVariant: MinecraftApiSkinVariant.slim,
             minecraftAccessToken: '',
           ),
           throwsA(isA<InvalidSkinImageDataMinecraftApiException>()),

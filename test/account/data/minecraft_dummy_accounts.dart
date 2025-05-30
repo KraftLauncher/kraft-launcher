@@ -1,5 +1,5 @@
-import 'package:kraft_launcher/account/data/minecraft_account.dart';
-import 'package:kraft_launcher/account/data/minecraft_accounts.dart';
+import 'package:kraft_launcher/account/data/minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/data/minecraft_account/minecraft_accounts.dart';
 
 import 'minecraft_account_utils.dart';
 
@@ -14,11 +14,7 @@ abstract final class MinecraftDummyAccounts {
       id: _defaultAccountId,
       username: 'SteveOnline',
       accountType: AccountType.microsoft,
-      microsoftAccountInfo: MicrosoftAccountInfo(
-        microsoftOAuthAccessToken: ExpirableToken(
-          value: 'access-token-1',
-          expiresAt: DateTime.utc(2030, 1, 1),
-        ),
+      microsoftAccountInfo: createMicrosoftAccountInfo(
         microsoftOAuthRefreshToken: ExpirableToken(
           value: 'refresh-token-1',
           expiresAt: DateTime.utc(2030, 10, 5),
@@ -27,7 +23,6 @@ abstract final class MinecraftDummyAccounts {
           value: 'mc-access-token-1',
           expiresAt: DateTime.utc(2077, 1, 1),
         ),
-        needsReAuthentication: false,
       ),
       skins: [
         createMinecraftSkin(
@@ -71,11 +66,7 @@ abstract final class MinecraftDummyAccounts {
       id: targetAccountId,
       username: 'CreeperGuy',
       accountType: AccountType.microsoft,
-      microsoftAccountInfo: MicrosoftAccountInfo(
-        microsoftOAuthAccessToken: ExpirableToken(
-          value: 'access-token-2',
-          expiresAt: DateTime.utc(2031, 10, 1),
-        ),
+      microsoftAccountInfo: createMicrosoftAccountInfo(
         microsoftOAuthRefreshToken: ExpirableToken(
           value: 'refresh-token-2',
           expiresAt: DateTime.utc(2099, 1, 1),
@@ -84,7 +75,6 @@ abstract final class MinecraftDummyAccounts {
           value: 'mc-access-token-2',
           expiresAt: DateTime.utc(2031, 1, 1),
         ),
-        needsReAuthentication: false,
       ),
       skins: [
         createMinecraftSkin(
@@ -125,10 +115,6 @@ abstract final class MinecraftDummyAccount {
     username: 'player_username',
     accountType: AccountType.microsoft,
     microsoftAccountInfo: createMicrosoftAccountInfo(
-      microsoftOAuthAccessToken: createExpirableToken(
-        value: 'microsoft-access-token',
-        expiresAt: DateTime(2025, 1, 20, 15, 40),
-      ),
       microsoftOAuthRefreshToken: createExpirableToken(
         value: 'microsoft-refresh-token',
         expiresAt: DateTime(2016),
@@ -137,7 +123,6 @@ abstract final class MinecraftDummyAccount {
         value: 'minecraft-access-token',
         expiresAt: DateTime(2022, 1, 20, 15, 40),
       ),
-      needsReAuthentication: false,
     ),
     skins: [
       createMinecraftSkin(

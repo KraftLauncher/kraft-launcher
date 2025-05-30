@@ -8,7 +8,6 @@ import '../../../common/logic/json.dart';
 import '../microsoft_auth_api/microsoft_auth_api.dart'
     as microsoft_api
     show XboxLiveAuthTokenResponse;
-import '../minecraft_account.dart';
 import 'minecraft_api.dart';
 import 'minecraft_api_exceptions.dart';
 
@@ -118,7 +117,7 @@ class MinecraftApiImpl extends MinecraftApi {
   @override
   Future<MinecraftProfileResponse> uploadSkin(
     File skinFile, {
-    required MinecraftSkinVariant skinVariant,
+    required MinecraftApiSkinVariant skinVariant,
     required String minecraftAccessToken,
   }) => _handleCommonFailures(
     () async {
@@ -133,8 +132,8 @@ class MinecraftApiImpl extends MinecraftApi {
             contentType: skinFile.mediaType,
           ),
           'variant': switch (skinVariant) {
-            MinecraftSkinVariant.classic => 'classic',
-            MinecraftSkinVariant.slim => 'slim',
+            MinecraftApiSkinVariant.classic => 'classic',
+            MinecraftApiSkinVariant.slim => 'slim',
           },
         }),
       );
