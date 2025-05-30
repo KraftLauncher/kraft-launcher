@@ -74,9 +74,8 @@ Our goal is to support standard features across most launchers while enabling pl
 2. On Linux, install the following dependencies:
 
     * [Flutter dependencies](https://docs.flutter.dev/get-started/install/linux/desktop#development-tools):
-        - **Debian or Ubuntu**: `sudo apt install -y curl git unzip xz-utils zip libglu1-mesa clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev`
-
-        - **Fedora**: `sudo dnf install -y curl git unzip xz zip mesa-libGLU clang cmake ninja-build pkgconf-pkg-config gtk3-devel xz-devel libstdc++-devel libsecret-devel libsecret`
+        - **Debian or Ubuntu**: `sudo apt install -y curl git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev`
+        - **Fedora**: `sudo dnf install -y curl git unzip xz zip mesa-libGLU clang cmake ninja-build pkgconf-pkg-config gtk3-devel xz-devel libstdc++-devel`
     * App dependencies:
         - **Debian or Ubuntu**: `sudo apt install -y libsecret-1-dev libsecret-1-0`
         - **Fedora**: `sudo dnf install -y libsecret-devel libsecret`

@@ -82,6 +82,9 @@ class AccountRepository {
   }
 
   Future<void> _saveSecureAccountData(MinecraftAccount account) async {
+    if (!_requireSupportsSecureStorage) {
+      return;
+    }
     final microsoftAccountInfo = account.microsoftAccountInfo;
     if (microsoftAccountInfo != null) {
       await secureAccountStorage.write(
@@ -112,7 +115,7 @@ class AccountRepository {
 
     MicrosoftReauthRequiredReason? getReauthRequiredReason(
       FileAccount account, {
-      required SecureAccountData? secureAccountData,
+      required bool? accountTokensMissingFromSecureStorage,
     }) {
       final microsoftAccountInfo = account.microsoftAccountInfo;
       if (microsoftAccountInfo == null) {
@@ -127,7 +130,7 @@ class AccountRepository {
           .hasExpired) {
         return MicrosoftReauthRequiredReason.refreshTokenExpired;
       }
-      if (secureAccountData == null) {
+      if (accountTokensMissingFromSecureStorage ?? false) {
         return MicrosoftReauthRequiredReason.tokensMissingFromSecureStorage;
       }
       return null;
@@ -150,7 +153,7 @@ class AccountRepository {
               secureAccountData: data,
               microsoftReauthRequiredReason: getReauthRequiredReason(
                 fileAccount,
-                secureAccountData: data,
+                accountTokensMissingFromSecureStorage: true,
               ),
             );
           }
@@ -160,7 +163,7 @@ class AccountRepository {
             secureAccountData: null,
             microsoftReauthRequiredReason: getReauthRequiredReason(
               fileAccount,
-              secureAccountData: null,
+              accountTokensMissingFromSecureStorage: false,
             ),
           );
 
@@ -169,8 +172,10 @@ class AccountRepository {
       }
       return fileAccounts.toAccounts(
         microsoftReauthRequiredReason:
-            (account) =>
-                getReauthRequiredReason(account, secureAccountData: null),
+            (account) => getReauthRequiredReason(
+              account,
+              accountTokensMissingFromSecureStorage: null,
+            ),
       );
     }
 
@@ -259,7 +264,9 @@ class AccountRepository {
     );
 
     await _saveAccountsInFileStorage(updatedAccounts);
-    await secureAccountStorage.delete(accountId);
+    if (_requireSupportsSecureStorage) {
+      await secureAccountStorage.delete(accountId);
+    }
 
     _setAccountsAndNotify(updatedAccounts);
   }
