@@ -179,7 +179,7 @@ class AccountDetails extends StatelessWidget {
                     if (!confirmed) {
                       return;
                     }
-                    accountCubit.removeAccount(account.id);
+                    await accountCubit.removeAccount(account.id);
                   },
                   title: Text(
                     context.loc.removeAccount,
