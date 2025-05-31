@@ -87,6 +87,8 @@ extension AccountManagerExceptionMessages on AccountManagerException {
         MicrosoftReauthRequiredReason.refreshTokenExpired => loc.sessionExpired,
         MicrosoftReauthRequiredReason.tokensMissingFromSecureStorage =>
           loc.reAuthRequiredDueToMissingSecureAccountData,
+        MicrosoftReauthRequiredReason.tokensMissingFromFileStorage =>
+          loc.reAuthRequiredDueToMissingAccountTokensFromFileStorage,
       },
       MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException() =>
         loc.sessionExpiredOrAccessRevoked,

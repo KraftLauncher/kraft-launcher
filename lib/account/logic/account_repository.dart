@@ -116,6 +116,7 @@ class AccountRepository {
     MicrosoftReauthRequiredReason? getReauthRequiredReason(
       FileAccount account, {
       required bool? accountTokensMissingFromSecureStorage,
+      required bool? accountTokensMissingFromFileStorage,
     }) {
       final microsoftAccountInfo = account.microsoftAccountInfo;
       if (microsoftAccountInfo == null) {
@@ -133,12 +134,16 @@ class AccountRepository {
       if (accountTokensMissingFromSecureStorage ?? false) {
         return MicrosoftReauthRequiredReason.tokensMissingFromSecureStorage;
       }
+      if (accountTokensMissingFromFileStorage ?? false) {
+        return MicrosoftReauthRequiredReason.tokensMissingFromFileStorage;
+      }
       return null;
     }
 
     Future<MinecraftAccounts> mapFileAccountsToAccounts(
       FileAccounts fileAccounts,
     ) async {
+      // TODO: Migrate tokens when switching between account and file storage
       if (_requireSupportsSecureStorage) {
         return fileAccounts.mapToAccountsAsync((fileAccount) async {
           if (fileAccount.accountType == AccountType.offline) {
@@ -153,7 +158,8 @@ class AccountRepository {
               secureAccountData: data,
               microsoftReauthRequiredReason: getReauthRequiredReason(
                 fileAccount,
-                accountTokensMissingFromSecureStorage: true,
+                accountTokensMissingFromSecureStorage: false,
+                accountTokensMissingFromFileStorage: null,
               ),
             );
           }
@@ -163,7 +169,8 @@ class AccountRepository {
             secureAccountData: null,
             microsoftReauthRequiredReason: getReauthRequiredReason(
               fileAccount,
-              accountTokensMissingFromSecureStorage: false,
+              accountTokensMissingFromSecureStorage: true,
+              accountTokensMissingFromFileStorage: null,
             ),
           );
 
@@ -175,6 +182,8 @@ class AccountRepository {
             (account) => getReauthRequiredReason(
               account,
               accountTokensMissingFromSecureStorage: null,
+              accountTokensMissingFromFileStorage:
+                  account.microsoftAccountInfo?.hasMissingTokens ?? false,
             ),
       );
     }

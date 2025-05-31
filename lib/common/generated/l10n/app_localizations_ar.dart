@@ -491,4 +491,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get unavailable => 'Unavailable';
+
+  @override
+  String get reAuthRequiredDueToMissingAccountTokensFromFileStorage =>
+      'Account tokens are missing. Please sign in again to continue.';
 }

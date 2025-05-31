@@ -312,7 +312,11 @@
     },
     "reAuthRequiredDueToMissingSecureAccountData": "Secure account data is missing. Please sign in again to continue.",
     "@reAuthRequiredDueToMissingSecureAccountData": {
-        "description": "Shown when secure tokens for the account cannot be found in secure storage and user is trying do an action that require Microsoft re-authentication."
+        "description": "Shown when secure account tokens cannot be found in secure storage, which is only used when secure storage is enabled. Appears when the user attempts an action that requires Microsoft re-authentication."
     },
-    "unavailable": "Unavailable"
+    "unavailable": "Unavailable",
+    "reAuthRequiredDueToMissingAccountTokensFromFileStorage": "Account tokens are missing. Please sign in again to continue.",
+    "@reAuthRequiredDueToMissingAccountTokensFromFileStorage": {
+        "description": "Shown when account tokens cannot be found in file storage, which is only used when secure storage is disabled. Appears when the user attempts an action that requires Microsoft re-authentication."
+    }
 }

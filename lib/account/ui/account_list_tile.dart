@@ -46,6 +46,10 @@ class AccountListTile extends StatelessWidget {
           context.loc.unavailable,
           context.loc.reAuthRequiredDueToMissingSecureAccountDataDetailed,
         ),
+        MicrosoftReauthRequiredReason.tokensMissingFromFileStorage => (
+          context.loc.unavailable,
+          context.loc.reAuthRequiredDueToMissingAccountTokensFromFileStorage,
+        ),
       };
       return Tooltip(
         richMessage: WidgetSpan(

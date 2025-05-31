@@ -930,7 +930,7 @@ abstract class AppLocalizations {
   /// **'Secure account data is missing. This can happen if you\'re using a different system user, desktop environment, or operating system. Please sign in again to continue.'**
   String get reAuthRequiredDueToMissingSecureAccountDataDetailed;
 
-  /// Shown when secure tokens for the account cannot be found in secure storage and user is trying do an action that require Microsoft re-authentication.
+  /// Shown when secure account tokens cannot be found in secure storage, which is only used when secure storage is enabled. Appears when the user attempts an action that requires Microsoft re-authentication.
   ///
   /// In en, this message translates to:
   /// **'Secure account data is missing. Please sign in again to continue.'**
@@ -941,6 +941,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unavailable'**
   String get unavailable;
+
+  /// Shown when account tokens cannot be found in file storage, which is only used when secure storage is disabled. Appears when the user attempts an action that requires Microsoft re-authentication.
+  ///
+  /// In en, this message translates to:
+  /// **'Account tokens are missing. Please sign in again to continue.'**
+  String get reAuthRequiredDueToMissingAccountTokensFromFileStorage;
 }
 
 class _AppLocalizationsDelegate

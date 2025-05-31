@@ -112,6 +112,10 @@ class FileMicrosoftAccountInfo extends Equatable {
     'accessRevoked': accessRevoked,
   };
 
+  bool get hasMissingTokens =>
+      microsoftOAuthRefreshToken.value == null ||
+      minecraftAccessToken.value == null;
+
   @override
   List<Object?> get props => [
     microsoftOAuthRefreshToken,
