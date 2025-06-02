@@ -1,23 +1,26 @@
-name: Run tests
+name: Run integration tests
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/tests.yml
-      - lib/**
-      - test/**
-      - integration_test/**
-      - pubspec.yaml
-      - pubspec.lock
-  pull_request:
-    paths:
-      - .github/workflows/tests.yml
-      - lib/**
-      - test/**
-      - integration_test/**
-      - pubspec.yaml
-      - pubspec.lock
+  # Currently, the integration tests run more often and we don't need it at this stage,
+  # unit tests should be extracted from this file.
+  workflow_dispatch:  # Enables manual trigger
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - .github/workflows/tests.yml
+  #     - lib/**
+  #     - test/**
+  #     - integration_test/**
+  #     - pubspec.yaml
+  #     - pubspec.lock
+  # pull_request:
+  #   paths:
+  #     - .github/workflows/tests.yml
+  #     - lib/**
+  #     - test/**
+  #     - integration_test/**
+  #     - pubspec.yaml
+  #     - pubspec.lock
 
 jobs:
   tests:
@@ -46,12 +49,8 @@ jobs:
       
       - name: Install package dependencies
         run: flutter pub get
-        
-      - name: Run Flutter unit tests
-        run: flutter test
-        timeout-minutes: 5
 
-      - name: Install Linux dependencies
+      - name: Install Flutter Linux dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update -y

@@ -290,8 +290,8 @@
     "@revoked": {
         "description": "Shown in the account list tile as a badge when the Microsoft refresh token access has been revoked."
     },
-    "reAuthenticationRequiredDueToInactivity": "Your session has expired after {daysInactive} days of inactivity. Please sign in again to continue.",
-    "@reAuthenticationRequiredDueToInactivity": {
+    "reAuthRequiredDueToInactivity": "Your session has expired after {daysInactive} days of inactivity. Please sign in again to continue.",
+    "@reAuthRequiredDueToInactivity": {
         "description": "Shown when the user has not signed in or used the account for a long time and the session has expired.",
         "placeholders": {
             "daysInactive": {
@@ -301,9 +301,22 @@
             }
         }
     },
-    "reAuthenticationRequiredDueToAccessRevoked": "Access to your account has been revoked. Please sign in again to continue.",
-    "@reAuthenticationRequiredDueToAccessRevoked": {
+    "reAuthRequiredDueToAccessRevoked": "Access to your account has been revoked. Please sign in again to continue.",
+    "@reAuthRequiredDueToAccessRevoked": {
         "description": "Shown when access to the user's account has been explicitly revoked, such as by an administrator or by the user from account settings. The user must re-authenticate to continue."
     },
-    "signInViaBrowser": "Sign in via Browser"
+    "signInViaBrowser": "Sign in via Browser",
+    "reAuthRequiredDueToMissingSecureAccountDataDetailed": "Secure account data is missing. This can happen if you're using a different system user, desktop environment, or operating system. Please sign in again to continue.",
+    "@reAuthRequiredDueToMissingSecureAccountDataDetailed": {
+        "description": "Shown when secure tokens for the account cannot be found in secure storage. This may happen in portable mode or when switching to a different OS user, desktop environment (e.g. Gnome/KDE), or operating system."
+    },
+    "reAuthRequiredDueToMissingSecureAccountData": "Secure account data is missing. Please sign in again to continue.",
+    "@reAuthRequiredDueToMissingSecureAccountData": {
+        "description": "Shown when secure account tokens cannot be found in secure storage, which is only used when secure storage is enabled. Appears when the user attempts an action that requires Microsoft re-authentication."
+    },
+    "unavailable": "Unavailable",
+    "reAuthRequiredDueToMissingAccountTokensFromFileStorage": "Account tokens are missing. Please sign in again to continue.",
+    "@reAuthRequiredDueToMissingAccountTokensFromFileStorage": {
+        "description": "Shown when account tokens cannot be found in file storage, which is only used when secure storage is disabled. Appears when the user attempts an action that requires Microsoft re-authentication."
+    }
 }

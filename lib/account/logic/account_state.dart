@@ -27,7 +27,7 @@ final class AccountState extends Equatable {
 
   String? get selectedAccountIdOrThrow =>
       selectedAccountId ??
-      (throw Exception(
+      (throw StateError(
         'Expected the current selected Minecraft account to be not null',
       ));
 

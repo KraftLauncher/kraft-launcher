@@ -1,13 +1,16 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../common/logic/utils.dart';
 import '../../common/ui/utils/exception_with_stacktrace.dart';
-import '../data/minecraft_account.dart';
-import '../data/minecraft_accounts.dart';
+import '../data/minecraft_account/minecraft_account.dart';
+import '../data/minecraft_account/minecraft_accounts.dart';
 import 'account_manager/minecraft_account_manager.dart';
 import 'account_manager/minecraft_account_manager_exceptions.dart';
+import 'account_utils.dart';
 
 part 'account_state.dart';
 
@@ -22,7 +25,7 @@ class AccountCubit extends Cubit<AccountState> {
 
   Future<void> loadAccounts() async {
     try {
-      final accounts = minecraftAccountManager.loadAccounts();
+      final accounts = await minecraftAccountManager.loadAccounts();
       emit(
         state.copyWith(
           status: AccountStatus.loadSuccess,
@@ -45,10 +48,10 @@ class AccountCubit extends Cubit<AccountState> {
   void updateSelectedAccount(String accountId) =>
       emit(state.copyWith(selectedAccountId: Wrapped.value(accountId)));
 
-  void updateDefaultAccount(String accountId) {
+  Future<void> updateDefaultAccount(String accountId) async {
     emit(
       state.copyWith(
-        accounts: minecraftAccountManager.updateDefaultAccount(
+        accounts: await minecraftAccountManager.updateDefaultAccount(
           newDefaultAccountId: accountId,
         ),
       ),
@@ -82,8 +85,8 @@ class AccountCubit extends Cubit<AccountState> {
     emit(state.copyWith(accounts: accounts));
   }
 
-  void createOfflineAccount({required String username}) {
-    final loginResult = minecraftAccountManager.createOfflineAccount(
+  Future<void> createOfflineAccount({required String username}) async {
+    final loginResult = await minecraftAccountManager.createOfflineAccount(
       username: username,
     );
 
@@ -93,11 +96,11 @@ class AccountCubit extends Cubit<AccountState> {
     );
   }
 
-  void updateOfflineAccount({
+  Future<void> updateOfflineAccount({
     required String accountId,
     required String username,
-  }) {
-    final loginResult = minecraftAccountManager.updateOfflineAccount(
+  }) async {
+    final loginResult = await minecraftAccountManager.updateOfflineAccount(
       accountId: accountId,
       username: username,
     );
@@ -108,11 +111,11 @@ class AccountCubit extends Cubit<AccountState> {
     );
   }
 
-  void removeAccount(String accountId) {
-    final removedAccountIndex = state.accounts.list.indexWhere(
-      (account) => account.id == accountId,
+  Future<void> removeAccount(String accountId) async {
+    final removedAccountIndex = state.accounts.list.findIndexById(accountId);
+    final updatedAccounts = await minecraftAccountManager.removeAccount(
+      accountId,
     );
-    final updatedAccounts = minecraftAccountManager.removeAccount(accountId);
 
     emit(
       state.copyWith(

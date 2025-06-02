@@ -21,9 +21,13 @@
     "sessionExpired",
     "expired",
     "revoked",
-    "reAuthenticationRequiredDueToInactivity",
-    "reAuthenticationRequiredDueToAccessRevoked",
-    "signInViaBrowser"
+    "reAuthRequiredDueToInactivity",
+    "reAuthRequiredDueToAccessRevoked",
+    "signInViaBrowser",
+    "reAuthRequiredDueToMissingSecureAccountDataDetailed",
+    "reAuthRequiredDueToMissingSecureAccountData",
+    "unavailable",
+    "reAuthRequiredDueToMissingAccountTokensFromFileStorage"
   ],
 
   "de": [
@@ -48,9 +52,13 @@
     "sessionExpired",
     "expired",
     "revoked",
-    "reAuthenticationRequiredDueToInactivity",
-    "reAuthenticationRequiredDueToAccessRevoked",
-    "signInViaBrowser"
+    "reAuthRequiredDueToInactivity",
+    "reAuthRequiredDueToAccessRevoked",
+    "signInViaBrowser",
+    "reAuthRequiredDueToMissingSecureAccountDataDetailed",
+    "reAuthRequiredDueToMissingSecureAccountData",
+    "unavailable",
+    "reAuthRequiredDueToMissingAccountTokensFromFileStorage"
   ],
 
   "zh": [
@@ -75,8 +83,12 @@
     "sessionExpired",
     "expired",
     "revoked",
-    "reAuthenticationRequiredDueToInactivity",
-    "reAuthenticationRequiredDueToAccessRevoked",
-    "signInViaBrowser"
+    "reAuthRequiredDueToInactivity",
+    "reAuthRequiredDueToAccessRevoked",
+    "signInViaBrowser",
+    "reAuthRequiredDueToMissingSecureAccountDataDetailed",
+    "reAuthRequiredDueToMissingSecureAccountData",
+    "unavailable",
+    "reAuthRequiredDueToMissingAccountTokensFromFileStorage"
   ]
 }

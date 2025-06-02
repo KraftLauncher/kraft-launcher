@@ -8,7 +8,7 @@ import '../../common/constants/constants.dart';
 import '../../common/constants/project_info_constants.dart';
 import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/utils/scaffold_messenger_ext.dart';
-import '../data/minecraft_account.dart';
+import '../data/minecraft_account/minecraft_account.dart';
 import '../logic/account_cubit.dart';
 import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
 import 'skin/full_skin_image.dart';
@@ -179,7 +179,7 @@ class AccountDetails extends StatelessWidget {
                     if (!confirmed) {
                       return;
                     }
-                    accountCubit.removeAccount(account.id);
+                    await accountCubit.removeAccount(account.id);
                   },
                   title: Text(
                     context.loc.removeAccount,

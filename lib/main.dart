@@ -3,17 +3,21 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'account/data/account_storage/account_storage.dart';
 import 'account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
+import 'account/data/minecraft_account/local_file_storage/file_account_storage.dart';
+import 'account/data/minecraft_account/secure_storage/secure_account_storage.dart';
 import 'account/data/minecraft_api/minecraft_api_impl.dart';
 import 'account/logic/account_cubit.dart';
 import 'account/logic/account_manager/image_cache_service/default_image_cache_service.dart';
 import 'account/logic/account_manager/minecraft_account_manager.dart';
+import 'account/logic/account_repository.dart';
 import 'account/logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
+import 'account/logic/platform_secure_storage_support.dart';
 import 'account/ui/account_switcher_icon_button.dart';
 import 'account/ui/accounts_tab.dart';
 import 'common/constants/project_info_constants.dart';
@@ -35,6 +39,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   AppDataPaths.instance = AppDataPaths(
+    // TODO: Support portable mode, run in portable mode on debug-builds
     workingDirectory:
         kDebugMode
             ? (Directory('devWorkingDirectory')..createSync(recursive: true))
@@ -68,8 +73,14 @@ class MainApp extends StatelessWidget {
       providers: [
         RepositoryProvider.value(
           value: MinecraftAccountManager(
-            accountStorage: AccountStorage.fromAppDataPaths(
-              AppDataPaths.instance,
+            accountRepository: AccountRepository(
+              fileAccountStorage: FileAccountStorage.fromAppDataPaths(
+                AppDataPaths.instance,
+              ),
+              secureAccountStorage: SecureAccountStorage(
+                flutterSecureStorage: const FlutterSecureStorage(),
+              ),
+              secureStorageSupport: PlatformSecureStorageSupport(),
             ),
             microsoftAuthApi: MicrosoftAuthApiImpl(dio: DioClient.instance),
             minecraftApi: MinecraftApiImpl(dio: DioClient.instance),
@@ -93,7 +104,7 @@ class MainApp extends StatelessWidget {
                   minecraftAccountManager:
                       context.read<MinecraftAccountManager>(),
                   // TODO: No bloc/cubit should depends on the other, avoid? See: https://bloclibrary.dev/architecture/#bloc-to-bloc-communication,
-                  //  We might need to manage the accounts in memory in MinecraftAccountManager instead of AccountCubit: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain
+                  //  See also: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain and AccountRepository, this should be fixed once other related TODOs are fixed in MinecraftAccountManager, AccountCubit and MicrosoftAccountHandlerCubit
                   accountCubit: context.read<AccountCubit>(),
                 ),
           ),

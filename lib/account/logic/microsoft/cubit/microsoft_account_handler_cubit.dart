@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../common/logic/utils.dart';
-import '../../../data/minecraft_account.dart';
+import '../../../data/minecraft_account/minecraft_account.dart';
 import '../../account_cubit.dart';
 import '../../account_manager/minecraft_account_manager.dart';
 import '../../account_manager/minecraft_account_manager_exceptions.dart';
@@ -32,6 +32,7 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
     } on AccountManagerException catch (e) {
       if (e
           is MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException) {
+        // TODO: We should not need this anymore due to AccountRepository, remove this when AccountCubit depends on AccountRepository. MicrosoftAccountHandlerCubit should not depend on MicrosoftAccountHandlerCubit directly.
         accountCubit.setAccounts(
           accountCubit.state.accounts.updateById(
             e.updatedAccount.id,

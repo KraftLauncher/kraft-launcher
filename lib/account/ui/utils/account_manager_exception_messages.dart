@@ -1,5 +1,6 @@
 import '../../../common/generated/l10n/app_localizations.dart';
 import '../../data/microsoft_auth_api/microsoft_auth_exceptions.dart';
+import '../../data/minecraft_account/minecraft_account.dart';
 import '../../data/minecraft_api/minecraft_api_exceptions.dart';
 import '../../logic/account_manager/minecraft_account_manager_exceptions.dart';
 
@@ -24,7 +25,7 @@ extension AccountManagerExceptionMessages on AccountManagerException {
             loc.expiredMicrosoftAccessTokenError,
 
           ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException() =>
-            throw Exception(
+            throw StateError(
               'Expected $ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException to be transformed into $MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException. $ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException should be caught and handled so this is likely a bug',
             ),
           TooManyRequestsMicrosoftAuthException() =>
@@ -79,8 +80,16 @@ extension AccountManagerExceptionMessages on AccountManagerException {
         loc.loginAttemptRejected,
       MinecraftEntitlementAbsentAccountManagerException() =>
         loc.minecraftOwnershipRequiredError,
-      MicrosoftRefreshTokenExpiredAccountManagerException() =>
-        loc.sessionExpired,
+      MicrosoftReAuthRequiredAccountManagerException() => switch (exception
+          .reason) {
+        MicrosoftReauthRequiredReason.accessRevoked =>
+          loc.reAuthRequiredDueToAccessRevoked,
+        MicrosoftReauthRequiredReason.refreshTokenExpired => loc.sessionExpired,
+        MicrosoftReauthRequiredReason.tokensMissingFromSecureStorage =>
+          loc.reAuthRequiredDueToMissingSecureAccountData,
+        MicrosoftReauthRequiredReason.tokensMissingFromFileStorage =>
+          loc.reAuthRequiredDueToMissingAccountTokensFromFileStorage,
+      },
       MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException() =>
         loc.sessionExpiredOrAccessRevoked,
     };

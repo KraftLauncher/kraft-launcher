@@ -1,14 +1,16 @@
 name: Create coverage badge
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/coverage-badge.yml
-      - lib/**
-      - test/**
-      - integration_test/**
-      - scripts/clean_coverage.sh
+  # Currently, we don't need to this workflow often at this point, at some point this workflow will be updated
+  workflow_dispatch:  # Enables manual trigger
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - .github/workflows/coverage-badge.yml
+  #     - lib/**
+  #     - test/**
+  #     - integration_test/**
+  #     - scripts/clean_coverage.sh
 
 jobs:
   build:

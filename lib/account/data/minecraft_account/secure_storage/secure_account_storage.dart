@@ -1,0 +1,34 @@
+import 'dart:convert';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../../../../common/logic/json.dart';
+import 'secure_account_data.dart';
+
+class SecureAccountStorage {
+  SecureAccountStorage({required FlutterSecureStorage flutterSecureStorage})
+    : _flutterSecureStorage = flutterSecureStorage;
+
+  final FlutterSecureStorage _flutterSecureStorage;
+
+  String _storageKey(String accountId) => 'account_$accountId';
+
+  Future<SecureAccountData?> read(String accountId) async {
+    final key = _storageKey(accountId);
+    final jsonString = await _flutterSecureStorage.read(key: key);
+    if (jsonString == null) {
+      return null;
+    }
+    return SecureAccountData.fromJson(jsonDecode(jsonString) as JsonObject);
+  }
+
+  Future<void> delete(String accountId) =>
+      _flutterSecureStorage.delete(key: _storageKey(accountId));
+
+  Future<void> write(String accountId, SecureAccountData secureAccountData) =>
+      _flutterSecureStorage.write(
+        key: _storageKey(accountId),
+        value: jsonEncode(secureAccountData.toJson()),
+        // TODO: Set platform options like MacOsOptions for all operations
+      );
+}

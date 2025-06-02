@@ -7,6 +7,8 @@ import 'package:test/test.dart';
 
 import '../../common/helpers/temp_file_utils.dart';
 
+// TODO: Avoid IO operations.
+
 void main() {
   late SettingsStorage settingsStorage;
   late AppDataPaths appDataPaths;

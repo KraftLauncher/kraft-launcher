@@ -9,7 +9,7 @@ import '../../common/ui/widgets/info_text_with_lottie.dart';
 import '../../common/ui/widgets/search_field.dart';
 import '../../common/ui/widgets/split_view.dart';
 import '../../common/ui/widgets/unknown_error.dart';
-import '../data/minecraft_account.dart';
+import '../data/minecraft_account/minecraft_account.dart';
 import '../logic/account_cubit.dart';
 import '../logic/account_manager/minecraft_account_manager_exceptions.dart';
 import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
@@ -156,9 +156,9 @@ class _AddAccountButton extends StatelessWidget {
                     // Handle special errors
 
                     switch (exception) {
-                      case MicrosoftRefreshTokenExpiredAccountManagerException():
+                      case MicrosoftReAuthRequiredAccountManagerException():
                         scaffoldMessenger.showSnackBarText(
-                          context.loc.sessionExpired,
+                          message,
                           snackBarAction: SnackBarAction(
                             label: context.loc.signInWithMicrosoft,
                             onPressed:

@@ -49,6 +49,7 @@ Our goal is to support standard features across most launchers while enabling pl
 ## ✨ Features
 
 * 🔄 **Account Switching**: Seamlessly switch between multiple Microsoft accounts.
+* 🔐 **Secure Authentication**: Microsoft account credentials are never exposed to the launcher — authentication is completed in the system browser. Account tokens are securely stored using the system’s secure storage (Windows Credential Manager, KDE Wallet, GNOME Keyring, or Apple Keychain).
 * 📁 **Profile Isolation**: Each profile has its own data — separate mods, worlds, configs, and more.
 * 🔗 **Profile Sharing & Syncing**: Effortlessly share complete profiles with others, including mods, resource packs, configs, key binds, Java version, Minecraft version, mod loader versions, and more.
 * 🔧 **Customizable Syncing**: Choose which mods, resource packs, and configurations to sync, or exclude specific ones for a more personalized experience.
@@ -69,16 +70,26 @@ Our goal is to support standard features across most launchers while enabling pl
 <details>
 <summary>Tap to show/hide build instructions</summary>
 
-Ensure [Flutter](https://docs.flutter.dev/get-started/install) is installed, and then run:
+1. Ensure [Flutter](https://docs.flutter.dev/get-started/install) is installed.
+2. On Linux, install the following dependencies:
 
-```bash
-git clone --depth 1 https://github.com/KraftLauncher/kraft-launcher
-cd kraft-launcher
-flutter pub get
-flutter build <platform>
-```
+    * [Flutter dependencies](https://docs.flutter.dev/get-started/install/linux/desktop#development-tools):
+        - **Debian or Ubuntu**: `sudo apt install -y curl git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev`
+        - **Fedora**: `sudo dnf install -y curl git unzip xz zip mesa-libGLU clang cmake ninja-build pkgconf-pkg-config gtk3-devel xz-devel libstdc++-devel`
+    * App dependencies:
+        - **Debian or Ubuntu**: `sudo apt install -y libsecret-1-dev libsecret-1-0`
+        - **Fedora**: `sudo dnf install -y libsecret-devel libsecret`
 
-Replace `<platform>` with `linux`, `macos` or `windows`.
+3. Run the following:
+
+    ```bash
+    git clone --depth 1 https://github.com/KraftLauncher/kraft-launcher
+    cd kraft-launcher
+    flutter pub get
+    flutter build <platform>
+    ```
+
+    Replace `<platform>` with `linux`, `macos` or `windows`.
 
 </details>
 

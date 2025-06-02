@@ -470,14 +470,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get revoked => 'Revoked';
 
   @override
-  String reAuthenticationRequiredDueToInactivity(int daysInactive) {
+  String reAuthRequiredDueToInactivity(int daysInactive) {
     return 'Your session has expired after $daysInactive days of inactivity. Please sign in again to continue.';
   }
 
   @override
-  String get reAuthenticationRequiredDueToAccessRevoked =>
+  String get reAuthRequiredDueToAccessRevoked =>
       'Access to your account has been revoked. Please sign in again to continue.';
 
   @override
   String get signInViaBrowser => 'Sign in via Browser';
+
+  @override
+  String get reAuthRequiredDueToMissingSecureAccountDataDetailed =>
+      'Secure account data is missing. This can happen if you\'re using a different system user, desktop environment, or operating system. Please sign in again to continue.';
+
+  @override
+  String get reAuthRequiredDueToMissingSecureAccountData =>
+      'Secure account data is missing. Please sign in again to continue.';
+
+  @override
+  String get unavailable => 'Unavailable';
+
+  @override
+  String get reAuthRequiredDueToMissingAccountTokensFromFileStorage =>
+      'Account tokens are missing. Please sign in again to continue.';
 }

@@ -910,19 +910,43 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Your session has expired after {daysInactive} days of inactivity. Please sign in again to continue.'**
-  String reAuthenticationRequiredDueToInactivity(int daysInactive);
+  String reAuthRequiredDueToInactivity(int daysInactive);
 
   /// Shown when access to the user's account has been explicitly revoked, such as by an administrator or by the user from account settings. The user must re-authenticate to continue.
   ///
   /// In en, this message translates to:
   /// **'Access to your account has been revoked. Please sign in again to continue.'**
-  String get reAuthenticationRequiredDueToAccessRevoked;
+  String get reAuthRequiredDueToAccessRevoked;
 
   /// No description provided for @signInViaBrowser.
   ///
   /// In en, this message translates to:
   /// **'Sign in via Browser'**
   String get signInViaBrowser;
+
+  /// Shown when secure tokens for the account cannot be found in secure storage. This may happen in portable mode or when switching to a different OS user, desktop environment (e.g. Gnome/KDE), or operating system.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure account data is missing. This can happen if you\'re using a different system user, desktop environment, or operating system. Please sign in again to continue.'**
+  String get reAuthRequiredDueToMissingSecureAccountDataDetailed;
+
+  /// Shown when secure account tokens cannot be found in secure storage, which is only used when secure storage is enabled. Appears when the user attempts an action that requires Microsoft re-authentication.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure account data is missing. Please sign in again to continue.'**
+  String get reAuthRequiredDueToMissingSecureAccountData;
+
+  /// No description provided for @unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get unavailable;
+
+  /// Shown when account tokens cannot be found in file storage, which is only used when secure storage is disabled. Appears when the user attempts an action that requires Microsoft re-authentication.
+  ///
+  /// In en, this message translates to:
+  /// **'Account tokens are missing. Please sign in again to continue.'**
+  String get reAuthRequiredDueToMissingAccountTokensFromFileStorage;
 }
 
 class _AppLocalizationsDelegate

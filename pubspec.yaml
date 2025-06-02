@@ -39,15 +39,16 @@ dependencies:
   collection: ^1.19.1
   clock: ^1.1.2
   pool: ^1.5.1
-  file: ^7.0.1
   process: ^5.0.3
+  flutter_secure_storage: ^10.0.0-beta.4
+  dbus: ^0.7.11
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   test: ^1.25.15
   mocktail: ^1.0.4
   fake_async: ^1.3.2
@@ -58,6 +59,7 @@ dev_dependencies:
   url_launcher_platform_interface: ^2.3.2
   plugin_platform_interface: ^2.1.8
   flutter_launcher_icons: ^0.14.3
+  file: ^7.0.1
 
 dependency_overrides:
   # Remove the override if this PR merged: https://github.com/material-foundation/flutter-packages/pull/634
@@ -66,6 +68,13 @@ dependency_overrides:
       url: https://github.com/EchoEllet/flutter-packages.git
       ref: feat/swift-package-manager
       path: packages/dynamic_color
+  # Remove when this issue solved: https://github.com/juliansteenbakker/flutter_secure_storage/issues/920
+  flutter_secure_storage_linux:
+    git:
+      url: https://github.com/m-berto/flutter_secure_storage.git
+      ref: patch-2
+      path: flutter_secure_storage_linux
+  flutter_secure_storage_platform_interface: ^2.0.1
 
 flutter:
   generate: true

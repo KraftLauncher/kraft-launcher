@@ -1,5 +1,5 @@
-import 'package:kraft_launcher/account/data/minecraft_account.dart';
-import 'package:kraft_launcher/account/data/minecraft_accounts.dart';
+import 'package:kraft_launcher/account/data/minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/data/minecraft_account/minecraft_accounts.dart';
 
 MinecraftAccounts createMinecraftAccounts({
   List<MinecraftAccount> list = const [],
@@ -37,21 +37,24 @@ MinecraftAccount createMinecraftAccount({
 );
 
 MicrosoftAccountInfo createMicrosoftAccountInfo({
-  ExpirableToken? microsoftOAuthAccessToken,
   ExpirableToken? microsoftOAuthRefreshToken,
   ExpirableToken? minecraftAccessToken,
-  bool needsReAuthentication = false,
+  MicrosoftReauthRequiredReason? reauthRequiredReason,
 }) => MicrosoftAccountInfo(
-  microsoftOAuthAccessToken:
-      microsoftOAuthAccessToken ?? createExpirableToken(),
   microsoftOAuthRefreshToken:
       microsoftOAuthRefreshToken ?? createExpirableToken(),
   minecraftAccessToken: minecraftAccessToken ?? createExpirableToken(),
-  needsReAuthentication: needsReAuthentication,
+  reauthRequiredReason: reauthRequiredReason,
 );
 
-ExpirableToken createExpirableToken({String? value, DateTime? expiresAt}) =>
-    ExpirableToken(value: value ?? '', expiresAt: expiresAt ?? DateTime(2099));
+ExpirableToken createExpirableToken({
+  String? value,
+  DateTime? expiresAt,
+  bool isValueNull = false,
+}) => ExpirableToken(
+  value: isValueNull ? null : (value ?? ''),
+  expiresAt: expiresAt ?? DateTime(2099),
+);
 
 MinecraftSkin createMinecraftSkin({
   String id = '',

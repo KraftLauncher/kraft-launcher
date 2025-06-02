@@ -20,12 +20,12 @@ void main() {
       cacheManager: mockBaseCacheManager,
     );
   });
-  test('delegates to CachedNetworkImage.evict', () {
+  test('delegates to CachedNetworkImage.evict', () async {
     when(() => mockBaseCacheManager.removeFile(any())).thenDoNothing();
 
     const exampleUrl =
         'https://example.com/image/123/sdadksadklsa.png&id=dsajkdasjkdsa';
-    imageCacheService.evictFromCache(exampleUrl);
+    await imageCacheService.evictFromCache(exampleUrl);
 
     final result = verify(() => mockBaseCacheManager.removeFile(captureAny()));
     result.called(1);

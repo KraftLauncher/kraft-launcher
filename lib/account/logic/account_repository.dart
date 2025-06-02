@@ -1,0 +1,305 @@
+import 'dart:async';
+
+import 'package:meta/meta.dart';
+
+import '../../common/logic/app_logger.dart';
+import '../../common/logic/utils.dart';
+import '../data/minecraft_account/local_file_storage/file_account.dart';
+import '../data/minecraft_account/local_file_storage/file_account_storage.dart';
+import '../data/minecraft_account/local_file_storage/file_accounts.dart';
+import '../data/minecraft_account/mappers/accounts_to_file_accounts_mapper.dart';
+import '../data/minecraft_account/mappers/file_accounts_to_accounts_mapper.dart';
+import '../data/minecraft_account/minecraft_account.dart';
+import '../data/minecraft_account/minecraft_accounts.dart';
+import '../data/minecraft_account/secure_storage/secure_account_data.dart';
+import '../data/minecraft_account/secure_storage/secure_account_storage.dart';
+import 'account_utils.dart';
+import 'platform_secure_storage_support.dart';
+
+// TODO: Update AccountManager tests due to this class
+
+@visibleForTesting
+typedef AccountsStreamControllerFactory = StreamController<MinecraftAccounts>;
+
+class AccountRepository {
+  AccountRepository({
+    required this.fileAccountStorage,
+    required this.secureAccountStorage,
+    required this.secureStorageSupport,
+    @visibleForTesting
+    AccountsStreamControllerFactory? accountsStreamControllerFactory,
+  }) : _accountsController =
+           accountsStreamControllerFactory ?? StreamController.broadcast();
+
+  @visibleForTesting
+  final FileAccountStorage fileAccountStorage;
+  @visibleForTesting
+  final SecureAccountStorage secureAccountStorage;
+  @visibleForTesting
+  final PlatformSecureStorageSupport secureStorageSupport;
+
+  bool? _supportsSecureStorage;
+
+  @visibleForTesting
+  bool get requireSupportsSecureStorage =>
+      _supportsSecureStorage ??
+      (throw StateError(
+        '$AccountRepository.loadAccounts() must be called before accessing supportsSecureStorage.',
+      ));
+
+  @visibleForTesting
+  void setSecureStorageSupportForTest({required bool supported}) {
+    _supportsSecureStorage = supported;
+  }
+
+  // TODO: We might not use this approach or might not use Stream at all? Also see https://pub.dev/documentation/rxdart/latest/rx/BehaviorSubject-class.html
+  final StreamController<MinecraftAccounts> _accountsController;
+  Stream<MinecraftAccounts> get accountsStream => _accountsController.stream;
+
+  MinecraftAccounts? _accounts;
+
+  MinecraftAccounts get _requireAccounts =>
+      _accounts ??
+      (throw StateError(
+        '$AccountRepository.loadAccounts() must be called before accessing accounts.',
+      ));
+
+  MinecraftAccounts get accounts =>
+      _requireAccounts.copyWith(list: List.unmodifiable(_requireAccounts.list));
+
+  @visibleForTesting
+  void setAccountsForTest(MinecraftAccounts accounts) {
+    _accounts = accounts;
+  }
+
+  void _setAccountsAndNotify(MinecraftAccounts updatedAccounts) {
+    _accounts = updatedAccounts;
+    _accountsController.add(updatedAccounts);
+  }
+
+  Future<void> _saveAccountsInFileStorage(
+    MinecraftAccounts updatedAccounts,
+  ) async {
+    await fileAccountStorage.saveAccounts(
+      updatedAccounts.toFileAccounts(
+        storeTokensInFile: !requireSupportsSecureStorage,
+      ),
+    );
+  }
+
+  Future<void> _saveSecureAccountData(MinecraftAccount account) async {
+    if (!requireSupportsSecureStorage) {
+      return;
+    }
+    final microsoftAccountInfo = account.microsoftAccountInfo;
+    if (microsoftAccountInfo != null) {
+      await secureAccountStorage.write(
+        account.id,
+        SecureAccountData(
+          microsoftRefreshToken:
+              microsoftAccountInfo.microsoftOAuthRefreshToken.value ??
+              (throw StateError(
+                'The Microsoft refresh token should not be null to save it in secure storage',
+              )),
+          minecraftAccessToken:
+              microsoftAccountInfo.minecraftAccessToken.value ??
+              (throw StateError(
+                'The Minecraft access token should not be null to save it in secure storage',
+              )),
+        ),
+      );
+    }
+  }
+
+  Future<MinecraftAccounts> loadAccounts() async {
+    MinecraftAccounts initializeEmptyAccounts() {
+      final accounts = MinecraftAccounts.empty();
+      return accounts;
+    }
+
+    Future<MinecraftAccounts> mapFileAccountsToAccounts(
+      FileAccounts fileAccounts,
+    ) async {
+      MicrosoftReauthRequiredReason? getReauthRequiredReason(
+        FileAccount account, {
+        bool? accountTokensMissingFromSecureStorage,
+        bool? accountTokensMissingFromFileStorage,
+      }) {
+        final microsoftAccountInfo = account.microsoftAccountInfo;
+        if (microsoftAccountInfo == null) {
+          return null;
+        }
+
+        if (microsoftAccountInfo.accessRevoked) {
+          return MicrosoftReauthRequiredReason.accessRevoked;
+        }
+        if (microsoftAccountInfo
+            .microsoftOAuthRefreshToken
+            .expiresAt
+            .hasExpired) {
+          return MicrosoftReauthRequiredReason.refreshTokenExpired;
+        }
+        if (accountTokensMissingFromSecureStorage ?? false) {
+          return MicrosoftReauthRequiredReason.tokensMissingFromSecureStorage;
+        }
+        if (accountTokensMissingFromFileStorage ?? false) {
+          return MicrosoftReauthRequiredReason.tokensMissingFromFileStorage;
+        }
+        return null;
+      }
+
+      // Currently, this doesn't migrate tokens when they are found in
+      // file but not in secure storage (and it's supported), or vice versa.
+      // This isn't needed at the moment.
+
+      if (requireSupportsSecureStorage) {
+        return fileAccounts.mapToAccountsAsync((fileAccount) async {
+          return switch (fileAccount.accountType) {
+            AccountType.microsoft => await () async {
+              final data = await secureAccountStorage.read(fileAccount.id);
+              if (data != null) {
+                return fileAccount.toAccount(
+                  secureAccountData: data,
+                  microsoftReauthRequiredReason: getReauthRequiredReason(
+                    fileAccount,
+                    accountTokensMissingFromSecureStorage: false,
+                  ),
+                );
+              }
+
+              final account = fileAccount.toAccount(
+                // The user needs to re-authenticate
+                secureAccountData: null,
+                microsoftReauthRequiredReason: getReauthRequiredReason(
+                  fileAccount,
+                  accountTokensMissingFromSecureStorage: true,
+                ),
+              );
+
+              return account;
+            }(),
+            AccountType.offline => fileAccount.toAccount(
+              secureAccountData: null,
+              microsoftReauthRequiredReason: null,
+            ),
+          };
+        });
+      }
+      return fileAccounts.toAccounts(
+        resolveMicrosoftReauthReason:
+            (account) => getReauthRequiredReason(
+              account,
+              accountTokensMissingFromFileStorage:
+                  account.microsoftAccountInfo?.hasMissingTokens ?? false,
+            ),
+      );
+    }
+
+    _supportsSecureStorage = await secureStorageSupport.isSupported();
+    if (!requireSupportsSecureStorage) {
+      AppLogger.i(
+        'Secure storage is not available on this platform. Falling back to file storage.',
+      );
+    }
+
+    final fileAccounts = await fileAccountStorage.readAccounts();
+
+    final accounts =
+        fileAccounts != null
+            ? await mapFileAccountsToAccounts(fileAccounts)
+            : initializeEmptyAccounts();
+
+    final accountsWithUnmodifiableList = accounts.copyWith(
+      list: List.unmodifiable(accounts.list),
+    );
+
+    _setAccountsAndNotify(accountsWithUnmodifiableList);
+
+    return accountsWithUnmodifiableList;
+  }
+
+  Future<void> addAccount(MinecraftAccount newAccount) async {
+    await _modifyAndSaveAccount(
+      account: newAccount,
+      buildList: (existingAccounts) => [newAccount, ...existingAccounts.list],
+    );
+  }
+
+  Future<void> updateAccount(MinecraftAccount updatedAccount) async {
+    await _modifyAndSaveAccount(
+      account: updatedAccount,
+      buildList:
+          (existingAccounts) => existingAccounts.list.updateById(
+            updatedAccount.id,
+            (_) => updatedAccount,
+          ),
+    );
+  }
+
+  // Shared for both addAccount and updateAccount
+  Future<void> _modifyAndSaveAccount({
+    required MinecraftAccount account,
+    required List<MinecraftAccount> Function(MinecraftAccounts existingAccounts)
+    buildList,
+  }) async {
+    final existingAccounts = _requireAccounts;
+
+    final updatedAccounts = existingAccounts.copyWith(
+      list: buildList(existingAccounts),
+      defaultAccountId: Wrapped.value(
+        existingAccounts.defaultAccountId ?? account.id,
+      ),
+    );
+
+    await _saveAccountsInFileStorage(updatedAccounts);
+    await _saveSecureAccountData(account);
+
+    _setAccountsAndNotify(updatedAccounts);
+  }
+
+  Future<void> removeAccount(String accountId) async {
+    final existingAccounts = _requireAccounts;
+
+    final existingAccountIndex = existingAccounts.list.findIndexById(accountId);
+
+    final updatedAccountsList = List<MinecraftAccount>.unmodifiable(
+      List.from(existingAccounts.list)..removeAt(existingAccountIndex),
+    );
+    final updatedAccounts = existingAccounts.copyWith(
+      list: updatedAccountsList,
+      defaultAccountId: Wrapped.value(
+        updatedAccountsList
+            .getReplacementElementAfterRemoval(existingAccountIndex)
+            ?.id,
+      ),
+    );
+
+    await _saveAccountsInFileStorage(updatedAccounts);
+    if (requireSupportsSecureStorage) {
+      await secureAccountStorage.delete(accountId);
+    }
+
+    _setAccountsAndNotify(updatedAccounts);
+  }
+
+  Future<void> updateDefaultAccount(String accountId) async {
+    if (!accountExists(accountId)) {
+      throw ArgumentError.value(
+        accountId,
+        'accountId',
+        'Account ID not found in current account list.',
+      );
+    }
+    final updatedAccounts = _requireAccounts.copyWith(
+      defaultAccountId: Wrapped.value(accountId),
+    );
+
+    await _saveAccountsInFileStorage(updatedAccounts);
+
+    _setAccountsAndNotify(updatedAccounts);
+  }
+
+  // TODO: Add upsertAccount for easier testing? Update MinecraftAccountManager and all usages of addAccount, updateAccount to use it if done
+  bool accountExists(String accountId) =>
+      _requireAccounts.list.any((account) => account.id == accountId);
+}

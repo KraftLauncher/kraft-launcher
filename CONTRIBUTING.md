@@ -16,6 +16,7 @@ Also, see [Project Architecture](./docs/ARCHITECTURE.md).
 - [Effective Dart](https://dart.dev/effective-dart).
 - [Writing Effective Tests](https://github.com/flutter/flutter/blob/master/docs/contributing/testing/Writing-Effective-Tests.md).
 - [Style guide for Flutter repo](https://github.com/flutter/flutter/blob/master/docs/contributing/Style-guide-for-Flutter-repo.md).
+- [Linux kernel coding style](https://www.kernel.org/doc/html/v4.10/process/coding-style.html) – while not directly applicable, it offers valuable insights and inspiration for maintaining consistent and readable code.
 
 ## 📋 Prerequisites
 
