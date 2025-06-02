@@ -31,7 +31,7 @@ void main() {
 
   group('requireNotNull', () {
     test('throws if null', () {
-      expect(() => requireNotNull(null, name: 'value'), throwsException);
+      expect(() => requireNotNull(null, name: 'value'), throwsStateError);
     });
 
     test('returns if not null', () {
