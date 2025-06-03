@@ -75,7 +75,7 @@ extension _FileMicrosoftAccountInfoMapper on FileMicrosoftAccountInfo {
     required SecureAccountData? secureAccountData,
     required MicrosoftReauthRequiredReason? reauthRequiredReason,
   }) => MicrosoftAccountInfo(
-    microsoftOAuthRefreshToken: microsoftOAuthRefreshToken.toExpirableToken(
+    microsoftRefreshToken: microsoftRefreshToken.toExpirableToken(
       secureAccountData?.microsoftRefreshToken,
     ),
     minecraftAccessToken: minecraftAccessToken.toExpirableToken(

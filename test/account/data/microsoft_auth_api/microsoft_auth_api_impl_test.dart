@@ -553,10 +553,10 @@ void main() {
           },
         );
 
-        const microsoftOauthRefreshToken = 'Example Microsoft Refresh Token';
+        const microsoftRefreshToken = 'Example Microsoft Refresh Token';
 
         await microsoftAuthApi.getNewTokensFromRefreshToken(
-          microsoftOauthRefreshToken,
+          microsoftRefreshToken,
         );
         final captured =
             mockDio.capturePostUriArguments<JsonObject, JsonObject>();
@@ -567,15 +567,12 @@ void main() {
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
           ).headers,
         );
-        expect(
-          captured.requestData['refresh_token'],
-          microsoftOauthRefreshToken,
-        );
+        expect(captured.requestData['refresh_token'], microsoftRefreshToken);
         expect(captured.uri, Uri.https('login.live.com', '/oauth20_token.srf'));
         expect(captured.requestData, {
           'client_id': ProjectInfoConstants.microsoftLoginClientId,
           'grant_type': 'refresh_token',
-          'refresh_token': microsoftOauthRefreshToken,
+          'refresh_token': microsoftRefreshToken,
         });
       },
     );

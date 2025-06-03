@@ -97,7 +97,7 @@ class AccountRepository {
         account.id,
         SecureAccountData(
           microsoftRefreshToken:
-              microsoftAccountInfo.microsoftOAuthRefreshToken.value ??
+              microsoftAccountInfo.microsoftRefreshToken.value ??
               (throw StateError(
                 'The Microsoft refresh token should not be null to save it in secure storage',
               )),
@@ -133,10 +133,7 @@ class AccountRepository {
         if (microsoftAccountInfo.accessRevoked) {
           return MicrosoftReauthRequiredReason.accessRevoked;
         }
-        if (microsoftAccountInfo
-            .microsoftOAuthRefreshToken
-            .expiresAt
-            .hasExpired) {
+        if (microsoftAccountInfo.microsoftRefreshToken.expiresAt.hasExpired) {
           return MicrosoftReauthRequiredReason.refreshTokenExpired;
         }
         if (accountTokensMissingFromSecureStorage ?? false) {

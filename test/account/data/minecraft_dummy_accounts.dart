@@ -15,7 +15,7 @@ abstract final class MinecraftDummyAccounts {
       username: 'SteveOnline',
       accountType: AccountType.microsoft,
       microsoftAccountInfo: createMicrosoftAccountInfo(
-        microsoftOAuthRefreshToken: ExpirableToken(
+        microsoftRefreshToken: ExpirableToken(
           value: 'refresh-token-1',
           expiresAt: DateTime.utc(2030, 10, 5),
         ),
@@ -67,7 +67,7 @@ abstract final class MinecraftDummyAccounts {
       username: 'CreeperGuy',
       accountType: AccountType.microsoft,
       microsoftAccountInfo: createMicrosoftAccountInfo(
-        microsoftOAuthRefreshToken: ExpirableToken(
+        microsoftRefreshToken: ExpirableToken(
           value: 'refresh-token-2',
           expiresAt: DateTime.utc(2099, 1, 1),
         ),
@@ -115,7 +115,7 @@ abstract final class MinecraftDummyAccount {
     username: 'player_username',
     accountType: AccountType.microsoft,
     microsoftAccountInfo: createMicrosoftAccountInfo(
-      microsoftOAuthRefreshToken: createExpirableToken(
+      microsoftRefreshToken: createExpirableToken(
         value: 'microsoft-refresh-token',
         expiresAt: DateTime(2016),
       ),

@@ -82,15 +82,15 @@ class FileAccount extends Equatable {
 @immutable
 class FileMicrosoftAccountInfo extends Equatable {
   const FileMicrosoftAccountInfo({
-    required this.microsoftOAuthRefreshToken,
+    required this.microsoftRefreshToken,
     required this.minecraftAccessToken,
     required this.accessRevoked,
   });
 
   factory FileMicrosoftAccountInfo.fromJson(JsonObject json) =>
       FileMicrosoftAccountInfo(
-        microsoftOAuthRefreshToken: FileExpirableToken.fromJson(
-          json['microsoftOAuthRefreshToken']! as JsonObject,
+        microsoftRefreshToken: FileExpirableToken.fromJson(
+          json['microsoftRefreshToken']! as JsonObject,
         ),
         minecraftAccessToken: FileExpirableToken.fromJson(
           json['minecraftAccessToken']! as JsonObject,
@@ -98,27 +98,26 @@ class FileMicrosoftAccountInfo extends Equatable {
         accessRevoked: json['accessRevoked']! as bool,
       );
 
-  final FileExpirableToken microsoftOAuthRefreshToken;
+  final FileExpirableToken microsoftRefreshToken;
   final FileExpirableToken minecraftAccessToken;
 
   /// Whether the Microsoft access was revoked by the user. This is set to true
   /// when a request is sent and the API denies the request before the expiration
-  /// of [microsoftOAuthRefreshToken].
+  /// of [microsoftRefreshToken].
   final bool accessRevoked;
 
   JsonObject toJson() => {
-    'microsoftOAuthRefreshToken': microsoftOAuthRefreshToken.toJson(),
+    'microsoftRefreshToken': microsoftRefreshToken.toJson(),
     'minecraftAccessToken': minecraftAccessToken.toJson(),
     'accessRevoked': accessRevoked,
   };
 
   bool get hasMissingTokens =>
-      microsoftOAuthRefreshToken.value == null ||
-      minecraftAccessToken.value == null;
+      microsoftRefreshToken.value == null || minecraftAccessToken.value == null;
 
   @override
   List<Object?> get props => [
-    microsoftOAuthRefreshToken,
+    microsoftRefreshToken,
     minecraftAccessToken,
     accessRevoked,
   ];

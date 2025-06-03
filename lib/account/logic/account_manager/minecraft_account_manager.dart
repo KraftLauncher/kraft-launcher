@@ -448,8 +448,7 @@ class MinecraftAccountManager {
               ' the Microsoft account. Account Type: ${account.accountType.name}',
         );
       }
-      final microsoftRefreshToken =
-          microsoftAccountInfo.microsoftOAuthRefreshToken;
+      final microsoftRefreshToken = microsoftAccountInfo.microsoftRefreshToken;
 
       _throwsIfNeedsMicrosoftReAuth(account);
 
@@ -593,7 +592,7 @@ class MinecraftAccountManager {
       onRefreshProgressUpdate(MicrosoftAuthProgress.refreshingMicrosoftTokens);
       final response = await microsoftAuthApi.getNewTokensFromRefreshToken(
         // TODO: Unit tests should expect the code to throws StateError for this point
-        microsoftAccountInfo.microsoftOAuthRefreshToken.value ??
+        microsoftAccountInfo.microsoftRefreshToken.value ??
             (throw StateError(
               'Microsoft refresh token should not be null to refresh the Minecraft access token',
             )),
@@ -620,7 +619,7 @@ class MinecraftAccountManager {
             value: loginResponse.accessToken,
             expiresAt: expiresInToExpiresAt(loginResponse.expiresIn),
           ),
-          microsoftOAuthRefreshToken: ExpirableToken(
+          microsoftRefreshToken: ExpirableToken(
             value: response.refreshToken,
             expiresAt: _microsoftRefreshTokenExpiresAt(),
           ),
@@ -656,7 +655,7 @@ class MinecraftAccountManager {
       username: profileResponse.name,
       accountType: AccountType.microsoft,
       microsoftAccountInfo: MicrosoftAccountInfo(
-        microsoftOAuthRefreshToken: ExpirableToken(
+        microsoftRefreshToken: ExpirableToken(
           value: oauthTokenResponse.refreshToken,
           expiresAt: _microsoftRefreshTokenExpiresAt(),
         ),

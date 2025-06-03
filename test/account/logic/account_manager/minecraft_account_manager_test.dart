@@ -194,7 +194,7 @@ void main() {}
 //               microsoftAccessToken.value ??
 //               (fail('Please provide a value for Microsoft OAuth access token')),
 //           refreshToken:
-//               account.microsoftAccountInfo?.microsoftOAuthRefreshToken.value ??
+//               account.microsoftAccountInfo?.microsoftRefreshToken.value ??
 //               (fail(
 //                 'Please provide a value for Microsoft OAuth refresh token',
 //               )),
@@ -2135,7 +2135,7 @@ void main() {}
 //         onProgressUpdate: (newProgress) => progressEvents.add(newProgress),
 //         accountBeforeRefresh: createMinecraftAccount(
 //           microsoftAccountInfo: createMicrosoftAccountInfo(
-//             microsoftOAuthRefreshToken: refreshToken,
+//             microsoftRefreshToken: refreshToken,
 //           ),
 //         ),
 //       );
@@ -2161,7 +2161,7 @@ void main() {}
 //         accountBeforeRefresh: createMinecraftAccount(
 //           id: exampleUserId,
 //           microsoftAccountInfo: createMicrosoftAccountInfo(
-//             microsoftOAuthRefreshToken: createExpirableToken(),
+//             microsoftRefreshToken: createExpirableToken(),
 //           ),
 //         ),
 //       );
@@ -2231,7 +2231,7 @@ void main() {}
 //               (progress, {authCodeLoginUrl}) => progressEvents.add(progress),
 //           accountBeforeRefresh: createMinecraftAccount(
 //             microsoftAccountInfo: createMicrosoftAccountInfo(
-//               microsoftOAuthRefreshToken: inputRefreshToken,
+//               microsoftRefreshToken: inputRefreshToken,
 //             ),
 //           ),
 //         );
@@ -2343,7 +2343,7 @@ void main() {}
 //               value: 'microsoft-access-token-after-refresh',
 //               expiresAt: DateTime(2029, 3, 21, 12, 43),
 //             ),
-//             microsoftOAuthRefreshToken: ExpirableToken(
+//             microsoftRefreshToken: ExpirableToken(
 //               value: 'microsoft-refresh-token-after-refresh',
 //               expiresAt: DateTime(2014),
 //             ),
@@ -2594,7 +2594,7 @@ void main() {}
 //           ]);
 //           verifyInOrder([
 //             () => _mockMicrosoftAuthApi.getNewTokensFromRefreshToken(
-//               account.microsoftAccountInfo!.microsoftOAuthRefreshToken.value,
+//               account.microsoftAccountInfo!.microsoftRefreshToken.value,
 //             ),
 //             () => _mockMicrosoftAuthApi.requestXboxLiveToken(
 //               microsoftOauthResponse,
@@ -2666,7 +2666,7 @@ void main() {}
 //         expect(
 //           refreshedAccount
 //               .microsoftAccountInfo
-//               ?.microsoftOAuthRefreshToken
+//               ?.microsoftRefreshToken
 //               .expiresAt,
 //           expectedMicrosoftRefreshTokenExpiresAt,
 //         );
@@ -2690,14 +2690,14 @@ void main() {}
 //           expiredAccount
 //               .copyWith(
 //                 microsoftAccountInfo: expiredMicrosoftAccountInfo.copyWith(
-//                   microsoftOAuthRefreshToken: expiredMicrosoftAccountInfo
-//                       .microsoftOAuthRefreshToken
+//                   microsoftRefreshToken: expiredMicrosoftAccountInfo
+//                       .microsoftRefreshToken
 //                       .copyWith(
 //                         expiresAt: expectedMicrosoftRefreshTokenExpiresAt,
 //                         value: microsoftOauthResponse.refreshToken,
 //                       ),
 //                   microsoftOAuthAccessToken: expiredMicrosoftAccountInfo
-//                       .microsoftOAuthRefreshToken
+//                       .microsoftRefreshToken
 //                       .copyWith(
 //                         expiresAt: expectedMicrosoftAccessTokenExpiresAt,
 //                         value: microsoftOauthResponse.accessToken,
@@ -2767,13 +2767,13 @@ void main() {}
 //                 microsoftAccountInfo.microsoftOAuthAccessToken.expiresAt
 //                     .trimSeconds(),
 //           ),
-//       microsoftOAuthRefreshToken: microsoftAccountInfo
-//           .microsoftOAuthRefreshToken
+//       microsoftRefreshToken: microsoftAccountInfo
+//           .microsoftRefreshToken
 //           .copyWith(
 //             expiresAt:
 //             // WORKAROUND: Using fixed DateTime to avoid comparing the refresh token expiresAt.
 //             DateTime(2015),
-//             // microsoftAccountInfo.microsoftOAuthRefreshToken.expiresAt
+//             // microsoftAccountInfo.microsoftRefreshToken.expiresAt
 //             //     .trimSeconds(),
 //           ),
 //       minecraftAccessToken: microsoftAccountInfo.minecraftAccessToken.copyWith(
@@ -3139,7 +3139,7 @@ void main() {}
 //             'The minecraftAccessToken should be: current date + ${minecraftLoginResponse.expiresIn}s which is the expiresIn from the API response',
 //       );
 //       expect(
-//         microsoftAccountInfo?.microsoftOAuthRefreshToken.expiresAt,
+//         microsoftAccountInfo?.microsoftRefreshToken.expiresAt,
 //         fixedDateTime
 //             .add(
 //               const Duration(
@@ -3148,7 +3148,7 @@ void main() {}
 //             )
 //             .add(elapsed),
 //         reason:
-//             'The microsoftOAuthRefreshToken should be: current date + ${MicrosoftConstants.refreshTokenExpiresInDays} days',
+//             'The microsoftRefreshToken should be: current date + ${MicrosoftConstants.refreshTokenExpiresInDays} days',
 //       );
 
 //       expect(

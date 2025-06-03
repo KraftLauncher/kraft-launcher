@@ -79,7 +79,7 @@ enum MicrosoftReauthRequiredReason {
 @immutable
 class MicrosoftAccountInfo extends Equatable {
   const MicrosoftAccountInfo({
-    required this.microsoftOAuthRefreshToken,
+    required this.microsoftRefreshToken,
     required this.minecraftAccessToken,
     required this.reauthRequiredReason,
   });
@@ -87,12 +87,10 @@ class MicrosoftAccountInfo extends Equatable {
   // TODO: We could consider changing the way we're storing token dates if needed,
   //  for example, storing issues at for both + expiresIn for the Minecraft access token
 
-  // TODO: Remove OAuth from microsoftOAuthRefreshToken? Do the same for FileAccount
-
   // NOTE: The Microsoft API doesn't provide the expiration date for the refresh token,
   // it's 90 days according to https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens#token-lifetime.
   // The app will always need to handle the case where it's expired or access is revoked when sending the request.
-  final ExpirableToken microsoftOAuthRefreshToken;
+  final ExpirableToken microsoftRefreshToken;
 
   final ExpirableToken minecraftAccessToken;
 
@@ -101,13 +99,13 @@ class MicrosoftAccountInfo extends Equatable {
   bool get needsReAuth => reauthRequiredReason != null;
 
   MicrosoftAccountInfo copyWith({
-    ExpirableToken? microsoftOAuthRefreshToken,
+    ExpirableToken? microsoftRefreshToken,
     ExpirableToken? minecraftAccessToken,
     MicrosoftReauthRequiredReason? reauthRequiredReason,
   }) {
     return MicrosoftAccountInfo(
-      microsoftOAuthRefreshToken:
-          microsoftOAuthRefreshToken ?? this.microsoftOAuthRefreshToken,
+      microsoftRefreshToken:
+          microsoftRefreshToken ?? this.microsoftRefreshToken,
       minecraftAccessToken: minecraftAccessToken ?? this.minecraftAccessToken,
       reauthRequiredReason: reauthRequiredReason ?? this.reauthRequiredReason,
     );
@@ -115,7 +113,7 @@ class MicrosoftAccountInfo extends Equatable {
 
   @override
   List<Object?> get props => [
-    microsoftOAuthRefreshToken,
+    microsoftRefreshToken,
     minecraftAccessToken,
     reauthRequiredReason,
   ];

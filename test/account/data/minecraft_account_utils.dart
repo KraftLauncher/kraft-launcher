@@ -37,12 +37,11 @@ MinecraftAccount createMinecraftAccount({
 );
 
 MicrosoftAccountInfo createMicrosoftAccountInfo({
-  ExpirableToken? microsoftOAuthRefreshToken,
+  ExpirableToken? microsoftRefreshToken,
   ExpirableToken? minecraftAccessToken,
   MicrosoftReauthRequiredReason? reauthRequiredReason,
 }) => MicrosoftAccountInfo(
-  microsoftOAuthRefreshToken:
-      microsoftOAuthRefreshToken ?? createExpirableToken(),
+  microsoftRefreshToken: microsoftRefreshToken ?? createExpirableToken(),
   minecraftAccessToken: minecraftAccessToken ?? createExpirableToken(),
   reauthRequiredReason: reauthRequiredReason,
 );

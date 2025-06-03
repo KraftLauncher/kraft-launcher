@@ -36,7 +36,7 @@ extension _MicrosoftAccountInfoMapper on MicrosoftAccountInfo {
   FileMicrosoftAccountInfo toFileMicrosoftAccountInfo({
     required bool storeTokensInFile,
   }) => FileMicrosoftAccountInfo(
-    microsoftOAuthRefreshToken: microsoftOAuthRefreshToken.toFileExpirableToken(
+    microsoftRefreshToken: microsoftRefreshToken.toFileExpirableToken(
       storeTokenInFile: storeTokensInFile,
     ),
     minecraftAccessToken: minecraftAccessToken.toFileExpirableToken(

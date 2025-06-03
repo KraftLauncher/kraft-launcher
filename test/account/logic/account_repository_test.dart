@@ -274,10 +274,7 @@ void main() {
             for (final account in loadedAccounts.list) {
               if (account.isMicrosoft) {
                 expect(
-                  account
-                      .microsoftAccountInfo
-                      ?.microsoftOAuthRefreshToken
-                      .value,
+                  account.microsoftAccountInfo?.microsoftRefreshToken.value,
                   secureAccountData.microsoftRefreshToken,
                   reason:
                       'Should match the Microsoft refresh token from $SecureAccountData',
@@ -348,10 +345,7 @@ void main() {
             for (final account in loadedAccounts.list) {
               if (account.isMicrosoft) {
                 expect(
-                  account
-                      .microsoftAccountInfo
-                      ?.microsoftOAuthRefreshToken
-                      .value,
+                  account.microsoftAccountInfo?.microsoftRefreshToken.value,
                   null,
                 );
                 expect(
@@ -385,7 +379,7 @@ void main() {
                 list: [
                   createMinecraftAccount(
                     microsoftAccountInfo: createMicrosoftAccountInfo(
-                      microsoftOAuthRefreshToken: createExpirableToken(
+                      microsoftRefreshToken: createExpirableToken(
                         isValueNull: true,
                       ),
                       minecraftAccessToken: createExpirableToken(
@@ -465,7 +459,7 @@ void main() {
                       createMinecraftAccount(
                         accountType: AccountType.microsoft,
                         microsoftAccountInfo: createMicrosoftAccountInfo(
-                          microsoftOAuthRefreshToken: createExpirableToken(
+                          microsoftRefreshToken: createExpirableToken(
                             expiresAt: fixedDateTime.subtract(
                               const Duration(days: 1),
                             ),
@@ -630,7 +624,7 @@ void main() {
             accountType: AccountType.microsoft,
             ownsMinecraftJava: false,
             microsoftAccountInfo: createMicrosoftAccountInfo(
-              microsoftOAuthRefreshToken: createExpirableToken(
+              microsoftRefreshToken: createExpirableToken(
                 value: 'microsoft-refresh-token',
               ),
               minecraftAccessToken: createExpirableToken(
@@ -654,7 +648,7 @@ void main() {
             ownsMinecraftJava: true,
             username: 'updated_minecraft_username',
             microsoftAccountInfo: createMicrosoftAccountInfo(
-              microsoftOAuthRefreshToken: createExpirableToken(
+              microsoftRefreshToken: createExpirableToken(
                 value: 'updated-microsoft-refresh-token',
               ),
               minecraftAccessToken: createExpirableToken(
@@ -758,7 +752,7 @@ void main() {
             // test saving to file storage logic; missing tokens may cause false test passes.
             accountType: AccountType.microsoft,
             microsoftAccountInfo: createMicrosoftAccountInfo(
-              microsoftOAuthRefreshToken: createExpirableToken(
+              microsoftRefreshToken: createExpirableToken(
                 value: 'example-microsoft-refresh-token',
               ),
               minecraftAccessToken: createExpirableToken(
@@ -1153,7 +1147,7 @@ void _saveSecureAccountDataTests(
       capturedSecureAccountData,
       SecureAccountData(
         microsoftRefreshToken:
-            microsoftAccountInfo!.microsoftOAuthRefreshToken.value!,
+            microsoftAccountInfo!.microsoftRefreshToken.value!,
         minecraftAccessToken: microsoftAccountInfo.minecraftAccessToken.value!,
       ),
       reason:
@@ -1176,7 +1170,7 @@ void _saveSecureAccountDataTests(
         id: accounts.list.first.id,
         accountType: AccountType.microsoft,
         microsoftAccountInfo: createMicrosoftAccountInfo(
-          microsoftOAuthRefreshToken: createExpirableToken(isValueNull: true),
+          microsoftRefreshToken: createExpirableToken(isValueNull: true),
           minecraftAccessToken: createExpirableToken(isValueNull: true),
         ),
       );
