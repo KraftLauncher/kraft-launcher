@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../../../common/constants/project_info_constants.dart';
 import '../../../../common/logic/json.dart';
 import 'secure_account_data.dart';
 
@@ -25,10 +26,17 @@ class SecureAccountStorage {
   Future<void> delete(String accountId) =>
       _flutterSecureStorage.delete(key: _storageKey(accountId));
 
-  Future<void> write(String accountId, SecureAccountData secureAccountData) =>
-      _flutterSecureStorage.write(
-        key: _storageKey(accountId),
-        value: jsonEncode(secureAccountData.toJson()),
-        // TODO: Set platform options like MacOsOptions for all operations
-      );
+  Future<void> write(
+    String accountId,
+    SecureAccountData secureAccountData,
+  ) => _flutterSecureStorage.write(
+    key: _storageKey(accountId),
+    value: jsonEncode(secureAccountData.toJson()),
+    mOptions: MacOsOptions(
+      accountName: ProjectInfoConstants.macOSKeychainAppName,
+      label: 'Minecraft Account [$accountId]',
+      description:
+          'Stored by ${ProjectInfoConstants.displayName} – secure credentials for account ID $accountId',
+    ),
+  );
 }

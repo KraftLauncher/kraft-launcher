@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kraft_launcher/account/data/minecraft_account/secure_storage/secure_account_data.dart';
 import 'package:kraft_launcher/account/data/minecraft_account/secure_storage/secure_account_storage.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -76,28 +77,59 @@ void main() {
     });
   });
   group('write', () {
-    test('calls $FlutterSecureStorage.write with correct key', () async {
-      const accountId = dummyAccountId;
-      final storageKey = storageKeyByAccountId(accountId);
+    test(
+      'calls $FlutterSecureStorage.write with correct key, value and options',
+      () async {
+        const accountId = dummyAccountId;
+        final storageKey = storageKeyByAccountId(accountId);
 
-      const data = SecureAccountData(
-        microsoftRefreshToken: 'example-microsoft-refresh-token',
-        minecraftAccessToken: 'example-minecraft-access-token',
-      );
+        const data = SecureAccountData(
+          microsoftRefreshToken: 'example-microsoft-refresh-token',
+          minecraftAccessToken: 'example-minecraft-access-token',
+        );
 
-      final value = jsonEncode(data.toJson());
+        final value = jsonEncode(data.toJson());
 
-      when(
-        () => mockFlutterSecureStorage.write(key: storageKey, value: value),
-      ).thenAnswer((_) async {});
+        when(
+          () => mockFlutterSecureStorage.write(
+            key: storageKey,
+            value: value,
+            mOptions: any(named: 'mOptions'),
+          ),
+        ).thenAnswer((_) async {});
 
-      await secureAccountStorage.write(accountId, data);
+        await secureAccountStorage.write(accountId, data);
 
-      verify(
-        () => mockFlutterSecureStorage.write(key: storageKey, value: value),
-      ).called(1);
-      verifyNoMoreInteractions(mockFlutterSecureStorage);
-    });
+        verify(
+          () => mockFlutterSecureStorage.write(
+            key: storageKey,
+            value: value,
+            mOptions: any(
+              named: 'mOptions',
+              that: isA<MacOsOptions>()
+                  .having(
+                    (e) => e.accountName,
+                    'accountName',
+                    equals(ProjectInfoConstants.macOSKeychainAppName),
+                  )
+                  .having(
+                    (e) => e.label,
+                    'label',
+                    equals('Minecraft Account [$accountId]'),
+                  )
+                  .having(
+                    (e) => e.description,
+                    'description',
+                    equals(
+                      'Stored by ${ProjectInfoConstants.displayName} – secure credentials for account ID $accountId',
+                    ),
+                  ),
+            ),
+          ),
+        ).called(1);
+        verifyNoMoreInteractions(mockFlutterSecureStorage);
+      },
+    );
   });
 }
 

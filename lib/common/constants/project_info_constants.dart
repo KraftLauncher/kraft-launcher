@@ -52,4 +52,6 @@ abstract final class ProjectInfoConstants {
   /// 4. Open the registered app, copy the link in the browser.
   static const microsoftRevokeAccessLink =
       'https://account.live.com/consent/Edit?client_id=0000000049694D4F';
+
+  static const macOSKeychainAppName = 'kraft_launcher';
 }

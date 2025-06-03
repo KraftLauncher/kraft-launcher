@@ -5,8 +5,6 @@ import '../../../../common/logic/app_data_paths.dart';
 import '../../../../common/logic/json.dart';
 import 'file_accounts.dart';
 
-// TODO: Test
-
 class FileAccountStorage {
   FileAccountStorage({required this.file});
   factory FileAccountStorage.fromAppDataPaths(AppDataPaths appDataPaths) =>
