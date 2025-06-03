@@ -9,7 +9,7 @@ Latest build size (uncompressed and compressed) for each desktop platform.
 | Windows  | [31 MB](#windows-detailed-size-analysis)               | 13.9 MB             | .zip                |
 
 > [!NOTE]
-> Updated after running `flutter build <platform>` and compressing the output folder.
+> Updated after running `flutter build <platform> --analyze-size` and compressing the output folder.
 
 Last run on `2025-06-03`, commit [`30bc1e6d306be574a6f9182051ac730d814c6874`](https://github.com/KraftLauncher/kraft-launcher/commit/30bc1e6d306be574a6f9182051ac730d814c6874).
 
