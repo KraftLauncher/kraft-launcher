@@ -1,7 +1,9 @@
+/// @docImport '../minecraft_api/minecraft_api.dart';
+library;
+
 import 'package:meta/meta.dart';
 
 import '../../../common/logic/json.dart';
-import '../minecraft_api/minecraft_api.dart';
 import 'auth_methods/microsoft_auth_code_flow.dart';
 import 'auth_methods/microsoft_device_code_flow.dart';
 
@@ -62,13 +64,10 @@ class XboxLiveAuthTokenResponse {
 ///  * [MinecraftApi]
 abstract class MicrosoftAuthApi
     implements MicrosoftAuthCodeFlow, MicrosoftDeviceCodeFlow {
-  // TODO: It's probably better to require the token only instead of the full response to avoid confusion, make the same change to MinecraftApi
   Future<XboxLiveAuthTokenResponse> requestXboxLiveToken(
-    MicrosoftOauthTokenExchangeResponse microsoftOauthToken,
+    String microsoftOauthToken,
   );
-  Future<XboxLiveAuthTokenResponse> requestXSTSToken(
-    XboxLiveAuthTokenResponse xboxLiveToken,
-  );
+  Future<XboxLiveAuthTokenResponse> requestXSTSToken(String xboxLiveToken);
 
   Future<MicrosoftOauthTokenExchangeResponse> getNewTokensFromRefreshToken(
     String microsoftRefreshToken,

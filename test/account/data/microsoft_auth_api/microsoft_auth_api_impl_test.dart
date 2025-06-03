@@ -12,6 +12,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import '../../../common/helpers/dio_utils.dart';
+import '../../../common/test_constants.dart';
 
 void main() {
   late MicrosoftAuthApi microsoftAuthApi;
@@ -279,7 +280,7 @@ void main() {
         );
 
         final result = await microsoftAuthApi.checkDeviceCodeStatus(
-          requestDeviceCodeResponse(deviceCode: 'any'),
+          requestDeviceCodeResponse(deviceCode: TestConstants.anyString),
         );
         expect(result, isA<MicrosoftCheckDeviceCodeStatusResult>());
       },
@@ -293,7 +294,7 @@ void main() {
         );
 
         final result = await microsoftAuthApi.checkDeviceCodeStatus(
-          requestDeviceCodeResponse(deviceCode: 'any'),
+          requestDeviceCodeResponse(deviceCode: TestConstants.anyString),
         );
         expect(result, isA<MicrosoftDeviceCodeAuthorizationPending>());
       },
@@ -306,7 +307,7 @@ void main() {
         );
 
         final result = await microsoftAuthApi.checkDeviceCodeStatus(
-          requestDeviceCodeResponse(deviceCode: 'any'),
+          requestDeviceCodeResponse(deviceCode: TestConstants.anyString),
         );
         expect(result, isA<MicrosoftDeviceCodeExpired>());
       },
@@ -315,14 +316,14 @@ void main() {
     _tooManyRequestsTest(
       () => mockDio,
       () => microsoftAuthApi.checkDeviceCodeStatus(
-        requestDeviceCodeResponse(deviceCode: 'any'),
+        requestDeviceCodeResponse(deviceCode: TestConstants.anyString),
       ),
     );
 
     _unknownErrorTests(
       () => mockDio,
       () => microsoftAuthApi.checkDeviceCodeStatus(
-        requestDeviceCodeResponse(deviceCode: 'any'),
+        requestDeviceCodeResponse(deviceCode: TestConstants.anyString),
       ),
     );
   });
@@ -332,31 +333,22 @@ void main() {
   // START: Xbox
 
   group('requestXboxLiveToken', () {
-    MicrosoftOauthTokenExchangeResponse microsoftOauthTokenResponse({
-      required String accessToken,
-    }) => MicrosoftOauthTokenExchangeResponse(
-      accessToken: accessToken,
-      refreshToken: '',
-      expiresIn: -1,
-    );
     test(
       'uses expected request URI, headers, and body with the Microsoft access token',
       () async {
         mockDio.mockPostUriSuccess<JsonObject>(
           responseData: {
-            'Token': '',
+            'Token': TestConstants.anyString,
             'DisplayClaims': {
               'xui': [
-                {'uhs': ''},
+                {'uhs': TestConstants.anyString},
               ],
             },
           },
         );
 
         const microsoftAccessToken = 'Example Access Token';
-        await microsoftAuthApi.requestXboxLiveToken(
-          microsoftOauthTokenResponse(accessToken: microsoftAccessToken),
-        );
+        await microsoftAuthApi.requestXboxLiveToken(microsoftAccessToken);
         final captured =
             mockDio.capturePostUriArguments<JsonObject, JsonObject>();
 
@@ -404,7 +396,7 @@ void main() {
       );
 
       final response = await microsoftAuthApi.requestXboxLiveToken(
-        microsoftOauthTokenResponse(accessToken: ''),
+        TestConstants.anyString,
       );
 
       expect(response.userHash, userHash);
@@ -422,9 +414,7 @@ void main() {
         );
 
         await expectLater(
-          () => microsoftAuthApi.requestXboxLiveToken(
-            microsoftOauthTokenResponse(accessToken: ''),
-          ),
+          () => microsoftAuthApi.requestXboxLiveToken(TestConstants.anyString),
           throwsA(
             isA<
               XboxTokenRequestFailedDueToExpiredAccessTokenMicrosoftAuthException
@@ -436,39 +426,31 @@ void main() {
 
     _tooManyRequestsTest(
       () => mockDio,
-      () => microsoftAuthApi.requestXboxLiveToken(
-        microsoftOauthTokenResponse(accessToken: ''),
-      ),
+      () => microsoftAuthApi.requestXboxLiveToken(TestConstants.anyString),
     );
     _unknownErrorTests(
       () => mockDio,
-      () => microsoftAuthApi.requestXboxLiveToken(
-        microsoftOauthTokenResponse(accessToken: ''),
-      ),
+      () => microsoftAuthApi.requestXboxLiveToken(TestConstants.anyString),
     );
   });
 
   group('requestXSTSToken', () {
-    XboxLiveAuthTokenResponse xboxLiveTokenResponse({String xboxToken = ''}) =>
-        XboxLiveAuthTokenResponse(xboxToken: xboxToken, userHash: '');
     test(
       'uses expected request URI, headers, and body with the Xbox Live token',
       () async {
         mockDio.mockPostUriSuccess<JsonObject>(
           responseData: {
-            'Token': '',
+            'Token': TestConstants.anyString,
             'DisplayClaims': {
               'xui': [
-                {'uhs': ''},
+                {'uhs': TestConstants.anyString},
               ],
             },
           },
         );
 
         const xboxLiveToken = 'Example Xbox Live Token';
-        await microsoftAuthApi.requestXSTSToken(
-          xboxLiveTokenResponse(xboxToken: xboxLiveToken),
-        );
+        await microsoftAuthApi.requestXSTSToken(xboxLiveToken);
         final captured =
             mockDio.capturePostUriArguments<JsonObject, JsonObject>();
 
@@ -517,7 +499,7 @@ void main() {
       );
 
       final response = await microsoftAuthApi.requestXSTSToken(
-        xboxLiveTokenResponse(),
+        TestConstants.anyString,
       );
 
       expect(response.userHash, userHash);
@@ -526,11 +508,11 @@ void main() {
 
     _tooManyRequestsTest(
       () => mockDio,
-      () => microsoftAuthApi.requestXSTSToken(xboxLiveTokenResponse()),
+      () => microsoftAuthApi.requestXSTSToken(TestConstants.anyString),
     );
     _unknownErrorTests(
       () => mockDio,
-      () => microsoftAuthApi.requestXSTSToken(xboxLiveTokenResponse()),
+      () => microsoftAuthApi.requestXSTSToken(TestConstants.anyString),
     );
 
     test(
@@ -544,7 +526,7 @@ void main() {
           );
 
           await expectLater(
-            microsoftAuthApi.requestXSTSToken(xboxLiveTokenResponse()),
+            microsoftAuthApi.requestXSTSToken(TestConstants.anyString),
             throwsA(
               isA<XstsErrorMicrosoftAuthException>()
                   .having((e) => e.message, 'message', message)
@@ -565,8 +547,8 @@ void main() {
       () async {
         mockDio.mockPostUriSuccess<JsonObject>(
           responseData: {
-            'access_token': '',
-            'refresh_token': '',
+            'access_token': TestConstants.anyString,
+            'refresh_token': TestConstants.anyString,
             'expires_in': -1,
           },
         );
@@ -613,7 +595,7 @@ void main() {
         );
 
         final response = await microsoftAuthApi.getNewTokensFromRefreshToken(
-          '',
+          TestConstants.anyString,
         );
 
         expect(response.accessToken, accessToken);
@@ -630,7 +612,9 @@ void main() {
         );
 
         await expectLater(
-          microsoftAuthApi.getNewTokensFromRefreshToken(''),
+          microsoftAuthApi.getNewTokensFromRefreshToken(
+            TestConstants.anyString,
+          ),
           throwsA(
             isA<ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException>(),
           ),
@@ -640,12 +624,16 @@ void main() {
 
     _tooManyRequestsTest(
       () => mockDio,
-      () => microsoftAuthApi.getNewTokensFromRefreshToken(''),
+      () => microsoftAuthApi.getNewTokensFromRefreshToken(
+        TestConstants.anyString,
+      ),
     );
 
     _unknownErrorTests(
       () => mockDio,
-      () => microsoftAuthApi.getNewTokensFromRefreshToken(''),
+      () => microsoftAuthApi.getNewTokensFromRefreshToken(
+        TestConstants.anyString,
+      ),
     );
   });
 }

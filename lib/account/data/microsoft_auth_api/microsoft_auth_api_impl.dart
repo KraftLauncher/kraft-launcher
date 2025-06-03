@@ -167,7 +167,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
 
   @override
   Future<XboxLiveAuthTokenResponse> requestXboxLiveToken(
-    MicrosoftOauthTokenExchangeResponse microsoftOauthToken,
+    String microsoftOauthToken,
   ) async => _handleCommonFailures(
     () async {
       final response = await dio.postUri<JsonObject>(
@@ -182,7 +182,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
           'Properties': {
             'AuthMethod': 'RPS',
             'SiteName': 'user.auth.xboxlive.com',
-            'RpsTicket': 'd=${microsoftOauthToken.accessToken}',
+            'RpsTicket': 'd=$microsoftOauthToken',
           },
           'RelyingParty': 'http://auth.xboxlive.com',
           'TokenType': 'JWT',
@@ -207,7 +207,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
 
   @override
   Future<XboxLiveAuthTokenResponse> requestXSTSToken(
-    XboxLiveAuthTokenResponse xboxLiveToken,
+    String xboxLiveToken,
   ) => _handleCommonFailures(
     () async {
       final response = await dio.postUri<JsonObject>(
@@ -221,7 +221,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
         data: {
           'Properties': {
             'SandboxId': 'RETAIL',
-            'UserTokens': [xboxLiveToken.xboxToken],
+            'UserTokens': [xboxLiveToken],
           },
           'RelyingParty': 'rp://api.minecraftservices.com/',
           'TokenType': 'JWT',

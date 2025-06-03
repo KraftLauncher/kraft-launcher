@@ -1,12 +1,12 @@
+/// @docImport '../microsoft_auth_api/microsoft_auth_api.dart';
+library;
+
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../../common/logic/json.dart';
-import '../microsoft_auth_api/microsoft_auth_api.dart'
-    as microsoft_api
-    show MicrosoftAuthApi, XboxLiveAuthTokenResponse;
 
 @immutable
 class MinecraftLoginResponse {
@@ -155,11 +155,12 @@ enum MinecraftApiCosmeticState {
 
 /// See also:
 ///  * https://minecraft.wiki/w/Mojang_API
-///  * [microsoft_api.MicrosoftAuthApi]
+///  * [MicrosoftAuthApi]
 abstract class MinecraftApi {
-  Future<MinecraftLoginResponse> loginToMinecraftWithXbox(
-    microsoft_api.XboxLiveAuthTokenResponse xsts,
-  );
+  Future<MinecraftLoginResponse> loginToMinecraftWithXbox({
+    required String xstsToken,
+    required String xstsUserHash,
+  });
 
   /// [minecraftAccessToken] is the same as [MinecraftLoginResponse.accessToken]
   Future<MinecraftProfileResponse> fetchMinecraftProfile(

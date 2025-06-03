@@ -15,6 +15,7 @@ import 'package:test/test.dart';
 
 import '../../../common/helpers/dio_utils.dart';
 import '../../../common/helpers/temp_file_utils.dart';
+import '../../../common/test_constants.dart';
 
 void main() {
   late MinecraftApi minecraftApi;
@@ -49,7 +50,10 @@ void main() {
           userHash: 'Example user hash',
           xboxToken: 'Example Xbox token',
         );
-        await minecraftApi.loginToMinecraftWithXbox(xboxLiveToken);
+        await minecraftApi.loginToMinecraftWithXbox(
+          xstsToken: xboxLiveToken.xboxToken,
+          xstsUserHash: xboxLiveToken.userHash,
+        );
         final captured =
             mockDio.capturePostUriArguments<JsonObject, JsonObject>();
 
@@ -83,7 +87,8 @@ void main() {
       );
 
       final response = await minecraftApi.loginToMinecraftWithXbox(
-        xboxLiveTokenResponse(),
+        xstsToken: TestConstants.anyString,
+        xstsUserHash: TestConstants.anyString,
       );
 
       expect(response.accessToken, accessToken);
@@ -92,17 +97,26 @@ void main() {
     });
     _tooManyRequestsTest(
       () => mockDio,
-      () => minecraftApi.loginToMinecraftWithXbox(xboxLiveTokenResponse()),
+      () => minecraftApi.loginToMinecraftWithXbox(
+        xstsToken: TestConstants.anyString,
+        xstsUserHash: TestConstants.anyString,
+      ),
       isPostRequest: true,
     );
     _unknownErrorTests(
       () => mockDio,
-      () => minecraftApi.loginToMinecraftWithXbox(xboxLiveTokenResponse()),
+      () => minecraftApi.loginToMinecraftWithXbox(
+        xstsToken: TestConstants.anyString,
+        xstsUserHash: TestConstants.anyString,
+      ),
       isPostRequest: true,
     );
     _unauthorizedTest(
       () => mockDio,
-      () => minecraftApi.loginToMinecraftWithXbox(xboxLiveTokenResponse()),
+      () => minecraftApi.loginToMinecraftWithXbox(
+        xstsToken: TestConstants.anyString,
+        xstsUserHash: TestConstants.anyString,
+      ),
       isPostRequest: true,
     );
   });

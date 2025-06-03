@@ -15,6 +15,7 @@ import 'package:kraft_launcher/common/logic/utils.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import '../../common/test_constants.dart';
 import '../data/minecraft_account_utils.dart';
 import '../data/minecraft_dummy_accounts.dart';
 
@@ -944,7 +945,7 @@ void main() {
     );
 
     _throwsStateErrorIfAccountsNotLoadedTest(
-      () => _accountRepository.updateDefaultAccount('any'),
+      () => _accountRepository.updateDefaultAccount(TestConstants.anyString),
     );
   });
 
@@ -977,13 +978,13 @@ void main() {
     test('throws $ArgumentError with given ID does not exist', () async {
       _accountRepository.setAccountsForTest(MinecraftAccounts.empty());
       await expectLater(
-        _accountRepository.updateDefaultAccount('any'),
+        _accountRepository.updateDefaultAccount(TestConstants.anyString),
         throwsArgumentError,
       );
     });
 
     _throwsStateErrorIfAccountsNotLoadedTest(
-      () => _accountRepository.updateDefaultAccount('any'),
+      () => _accountRepository.updateDefaultAccount(TestConstants.anyString),
     );
 
     _saveAccountsInFileStorageTests(({
@@ -1031,7 +1032,7 @@ void main() {
 
     test('returns false when list is empty', () {
       _accountRepository.setAccountsForTest(MinecraftAccounts.empty());
-      expect(_accountRepository.accountExists('any'), false);
+      expect(_accountRepository.accountExists(TestConstants.anyString), false);
     });
   });
 }

@@ -5,9 +5,6 @@ import 'package:dio/dio.dart';
 import '../../../common/logic/dio_client.dart';
 import '../../../common/logic/file_utils.dart';
 import '../../../common/logic/json.dart';
-import '../microsoft_auth_api/microsoft_auth_api.dart'
-    as microsoft_api
-    show XboxLiveAuthTokenResponse;
 import 'minecraft_api.dart';
 import 'minecraft_api_exceptions.dart';
 
@@ -57,9 +54,10 @@ class MinecraftApiImpl extends MinecraftApi {
   }
 
   @override
-  Future<MinecraftLoginResponse> loginToMinecraftWithXbox(
-    microsoft_api.XboxLiveAuthTokenResponse xsts,
-  ) async => _handleCommonFailures(() async {
+  Future<MinecraftLoginResponse> loginToMinecraftWithXbox({
+    required String xstsToken,
+    required String xstsUserHash,
+  }) async => _handleCommonFailures(() async {
     final response = await dio.postUri<JsonObject>(
       Uri.https('api.minecraftservices.com', '/authentication/login_with_xbox'),
       options: Options(
@@ -68,7 +66,7 @@ class MinecraftApiImpl extends MinecraftApi {
           'Accept': 'application/json',
         },
       ),
-      data: {'identityToken': 'XBL3.0 x=${xsts.userHash};${xsts.xboxToken}'},
+      data: {'identityToken': 'XBL3.0 x=$xstsUserHash;$xstsToken'},
     );
     return MinecraftLoginResponse.fromJson(response.dataOrThrow);
   });

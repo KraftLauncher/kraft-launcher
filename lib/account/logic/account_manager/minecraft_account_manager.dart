@@ -377,16 +377,17 @@ class MinecraftAccountManager {
   }) async {
     onProgressUpdate(MicrosoftAuthProgress.requestingXboxToken);
     final xboxLiveTokenResponse = await microsoftAuthApi.requestXboxLiveToken(
-      oauthTokenResponse,
+      oauthTokenResponse.accessToken,
     );
 
     onProgressUpdate(MicrosoftAuthProgress.requestingXstsToken);
-    final xstsToken = await microsoftAuthApi.requestXSTSToken(
-      xboxLiveTokenResponse,
+    final xstsTokenResponse = await microsoftAuthApi.requestXSTSToken(
+      xboxLiveTokenResponse.xboxToken,
     );
     onProgressUpdate(MicrosoftAuthProgress.loggingIntoMinecraft);
     final minecraftLoginResponse = await minecraftApi.loginToMinecraftWithXbox(
-      xstsToken,
+      xstsToken: xstsTokenResponse.xboxToken,
+      xstsUserHash: xstsTokenResponse.userHash,
     );
 
     onProgressUpdate(MicrosoftAuthProgress.checkingMinecraftJavaOwnership);
@@ -600,17 +601,18 @@ class MinecraftAccountManager {
 
       onRefreshProgressUpdate(MicrosoftAuthProgress.requestingXboxToken);
       final xboxResponse = await microsoftAuthApi.requestXboxLiveToken(
-        response,
+        response.accessToken,
       );
 
       onRefreshProgressUpdate(MicrosoftAuthProgress.requestingXstsToken);
-      final xstsResponse = await microsoftAuthApi.requestXSTSToken(
-        xboxResponse,
+      final xstsTokenResponse = await microsoftAuthApi.requestXSTSToken(
+        xboxResponse.xboxToken,
       );
 
       onRefreshProgressUpdate(MicrosoftAuthProgress.loggingIntoMinecraft);
       final loginResponse = await minecraftApi.loginToMinecraftWithXbox(
-        xstsResponse,
+        xstsToken: xstsTokenResponse.xboxToken,
+        xstsUserHash: xstsTokenResponse.userHash,
       );
       final refreshedAccount = account.copyWith(
         microsoftAccountInfo: microsoftAccountInfo.copyWith(
