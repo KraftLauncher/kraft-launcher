@@ -62,13 +62,13 @@ dev_dependencies:
   file: ^7.0.1
 
 dependency_overrides:
-  # Remove the override if this PR merged: https://github.com/material-foundation/flutter-packages/pull/634
+  # Remove the override if this PR is merged: https://github.com/material-foundation/flutter-packages/pull/634
   dynamic_color:
     git:
       url: https://github.com/EchoEllet/flutter-packages.git
       ref: feat/swift-package-manager
       path: packages/dynamic_color
-  # Remove when this issue solved: https://github.com/juliansteenbakker/flutter_secure_storage/issues/920
+  # Remove when this issue is solved: https://github.com/juliansteenbakker/flutter_secure_storage/issues/920
   flutter_secure_storage_linux:
     git:
       url: https://github.com/m-berto/flutter_secure_storage.git
