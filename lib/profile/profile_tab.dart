@@ -17,7 +17,7 @@ import 'package:path/path.dart' as p;
 import 'package:pool/pool.dart';
 
 import '../account/data/minecraft_account/minecraft_account.dart';
-import '../account/logic/account_cubit.dart';
+import '../account/logic/account_cubit/account_cubit.dart';
 import '../common/constants/project_info_constants.dart';
 import '../common/logic/app_data_paths.dart';
 import '../common/logic/dio_client.dart';

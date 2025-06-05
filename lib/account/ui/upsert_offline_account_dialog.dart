@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../common/ui/utils/build_context_ext.dart';
 import '../data/minecraft_account/minecraft_account.dart';
-import '../logic/account_cubit.dart';
+import '../logic/account_cubit/account_cubit.dart';
 
 class UpsertOfflineAccountDialog extends StatefulWidget {
   const UpsertOfflineAccountDialog({

@@ -10,7 +10,7 @@ import '../../common/ui/widgets/search_field.dart';
 import '../../common/ui/widgets/split_view.dart';
 import '../../common/ui/widgets/unknown_error.dart';
 import '../data/minecraft_account/minecraft_account.dart';
-import '../logic/account_cubit.dart';
+import '../logic/account_cubit/account_cubit.dart';
 import '../logic/account_manager/minecraft_account_manager_exceptions.dart';
 import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
 import 'account_details.dart';

@@ -4,13 +4,13 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import '../../common/logic/utils.dart';
-import '../../common/ui/utils/exception_with_stacktrace.dart';
-import '../data/minecraft_account/minecraft_account.dart';
-import '../data/minecraft_account/minecraft_accounts.dart';
-import 'account_manager/minecraft_account_manager.dart';
-import 'account_manager/minecraft_account_manager_exceptions.dart';
-import 'account_utils.dart';
+import '../../../common/logic/utils.dart';
+import '../../../common/ui/utils/exception_with_stacktrace.dart';
+import '../../data/minecraft_account/minecraft_account.dart';
+import '../../data/minecraft_account/minecraft_accounts.dart';
+import '../account_manager/minecraft_account_manager.dart';
+import '../account_manager/minecraft_account_manager_exceptions.dart';
+import '../account_utils.dart';
 
 part 'account_state.dart';
 

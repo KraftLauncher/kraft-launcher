@@ -5,7 +5,7 @@ import '../../common/constants/constants.dart';
 import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/widgets/split_view.dart';
 import '../data/minecraft_account/minecraft_account.dart';
-import '../logic/account_cubit.dart';
+import '../logic/account_cubit/account_cubit.dart';
 import 'skin/skin_icon_image.dart';
 
 class AccountListTile extends StatelessWidget {

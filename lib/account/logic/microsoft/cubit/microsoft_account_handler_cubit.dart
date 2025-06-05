@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../common/logic/utils.dart';
 import '../../../data/minecraft_account/minecraft_account.dart';
-import '../../account_cubit.dart';
+import '../../account_cubit/account_cubit.dart';
 import '../../account_manager/minecraft_account_manager.dart';
 import '../../account_manager/minecraft_account_manager_exceptions.dart';
 import '../../account_utils.dart';

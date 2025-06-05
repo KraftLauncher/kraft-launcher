@@ -12,7 +12,7 @@ import 'account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
 import 'account/data/minecraft_account/local_file_storage/file_account_storage.dart';
 import 'account/data/minecraft_account/secure_storage/secure_account_storage.dart';
 import 'account/data/minecraft_account_api/minecraft_account_api_impl.dart';
-import 'account/logic/account_cubit.dart';
+import 'account/logic/account_cubit/account_cubit.dart';
 import 'account/logic/account_manager/image_cache_service/default_image_cache_service.dart';
 import 'account/logic/account_manager/minecraft_account_manager.dart';
 import 'account/logic/account_repository.dart';
