@@ -130,6 +130,24 @@ class MainApp extends StatelessWidget {
               ),
             );
 
+            const progressIndicatorTheme = ProgressIndicatorThemeData(
+              // ignore: deprecated_member_use
+              year2023: false,
+            );
+            const sliderTheme = SliderThemeData(
+              // ignore: deprecated_member_use
+              year2023: false,
+            );
+
+            ColorScheme colorScheme(Brightness brightness) =>
+                ColorScheme.fromSeed(
+                  seedColor:
+                      generalSettings.useAccentColor
+                          ? generalSettings.accentColor
+                          : Colors.lightBlue,
+                  brightness: brightness,
+                );
+
             return OptionalDynamicColorBuilder(
               isEnabled: generalSettings.useDynamicColor,
               builder:
@@ -140,44 +158,18 @@ class MainApp extends StatelessWidget {
                     theme: ThemeData(
                       useMaterial3: !generalSettings.useClassicMaterialDesign,
                       colorScheme:
-                          lightColorScheme ??
-                          ColorScheme.fromSeed(
-                            seedColor:
-                                generalSettings.useAccentColor
-                                    ? generalSettings.accentColor
-                                    : Colors.lightBlue,
-                            brightness: Brightness.light,
-                          ),
+                          lightColorScheme ?? colorScheme(Brightness.light),
                       listTileTheme: listTileTheme,
-                      progressIndicatorTheme: const ProgressIndicatorThemeData(
-                        // ignore: deprecated_member_use
-                        year2023: false,
-                      ),
-                      sliderTheme: const SliderThemeData(
-                        // ignore: deprecated_member_use
-                        year2023: false,
-                      ),
+                      progressIndicatorTheme: progressIndicatorTheme,
+                      sliderTheme: sliderTheme,
                     ),
                     darkTheme: ThemeData(
                       useMaterial3: !generalSettings.useClassicMaterialDesign,
                       colorScheme:
-                          darkColorScheme ??
-                          ColorScheme.fromSeed(
-                            seedColor:
-                                generalSettings.useAccentColor
-                                    ? generalSettings.accentColor
-                                    : Colors.lightBlue,
-                            brightness: Brightness.dark,
-                          ),
+                          darkColorScheme ?? colorScheme(Brightness.dark),
                       listTileTheme: listTileTheme,
-                      progressIndicatorTheme: const ProgressIndicatorThemeData(
-                        // ignore: deprecated_member_use
-                        year2023: false,
-                      ),
-                      sliderTheme: const SliderThemeData(
-                        // ignore: deprecated_member_use
-                        year2023: false,
-                      ),
+                      progressIndicatorTheme: progressIndicatorTheme,
+                      sliderTheme: sliderTheme,
                     ),
                     themeMode: generalSettings.themeMode,
                     localizationsDelegates:
