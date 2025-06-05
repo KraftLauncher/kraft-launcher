@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:kraft_launcher/common/logic/utils.dart';
 import 'package:test/test.dart';
 
@@ -134,6 +135,25 @@ void main() {
             previousElement,
           );
         });
+      });
+    });
+  });
+
+  group('hasExpired', () {
+    test('returns true when expired', () {
+      final fixedDateTime = DateTime(2027, 3, 12, 15);
+      withClock(Clock.fixed(fixedDateTime), () {
+        expect(
+          fixedDateTime.subtract(const Duration(seconds: 1)).hasExpired,
+          true,
+        );
+      });
+    });
+
+    test('returns false when not expired', () {
+      final fixedDateTime = DateTime(2027, 3, 12, 15);
+      withClock(Clock.fixed(fixedDateTime), () {
+        expect(fixedDateTime.add(const Duration(seconds: 1)).hasExpired, false);
       });
     });
   });

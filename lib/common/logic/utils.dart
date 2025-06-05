@@ -71,7 +71,6 @@ T requireNotNull<T>(T? value, {required String name}) {
 DateTime expiresInToExpiresAt(int expiresIn) =>
     clock.now().add(Duration(seconds: expiresIn));
 
-// TODO: Unit test
 extension DateTimeExt on DateTime {
   bool get hasExpired => isBefore(clock.now());
 }

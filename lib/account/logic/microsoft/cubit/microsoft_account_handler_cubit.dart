@@ -32,7 +32,7 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
     } on AccountManagerException catch (e) {
       if (e
           is MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException) {
-        // TODO: We should not need this anymore due to AccountRepository, remove this when AccountCubit depends on AccountRepository. MicrosoftAccountHandlerCubit should not depend on MicrosoftAccountHandlerCubit directly.
+        // TODO: We should not need this anymore due to AccountRepository, remove this when AccountCubit depends on AccountRepository. MicrosoftAccountHandlerCubit should not depend on AccountCubit directly.
         accountCubit.setAccounts(
           accountCubit.state.accounts.updateById(
             e.updatedAccount.id,
