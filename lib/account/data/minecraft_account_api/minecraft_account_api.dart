@@ -150,13 +150,10 @@ enum MinecraftApiCosmeticState {
   };
 }
 
-// TODO: We probably need to rename this to MinecraftAccountApi (everywhere, even in tests),
-//  since there is also Minecraft APIs for downloading the game, runtimes, news and more.
-
 /// See also:
 ///  * https://minecraft.wiki/w/Mojang_API
 ///  * [MicrosoftAuthApi]
-abstract class MinecraftApi {
+abstract class MinecraftAccountApi {
   Future<MinecraftLoginResponse> loginToMinecraftWithXbox({
     required String xstsToken,
     required String xstsUserHash,

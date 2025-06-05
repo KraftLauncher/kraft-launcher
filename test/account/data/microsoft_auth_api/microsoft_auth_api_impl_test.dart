@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_methods/microsoft_device_code_flow.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_exceptions.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
-import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_exceptions.dart';
 import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/logic/json.dart';
@@ -97,7 +97,7 @@ void main() {
     );
 
     test(
-      'throws $AuthCodeExpiredMicrosoftAuthException when auth code expires',
+      'throws $MicrosoftAuthCodeExpiredException when auth code expires',
       () async {
         mockDio.mockPostUriFailure<JsonObject>(
           responseData: {'error': 'invalid_grant'},
@@ -105,7 +105,7 @@ void main() {
 
         await expectLater(
           microsoftAuthApi.exchangeAuthCodeForTokens(fakeAuthCode),
-          throwsA(isA<AuthCodeExpiredMicrosoftAuthException>()),
+          throwsA(isA<MicrosoftAuthCodeExpiredException>()),
         );
       },
     );
@@ -404,7 +404,7 @@ void main() {
     });
 
     test(
-      'throws $XboxTokenRequestFailedDueToExpiredAccessTokenMicrosoftAuthException when Microsoft OAuth access token expires',
+      'throws $MicrosoftAuthXboxTokenMicrosoftAccessTokenExpiredException when Microsoft OAuth access token expires',
       () async {
         mockDio.mockPostUriFailure<JsonObject>(
           headers: Headers.fromMap({
@@ -416,9 +416,7 @@ void main() {
         await expectLater(
           () => microsoftAuthApi.requestXboxLiveToken(TestConstants.anyString),
           throwsA(
-            isA<
-              XboxTokenRequestFailedDueToExpiredAccessTokenMicrosoftAuthException
-            >(),
+            isA<MicrosoftAuthXboxTokenMicrosoftAccessTokenExpiredException>(),
           ),
         );
       },
@@ -516,7 +514,7 @@ void main() {
     );
 
     test(
-      'throws $XstsErrorMicrosoftAuthException for Xbox specific errors',
+      'throws $MicrosoftAuthXstsErrorException for Xbox specific errors',
       () async {
         for (final xstsError in XstsError.values) {
           const message = 'An unknown error';
@@ -528,7 +526,7 @@ void main() {
           await expectLater(
             microsoftAuthApi.requestXSTSToken(TestConstants.anyString),
             throwsA(
-              isA<XstsErrorMicrosoftAuthException>()
+              isA<MicrosoftAuthXstsErrorException>()
                   .having((e) => e.message, 'message', message)
                   .having((e) => e.xErr, 'xErr', xstsError.xErr)
                   .having((e) => e.xstsError, 'xstsError', xstsError),
@@ -602,7 +600,7 @@ void main() {
     );
 
     test(
-      'throws $ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException when refresh token expires',
+      'throws $MicrosoftAuthInvalidRefreshTokenException when refresh token expires',
       () async {
         mockDio.mockPostUriFailure<JsonObject>(
           responseData: {'error': 'invalid_grant'},
@@ -612,9 +610,7 @@ void main() {
           microsoftAuthApi.getNewTokensFromRefreshToken(
             TestConstants.anyString,
           ),
-          throwsA(
-            isA<ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException>(),
-          ),
+          throwsA(isA<MicrosoftAuthInvalidRefreshTokenException>()),
         );
       },
     );
@@ -640,7 +636,7 @@ void _tooManyRequestsTest(
   Future<void> Function() call,
 ) {
   test(
-    'throws $TooManyRequestsMicrosoftAuthException on HTTP ${HttpStatus.tooManyRequests}',
+    'throws $MicrosoftAuthTooManyRequestsException on HTTP ${HttpStatus.tooManyRequests}',
     () async {
       mockDio().mockPostUriFailure<JsonObject>(
         statusCode: HttpStatus.tooManyRequests,
@@ -649,7 +645,7 @@ void _tooManyRequestsTest(
 
       await expectLater(
         call,
-        throwsA(isA<TooManyRequestsMicrosoftAuthException>()),
+        throwsA(isA<MicrosoftAuthTooManyRequestsException>()),
       );
     },
   );
@@ -660,7 +656,7 @@ void _unknownErrorTests(
   Future<void> Function() call,
 ) {
   test(
-    'throws $UnknownMicrosoftAuthException for unhandled or unknown errors with code and description when provided',
+    'throws $MicrosoftAuthUnknownException for unhandled or unknown errors with code and description when provided',
     () async {
       const errorCode = 'unknown_error_code';
       const errorDescription = 'The unknown error description';
@@ -674,7 +670,7 @@ void _unknownErrorTests(
       await expectLater(
         call,
         throwsA(
-          isA<UnknownMicrosoftAuthException>()
+          isA<MicrosoftAuthUnknownException>()
               .having((e) => e.message, 'errorCode', contains(errorCode))
               .having(
                 (e) => e.message,
@@ -687,16 +683,16 @@ void _unknownErrorTests(
   );
 
   test(
-    'throws $UnknownMicrosoftAuthException for unhandled or unknown errors without code and description when not provided',
+    'throws $MicrosoftAuthUnknownException for unhandled or unknown errors without code and description when not provided',
     () async {
       mockDio().mockPostUriFailure<JsonObject>(responseData: {});
 
-      await expectLater(call, throwsA(isA<UnknownMicrosoftAuthException>()));
+      await expectLater(call, throwsA(isA<MicrosoftAuthUnknownException>()));
     },
   );
 
   test(
-    'throws $UnknownMicrosoftAuthException when catching $Exception',
+    'throws $MicrosoftAuthUnknownException when catching $Exception',
     () async {
       final exception = Exception('Example exception');
       mockDio().mockPostUriFailure<JsonObject>(

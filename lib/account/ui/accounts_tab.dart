@@ -156,7 +156,7 @@ class _AddAccountButton extends StatelessWidget {
                     // Handle special errors
 
                     switch (exception) {
-                      case MicrosoftReAuthRequiredAccountManagerException():
+                      case AccountManagerMicrosoftReAuthRequiredException():
                         scaffoldMessenger.showSnackBarText(
                           message,
                           snackBarAction: SnackBarAction(
@@ -165,7 +165,7 @@ class _AddAccountButton extends StatelessWidget {
                                 () => LoginWithMicrosoftDialog.show(context),
                           ),
                         );
-                      case MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException():
+                      case AccountManagerInvalidMicrosoftRefreshToken():
                         scaffoldMessenger.showSnackBarText(
                           context.loc.sessionExpiredOrAccessRevoked,
                           snackBarAction: SnackBarAction(

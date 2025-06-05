@@ -12,11 +12,11 @@ import '../../../common/logic/app_logger.dart';
 import '../../../common/logic/utils.dart';
 import '../../data/microsoft_auth_api/auth_methods/microsoft_device_code_flow.dart';
 import '../../data/microsoft_auth_api/microsoft_auth_api.dart';
-import '../../data/microsoft_auth_api/microsoft_auth_exceptions.dart';
+import '../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart';
 import '../../data/minecraft_account/minecraft_account.dart';
 import '../../data/minecraft_account/minecraft_accounts.dart';
-import '../../data/minecraft_api/minecraft_api.dart';
-import '../../data/minecraft_api/minecraft_api_exceptions.dart';
+import '../../data/minecraft_account_api/minecraft_account_api.dart';
+import '../../data/minecraft_account_api/minecraft_account_api_exceptions.dart';
 import '../account_repository.dart';
 import '../account_utils.dart';
 import '../minecraft_skin_ext.dart';
@@ -31,7 +31,7 @@ import 'minecraft_account_manager_exceptions.dart';
 class MinecraftAccountManager {
   MinecraftAccountManager({
     required this.microsoftAuthApi,
-    required this.minecraftApi,
+    required this.minecraftAccountApi,
     required this.accountRepository,
     required this.imageCacheService,
   });
@@ -39,7 +39,7 @@ class MinecraftAccountManager {
   @visibleForTesting
   final MicrosoftAuthApi microsoftAuthApi;
   @visibleForTesting
-  final MinecraftApi minecraftApi;
+  final MinecraftAccountApi minecraftAccountApi;
 
   @visibleForTesting
   final AccountRepository accountRepository;
@@ -49,15 +49,16 @@ class MinecraftAccountManager {
 
   Future<T> _transformExceptions<T>(
     Future<T> Function() run, {
-    Future<void> Function(MicrosoftAuthException e)? onMicrosoftAuthException,
+    Future<void> Function(MicrosoftAuthApiException e)?
+    onMicrosoftAuthApiException,
   }) async {
     try {
       return await run();
-    } on MicrosoftAuthException catch (e) {
-      await onMicrosoftAuthException?.call(e);
+    } on MicrosoftAuthApiException catch (e) {
+      await onMicrosoftAuthApiException?.call(e);
       throw AccountManagerException.microsoftAuthApiException(e);
-    } on MinecraftApiException catch (e) {
-      throw AccountManagerException.minecraftApiException(e);
+    } on MinecraftAccountApiException catch (e) {
+      throw AccountManagerException.minecraftAccountApiException(e);
     } on AccountManagerException {
       rethrow;
     } on Exception catch (e, stackTrace) {
@@ -191,7 +192,7 @@ class MinecraftAccountManager {
           isSuccess: false,
         ),
       );
-      throw AccountManagerException.microsoftMissingAuthCode();
+      throw AccountManagerException.missingMicrosoftAuthCode();
     }
     await respondAndStopServer(
       buildAuthCodeResultHtmlPage(
@@ -385,24 +386,23 @@ class MinecraftAccountManager {
       xboxLiveTokenResponse.xboxToken,
     );
     onProgressUpdate(MicrosoftAuthProgress.loggingIntoMinecraft);
-    final minecraftLoginResponse = await minecraftApi.loginToMinecraftWithXbox(
-      xstsToken: xstsTokenResponse.xboxToken,
-      xstsUserHash: xstsTokenResponse.userHash,
-    );
+    final minecraftLoginResponse = await minecraftAccountApi
+        .loginToMinecraftWithXbox(
+          xstsToken: xstsTokenResponse.xboxToken,
+          xstsUserHash: xstsTokenResponse.userHash,
+        );
 
     onProgressUpdate(MicrosoftAuthProgress.checkingMinecraftJavaOwnership);
-    final ownsMinecraftJava = await minecraftApi.checkMinecraftJavaOwnership(
-      minecraftLoginResponse.accessToken,
-    );
+    final ownsMinecraftJava = await minecraftAccountApi
+        .checkMinecraftJavaOwnership(minecraftLoginResponse.accessToken);
 
     if (!ownsMinecraftJava) {
       throw AccountManagerException.minecraftEntitlementAbsent();
     }
 
     onProgressUpdate(MicrosoftAuthProgress.fetchingProfile);
-    final minecraftProfileResponse = await minecraftApi.fetchMinecraftProfile(
-      minecraftLoginResponse.accessToken,
-    );
+    final minecraftProfileResponse = await minecraftAccountApi
+        .fetchMinecraftProfile(minecraftLoginResponse.accessToken);
 
     final newAccount = accountFromResponses(
       profileResponse: minecraftProfileResponse,
@@ -471,15 +471,15 @@ class MinecraftAccountManager {
         onProgressUpdate: onProgressUpdate,
       );
     },
-    onMicrosoftAuthException: (e) async {
-      if (e is ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException) {
+    onMicrosoftAuthApiException: (e) async {
+      if (e is MicrosoftAuthInvalidRefreshTokenException) {
         final updatedAccount = account.copyWith(
           microsoftAccountInfo: account.microsoftAccountInfo!.copyWith(
             reauthRequiredReason: MicrosoftReauthRequiredReason.accessRevoked,
           ),
         );
         await accountRepository.updateAccount(updatedAccount);
-        throw AccountManagerException.microsoftExpiredOrUnauthorizedRefreshToken(
+        throw AccountManagerException.invalidMicrosoftRefreshToken(
           updatedAccount,
         );
       }
@@ -609,7 +609,7 @@ class MinecraftAccountManager {
       );
 
       onRefreshProgressUpdate(MicrosoftAuthProgress.loggingIntoMinecraft);
-      final loginResponse = await minecraftApi.loginToMinecraftWithXbox(
+      final loginResponse = await minecraftAccountApi.loginToMinecraftWithXbox(
         xstsToken: xstsTokenResponse.xboxToken,
         xstsUserHash: xstsTokenResponse.userHash,
       );

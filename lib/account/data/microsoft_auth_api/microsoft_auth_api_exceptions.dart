@@ -1,31 +1,35 @@
 import 'package:meta/meta.dart';
 
 @immutable
-sealed class MicrosoftAuthException implements Exception {
-  const MicrosoftAuthException(this.message);
+sealed class MicrosoftAuthApiException implements Exception {
+  const MicrosoftAuthApiException(this.message);
 
-  factory MicrosoftAuthException.unknown(
+  factory MicrosoftAuthApiException.unknown(
     String message,
     StackTrace stackTrace,
-  ) => UnknownMicrosoftAuthException(message, stackTrace);
-  factory MicrosoftAuthException.authCodeExpired() =>
-      const AuthCodeExpiredMicrosoftAuthException();
-  factory MicrosoftAuthException.expiredOrUnauthorizedMicrosoftRefreshToken() =>
-      const ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException();
-  factory MicrosoftAuthException.xboxTokenRequestFailedDueToExpiredAccessToken() =>
-      const XboxTokenRequestFailedDueToExpiredAccessTokenMicrosoftAuthException();
-  factory MicrosoftAuthException.xstsError(
+  ) => MicrosoftAuthUnknownException(message, stackTrace);
+
+  factory MicrosoftAuthApiException.authCodeExpired() =>
+      const MicrosoftAuthCodeExpiredException();
+
+  factory MicrosoftAuthApiException.invalidRefreshToken() =>
+      const MicrosoftAuthInvalidRefreshTokenException();
+
+  factory MicrosoftAuthApiException.xboxTokenMicrosoftAccessTokenExpired() =>
+      const MicrosoftAuthXboxTokenMicrosoftAccessTokenExpiredException();
+
+  factory MicrosoftAuthApiException.xstsError(
     String message, {
     required XstsError? xstsError,
     required int? xErr,
-  }) => XstsErrorMicrosoftAuthException(
+  }) => MicrosoftAuthXstsErrorException(
     message,
     xstsError: xstsError,
     xErr: xErr,
   );
 
-  factory MicrosoftAuthException.tooManyRequests() =>
-      const TooManyRequestsMicrosoftAuthException();
+  factory MicrosoftAuthApiException.tooManyRequests() =>
+      const MicrosoftAuthTooManyRequestsException();
 
   final String message;
 
@@ -33,41 +37,41 @@ sealed class MicrosoftAuthException implements Exception {
   String toString() => message;
 }
 
-final class UnknownMicrosoftAuthException extends MicrosoftAuthException {
-  const UnknownMicrosoftAuthException(super.message, this.stackTrace);
+final class MicrosoftAuthUnknownException extends MicrosoftAuthApiException {
+  const MicrosoftAuthUnknownException(super.message, this.stackTrace);
 
   final StackTrace stackTrace;
 }
 
-final class AuthCodeExpiredMicrosoftAuthException
-    extends MicrosoftAuthException {
-  const AuthCodeExpiredMicrosoftAuthException()
+// The device code could also expire but it's handled in a result class instead of an exception.
+
+final class MicrosoftAuthCodeExpiredException
+    extends MicrosoftAuthApiException {
+  const MicrosoftAuthCodeExpiredException()
     : super(
         'This auth code has been already expired and cannot be used to exchange for Microsoft OAuth access and refresh tokens.',
       );
 }
 
-// The device code could also expire but it's handled in a result class instead of exception.
-
-final class ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException
-    extends MicrosoftAuthException {
-  const ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException()
+final class MicrosoftAuthInvalidRefreshTokenException
+    extends MicrosoftAuthApiException {
+  const MicrosoftAuthInvalidRefreshTokenException()
     : super(
         'Microsoft OAuth Refresh token expired or access revoked. The user needs to log in again to reauthorize.',
       );
 }
 
-final class XboxTokenRequestFailedDueToExpiredAccessTokenMicrosoftAuthException
-    extends MicrosoftAuthException {
-  const XboxTokenRequestFailedDueToExpiredAccessTokenMicrosoftAuthException()
+final class MicrosoftAuthXboxTokenMicrosoftAccessTokenExpiredException
+    extends MicrosoftAuthApiException {
+  const MicrosoftAuthXboxTokenMicrosoftAccessTokenExpiredException()
     : super(
         'Could not get the Xbox live token as the required input which is Microsoft OAuth access token is already expired',
       );
 }
 
-final class TooManyRequestsMicrosoftAuthException
-    extends MicrosoftAuthException {
-  const TooManyRequestsMicrosoftAuthException()
+final class MicrosoftAuthTooManyRequestsException
+    extends MicrosoftAuthApiException {
+  const MicrosoftAuthTooManyRequestsException()
     : super(
         'Request limit reached while communicating with Microsoft authentication servers.',
       );
@@ -97,8 +101,8 @@ enum XstsError {
   final int xErr;
 }
 
-final class XstsErrorMicrosoftAuthException extends MicrosoftAuthException {
-  const XstsErrorMicrosoftAuthException(
+final class MicrosoftAuthXstsErrorException extends MicrosoftAuthApiException {
+  const MicrosoftAuthXstsErrorException(
     super.message, {
     required this.xstsError,
     required this.xErr,

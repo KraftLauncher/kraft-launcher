@@ -5,11 +5,11 @@ import 'package:dio/dio.dart';
 import '../../../common/logic/dio_client.dart';
 import '../../../common/logic/file_utils.dart';
 import '../../../common/logic/json.dart';
-import 'minecraft_api.dart';
-import 'minecraft_api_exceptions.dart';
+import 'minecraft_account_api.dart';
+import 'minecraft_account_api_exceptions.dart';
 
-class MinecraftApiImpl extends MinecraftApi {
-  MinecraftApiImpl({required this.dio});
+class MinecraftAccountApiImpl extends MinecraftAccountApi {
+  MinecraftAccountApiImpl({required this.dio});
 
   final Dio dio;
 
@@ -26,11 +26,11 @@ class MinecraftApiImpl extends MinecraftApi {
       }
 
       if (e.response?.statusCode == HttpStatus.tooManyRequests) {
-        throw MinecraftApiException.tooManyRequests();
+        throw MinecraftAccountApiException.tooManyRequests();
       }
 
       if (e.response?.statusCode == HttpStatus.unauthorized) {
-        throw MinecraftApiException.unauthorized();
+        throw MinecraftAccountApiException.unauthorized();
       }
 
       final errorBody = e.response?.data as JsonObject?;
@@ -38,18 +38,18 @@ class MinecraftApiImpl extends MinecraftApi {
       final errorMessage = errorBody?['errorMessage'] as String?;
 
       final exception = switch (code) {
-        String() => MinecraftApiException.unknown(
+        String() => MinecraftAccountApiException.unknown(
           'Code: $code, Details: ${errorMessage ?? 'The error description is not provided.'}',
           stackTrace,
         ),
-        null => MinecraftApiException.unknown(
+        null => MinecraftAccountApiException.unknown(
           'The error code is not provided: ${e.response?.data}, ${e.response?.headers}',
           stackTrace,
         ),
       };
       throw exception;
     } on Exception catch (e, stackTrace) {
-      throw MinecraftApiException.unknown(e.toString(), stackTrace);
+      throw MinecraftAccountApiException.unknown(e.toString(), stackTrace);
     }
   }
 
@@ -89,7 +89,7 @@ class MinecraftApiImpl extends MinecraftApi {
       final code = errorBody?['error'] as String?;
 
       if (code == 'NOT_FOUND') {
-        throw MinecraftApiException.accountNotFound();
+        throw MinecraftAccountApiException.accountNotFound();
       }
       return null;
     },
@@ -145,7 +145,7 @@ class MinecraftApiImpl extends MinecraftApi {
             ) ??
             false;
         if (isInvalidSkinImageData) {
-          throw MinecraftApiException.invalidSkinImageData();
+          throw MinecraftAccountApiException.invalidSkinImageData();
         }
       }
       return null;

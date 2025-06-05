@@ -1,54 +1,54 @@
+/// @docImport '../../data/microsoft_auth_api/microsoft_auth_api.dart';
+library;
+
 import 'package:meta/meta.dart';
 
-import '../../data/microsoft_auth_api/microsoft_auth_api.dart';
-import '../../data/microsoft_auth_api/microsoft_auth_exceptions.dart';
+import '../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart';
 import '../../data/minecraft_account/minecraft_account.dart';
-import '../../data/minecraft_api/minecraft_api_exceptions.dart';
+import '../../data/minecraft_account_api/minecraft_account_api_exceptions.dart';
 import 'minecraft_account_manager.dart';
 
 @immutable
 sealed class AccountManagerException implements Exception {
   const AccountManagerException(this.message);
 
-  factory AccountManagerException.microsoftMissingAuthCode() =>
-      const MicrosoftMissingAuthCodeAccountManagerException();
+  factory AccountManagerException.missingMicrosoftAuthCode() =>
+      const AccountManagerMissingMicrosoftAuthCodeException();
 
   factory AccountManagerException.microsoftAuthCodeRedirect({
     required String error,
     required String errorDescription,
-  }) => MicrosoftAuthCodeRedirectAccountManagerException(
+  }) => AccountManagerMicrosoftAuthCodeRedirectException(
     error: error,
     errorDescription: errorDescription,
   );
 
   factory AccountManagerException.microsoftAuthCodeDenied() =>
-      const MicrosoftAuthCodeDeniedAccountManagerException();
+      const AccountManagerMicrosoftAuthCodeDeniedException();
 
   factory AccountManagerException.minecraftEntitlementAbsent() =>
-      const MinecraftEntitlementAbsentAccountManagerException();
+      const AccountManagerMinecraftEntitlementAbsentException();
 
   factory AccountManagerException.microsoftReAuthRequired(
     MicrosoftReauthRequiredReason reason,
-  ) => MicrosoftReAuthRequiredAccountManagerException(reason);
+  ) => AccountManagerMicrosoftReAuthRequiredException(reason);
 
-  factory AccountManagerException.microsoftExpiredOrUnauthorizedRefreshToken(
+  factory AccountManagerException.invalidMicrosoftRefreshToken(
     MinecraftAccount updatedAccount,
-  ) => MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException(
-    updatedAccount,
-  );
+  ) => AccountManagerInvalidMicrosoftRefreshToken(updatedAccount);
 
   factory AccountManagerException.microsoftAuthApiException(
-    MicrosoftAuthException authApiException,
-  ) => MicrosoftApiAccountManagerException(authApiException);
+    MicrosoftAuthApiException exception,
+  ) => AccountManagerMicrosoftAuthApiException(exception);
 
-  factory AccountManagerException.minecraftApiException(
-    MinecraftApiException minecraftApiException,
-  ) => MinecraftApiAccountManagerException(minecraftApiException);
+  factory AccountManagerException.minecraftAccountApiException(
+    MinecraftAccountApiException exception,
+  ) => AccountManagerMinecraftAccountApiException(exception);
 
   factory AccountManagerException.unknown(
     String message,
     StackTrace stackTrace,
-  ) => UnknownAccountManagerException(message, stackTrace);
+  ) => AccountManagerUnknownException(message, stackTrace);
 
   final String message;
 
@@ -56,61 +56,60 @@ sealed class AccountManagerException implements Exception {
   String toString() => message;
 }
 
-final class MicrosoftMissingAuthCodeAccountManagerException
+final class AccountManagerMissingMicrosoftAuthCodeException
     extends AccountManagerException {
-  const MicrosoftMissingAuthCodeAccountManagerException()
+  const AccountManagerMissingMicrosoftAuthCodeException()
     : super(
         'The Microsoft auth code query parameter should be passed to the redirect URL but was not found.',
       );
 }
 
-final class MicrosoftAuthCodeRedirectAccountManagerException
+final class AccountManagerMicrosoftAuthCodeRedirectException
     extends AccountManagerException {
-  const MicrosoftAuthCodeRedirectAccountManagerException({
+  const AccountManagerMicrosoftAuthCodeRedirectException({
     required this.error,
     required this.errorDescription,
   }) : super(
-         'While logging via auth code, Microsoft redirected the result which is an unknown error: "$error", description: "$errorDescription".',
+         'Microsoft redirected the result which is an unknown error while logging via auth code: "$error", description: "$errorDescription".',
        );
 
   final String error;
   final String errorDescription;
 }
 
-final class MicrosoftAuthCodeDeniedAccountManagerException
+final class AccountManagerMicrosoftAuthCodeDeniedException
     extends AccountManagerException {
-  const MicrosoftAuthCodeDeniedAccountManagerException()
+  const AccountManagerMicrosoftAuthCodeDeniedException()
     : super(
         'While logging with Microsoft via auth code, the user has denied the authorization request.',
       );
 }
 
-final class MinecraftEntitlementAbsentAccountManagerException
+final class AccountManagerMinecraftEntitlementAbsentException
     extends AccountManagerException {
-  const MinecraftEntitlementAbsentAccountManagerException()
+  const AccountManagerMinecraftEntitlementAbsentException()
     : super(
         'The user does not possess the required Minecraft Java Edition entitlement for this account.',
       );
 }
 
-final class MicrosoftReAuthRequiredAccountManagerException
+final class AccountManagerMicrosoftReAuthRequiredException
     extends AccountManagerException {
-  MicrosoftReAuthRequiredAccountManagerException(this.reason)
+  AccountManagerMicrosoftReAuthRequiredException(this.reason)
     : super('Microsoft Re-authentication is required. Reason: ${reason.name}');
 
   final MicrosoftReauthRequiredReason reason;
 }
 
-/// The exception [ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException] will be
+/// The exception [MicrosoftAuthInvalidRefreshTokenException] originates
+/// from [MicrosoftAuthApi] and will be
 /// caught in [MinecraftAccountManager] and transformed into this exception,
 /// which includes the updated account that indicates it needs re-authentication.
-/// The exception [ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException] originates from [MicrosoftAuthApi],
 /// and this transformation is specific to [MinecraftAccountManager].
-final class MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException
+final class AccountManagerInvalidMicrosoftRefreshToken
     extends AccountManagerException {
-  MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException(
-    this.updatedAccount,
-  ) : super(
+  AccountManagerInvalidMicrosoftRefreshToken(this.updatedAccount)
+    : super(
         'Microsoft OAuth Refresh token expired or access revoked. The account ${updatedAccount.id} needs re-authentication.',
       );
 
@@ -118,24 +117,24 @@ final class MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException
   final MinecraftAccount updatedAccount;
 }
 
-final class MicrosoftApiAccountManagerException
+final class AccountManagerMicrosoftAuthApiException
     extends AccountManagerException {
-  MicrosoftApiAccountManagerException(this.authApiException)
-    : super(authApiException.message);
+  AccountManagerMicrosoftAuthApiException(this.exception)
+    : super(exception.message);
 
-  final MicrosoftAuthException authApiException;
+  final MicrosoftAuthApiException exception;
 }
 
-final class MinecraftApiAccountManagerException
+final class AccountManagerMinecraftAccountApiException
     extends AccountManagerException {
-  MinecraftApiAccountManagerException(this.minecraftApiException)
-    : super(minecraftApiException.message);
+  AccountManagerMinecraftAccountApiException(this.exception)
+    : super(exception.message);
 
-  final MinecraftApiException minecraftApiException;
+  final MinecraftAccountApiException exception;
 }
 
-final class UnknownAccountManagerException extends AccountManagerException {
-  const UnknownAccountManagerException(super.message, this.stackTrace);
+final class AccountManagerUnknownException extends AccountManagerException {
+  const AccountManagerUnknownException(super.message, this.stackTrace);
 
   final StackTrace stackTrace;
 }

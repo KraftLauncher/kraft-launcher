@@ -1,7 +1,7 @@
 import '../../../common/generated/l10n/app_localizations.dart';
-import '../../data/microsoft_auth_api/microsoft_auth_exceptions.dart';
+import '../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart';
 import '../../data/minecraft_account/minecraft_account.dart';
-import '../../data/minecraft_api/minecraft_api_exceptions.dart';
+import '../../data/minecraft_account_api/minecraft_account_api_exceptions.dart';
 import '../../logic/account_manager/minecraft_account_manager_exceptions.dart';
 
 extension AccountManagerExceptionMessages on AccountManagerException {
@@ -11,26 +11,26 @@ extension AccountManagerExceptionMessages on AccountManagerException {
   String getMessage(AppLocalizations loc) {
     final exception = this;
     return switch (exception) {
-      MicrosoftMissingAuthCodeAccountManagerException() =>
+      AccountManagerMissingMicrosoftAuthCodeException() =>
         loc.missingAuthCodeError,
-      MicrosoftApiAccountManagerException() => () {
-        final microsoftApiException = exception.authApiException;
+      AccountManagerMicrosoftAuthApiException() => () {
+        final microsoftApiException = exception.exception;
         return switch (microsoftApiException) {
-          UnknownMicrosoftAuthException() => loc.unexpectedMicrosoftApiError(
+          MicrosoftAuthUnknownException() => loc.unexpectedMicrosoftApiError(
             exception.message,
           ),
-          AuthCodeExpiredMicrosoftAuthException() => loc.expiredAuthCodeError,
+          MicrosoftAuthCodeExpiredException() => loc.expiredAuthCodeError,
 
-          XboxTokenRequestFailedDueToExpiredAccessTokenMicrosoftAuthException() =>
+          MicrosoftAuthXboxTokenMicrosoftAccessTokenExpiredException() =>
             loc.expiredMicrosoftAccessTokenError,
 
-          ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException() =>
+          MicrosoftAuthInvalidRefreshTokenException() =>
             throw StateError(
-              'Expected $ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException to be transformed into $MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException. $ExpiredOrUnauthorizedRefreshTokenMicrosoftAuthException should be caught and handled so this is likely a bug',
+              'Expected $MicrosoftAuthInvalidRefreshTokenException to be transformed into $AccountManagerInvalidMicrosoftRefreshToken. $MicrosoftAuthInvalidRefreshTokenException should be caught and handled so this is likely a bug',
             ),
-          TooManyRequestsMicrosoftAuthException() =>
+          MicrosoftAuthTooManyRequestsException() =>
             loc.microsoftRequestLimitError,
-          XstsErrorMicrosoftAuthException() => switch (microsoftApiException
+          MicrosoftAuthXstsErrorException() => switch (microsoftApiException
               .xstsError) {
             null =>
               microsoftApiException.xErr != null
@@ -53,34 +53,33 @@ extension AccountManagerExceptionMessages on AccountManagerException {
           },
         };
       }(),
-      MinecraftApiAccountManagerException() => switch (exception
-          .minecraftApiException) {
-        UnknownMinecraftApiException() => loc.unexpectedMinecraftApiError(
+      AccountManagerMinecraftAccountApiException() => switch (exception
+          .exception) {
+        MinecraftAccountUnknownException() => loc.unexpectedMinecraftApiError(
           exception.message,
         ),
-
-        UnauthorizedMinecraftApiException() =>
+        MinecraftAccountUnauthorizedException() =>
           loc.unauthorizedMinecraftAccessError,
-        TooManyRequestsMinecraftApiException() =>
+        MinecraftAccountTooManyRequestsException() =>
           loc.minecraftRequestLimitError,
-        InvalidSkinImageDataMinecraftApiException() =>
+        MinecraftAccountInvalidSkinImageDataException() =>
           loc.invalidMinecraftSkinFile,
-        AccountNotFoundMinecraftApiException() =>
+        MinecraftAccountNotFoundException() =>
           loc.minecraftAccountNotFoundError,
       },
-      UnknownAccountManagerException() => loc.unexpectedError(
+      AccountManagerUnknownException() => loc.unexpectedError(
         exception.message,
       ),
-      MicrosoftAuthCodeRedirectAccountManagerException() => loc
+      AccountManagerMicrosoftAuthCodeRedirectException() => loc
           .authCodeLoginUnknownError(
             exception.error,
             exception.errorDescription,
           ),
-      MicrosoftAuthCodeDeniedAccountManagerException() =>
+      AccountManagerMicrosoftAuthCodeDeniedException() =>
         loc.loginAttemptRejected,
-      MinecraftEntitlementAbsentAccountManagerException() =>
+      AccountManagerMinecraftEntitlementAbsentException() =>
         loc.minecraftOwnershipRequiredError,
-      MicrosoftReAuthRequiredAccountManagerException() => switch (exception
+      AccountManagerMicrosoftReAuthRequiredException() => switch (exception
           .reason) {
         MicrosoftReauthRequiredReason.accessRevoked =>
           loc.reAuthRequiredDueToAccessRevoked,
@@ -90,7 +89,7 @@ extension AccountManagerExceptionMessages on AccountManagerException {
         MicrosoftReauthRequiredReason.tokensMissingFromFileStorage =>
           loc.reAuthRequiredDueToMissingAccountTokensFromFileStorage,
       },
-      MicrosoftExpiredOrUnauthorizedRefreshTokenAccountManagerException() =>
+      AccountManagerInvalidMicrosoftRefreshToken() =>
         loc.sessionExpiredOrAccessRevoked,
     };
   }
