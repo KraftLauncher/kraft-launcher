@@ -10,7 +10,7 @@ import '../../../common/constants/constants.dart';
 import '../../../common/constants/project_info_constants.dart';
 import '../../../common/logic/app_logger.dart';
 import '../../../common/logic/utils.dart';
-import '../../data/microsoft_auth_api/auth_methods/microsoft_device_code_flow.dart';
+import '../../data/microsoft_auth_api/auth_flows/microsoft_device_code_flow_api.dart';
 import '../../data/microsoft_auth_api/microsoft_auth_api.dart';
 import '../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart';
 import '../../data/minecraft_account/minecraft_account.dart';

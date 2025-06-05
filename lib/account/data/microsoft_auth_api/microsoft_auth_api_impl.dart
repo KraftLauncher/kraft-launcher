@@ -7,7 +7,7 @@ import '../../../common/constants/constants.dart';
 import '../../../common/constants/project_info_constants.dart';
 import '../../../common/logic/dio_client.dart';
 import '../../../common/logic/json.dart';
-import 'auth_methods/microsoft_device_code_flow.dart';
+import 'auth_flows/microsoft_device_code_flow_api.dart';
 import 'microsoft_auth_api.dart';
 import 'microsoft_auth_api_exceptions.dart';
 

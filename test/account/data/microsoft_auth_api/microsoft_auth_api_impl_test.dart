@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_methods/microsoft_device_code_flow.dart';
+import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_flows/microsoft_device_code_flow_api.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_exceptions.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';

@@ -64,7 +64,7 @@ class MicrosoftDeviceCodeExpired extends MicrosoftCheckDeviceCodeStatusResult {
   const MicrosoftDeviceCodeExpired();
 }
 
-abstract class MicrosoftDeviceCodeFlow {
+abstract class MicrosoftDeviceCodeFlowApi {
   Future<MicrosoftRequestDeviceCodeResponse> requestDeviceCode();
 
   Future<MicrosoftCheckDeviceCodeStatusResult> checkDeviceCodeStatus(

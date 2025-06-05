@@ -1,7 +1,7 @@
 import '../../../../common/constants/constants.dart';
 import '../microsoft_auth_api.dart';
 
-abstract class MicrosoftAuthCodeFlow {
+abstract class MicrosoftAuthCodeFlowApi {
   /// Returns the login URL that the user needs to open to start logging in.
   ///
   /// This doesn't start the redirect server which the API will redirect to

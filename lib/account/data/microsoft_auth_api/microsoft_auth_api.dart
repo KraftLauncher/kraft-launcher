@@ -4,8 +4,8 @@ library;
 import 'package:meta/meta.dart';
 
 import '../../../common/logic/json.dart';
-import 'auth_methods/microsoft_auth_code_flow.dart';
-import 'auth_methods/microsoft_device_code_flow.dart';
+import 'auth_flows/microsoft_auth_code_flow_api.dart';
+import 'auth_flows/microsoft_device_code_flow_api.dart';
 
 // The success response when exchanging the auth code or device code for Microsoft tokens.
 @immutable
@@ -63,7 +63,7 @@ class XboxLiveAuthTokenResponse {
 ///  * https://minecraft.wiki/w/Microsoft_authentication
 ///  * [MinecraftAccountApi]
 abstract class MicrosoftAuthApi
-    implements MicrosoftAuthCodeFlow, MicrosoftDeviceCodeFlow {
+    implements MicrosoftAuthCodeFlowApi, MicrosoftDeviceCodeFlowApi {
   Future<XboxLiveAuthTokenResponse> requestXboxLiveToken(
     String microsoftOauthToken,
   );
