@@ -1,7 +1,10 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Color, Colors, ThemeMode;
+import 'package:meta/meta.dart';
 
 import '../../common/logic/json.dart';
+import 'app_language.dart';
+export 'app_language.dart';
 
 @immutable
 class Settings extends Equatable {
@@ -105,17 +108,4 @@ class GeneralSettings extends Equatable {
     useAccentColor: useAccentColor ?? this.useAccentColor,
     defaultTab: defaultTab ?? this.defaultTab,
   );
-}
-
-enum AppLanguage {
-  system(labelText: 'System', localeCode: ''),
-  en(labelText: 'English', localeCode: 'en'),
-  de(labelText: 'German', localeCode: 'de'),
-  ar(labelText: 'العربية', localeCode: 'ar'),
-  zh(labelText: 'Mandarin Chinese', localeCode: 'zh');
-
-  const AppLanguage({required this.labelText, required this.localeCode});
-
-  final String labelText;
-  final String localeCode;
 }

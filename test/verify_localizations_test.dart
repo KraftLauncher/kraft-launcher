@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:kraft_launcher/settings/data/settings.dart';
+import 'package:kraft_launcher/settings/data/app_language.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -10,7 +10,7 @@ const _localizationFilePrefix = 'app_'; // E.g, app_en.arb
 
 void main() {
   test(
-    'Localizations matches AppLanguage.values to support in-app language settings',
+    'localizations matches $AppLanguage.values to support in-app language settings',
     () async {
       final supportedLanguages =
           AppLanguage.values.toList()
