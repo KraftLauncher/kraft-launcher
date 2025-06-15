@@ -6,7 +6,8 @@ import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_ap
     show XboxLiveAuthTokenResponse;
 import 'package:kraft_launcher/account/data/minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api.dart';
-import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_exceptions.dart';
+import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_exceptions.dart'
+    as minecraft_account_api_exceptions;
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_impl.dart';
 import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:mocktail/mocktail.dart';
@@ -222,7 +223,7 @@ void main() {
     );
 
     test(
-      'throws $MinecraftAccountNotFoundException when the API indicates the account does not exist',
+      'throws ${minecraft_account_api_exceptions.AccountNotFoundException} when the API indicates the account does not exist',
       () async {
         mockDio.mockGetUriFailure<JsonObject>(
           responseData: {'error': 'NOT_FOUND'},
@@ -230,7 +231,9 @@ void main() {
 
         await expectLater(
           minecraftAccountApi.fetchMinecraftProfile(''),
-          throwsA(isA<MinecraftAccountNotFoundException>()),
+          throwsA(
+            isA<minecraft_account_api_exceptions.AccountNotFoundException>(),
+          ),
         );
       },
     );
@@ -299,7 +302,6 @@ void main() {
     late Directory tempTestDir;
 
     setUp(() {
-      // TODO: Avoid IO operations in unit tests, track all usages of createTempTestDir and createFileInsideDir. Use file package instead
       tempTestDir = createTempTestDir();
       skinFile = createFileInsideDir(
         tempTestDir,
@@ -417,7 +419,7 @@ void main() {
     );
 
     test(
-      'throws $MinecraftAccountInvalidSkinImageDataException when uploading invalid Minecraft skin image',
+      'throws ${minecraft_account_api_exceptions.InvalidSkinImageDataException} when uploading invalid Minecraft skin image',
       () async {
         mockDio.mockPostUriFailure<JsonObject>(
           statusCode: HttpStatus.badRequest,
@@ -433,7 +435,11 @@ void main() {
             skinVariant: MinecraftApiSkinVariant.slim,
             minecraftAccessToken: '',
           ),
-          throwsA(isA<MinecraftAccountInvalidSkinImageDataException>()),
+          throwsA(
+            isA<
+              minecraft_account_api_exceptions.InvalidSkinImageDataException
+            >(),
+          ),
         );
       },
     );
@@ -446,7 +452,7 @@ void _tooManyRequestsTest(
   required bool isPostRequest,
 }) {
   test(
-    'throws $MinecraftAccountTooManyRequestsException on HTTP ${HttpStatus.tooManyRequests}',
+    'throws ${minecraft_account_api_exceptions.TooManyRequestsException} on HTTP ${HttpStatus.tooManyRequests}',
     () async {
       if (isPostRequest) {
         mockDio().mockPostUriFailure<JsonObject>(
@@ -462,7 +468,9 @@ void _tooManyRequestsTest(
 
       await expectLater(
         call,
-        throwsA(isA<MinecraftAccountTooManyRequestsException>()),
+        throwsA(
+          isA<minecraft_account_api_exceptions.TooManyRequestsException>(),
+        ),
       );
     },
   );
@@ -474,7 +482,7 @@ void _unknownErrorTests(
   required bool isPostRequest,
 }) {
   test(
-    'throws $MinecraftAccountUnknownException for unhandled or unknown errors with code and description when provided',
+    'throws ${minecraft_account_api_exceptions.UnknownException} for unhandled or unknown errors with code and description when provided',
     () async {
       const errorCode = 'unknown_error_code';
       const errorMessage = 'The unknown error message';
@@ -491,7 +499,7 @@ void _unknownErrorTests(
       await expectLater(
         call,
         throwsA(
-          isA<MinecraftAccountUnknownException>()
+          isA<minecraft_account_api_exceptions.UnknownException>()
               .having((e) => e.message, 'errorCode', contains(errorCode))
               .having((e) => e.message, 'errorMessage', contains(errorMessage)),
         ),
@@ -500,7 +508,7 @@ void _unknownErrorTests(
   );
 
   test(
-    'throws $MinecraftAccountUnknownException for unhandled or unknown errors without code and description when not provided',
+    'throws ${minecraft_account_api_exceptions.UnknownException} for unhandled or unknown errors without code and description when not provided',
     () async {
       if (isPostRequest) {
         mockDio().mockPostUriFailure<JsonObject>(responseData: {});
@@ -508,12 +516,15 @@ void _unknownErrorTests(
         mockDio().mockGetUriFailure<JsonObject>(responseData: {});
       }
 
-      await expectLater(call, throwsA(isA<MinecraftAccountUnknownException>()));
+      await expectLater(
+        call,
+        throwsA(isA<minecraft_account_api_exceptions.UnknownException>()),
+      );
     },
   );
 
   test(
-    'throws $MinecraftAccountUnknownException when catching $Exception',
+    'throws ${minecraft_account_api_exceptions.UnknownException} when catching $Exception',
     () async {
       final exception = Exception('Example exception');
       if (isPostRequest) {
@@ -548,7 +559,7 @@ void _unauthorizedTest(
   required bool isPostRequest,
 }) {
   test(
-    'throws $MinecraftAccountUnauthorizedException on HTTP ${HttpStatus.unauthorized}',
+    'throws ${minecraft_account_api_exceptions.UnauthorizedException} on HTTP ${HttpStatus.unauthorized}',
     () async {
       if (isPostRequest) {
         mockDio().mockPostUriFailure<JsonObject>(
@@ -564,7 +575,7 @@ void _unauthorizedTest(
 
       await expectLater(
         call,
-        throwsA(isA<MinecraftAccountUnauthorizedException>()),
+        throwsA(isA<minecraft_account_api_exceptions.UnauthorizedException>()),
       );
     },
   );

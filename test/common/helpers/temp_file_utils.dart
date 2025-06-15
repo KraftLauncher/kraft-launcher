@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:path/path.dart' as p;
 
+// TODO: Avoid IO operations in unit tests, track all usages of createTempTestDir and createFileInsideDir. Use file package instead
+
 Directory createTempTestDir() {
   return Directory.systemTemp.createTempSync();
 }

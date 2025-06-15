@@ -2,6 +2,7 @@ part of 'account_cubit.dart';
 
 enum AccountStatus {
   initial,
+  loading,
   loadSuccess,
   loadFailure,
   offlineAccountCreated,
@@ -46,8 +47,7 @@ final class AccountState extends Equatable {
   final AccountStatus status;
 
   // There are no specific errors that could be encountered with this state.
-  final ExceptionWithStacktrace<AccountManagerException>?
-  exceptionWithStackTrace;
+  final ExceptionWithStacktrace<Exception>? exceptionWithStackTrace;
 
   @override
   List<Object?> get props => [
@@ -65,7 +65,7 @@ final class AccountState extends Equatable {
     Wrapped<List<MinecraftAccount>?>? searchedAccounts,
     Wrapped<String?>? searchQuery,
     AccountStatus? status,
-    ExceptionWithStacktrace<AccountManagerException>? exceptionWithStackTrace,
+    ExceptionWithStacktrace<Exception>? exceptionWithStackTrace,
   }) => AccountState(
     selectedAccountId:
         selectedAccountId != null

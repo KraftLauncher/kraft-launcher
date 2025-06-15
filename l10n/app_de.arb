@@ -13,10 +13,6 @@
   "offline": "Offline",
   "signInWithMicrosoft": "Mit Microsoft anmelden",
   "addMicrosoftAccount": "Microsoft-Konto hinzufügen",
-  "useDeviceCodeMethod": "Alternativ die Methode mit Gerätecode verwenden",
-  "@useDeviceCodeMethod": {
-    "description": "Vorschlag, dass der Benutzer alternativ die Gerätecode-Methode für die Microsoft-Anmeldung verwenden kann"
-  },
   "copyCode": "Code kopieren",
   "copiedToClipboard": "In die Zwischenablage kopiert",
   "deviceCodeStepVisit": "1. Besuche",

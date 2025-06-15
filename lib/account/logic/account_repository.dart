@@ -16,11 +16,35 @@ import '../data/minecraft_account/secure_storage/secure_account_storage.dart';
 import 'account_utils.dart';
 import 'platform_secure_storage_support.dart';
 
-// TODO: Update AccountManager tests due to this class
-
 @visibleForTesting
 typedef AccountsStreamControllerFactory = StreamController<MinecraftAccounts>;
 
+/// A repository for managing Minecraft accounts.
+///
+/// Handles account data storage and retrieval, combining both file and secure storage
+/// for account info.
+///
+/// Interacts with the following storage layers to meet the requirements:
+///
+/// * [FileAccountStorage] for file-based storage. Stores account information,
+///   except for the account tokens, which are stored in system secure storage when supported.
+///   If secure storage is not available, the tokens will be stored in file storage.
+///
+/// * [SecureAccountStorage] for secure storage (if supported). Secure storage support
+///   is platform-dependent, so [PlatformSecureStorageSupport] is used to check
+///   if [SecureAccountStorage] can be used.
+///
+/// Provides a single source of truth for the account data, ensuring a consistent state across the app.
+///
+/// **Note:** [loadAccounts] must be called before invoking any other operations to avoid a [StateError]:
+///
+/// ```dart
+/// final repository = AccountRepository(...);
+/// await repository.loadAccounts();
+///
+/// await repository.addAccount(...);
+/// await repository.removeAccount(...);
+/// ```
 class AccountRepository {
   AccountRepository({
     required this.fileAccountStorage,
@@ -296,7 +320,6 @@ class AccountRepository {
     _setAccountsAndNotify(updatedAccounts);
   }
 
-  // TODO: Add upsertAccount for easier testing? Update MinecraftAccountManager and all usages of addAccount, updateAccount to use it if done
   bool accountExists(String accountId) =>
       _requireAccounts.list.any((account) => account.id == accountId);
 }

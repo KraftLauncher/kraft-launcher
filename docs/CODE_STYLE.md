@@ -7,28 +7,81 @@ ideas but at some point it will be fully rewritten to adhere to our standards.
 **This document has been written very quickly, just to document the 
 current conventions but will we rewritten fully in the future.**
 
-## Naming Conventions
+## Exceptions
 
-### Exceptions
+### Always import `*_exceptions.dart` files with a prefix
 
-```
-<Scope><FailureType>Exception
-```
-
-When defining exceptions, follow a naming pattern that reflects both the **scope** and the **type of failure**.
-
-For example, if you have a class `MinecraftAccountApi` with a corresponding sealed exception class `MinecraftAccountApiException`, and several specific subclasses, it's generally preferred to **prefix those subclasses with part of the sealed class name**—but not necessarily the full name—since the full name can become overly long and verbose.
+<!-- TODO: We might want to apply this for all public sealed classes? See also https://docs.flutter.dev/app-architecture/design-patterns/result#putting-it-all-together
+ -->
 
 #### ✅ Preferred
 
 ```dart
-MicrosoftAuthUnknownException
+import 'minecraft_exceptions.dart' as minecraft_exceptions;
 ```
 
 #### 🚫 Avoid
 
 ```dart
-MicrosoftAuthApiUnknownException
+import 'minecraft_exceptions.dart';
 ```
 
-In this case, `MicrosoftAuthUnknownException` is clearer and more concise, while still indicating its relationship to the sealed class `MicrosoftAuthApiException`.
+#### Reason
+
+To avoid name collisions and make it clear where the exception originates.
+
+### Avoid including the sealed class name in subclasses
+
+#### ✅ Preferred
+
+```dart
+sealed class MinecraftException {}
+
+final class UserNotFoundException extends MinecraftException {}
+```
+
+#### 🚫 Avoid
+
+```dart
+sealed class MinecraftException {}
+
+final class MinecraftUserNotFoundException extends MinecraftException {}
+```
+
+#### Example Usage
+
+```dart
+import 'minecraft_exceptions.dart' as minecraft_exceptions;
+
+minecraft_exceptions.UserNotFoundException();
+```
+
+#### Reason
+
+Including the sealed class name in subclasses can become very verbose, making the code harder to maintain, read, and refactor.
+
+## Prefer `@docImport` over `import` when referencing APIs in Dart doc comment
+
+#### ✅ Preferred
+
+```dart
+/// @docImport '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
+/// @docImport 'minecraft_account_refresher.dart';
+library;
+```
+
+#### 🚫 Avoid
+
+```dart
+import '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'minecraft_account_refresher.dart';
+```
+
+#### Acceptable
+
+Prefer `import` over `@docImport` when using prefixes since `@docImport` doesn't support `as`:
+
+```dart
+import '../../../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
+    as microsoft_auth_api_exceptions;
+```

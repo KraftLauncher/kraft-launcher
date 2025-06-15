@@ -35,7 +35,7 @@ sealed class MicrosoftCheckDeviceCodeStatusResult {
   const MicrosoftCheckDeviceCodeStatusResult();
 
   factory MicrosoftCheckDeviceCodeStatusResult.approved(
-    MicrosoftOauthTokenExchangeResponse response,
+    MicrosoftOAuthTokenResponse response,
   ) => MicrosoftDeviceCodeApproved(response: response);
   factory MicrosoftCheckDeviceCodeStatusResult.declined() =>
       const MicrosoftDeviceCodeDeclined();
@@ -48,7 +48,7 @@ sealed class MicrosoftCheckDeviceCodeStatusResult {
 class MicrosoftDeviceCodeApproved extends MicrosoftCheckDeviceCodeStatusResult {
   const MicrosoftDeviceCodeApproved({required this.response});
 
-  final MicrosoftOauthTokenExchangeResponse response;
+  final MicrosoftOAuthTokenResponse response;
 }
 
 class MicrosoftDeviceCodeDeclined extends MicrosoftCheckDeviceCodeStatusResult {

@@ -2,11 +2,11 @@
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
     show BaseCacheManager;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kraft_launcher/account/logic/account_manager/image_cache_service/default_image_cache_service.dart';
-import 'package:kraft_launcher/account/logic/account_manager/image_cache_service/image_cache_service.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/image_cache_service/default_image_cache_service.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/image_cache_service/image_cache_service.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../../common/helpers/utils.dart';
+import '../../../../../../common/helpers/utils.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

@@ -39,12 +39,24 @@ final class MicrosoftAccountHandlerState extends Equatable {
   /// Not null if [deviceCodeStatus] is [DeviceCodeStatus.polling].
   final String? requestedDeviceCode;
 
+  String get requireRequestedDeviceCode =>
+      requestedDeviceCode ??
+      (throw StateError(
+        'Expected the user device code to be not null when status is: ${DeviceCodeStatus.polling}. Status: $deviceCodeStatus',
+      ));
+
   /// Not null if [microsoftLoginStatus] is [MicrosoftLoginStatus.loading]
   /// or [microsoftRefreshAccountStatus] is [MicrosoftRefreshAccountStatus.loading].
-  final MicrosoftAuthProgress? authProgress;
+  final MinecraftFullAuthProgress? authProgress;
 
-  /// Not null if [authProgress] is [MicrosoftAuthProgress.waitingForUserLogin].
+  /// Not null if [authProgress] is [MinecraftFullAuthCodeProgress.progress] with [MicrosoftAuthCodeProgress.waitingForUserLogin].
   final String? authCodeLoginUrl;
+
+  String get requireAuthCodeLoginUrl =>
+      authCodeLoginUrl ??
+      (throw StateError(
+        'Expected the auth code login URL to be not null for status: ${MicrosoftAuthCodeProgress.waitingForUserLogin}',
+      ));
 
   /// The account that was added or modified.
   ///
@@ -52,14 +64,24 @@ final class MicrosoftAccountHandlerState extends Equatable {
   /// [MicrosoftLoginStatus.successAccountAdded] or [MicrosoftLoginStatus.successAccountAdded].
   final MinecraftAccount? recentAccount;
 
+  MinecraftAccount get requireRecentAccount =>
+      recentAccount ??
+      (throw StateError(
+        'Expected the recent Minecraft account to be not null',
+      ));
+
   /// Not null if [microsoftLoginStatus] is a failure (e.g., [MicrosoftLoginStatus.failure])
-  final AccountManagerException? exception;
+  final MinecraftAccountServiceException? exception;
 
-  MinecraftAccount get recentAccountOrThrow =>
-      requireNotNull(recentAccount, name: 'recentAccount');
-
-  AccountManagerException get exceptionOrThrow =>
-      requireNotNull(exception, name: 'accountManagerException');
+  MinecraftAccountServiceException get exceptionOrThrow =>
+      exception ??
+      (throw StateError(
+        'Expected $MinecraftAccountServiceException to be not null in '
+        'case of a failure status. '
+        '$MicrosoftLoginStatus: $microsoftLoginStatus'
+        '$MicrosoftRefreshAccountStatus: $microsoftRefreshAccountStatus'
+        '$DeviceCodeStatus: $deviceCodeStatus',
+      ));
 
   @override
   List<Object?> get props => [
@@ -78,10 +100,10 @@ final class MicrosoftAccountHandlerState extends Equatable {
     MicrosoftRefreshAccountStatus? microsoftRefreshAccountStatus,
     DeviceCodeStatus? deviceCodeStatus,
     Wrapped<String?>? requestedDeviceCode,
-    MicrosoftAuthProgress? authProgress,
+    MinecraftFullAuthProgress? authProgress,
     String? authCodeLoginUrl,
     MinecraftAccount? recentAccount,
-    AccountManagerException? exception,
+    MinecraftAccountServiceException? exception,
   }) {
     return MicrosoftAccountHandlerState(
       microsoftLoginStatus: microsoftLoginStatus ?? this.microsoftLoginStatus,

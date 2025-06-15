@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:kraft_launcher/common/logic/platform_check.dart';
 import 'package:path/path.dart' as p;
@@ -11,7 +10,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   test(
-    'uses correct application support directory on "${defaultTargetPlatform.name}" to avoid breaking changes',
+    'uses correct application support directory on "${currentDesktopPlatform.name}" to avoid breaking changes',
     () async {
       final actualDir = await getApplicationSupportDirectory();
 

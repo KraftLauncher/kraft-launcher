@@ -8,15 +8,23 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
 import 'account/data/minecraft_account/local_file_storage/file_account_storage.dart';
 import 'account/data/minecraft_account/secure_storage/secure_account_storage.dart';
+import 'account/data/minecraft_account_api/minecraft_account_api.dart';
 import 'account/data/minecraft_account_api/minecraft_account_api_impl.dart';
 import 'account/logic/account_cubit/account_cubit.dart';
-import 'account/logic/account_manager/image_cache_service/default_image_cache_service.dart';
-import 'account/logic/account_manager/minecraft_account_manager.dart';
 import 'account/logic/account_repository.dart';
+import 'account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
+import 'account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
 import 'account/logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
+import 'account/logic/microsoft/microsoft_oauth_flow_controller.dart';
+import 'account/logic/microsoft/minecraft/account_refresher/image_cache_service/default_image_cache_service.dart';
+import 'account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher.dart';
+import 'account/logic/microsoft/minecraft/account_resolver/minecraft_account_resolver.dart';
+import 'account/logic/microsoft/minecraft/account_service/minecraft_account_service.dart';
+import 'account/logic/offline_account/minecraft_offline_account_factory.dart';
 import 'account/logic/platform_secure_storage_support.dart';
 import 'account/ui/account_switcher_icon_button.dart';
 import 'account/ui/accounts_tab.dart';
@@ -69,57 +77,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider.value(
-          value: MinecraftAccountManager(
-            accountRepository: AccountRepository(
-              fileAccountStorage: FileAccountStorage.fromAppDataPaths(
-                AppDataPaths.instance,
-              ),
-              secureAccountStorage: SecureAccountStorage(
-                flutterSecureStorage: const FlutterSecureStorage(),
-              ),
-              secureStorageSupport: PlatformSecureStorageSupport(),
-            ),
-            microsoftAuthApi: MicrosoftAuthApiImpl(dio: DioClient.instance),
-            minecraftAccountApi: MinecraftAccountApiImpl(
-              dio: DioClient.instance,
-            ),
-            imageCacheService: DefaultImageCacheService(),
-          ),
-        ),
-        RepositoryProvider.value(value: ImagePicker()),
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create:
-                (context) => AccountCubit(
-                  minecraftAccountManager:
-                      context.read<MinecraftAccountManager>(),
-                ),
-          ),
-          BlocProvider(
-            create:
-                (context) => MicrosoftAccountHandlerCubit(
-                  minecraftAccountManager:
-                      context.read<MinecraftAccountManager>(),
-                  // TODO: No bloc/cubit should depends on the other, avoid? See: https://bloclibrary.dev/architecture/#bloc-to-bloc-communication,
-                  //  See also: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain and AccountRepository, this should be fixed once other related TODOs are fixed in MinecraftAccountManager, AccountCubit and MicrosoftAccountHandlerCubit
-                  accountCubit: context.read<AccountCubit>(),
-                ),
-          ),
-          BlocProvider(
-            create:
-                (context) => SettingsCubit(
-                  settingsStorage: SettingsStorage.fromAppDataPaths(
-                    AppDataPaths.instance,
-                  ),
-                ),
-            lazy: true,
-          ),
-        ],
+    return di(
+      child: blocProviders(
         child: BlocBuilder<SettingsCubit, SettingsState>(
           buildWhen:
               (previous, current) =>
@@ -188,6 +147,89 @@ class MainApp extends StatelessWidget {
       ),
     );
   }
+
+  Widget di({required Widget child}) => MultiRepositoryProvider(
+    providers: [
+      RepositoryProvider<MicrosoftAuthApi>.value(
+        value: MicrosoftAuthApiImpl(dio: DioClient.instance),
+      ),
+      RepositoryProvider<MinecraftAccountApi>.value(
+        value: MinecraftAccountApiImpl(dio: DioClient.instance),
+      ),
+      RepositoryProvider<AccountRepository>.value(
+        value: AccountRepository(
+          fileAccountStorage: FileAccountStorage.fromAppDataPaths(
+            AppDataPaths.instance,
+          ),
+          secureAccountStorage: SecureAccountStorage(
+            flutterSecureStorage: const FlutterSecureStorage(),
+          ),
+          secureStorageSupport: PlatformSecureStorageSupport(),
+        ),
+      ),
+      RepositoryProvider<MinecraftAccountResolver>(
+        create:
+            (context) => MinecraftAccountResolver(
+              microsoftAuthApi: context.read(),
+              minecraftAccountApi: context.read(),
+            ),
+      ),
+      RepositoryProvider<MinecraftAccountService>(
+        create:
+            (context) => MinecraftAccountService(
+              accountRepository: context.read<AccountRepository>(),
+              microsoftOAuthFlowController: MicrosoftOAuthFlowController(
+                microsoftAuthCodeFlow: MicrosoftAuthCodeFlow(
+                  microsoftAuthApi: context.read(),
+                ),
+                microsoftDeviceCodeFlow: MicrosoftDeviceCodeFlow(
+                  microsoftAuthApi: context.read(),
+                ),
+              ),
+              minecraftAccountResolver: context.read(),
+              minecraftAccountRefresher: MinecraftAccountRefresher(
+                imageCacheService: DefaultImageCacheService(),
+                microsoftAuthApi: context.read(),
+                minecraftAccountApi: context.read(),
+                accountResolver: context.read(),
+              ),
+            ),
+      ),
+      RepositoryProvider.value(value: ImagePicker()),
+    ],
+    child: child,
+  );
+
+  Widget blocProviders({required Widget child}) => MultiBlocProvider(
+    providers: [
+      BlocProvider(
+        create:
+            (context) => AccountCubit(
+              accountRepository: context.read(),
+              offlineAccountFactory: MinecraftOfflineAccountFactory(),
+            ),
+      ),
+      BlocProvider(
+        create:
+            (context) => MicrosoftAccountHandlerCubit(
+              minecraftAccountService: context.read(),
+              // TODO: No bloc/cubit should depends on the other, avoid? See: https://bloclibrary.dev/architecture/#bloc-to-bloc-communication,
+              //  See also: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain and AccountRepository, this should be fixed once other related TODOs are fixed in MinecraftAccountManager, AccountCubit and MicrosoftAccountHandlerCubit
+              accountCubit: context.read<AccountCubit>(),
+            ),
+      ),
+      BlocProvider(
+        create:
+            (context) => SettingsCubit(
+              settingsStorage: SettingsStorage.fromAppDataPaths(
+                AppDataPaths.instance,
+              ),
+            ),
+        lazy: true,
+      ),
+    ],
+    child: child,
+  );
 }
 
 class HomeScreen extends StatelessWidget {

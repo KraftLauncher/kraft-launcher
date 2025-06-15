@@ -48,9 +48,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addMicrosoftAccount => 'Add Microsoft Account';
 
   @override
-  String get useDeviceCodeMethod => 'Alternatively, use the device code method';
-
-  @override
   String get copyCode => 'Copy Code';
 
   @override

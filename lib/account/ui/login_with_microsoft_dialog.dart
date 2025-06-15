@@ -8,18 +8,20 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../common/constants/constants.dart';
 import '../../common/constants/project_info_constants.dart';
-import '../../common/logic/utils.dart';
 import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/utils/scaffold_messenger_ext.dart';
 import '../../common/ui/widgets/copy_code_block.dart';
 import '../../settings/logic/cubit/settings_cubit.dart';
-import '../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart';
-import '../logic/account_manager/minecraft_account_manager.dart';
-import '../logic/account_manager/minecraft_account_manager_exceptions.dart';
+import '../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
+    as microsoft_auth_api_exceptions;
+import '../logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
+import '../logic/microsoft/minecraft/account_resolver/minecraft_account_resolver_exceptions.dart';
+import '../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
+    as minecraft_account_service_exceptions;
 import 'minecraft_java_entitlement_absent_dialog.dart';
-import 'utils/account_manager_exception_messages.dart';
 import 'utils/auth_progress_messages.dart';
+import 'utils/minecraft_account_service_exception_messages.dart';
 
 class LoginWithMicrosoftDialog extends StatefulWidget {
   const LoginWithMicrosoftDialog({super.key});
@@ -60,7 +62,7 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
               setState(() => _canUserClose = true);
 
               if (state.microsoftLoginStatus.isSuccess) {
-                final username = state.recentAccountOrThrow.username;
+                final username = state.requireRecentAccount.username;
                 context.scaffoldMessenger.showSnackBarText(
                   state.microsoftLoginStatus ==
                           MicrosoftLoginStatus.successAccountAdded
@@ -80,12 +82,14 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
 
                 // Handle special errors
                 switch (exception) {
-                  case AccountManagerMicrosoftAuthApiException():
+                  case minecraft_account_service_exceptions.MicrosoftAuthApiException():
                     final microsoftAuthApiException = exception.exception;
                     switch (microsoftAuthApiException) {
-                      case MicrosoftAuthXstsErrorException():
+                      case microsoft_auth_api_exceptions.XstsErrorException():
                         switch (microsoftAuthApiException.xstsError) {
-                          case XstsError.accountCreationRequired:
+                          case microsoft_auth_api_exceptions
+                              .XstsError
+                              .accountCreationRequired:
                             scaffoldMessenger.showSnackBarText(
                               message,
                               snackBarAction: SnackBarAction(
@@ -107,13 +111,16 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                         scaffoldMessenger.showSnackBarText(message);
                     }
 
-                  case AccountManagerMinecraftEntitlementAbsentException():
-                    showDialog<void>(
-                      context: context,
-                      builder:
-                          (context) =>
-                              const MinecraftJavaEntitlementAbsentDialog(),
-                    );
+                  case minecraft_account_service_exceptions.MinecraftAccountResolverException():
+                    switch (exception.exception) {
+                      case MinecraftJavaEntitlementAbsentException():
+                        showDialog<void>(
+                          context: context,
+                          builder:
+                              (context) =>
+                                  const MinecraftJavaEntitlementAbsentDialog(),
+                        );
+                    }
 
                   case _:
                     scaffoldMessenger.showSnackBarText(message);
@@ -121,9 +128,9 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
               }
             },
             builder: (context, state) {
-              // While the listener is processing and about to close the dialog,
-              // keep showing the loading state even after a success to avoid a UI flash.
               if (state.microsoftLoginStatus == MicrosoftLoginStatus.loading ||
+                  // While the listener is processing and about to close the dialog,
+                  // keep showing the loading state even after a success to avoid a UI flash.
                   state.microsoftLoginStatus.isSuccess) {
                 assert(
                   state.authProgress != null,
@@ -142,14 +149,13 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                         child: CircularProgressIndicator(),
                       ),
                       const SizedBox(height: 16),
-                      if (state.authProgress ==
-                          MicrosoftAuthProgress.waitingForUserLogin)
+
+                      // TODO: BUG: CONFLICTING WITH DEVICE CODE when request was not sent yet and "Sign in via browser was pressed"
+                      if (state.authProgress?.authCodeProgress?.progress ==
+                          MicrosoftAuthCodeProgress.waitingForUserLogin)
                         () {
                           final authCodeLoginUrl =
-                              state.authCodeLoginUrl ??
-                              (throw StateError(
-                                'Expected the auth code login URL to be not null for status: ${MicrosoftAuthProgress.waitingForUserLogin}',
-                              ));
+                              state.requireAuthCodeLoginUrl;
                           return GestureDetector(
                             onTap: () => launchUrl(Uri.parse(authCodeLoginUrl)),
                             onLongPress:
@@ -261,10 +267,6 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(context.loc.useDeviceCodeMethod),
-
-                  const SizedBox(height: 12),
-
                   SelectableText.rich(
                     TextSpan(
                       children: [
@@ -300,10 +302,7 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
                           child: LinearProgressIndicator(),
                         ),
                         DeviceCodeStatus.polling => CopyCodeBlock(
-                          code: requireNotNull(
-                            state.requestedDeviceCode,
-                            name: 'requestedDeviceCode',
-                          ),
+                          code: state.requireRequestedDeviceCode,
                         ),
                         DeviceCodeStatus.expired => Column(
                           spacing: 8,

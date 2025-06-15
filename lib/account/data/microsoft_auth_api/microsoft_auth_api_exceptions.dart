@@ -4,74 +4,44 @@ import 'package:meta/meta.dart';
 sealed class MicrosoftAuthApiException implements Exception {
   const MicrosoftAuthApiException(this.message);
 
-  factory MicrosoftAuthApiException.unknown(
-    String message,
-    StackTrace stackTrace,
-  ) => MicrosoftAuthUnknownException(message, stackTrace);
-
-  factory MicrosoftAuthApiException.authCodeExpired() =>
-      const MicrosoftAuthCodeExpiredException();
-
-  factory MicrosoftAuthApiException.invalidRefreshToken() =>
-      const MicrosoftAuthInvalidRefreshTokenException();
-
-  factory MicrosoftAuthApiException.xboxTokenMicrosoftAccessTokenExpired() =>
-      const MicrosoftAuthXboxTokenMicrosoftAccessTokenExpiredException();
-
-  factory MicrosoftAuthApiException.xstsError(
-    String message, {
-    required XstsError? xstsError,
-    required int? xErr,
-  }) => MicrosoftAuthXstsErrorException(
-    message,
-    xstsError: xstsError,
-    xErr: xErr,
-  );
-
-  factory MicrosoftAuthApiException.tooManyRequests() =>
-      const MicrosoftAuthTooManyRequestsException();
-
   final String message;
 
   @override
   String toString() => message;
 }
 
-final class MicrosoftAuthUnknownException extends MicrosoftAuthApiException {
-  const MicrosoftAuthUnknownException(super.message, this.stackTrace);
+final class UnknownException extends MicrosoftAuthApiException {
+  const UnknownException(super.message, this.stackTrace);
 
   final StackTrace stackTrace;
 }
 
 // The device code could also expire but it's handled in a result class instead of an exception.
 
-final class MicrosoftAuthCodeExpiredException
-    extends MicrosoftAuthApiException {
-  const MicrosoftAuthCodeExpiredException()
+final class AuthCodeExpiredException extends MicrosoftAuthApiException {
+  const AuthCodeExpiredException()
     : super(
-        'This auth code has been already expired and cannot be used to exchange for Microsoft OAuth access and refresh tokens.',
+        'This Microsoft auth code has been already expired and cannot be used to exchange for Microsoft OAuth access and refresh tokens.',
       );
 }
 
-final class MicrosoftAuthInvalidRefreshTokenException
-    extends MicrosoftAuthApiException {
-  const MicrosoftAuthInvalidRefreshTokenException()
+final class InvalidRefreshTokenException extends MicrosoftAuthApiException {
+  const InvalidRefreshTokenException()
     : super(
         'Microsoft OAuth Refresh token expired or access revoked. The user needs to log in again to reauthorize.',
       );
 }
 
-final class MicrosoftAuthXboxTokenMicrosoftAccessTokenExpiredException
+final class XboxTokenMicrosoftAccessTokenExpiredException
     extends MicrosoftAuthApiException {
-  const MicrosoftAuthXboxTokenMicrosoftAccessTokenExpiredException()
+  const XboxTokenMicrosoftAccessTokenExpiredException()
     : super(
         'Could not get the Xbox live token as the required input which is Microsoft OAuth access token is already expired',
       );
 }
 
-final class MicrosoftAuthTooManyRequestsException
-    extends MicrosoftAuthApiException {
-  const MicrosoftAuthTooManyRequestsException()
+final class TooManyRequestsException extends MicrosoftAuthApiException {
+  const TooManyRequestsException()
     : super(
         'Request limit reached while communicating with Microsoft authentication servers.',
       );
@@ -101,8 +71,8 @@ enum XstsError {
   final int xErr;
 }
 
-final class MicrosoftAuthXstsErrorException extends MicrosoftAuthApiException {
-  const MicrosoftAuthXstsErrorException(
+final class XstsErrorException extends MicrosoftAuthApiException {
+  const XstsErrorException(
     super.message, {
     required this.xstsError,
     required this.xErr,

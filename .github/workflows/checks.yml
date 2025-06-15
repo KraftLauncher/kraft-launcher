@@ -29,6 +29,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Extract common code in all workflows using action yaml files to .github/actions and use them
+
       - name: Setup Flutter (Stable)
         uses: subosito/flutter-action@v2
         with:

@@ -6,7 +6,8 @@ import '../../../common/logic/dio_client.dart';
 import '../../../common/logic/file_utils.dart';
 import '../../../common/logic/json.dart';
 import 'minecraft_account_api.dart';
-import 'minecraft_account_api_exceptions.dart';
+import 'minecraft_account_api_exceptions.dart'
+    as minecraft_account_api_exceptions;
 
 class MinecraftAccountApiImpl extends MinecraftAccountApi {
   MinecraftAccountApiImpl({required this.dio});
@@ -26,11 +27,11 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
       }
 
       if (e.response?.statusCode == HttpStatus.tooManyRequests) {
-        throw MinecraftAccountApiException.tooManyRequests();
+        throw const minecraft_account_api_exceptions.TooManyRequestsException();
       }
 
       if (e.response?.statusCode == HttpStatus.unauthorized) {
-        throw MinecraftAccountApiException.unauthorized();
+        throw const minecraft_account_api_exceptions.UnauthorizedException();
       }
 
       final errorBody = e.response?.data as JsonObject?;
@@ -38,18 +39,21 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
       final errorMessage = errorBody?['errorMessage'] as String?;
 
       final exception = switch (code) {
-        String() => MinecraftAccountApiException.unknown(
+        String() => minecraft_account_api_exceptions.UnknownException(
           'Code: $code, Details: ${errorMessage ?? 'The error description is not provided.'}',
           stackTrace,
         ),
-        null => MinecraftAccountApiException.unknown(
+        null => minecraft_account_api_exceptions.UnknownException(
           'The error code is not provided: ${e.response?.data}, ${e.response?.headers}',
           stackTrace,
         ),
       };
       throw exception;
     } on Exception catch (e, stackTrace) {
-      throw MinecraftAccountApiException.unknown(e.toString(), stackTrace);
+      throw minecraft_account_api_exceptions.UnknownException(
+        e.toString(),
+        stackTrace,
+      );
     }
   }
 
@@ -89,7 +93,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
       final code = errorBody?['error'] as String?;
 
       if (code == 'NOT_FOUND') {
-        throw MinecraftAccountApiException.accountNotFound();
+        throw const minecraft_account_api_exceptions.AccountNotFoundException();
       }
       return null;
     },
@@ -145,7 +149,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
             ) ??
             false;
         if (isInvalidSkinImageData) {
-          throw MinecraftAccountApiException.invalidSkinImageData();
+          throw const minecraft_account_api_exceptions.InvalidSkinImageDataException();
         }
       }
       return null;

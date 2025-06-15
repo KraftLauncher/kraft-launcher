@@ -8,6 +8,8 @@ import '../utils/exception_with_stacktrace.dart';
 import 'copy_code_block.dart';
 import 'info_text_with_lottie.dart';
 
+// TODO: Probably invalid, is this for errors (bugs) or failures (expected)?
+
 class UnknownError extends StatelessWidget {
   const UnknownError({
     required this.onTryAgain,

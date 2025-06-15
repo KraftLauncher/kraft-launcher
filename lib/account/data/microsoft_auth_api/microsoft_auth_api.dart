@@ -7,17 +7,18 @@ import '../../../common/logic/json.dart';
 import 'auth_flows/microsoft_auth_code_flow_api.dart';
 import 'auth_flows/microsoft_device_code_flow_api.dart';
 
-// The success response when exchanging the auth code or device code for Microsoft tokens.
+// The success response when exchanging the auth code, device code or Microsoft
+// refresh token for Microsoft tokens.
 @immutable
-class MicrosoftOauthTokenExchangeResponse {
-  const MicrosoftOauthTokenExchangeResponse({
+class MicrosoftOAuthTokenResponse {
+  const MicrosoftOAuthTokenResponse({
     required this.accessToken,
     required this.refreshToken,
     required this.expiresIn,
   });
 
-  factory MicrosoftOauthTokenExchangeResponse.fromJson(JsonObject json) =>
-      MicrosoftOauthTokenExchangeResponse(
+  factory MicrosoftOAuthTokenResponse.fromJson(JsonObject json) =>
+      MicrosoftOAuthTokenResponse(
         accessToken: json['access_token']! as String,
         refreshToken: json['refresh_token']! as String,
         expiresIn: json['expires_in']! as int,
@@ -29,7 +30,7 @@ class MicrosoftOauthTokenExchangeResponse {
 
   @override
   String toString() =>
-      'MicrosoftOauthTokenExchangeResponse(accessToken: $accessToken, refreshToken: $refreshToken, expiresIn: $expiresIn)';
+      'MicrosoftOAuthTokenResponse(accessToken: $accessToken, refreshToken: $refreshToken, expiresIn: $expiresIn)';
 }
 
 @immutable
@@ -65,11 +66,11 @@ class XboxLiveAuthTokenResponse {
 abstract class MicrosoftAuthApi
     implements MicrosoftAuthCodeFlowApi, MicrosoftDeviceCodeFlowApi {
   Future<XboxLiveAuthTokenResponse> requestXboxLiveToken(
-    String microsoftOauthToken,
+    String microsoftAccessToken,
   );
   Future<XboxLiveAuthTokenResponse> requestXSTSToken(String xboxLiveToken);
 
-  Future<MicrosoftOauthTokenExchangeResponse> getNewTokensFromRefreshToken(
+  Future<MicrosoftOAuthTokenResponse> getNewTokensFromRefreshToken(
     String microsoftRefreshToken,
   );
 }
