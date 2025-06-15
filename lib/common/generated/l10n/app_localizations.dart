@@ -180,12 +180,6 @@ abstract class AppLocalizations {
   /// **'Add Microsoft Account'**
   String get addMicrosoftAccount;
 
-  /// Prompt that suggests the user can alternatively use the device code method for logging with Microsoft
-  ///
-  /// In en, this message translates to:
-  /// **'Alternatively, use the device code method'**
-  String get useDeviceCodeMethod;
-
   /// No description provided for @copyCode.
   ///
   /// In en, this message translates to:

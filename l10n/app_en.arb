@@ -13,10 +13,6 @@
     "offline": "Offline",
     "signInWithMicrosoft": "Sign in with Microsoft",
     "addMicrosoftAccount": "Add Microsoft Account",
-    "useDeviceCodeMethod": "Alternatively, use the device code method",
-    "@useDeviceCodeMethod": {
-        "description": "Prompt that suggests the user can alternatively use the device code method for logging with Microsoft"
-    },
     "copyCode": "Copy Code",
     "copiedToClipboard": "Copied to clipboard",
     "deviceCodeStepVisit": "1. Visit",

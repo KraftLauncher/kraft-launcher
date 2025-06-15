@@ -11,6 +11,7 @@ abstract class BaseFailure {
   String toString() => message;
 }
 
+// See also: https://docs.flutter.dev/app-architecture/design-patterns/result
 @immutable
 sealed class Result<V, F extends BaseFailure> {
   const Result();

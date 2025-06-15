@@ -13,10 +13,6 @@
   "offline": "بدون اتصال",
   "signInWithMicrosoft": "تسجيل الدخول باستخدام مايكروسوفت",
   "addMicrosoftAccount": "إضافة حساب مايكروسوفت",
-  "useDeviceCodeMethod": "بدلاً من ذلك، استخدم طريقة رمز الجهاز",
-  "@useDeviceCodeMethod": {
-    "description": "اقتراح بأن المستخدم يمكنه بدلاً من ذلك استخدام طريقة رمز الجهاز لتسجيل الدخول بمايكروسوفت"
-  },
   "copyCode": "نسخ الرمز",
   "copiedToClipboard": "تم النسخ إلى الحافظة",
   "deviceCodeStepVisit": "1. قم بزيارة",

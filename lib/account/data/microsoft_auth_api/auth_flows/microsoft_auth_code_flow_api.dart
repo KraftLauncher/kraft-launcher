@@ -20,7 +20,7 @@ abstract class MicrosoftAuthCodeFlowApi {
   /// [userLoginUrlWithAuthCode] and once the login is successful,
   /// Microsoft will redirect to the redirect URI with the `code` query parameter
   /// (e.g., `http://127.0.0.1:48162/?code=M.C515_SN1.2.U.169e8c98-7710-97d2-817e-76740b144f41`).
-  Future<MicrosoftOauthTokenExchangeResponse> exchangeAuthCodeForTokens(
+  Future<MicrosoftOAuthTokenResponse> exchangeAuthCodeForTokens(
     String authCode,
   );
 }

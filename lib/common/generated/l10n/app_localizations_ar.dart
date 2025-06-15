@@ -48,9 +48,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addMicrosoftAccount => 'إضافة حساب مايكروسوفت';
 
   @override
-  String get useDeviceCodeMethod => 'بدلاً من ذلك، استخدم طريقة رمز الجهاز';
-
-  @override
   String get copyCode => 'نسخ الرمز';
 
   @override

@@ -11,13 +11,16 @@ import '../../common/ui/widgets/split_view.dart';
 import '../../common/ui/widgets/unknown_error.dart';
 import '../data/minecraft_account/minecraft_account.dart';
 import '../logic/account_cubit/account_cubit.dart';
-import '../logic/account_manager/minecraft_account_manager_exceptions.dart';
 import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
+import '../logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
+    as minecraft_account_refresher_exceptions;
+import '../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
+    as minecraft_account_service_exceptions;
 import 'account_details.dart';
 import 'account_list_tile.dart';
 import 'login_with_microsoft_dialog.dart';
 import 'upsert_offline_account_dialog.dart';
-import 'utils/account_manager_exception_messages.dart';
+import 'utils/minecraft_account_service_exception_messages.dart';
 
 class AccountsTab extends StatelessWidget {
   const AccountsTab({super.key});
@@ -26,6 +29,9 @@ class AccountsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AccountCubit, AccountState>(
       builder: (context, state) {
+        if (state.status == AccountStatus.loading) {
+          return const Center(child: CircularProgressIndicator());
+        }
         if (state.status == AccountStatus.loadFailure) {
           return UnknownError(
             onTryAgain: () => context.read<AccountCubit>().loadAccounts(),
@@ -140,7 +146,7 @@ class _AddAccountButton extends StatelessWidget {
                       MicrosoftRefreshAccountStatus.success) {
                     context.scaffoldMessenger.showSnackBarText(
                       context.loc.accountRefreshedMessage(
-                        state.recentAccountOrThrow.username,
+                        state.requireRecentAccount.username,
                       ),
                     );
                     context
@@ -154,26 +160,31 @@ class _AddAccountButton extends StatelessWidget {
                     final scaffoldMessenger = context.scaffoldMessenger;
 
                     // Handle special errors
-
                     switch (exception) {
-                      case AccountManagerMicrosoftReAuthRequiredException():
-                        scaffoldMessenger.showSnackBarText(
-                          message,
-                          snackBarAction: SnackBarAction(
-                            label: context.loc.signInWithMicrosoft,
-                            onPressed:
-                                () => LoginWithMicrosoftDialog.show(context),
-                          ),
-                        );
-                      case AccountManagerInvalidMicrosoftRefreshToken():
-                        scaffoldMessenger.showSnackBarText(
-                          context.loc.sessionExpiredOrAccessRevoked,
-                          snackBarAction: SnackBarAction(
-                            label: context.loc.signInWithMicrosoft,
-                            onPressed:
-                                () => LoginWithMicrosoftDialog.show(context),
-                          ),
-                        );
+                      // TODO: TEST THIS CHANGE MANUALLY
+                      case minecraft_account_service_exceptions.MinecraftAccountRefresherException():
+                        switch (exception.exception) {
+                          case minecraft_account_refresher_exceptions.InvalidMicrosoftRefreshTokenException():
+                            scaffoldMessenger.showSnackBarText(
+                              context.loc.sessionExpiredOrAccessRevoked,
+                              snackBarAction: SnackBarAction(
+                                label: context.loc.signInWithMicrosoft,
+                                onPressed:
+                                    () =>
+                                        LoginWithMicrosoftDialog.show(context),
+                              ),
+                            );
+                          case minecraft_account_refresher_exceptions.MicrosoftReAuthRequiredException():
+                            scaffoldMessenger.showSnackBarText(
+                              message,
+                              snackBarAction: SnackBarAction(
+                                label: context.loc.signInWithMicrosoft,
+                                onPressed:
+                                    () =>
+                                        LoginWithMicrosoftDialog.show(context),
+                              ),
+                            );
+                        }
                       case _:
                         scaffoldMessenger.showSnackBarText(message);
                     }

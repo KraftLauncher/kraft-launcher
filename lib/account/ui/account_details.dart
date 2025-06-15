@@ -72,7 +72,6 @@ class AccountDetails extends StatelessWidget {
                   subtitle: Text(switch (account.accountType) {
                     AccountType.microsoft => context.loc.microsoft,
                     AccountType.offline => context.loc.offline,
-                    // ignore: require_trailing_commas
                   }),
                   leading: const Icon(Icons.account_circle),
                   shape: _shape,

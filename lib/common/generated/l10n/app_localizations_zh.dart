@@ -48,9 +48,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addMicrosoftAccount => '添加 Microsoft 账户';
 
   @override
-  String get useDeviceCodeMethod => '或者，使用设备代码方式登录';
-
-  @override
   String get copyCode => '复制代码';
 
   @override

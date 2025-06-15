@@ -33,4 +33,11 @@ Widgets and UI logic (e.g., localization, error messages).
 > A feature is a group of related code inside a directory, one special exception is the `common` directory which contains common code
 > to be used across different features.
 
-This architecture is different from Clean Architecture. Clean Architecture follows stricter rules, has more abstractions, and is more generic. We also use fewer classes and avoid verbose suffixes like `DataSource` or `UseCase`.
+This architecture is different from Uncle Bob's Clean Architecture. Clean Architecture follows stricter rules, has more abstractions, and is more generic. We also use fewer classes and avoid verbose suffixes like `DataSource` or `UseCase`.
+
+## Resources
+
+See also:
+
+* [Bloc Architecture](https://bloclibrary.dev/architecture/)
+* [Flutter App Architecture](https://docs.flutter.dev/app-architecture)

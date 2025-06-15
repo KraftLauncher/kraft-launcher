@@ -13,10 +13,6 @@
     "offline": "离线",
     "signInWithMicrosoft": "使用 Microsoft 登录",
     "addMicrosoftAccount": "添加 Microsoft 账户",
-    "useDeviceCodeMethod": "或者，使用设备代码方式登录",
-    "@useDeviceCodeMethod": {
-        "description": "提示用户可以选择使用设备代码方式登录 Microsoft"
-    },
     "copyCode": "复制代码",
     "copiedToClipboard": "已复制到剪贴板",
     "deviceCodeStepVisit": "1. 访问",

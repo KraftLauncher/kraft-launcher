@@ -9,7 +9,7 @@ import '../../../common/logic/dio_client.dart';
 import '../../../common/logic/json.dart';
 import 'auth_flows/microsoft_device_code_flow_api.dart';
 import 'microsoft_auth_api.dart';
-import 'microsoft_auth_api_exceptions.dart';
+import 'microsoft_auth_api_exceptions.dart' as microsoft_auth_api_exceptions;
 
 class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   MicrosoftAuthApiImpl({required this.dio});
@@ -29,7 +29,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       }
 
       if (e.response?.statusCode == HttpStatus.tooManyRequests) {
-        throw MicrosoftAuthApiException.tooManyRequests();
+        throw const microsoft_auth_api_exceptions.TooManyRequestsException();
       }
 
       // The error code and description are included in responses of requests
@@ -41,18 +41,21 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       final errorDescription = errorBody?['error_description'] as String?;
 
       final exception = switch (code) {
-        String() => MicrosoftAuthApiException.unknown(
+        String() => microsoft_auth_api_exceptions.UnknownException(
           'Code: $code, Details: ${errorDescription ?? 'The error description is not provided.'}',
           stackTrace,
         ),
-        null => MicrosoftAuthApiException.unknown(
+        null => microsoft_auth_api_exceptions.UnknownException(
           'The error code is not provided: ${e.response?.data}, ${e.response?.headers}',
           stackTrace,
         ),
       };
       throw exception;
     } on Exception catch (e, stackTrace) {
-      throw MicrosoftAuthApiException.unknown(e.toString(), stackTrace);
+      throw microsoft_auth_api_exceptions.UnknownException(
+        e.toString(),
+        stackTrace,
+      );
     }
   }
 
@@ -68,7 +71,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       }).toString();
 
   @override
-  Future<MicrosoftOauthTokenExchangeResponse> exchangeAuthCodeForTokens(
+  Future<MicrosoftOAuthTokenResponse> exchangeAuthCodeForTokens(
     String authCode,
   ) async => _handleCommonFailures(
     () async {
@@ -86,13 +89,13 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
         },
       );
 
-      return MicrosoftOauthTokenExchangeResponse.fromJson(response.dataOrThrow);
+      return MicrosoftOAuthTokenResponse.fromJson(response.dataOrThrow);
     },
     customHandle: (e) {
       final errorBody = e.response?.data as JsonObject?;
       final code = errorBody?['error'] as String?;
       if (code == 'invalid_grant') {
-        throw MicrosoftAuthApiException.authCodeExpired();
+        throw const microsoft_auth_api_exceptions.AuthCodeExpiredException();
       }
       return null;
     },
@@ -141,7 +144,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       );
 
       return MicrosoftCheckDeviceCodeStatusResult.approved(
-        MicrosoftOauthTokenExchangeResponse.fromJson(response.dataOrThrow),
+        MicrosoftOAuthTokenResponse.fromJson(response.dataOrThrow),
       );
     },
     customHandle: (e) {
@@ -167,7 +170,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
 
   @override
   Future<XboxLiveAuthTokenResponse> requestXboxLiveToken(
-    String microsoftOauthToken,
+    String microsoftAccessToken,
   ) async => _handleCommonFailures(
     () async {
       final response = await dio.postUri<JsonObject>(
@@ -182,7 +185,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
           'Properties': {
             'AuthMethod': 'RPS',
             'SiteName': 'user.auth.xboxlive.com',
-            'RpsTicket': 'd=$microsoftOauthToken',
+            'RpsTicket': 'd=$microsoftAccessToken',
           },
           'RelyingParty': 'http://auth.xboxlive.com',
           'TokenType': 'JWT',
@@ -198,7 +201,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
         // This header is usually 'XASU error=token_expired' when expired.
         if (wwwAuthenticateHeader?.contains('token_expired') ?? false) {
           // The request body is empty in case of a failure.
-          throw MicrosoftAuthApiException.xboxTokenMicrosoftAccessTokenExpired();
+          throw const microsoft_auth_api_exceptions.XboxTokenMicrosoftAccessTokenExpiredException();
         }
       }
       return null;
@@ -235,7 +238,9 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       final xErr = errorBody?['XErr'] as int?;
       final xstsError =
           xErr != null
-              ? XstsError.values.firstWhereOrNull((e) => e.xErr == xErr)
+              ? microsoft_auth_api_exceptions.XstsError.values.firstWhereOrNull(
+                (e) => e.xErr == xErr,
+              )
               : null;
 
       if (e.response?.statusCode != HttpStatus.unauthorized &&
@@ -244,7 +249,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
         return null;
       }
 
-      throw MicrosoftAuthApiException.xstsError(
+      throw microsoft_auth_api_exceptions.XstsErrorException(
         message ??
             'An unknown error, Xbox API did not provided a message, headers: ${e.response?.headers}',
         xErr: xErr,
@@ -256,7 +261,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   // END: Xbox
 
   @override
-  Future<MicrosoftOauthTokenExchangeResponse> getNewTokensFromRefreshToken(
+  Future<MicrosoftOAuthTokenResponse> getNewTokensFromRefreshToken(
     String microsoftRefreshToken,
   ) => _handleCommonFailures(
     () async {
@@ -272,13 +277,13 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
         },
       );
 
-      return MicrosoftOauthTokenExchangeResponse.fromJson(response.dataOrThrow);
+      return MicrosoftOAuthTokenResponse.fromJson(response.dataOrThrow);
     },
     customHandle: (e) {
       final errorBody = e.response?.data as JsonObject?;
       final code = errorBody?['error'] as String?;
       if (code == 'invalid_grant') {
-        throw MicrosoftAuthApiException.invalidRefreshToken();
+        throw const microsoft_auth_api_exceptions.InvalidRefreshTokenException();
       }
       return null;
     },
