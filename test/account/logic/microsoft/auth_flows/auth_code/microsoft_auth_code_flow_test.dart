@@ -12,6 +12,7 @@ import 'package:test/test.dart';
 
 import '../../../../../common/helpers/mocks.dart';
 import '../../../../../common/test_constants.dart';
+import '../../../../data/microsoft_auth_api/microsoft_auth_api_dummy_values.dart';
 
 void main() {
   late MockMicrosoftAuthApi mockMicrosoftAuthApi;
@@ -36,13 +37,7 @@ void main() {
     ).thenReturn(TestConstants.anyString);
     when(
       () => mockMicrosoftAuthApi.exchangeAuthCodeForTokens(any()),
-    ).thenAnswer(
-      (_) async => const MicrosoftOAuthTokenResponse(
-        accessToken: TestConstants.anyString,
-        expiresIn: TestConstants.anyInt,
-        refreshToken: TestConstants.anyString,
-      ),
-    );
+    ).thenAnswer((_) async => dummyMicrosoftOAuthTokenResponse);
   });
 
   test(

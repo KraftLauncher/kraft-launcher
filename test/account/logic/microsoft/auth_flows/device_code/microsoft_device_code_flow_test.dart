@@ -9,6 +9,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import '../../../../../common/helpers/mocks.dart';
+import '../../../../data/microsoft_auth_api/microsoft_auth_api_dummy_values.dart';
 
 void main() {
   late MockMicrosoftAuthApi mockMicrosoftAuthApi;
@@ -243,12 +244,7 @@ void main() {
             () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
           ).thenAnswer(
             (_) async => MicrosoftCheckDeviceCodeStatusResult.approved(
-              mockTokenResponse ??
-                  const MicrosoftOAuthTokenResponse(
-                    accessToken: '',
-                    refreshToken: '',
-                    expiresIn: -1,
-                  ),
+              mockTokenResponse ?? dummyMicrosoftOAuthTokenResponse,
             ),
           );
         }
@@ -654,11 +650,7 @@ void main() {
           () => mockMicrosoftAuthApi.checkDeviceCodeStatus(any()),
         ).thenAnswer(
           (_) async => MicrosoftCheckDeviceCodeStatusResult.approved(
-            const MicrosoftOAuthTokenResponse(
-              accessToken: '',
-              refreshToken: '',
-              expiresIn: -1,
-            ),
+            dummyMicrosoftOAuthTokenResponse,
           ),
         );
 

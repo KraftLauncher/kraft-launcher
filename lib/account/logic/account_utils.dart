@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 import '../../common/logic/utils.dart';
 import '../data/minecraft_account/minecraft_account.dart';
 
-// TODO: Add tests, and make use of them when possible
+// TODO: Unit tests
 
 extension AccountsListExt on List<MinecraftAccount> {
   List<MinecraftAccount> updateById(

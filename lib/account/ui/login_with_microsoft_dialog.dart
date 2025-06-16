@@ -25,23 +25,23 @@ import 'utils/auth_progress_messages.dart';
 import 'utils/minecraft_account_service_exception_messages.dart';
 
 class LoginWithMicrosoftDialog extends StatefulWidget {
-  const LoginWithMicrosoftDialog({super.key, required this.isRAauthentication});
+  const LoginWithMicrosoftDialog({super.key, required this.isReAuthentication});
 
   /// Whether this dialog was launched for re-authentication.
   ///
   /// Affects only UI labels, not functionality.
-  final bool isRAauthentication;
+  final bool isReAuthentication;
 
   @override
   State<LoginWithMicrosoftDialog> createState() =>
       _LoginWithMicrosoftDialogState();
 
-  static void show(BuildContext context, {bool isRAauthentication = false}) =>
+  static void show(BuildContext context, {bool isReAuthentication = false}) =>
       showDialog<void>(
         context: context,
         builder:
             (context) => LoginWithMicrosoftDialog(
-              isRAauthentication: isRAauthentication,
+              isReAuthentication: isReAuthentication,
             ),
       );
 }
@@ -55,7 +55,7 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
     canPop: _canUserClose,
     child: AlertDialog(
       title: Text(
-        widget.isRAauthentication
+        widget.isReAuthentication
             ? context.loc.updateMicrosoftAccount
             : context.loc.addMicrosoftAccount,
       ),
@@ -443,9 +443,9 @@ class _LoadingIndicator extends StatelessWidget {
           const SizedBox(height: 16),
 
           // TODO: Still buggy when launched before device code request finished (timer is not set yet). Confliciting with device code.
-          // the auth flow is correct although the authProgress is not:
-          // authProgress?.authCodeProgress?.progress is null and authProgress?.deviceCodeProgress?.progress == MicrosoftDeviceCodeProgress.waitingForUserLogin
-          // Easiest solution is to have different progress for auth and device code or fix the cubit code
+          //  the auth flow is correct although the authProgress is not:
+          //  authProgress?.authCodeProgress?.progress is null and authProgress?.deviceCodeProgress?.progress == MicrosoftDeviceCodeProgress.waitingForUserLogin
+          //  Easiest solution is to have different progress for auth and device code or fix the cubit code
           if (authProgress?.authCodeProgress?.progress ==
                   MicrosoftAuthCodeProgress.waitingForUserLogin &&
               authFlow == MicrosoftAuthFlow.authCode)
