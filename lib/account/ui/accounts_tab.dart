@@ -183,7 +183,6 @@ class _AddAccountButton extends StatelessWidget {
 
                     // Handle special errors
                     switch (exception) {
-                      // TODO: TEST THIS CHANGE MANUALLY
                       case minecraft_account_service_exceptions.MinecraftAccountRefresherException():
                         switch (exception.exception) {
                           case minecraft_account_refresher_exceptions.InvalidMicrosoftRefreshTokenException():
@@ -194,7 +193,7 @@ class _AddAccountButton extends StatelessWidget {
                                 onPressed:
                                     () => LoginWithMicrosoftDialog.show(
                                       context,
-                                      isRAauthentication: true,
+                                      isReAuthentication: true,
                                     ),
                               ),
                             );
@@ -206,7 +205,7 @@ class _AddAccountButton extends StatelessWidget {
                                 onPressed:
                                     () => LoginWithMicrosoftDialog.show(
                                       context,
-                                      isRAauthentication: true,
+                                      isReAuthentication: true,
                                     ),
                               ),
                             );

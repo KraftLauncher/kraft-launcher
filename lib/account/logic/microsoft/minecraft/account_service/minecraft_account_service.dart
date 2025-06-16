@@ -52,7 +52,7 @@ class MinecraftAccountService {
     )?
     onMicrosoftAuthApiException,
   }) async {
-    // TODO: The current solution is not scalable enough. Avoid using exceptions for possible failures, and only throw Dart errors (major refactor).
+    // TODO: The current solution is not scalable enough. Avoid using exceptions for possible failures, and only throw Dart errors (major refactor). Consider using Result pattern again?
     try {
       return await run();
     } on microsoft_auth_api_exceptions.MicrosoftAuthApiException catch (e) {

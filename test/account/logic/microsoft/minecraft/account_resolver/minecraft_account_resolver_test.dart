@@ -11,6 +11,7 @@ import 'package:test/test.dart';
 
 import '../../../../../common/helpers/mocks.dart';
 import '../../../../../common/test_constants.dart';
+import '../../../../data/microsoft_auth_api/microsoft_auth_api_dummy_values.dart';
 
 void main() {
   late MockMicrosoftAuthApi mockMicrosoftAuthApi;
@@ -46,18 +47,12 @@ void main() {
       ),
     );
 
-    when(() => mockMicrosoftAuthApi.requestXboxLiveToken(any())).thenAnswer(
-      (_) async => const XboxLiveAuthTokenResponse(
-        xboxToken: TestConstants.anyString,
-        userHash: TestConstants.anyString,
-      ),
-    );
-    when(() => mockMicrosoftAuthApi.requestXSTSToken(any())).thenAnswer(
-      (_) async => const XboxLiveAuthTokenResponse(
-        xboxToken: TestConstants.anyString,
-        userHash: TestConstants.anyString,
-      ),
-    );
+    when(
+      () => mockMicrosoftAuthApi.requestXboxLiveToken(any()),
+    ).thenAnswer((_) async => dummyXboxLiveAuthTokenResponse);
+    when(
+      () => mockMicrosoftAuthApi.requestXSTSToken(any()),
+    ).thenAnswer((_) async => dummyXboxLiveAuthTokenResponse);
     mockLoginToMinecraftWithXbox(
       const MinecraftLoginResponse(
         username: TestConstants.anyString,
@@ -75,13 +70,7 @@ void main() {
     MicrosoftOAuthTokenResponse? tokenResponse,
     ResolveMinecraftAccountProgressCallback? onProgress,
   }) => resolver.resolve(
-    oauthTokenResponse:
-        tokenResponse ??
-        const MicrosoftOAuthTokenResponse(
-          accessToken: TestConstants.anyString,
-          refreshToken: TestConstants.anyString,
-          expiresIn: TestConstants.anyInt,
-        ),
+    oauthTokenResponse: tokenResponse ?? dummyMicrosoftOAuthTokenResponse,
     onProgress: onProgress ?? (_) {},
   );
 

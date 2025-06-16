@@ -215,7 +215,7 @@ class MainApp extends StatelessWidget {
             (context) => MicrosoftAccountHandlerCubit(
               minecraftAccountService: context.read(),
               // TODO: No bloc/cubit should depends on the other, avoid? See: https://bloclibrary.dev/architecture/#bloc-to-bloc-communication,
-              //  See also: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain and AccountRepository, this should be fixed once other related TODOs are fixed in MinecraftAccountManager, AccountCubit and MicrosoftAccountHandlerCubit
+              //  See also: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain and AccountRepository, this should be fixed once other related TODOs are fixed in AccountCubit and MicrosoftAccountHandlerCubit
               accountCubit: context.read(),
               secureStorageSupport: context.read(),
             ),

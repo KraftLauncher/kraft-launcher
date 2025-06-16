@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
+import '../../../common/logic/external_stream_cubit.dart';
 import '../../../common/logic/utils.dart';
 import '../../../common/ui/utils/exception_with_stacktrace.dart';
 import '../../data/minecraft_account/minecraft_account.dart';
@@ -14,7 +14,7 @@ import '../offline_account/minecraft_offline_account_factory.dart';
 
 part 'account_state.dart';
 
-class AccountCubit extends Cubit<AccountState> {
+class AccountCubit extends ExternalStreamCubit<AccountState> {
   AccountCubit({
     required this.offlineAccountFactory,
     required this.accountRepository,
