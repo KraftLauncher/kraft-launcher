@@ -941,6 +941,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account tokens are missing. Please sign in again to continue.'**
   String get reAuthRequiredDueToMissingAccountTokensFromFileStorage;
+
+  /// No description provided for @securityWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Warning'**
+  String get securityWarning;
+
+  /// Displayed when the user's operating system does not support secure storage. Account tokens will be saved unencrypted in a local file, increasing the risk of unauthorized access. Users should be cautious with installed programs and mods.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure storage is not supported on this platform. Account tokens will be stored unencrypted in a local file. Be cautious with installed programs and Minecraft mods.'**
+  String get secureStorageUnsupportedWarning;
+
+  /// No description provided for @updateMicrosoftAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Microsoft Account'**
+  String get updateMicrosoftAccount;
+
+  /// Shown when a request to api.minecraftservices.com fails with a 503 Service Unavailable response. Indicates that Minecraft services are temporarily unavailable during communication with the API, such as login or other account-related operations.
+  ///
+  /// In en, this message translates to:
+  /// **'Minecraft services are currently unavailable. Please try again in a few minutes.'**
+  String get minecraftAccountApiUnavailable;
 }
 
 class _AppLocalizationsDelegate

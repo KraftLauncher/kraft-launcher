@@ -27,7 +27,11 @@
     "reAuthRequiredDueToMissingSecureAccountDataDetailed",
     "reAuthRequiredDueToMissingSecureAccountData",
     "unavailable",
-    "reAuthRequiredDueToMissingAccountTokensFromFileStorage"
+    "reAuthRequiredDueToMissingAccountTokensFromFileStorage",
+    "securityWarning",
+    "secureStorageUnsupportedWarning",
+    "updateMicrosoftAccount",
+    "minecraftAccountApiUnavailable"
   ],
 
   "de": [
@@ -58,7 +62,11 @@
     "reAuthRequiredDueToMissingSecureAccountDataDetailed",
     "reAuthRequiredDueToMissingSecureAccountData",
     "unavailable",
-    "reAuthRequiredDueToMissingAccountTokensFromFileStorage"
+    "reAuthRequiredDueToMissingAccountTokensFromFileStorage",
+    "securityWarning",
+    "secureStorageUnsupportedWarning",
+    "updateMicrosoftAccount",
+    "minecraftAccountApiUnavailable"
   ],
 
   "zh": [
@@ -89,6 +97,10 @@
     "reAuthRequiredDueToMissingSecureAccountDataDetailed",
     "reAuthRequiredDueToMissingSecureAccountData",
     "unavailable",
-    "reAuthRequiredDueToMissingAccountTokensFromFileStorage"
+    "reAuthRequiredDueToMissingAccountTokensFromFileStorage",
+    "securityWarning",
+    "secureStorageUnsupportedWarning",
+    "updateMicrosoftAccount",
+    "minecraftAccountApiUnavailable"
   ]
 }

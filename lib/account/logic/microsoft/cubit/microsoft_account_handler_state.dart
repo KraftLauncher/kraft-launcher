@@ -20,6 +20,8 @@ enum MicrosoftRefreshAccountStatus { initial, loading, success, failure }
 // When the login dialog is opened, the device code will be automatically requested.
 enum DeviceCodeStatus { idle, requestingCode, polling, expired, declined }
 
+enum MicrosoftAuthFlow { authCode, deviceCode }
+
 final class MicrosoftAccountHandlerState extends Equatable {
   const MicrosoftAccountHandlerState({
     this.microsoftRefreshAccountStatus = MicrosoftRefreshAccountStatus.initial,
@@ -30,6 +32,8 @@ final class MicrosoftAccountHandlerState extends Equatable {
     this.authCodeLoginUrl,
     this.recentAccount,
     this.exception,
+    this.authFlow,
+    this.supportsSecureStorage,
   });
 
   final MicrosoftLoginStatus microsoftLoginStatus;
@@ -73,6 +77,8 @@ final class MicrosoftAccountHandlerState extends Equatable {
   /// Not null if [microsoftLoginStatus] is a failure (e.g., [MicrosoftLoginStatus.failure])
   final MinecraftAccountServiceException? exception;
 
+  final MicrosoftAuthFlow? authFlow;
+
   MinecraftAccountServiceException get exceptionOrThrow =>
       exception ??
       (throw StateError(
@@ -82,6 +88,8 @@ final class MicrosoftAccountHandlerState extends Equatable {
         '$MicrosoftRefreshAccountStatus: $microsoftRefreshAccountStatus'
         '$DeviceCodeStatus: $deviceCodeStatus',
       ));
+
+  final bool? supportsSecureStorage;
 
   @override
   List<Object?> get props => [
@@ -93,6 +101,8 @@ final class MicrosoftAccountHandlerState extends Equatable {
     authCodeLoginUrl,
     recentAccount,
     exception,
+    authFlow,
+    supportsSecureStorage,
   ];
 
   MicrosoftAccountHandlerState copyWith({
@@ -104,6 +114,8 @@ final class MicrosoftAccountHandlerState extends Equatable {
     String? authCodeLoginUrl,
     MinecraftAccount? recentAccount,
     MinecraftAccountServiceException? exception,
+    MicrosoftAuthFlow? authFlow,
+    bool? supportsSecureStorage,
   }) {
     return MicrosoftAccountHandlerState(
       microsoftLoginStatus: microsoftLoginStatus ?? this.microsoftLoginStatus,
@@ -118,6 +130,9 @@ final class MicrosoftAccountHandlerState extends Equatable {
       authCodeLoginUrl: authCodeLoginUrl ?? this.authCodeLoginUrl,
       recentAccount: recentAccount ?? this.recentAccount,
       exception: exception ?? this.exception,
+      authFlow: authFlow ?? this.authFlow,
+      supportsSecureStorage:
+          supportsSecureStorage ?? this.supportsSecureStorage,
     );
   }
 }

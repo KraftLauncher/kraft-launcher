@@ -9,38 +9,38 @@ class AccountSwitcherIconButton extends StatelessWidget {
   const AccountSwitcherIconButton({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<AccountCubit, AccountState>(
-    builder:
-        (context, state) => MenuAnchor(
-          menuChildren:
-              state.accounts.list.indexed.map((entry) {
-                final account = entry.$2;
+  Widget build(BuildContext context) {
+    final accounts = context.select(
+      (AccountCubit cubit) => cubit.state.accounts,
+    );
+    return MenuAnchor(
+      menuChildren:
+          accounts.list.indexed.map((entry) {
+            final account = entry.$2;
 
-                return MenuItemButton(
-                  leadingIcon: SkinIconImage(
-                    account: account,
-                    useCircleAvatar: true,
-                  ),
-                  child: Text(account.username),
-                  onPressed:
-                      () => context.read<AccountCubit>().updateDefaultAccount(
-                        account.id,
-                      ),
-                );
-              }).toList(),
-          builder:
-              (context, controller, child) => IconButton(
-                onPressed:
-                    () =>
-                        controller.isOpen
-                            ? controller.close()
-                            : controller.open(),
-                icon: SkinIconImage(
-                  account: state.accounts.defaultAccount,
-                  useCircleAvatar: true,
-                ),
-                tooltip: context.loc.switchAccount,
+            return MenuItemButton(
+              leadingIcon: SkinIconImage(
+                account: account,
+                useCircleAvatar: true,
               ),
-        ),
-  );
+              child: Text(account.username),
+              onPressed:
+                  () => context.read<AccountCubit>().updateDefaultAccount(
+                    account.id,
+                  ),
+            );
+          }).toList(),
+      builder:
+          (context, controller, child) => IconButton(
+            onPressed:
+                () =>
+                    controller.isOpen ? controller.close() : controller.open(),
+            icon: SkinIconImage(
+              account: accounts.defaultAccount,
+              useCircleAvatar: true,
+            ),
+            tooltip: context.loc.switchAccount,
+          ),
+    );
+  }
 }

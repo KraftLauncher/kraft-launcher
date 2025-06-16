@@ -118,6 +118,8 @@ extension AccountManagerExceptionMessages
             loc.minecraftAccountNotFoundError,
           minecraft_account_api_exceptions.InvalidSkinImageDataException() =>
             loc.invalidMinecraftSkinFile,
+          minecraft_account_api_exceptions.ServiceUnavailableException() =>
+            loc.minecraftAccountApiUnavailable,
         },
     };
   }

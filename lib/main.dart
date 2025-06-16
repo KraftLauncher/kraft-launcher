@@ -79,12 +79,9 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return di(
       child: blocProviders(
-        child: BlocBuilder<SettingsCubit, SettingsState>(
-          buildWhen:
-              (previous, current) =>
-                  previous.settings.general != current.settings.general,
-          builder: (context, state) {
-            final generalSettings = state.settings.general;
+        child: BlocSelector<SettingsCubit, SettingsState, GeneralSettings>(
+          selector: (state) => state.settings.general,
+          builder: (context, generalSettings) {
             final listTileTheme = ListTileThemeData(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -156,16 +153,20 @@ class MainApp extends StatelessWidget {
       RepositoryProvider<MinecraftAccountApi>.value(
         value: MinecraftAccountApiImpl(dio: DioClient.instance),
       ),
-      RepositoryProvider<AccountRepository>.value(
-        value: AccountRepository(
-          fileAccountStorage: FileAccountStorage.fromAppDataPaths(
-            AppDataPaths.instance,
-          ),
-          secureAccountStorage: SecureAccountStorage(
-            flutterSecureStorage: const FlutterSecureStorage(),
-          ),
-          secureStorageSupport: PlatformSecureStorageSupport(),
-        ),
+      RepositoryProvider<PlatformSecureStorageSupport>.value(
+        value: PlatformSecureStorageSupport(),
+      ),
+      RepositoryProvider<AccountRepository>(
+        create:
+            (context) => AccountRepository(
+              fileAccountStorage: FileAccountStorage.fromAppDataPaths(
+                AppDataPaths.instance,
+              ),
+              secureAccountStorage: SecureAccountStorage(
+                flutterSecureStorage: const FlutterSecureStorage(),
+              ),
+              secureStorageSupport: context.read(),
+            ),
       ),
       RepositoryProvider<MinecraftAccountResolver>(
         create:
@@ -215,7 +216,8 @@ class MainApp extends StatelessWidget {
               minecraftAccountService: context.read(),
               // TODO: No bloc/cubit should depends on the other, avoid? See: https://bloclibrary.dev/architecture/#bloc-to-bloc-communication,
               //  See also: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain and AccountRepository, this should be fixed once other related TODOs are fixed in MinecraftAccountManager, AccountCubit and MicrosoftAccountHandlerCubit
-              accountCubit: context.read<AccountCubit>(),
+              accountCubit: context.read(),
+              secureStorageSupport: context.read(),
             ),
       ),
       BlocProvider(

@@ -26,15 +26,12 @@ final class AccountState extends Equatable {
   // will updates the selected index.
   final String? selectedAccountId;
 
-  String? get selectedAccountIdOrThrow =>
-      selectedAccountId ??
-      (throw StateError(
-        'Expected the current selected Minecraft account to be not null',
-      ));
-
-  MinecraftAccount get selectedAccountOrThrow => accounts.list.firstWhere(
-    (account) => account.id == selectedAccountIdOrThrow,
-  );
+  MinecraftAccount? get selectedAccount {
+    final selectedAccountId = this.selectedAccountId;
+    return selectedAccountId != null
+        ? accounts.list.findById(selectedAccountId)
+        : null;
+  }
 
   final MinecraftAccounts accounts;
 
