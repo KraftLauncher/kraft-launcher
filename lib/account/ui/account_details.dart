@@ -11,6 +11,7 @@ import '../../common/ui/utils/scaffold_messenger_ext.dart';
 import '../data/minecraft_account/minecraft_account.dart';
 import '../logic/account_cubit/account_cubit.dart';
 import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
+import '../logic/microsoft/minecraft/account_service/minecraft_full_auth_progress.dart';
 import 'skin/full_skin_image.dart';
 import 'upsert_offline_account_dialog.dart';
 import 'utils/auth_progress_messages.dart';
@@ -91,19 +92,31 @@ class AccountDetails extends StatelessWidget {
                   shape: _shape,
                 ),
                 if (account.isMicrosoft)
-                  BlocBuilder<
+                  BlocSelector<
                     MicrosoftAccountHandlerCubit,
-                    MicrosoftAccountHandlerState
+                    MicrosoftAccountHandlerState,
+                    MicrosoftRefreshAccountStatus
                   >(
-                    builder: (context, state) {
-                      if (state.microsoftRefreshAccountStatus ==
+                    selector: (state) => state.microsoftRefreshAccountStatus,
+                    builder: (context, microsoftRefreshAccountStatus) {
+                      if (microsoftRefreshAccountStatus ==
                           MicrosoftRefreshAccountStatus.loading) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: Column(
                             spacing: 8,
                             children: [
-                              Text(state.authProgress.getMessage(context.loc)),
+                              BlocSelector<
+                                MicrosoftAccountHandlerCubit,
+                                MicrosoftAccountHandlerState,
+                                MinecraftFullAuthProgress?
+                              >(
+                                selector: (state) => state.authProgress,
+                                builder:
+                                    (context, authProgress) => Text(
+                                      authProgress.getMessage(context.loc),
+                                    ),
+                              ),
                               const LinearProgressIndicator(),
                             ],
                           ),

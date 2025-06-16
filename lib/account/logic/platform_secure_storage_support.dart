@@ -3,8 +3,6 @@ import 'package:flutter/foundation.dart';
 
 import '../../common/logic/platform_check.dart';
 
-// TODO: Show a message or indicator when the secure storage is unsupported on the current OS for the user in the UI?
-
 class PlatformSecureStorageSupport {
   PlatformSecureStorageSupport({
     @visibleForTesting DBusClient Function()? linuxDBusClientFactory,

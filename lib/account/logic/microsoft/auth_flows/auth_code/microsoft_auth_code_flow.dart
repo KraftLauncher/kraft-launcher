@@ -102,7 +102,6 @@ class MicrosoftAuthCodeFlow {
     final server = requireServer;
 
     final authCodeLoginUrl = microsoftAuthApi.userLoginUrlWithAuthCode();
-    // TODO: Launch authCodeLoginUrl using url_launcher in UI
 
     onProgress(MicrosoftAuthCodeProgress.waitingForUserLogin);
     onAuthCodeLoginUrlAvailable(authCodeLoginUrl);

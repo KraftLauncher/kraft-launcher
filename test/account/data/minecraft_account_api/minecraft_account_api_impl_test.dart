@@ -96,23 +96,7 @@ void main() {
       expect(response.username, username);
       expect(response.expiresIn, expiresIn);
     });
-    _tooManyRequestsTest(
-      () => mockDio,
-      () => minecraftAccountApi.loginToMinecraftWithXbox(
-        xstsToken: TestConstants.anyString,
-        xstsUserHash: TestConstants.anyString,
-      ),
-      isPostRequest: true,
-    );
-    _unknownErrorTests(
-      () => mockDio,
-      () => minecraftAccountApi.loginToMinecraftWithXbox(
-        xstsToken: TestConstants.anyString,
-        xstsUserHash: TestConstants.anyString,
-      ),
-      isPostRequest: true,
-    );
-    _unauthorizedTest(
+    _handleCommonFailuresTests(
       () => mockDio,
       () => minecraftAccountApi.loginToMinecraftWithXbox(
         xstsToken: TestConstants.anyString,
@@ -206,19 +190,9 @@ void main() {
         capes.map((cape) => MinecraftProfileCape.fromJson(cape)),
       );
     });
-    _tooManyRequestsTest(
+    _handleCommonFailuresTests(
       () => mockDio,
-      () => minecraftAccountApi.fetchMinecraftProfile(fakeMcAccessToken),
-      isPostRequest: false,
-    );
-    _unknownErrorTests(
-      () => mockDio,
-      () => minecraftAccountApi.fetchMinecraftProfile(fakeMcAccessToken),
-      isPostRequest: false,
-    );
-    _unauthorizedTest(
-      () => mockDio,
-      () => minecraftAccountApi.fetchMinecraftProfile(fakeMcAccessToken),
+      () => minecraftAccountApi.fetchMinecraftProfile(TestConstants.anyString),
       isPostRequest: false,
     );
 
@@ -281,19 +255,11 @@ void main() {
       );
     });
 
-    _tooManyRequestsTest(
+    _handleCommonFailuresTests(
       () => mockDio,
-      () => minecraftAccountApi.checkMinecraftJavaOwnership(fakeMcAccessToken),
-      isPostRequest: false,
-    );
-    _unknownErrorTests(
-      () => mockDio,
-      () => minecraftAccountApi.checkMinecraftJavaOwnership(fakeMcAccessToken),
-      isPostRequest: false,
-    );
-    _unauthorizedTest(
-      () => mockDio,
-      () => minecraftAccountApi.checkMinecraftJavaOwnership(fakeMcAccessToken),
+      () => minecraftAccountApi.checkMinecraftJavaOwnership(
+        TestConstants.anyString,
+      ),
       isPostRequest: false,
     );
   });
@@ -390,30 +356,12 @@ void main() {
       expect(response.capes.length, capes.length);
     });
 
-    _tooManyRequestsTest(
+    _handleCommonFailuresTests(
       () => mockDio,
       () => minecraftAccountApi.uploadSkin(
         skinFile,
         skinVariant: MinecraftApiSkinVariant.slim,
-        minecraftAccessToken: fakeMcAccessToken,
-      ),
-      isPostRequest: true,
-    );
-    _unknownErrorTests(
-      () => mockDio,
-      () => minecraftAccountApi.uploadSkin(
-        skinFile,
-        skinVariant: MinecraftApiSkinVariant.classic,
-        minecraftAccessToken: fakeMcAccessToken,
-      ),
-      isPostRequest: true,
-    );
-    _unauthorizedTest(
-      () => mockDio,
-      () => minecraftAccountApi.uploadSkin(
-        skinFile,
-        skinVariant: MinecraftApiSkinVariant.slim,
-        minecraftAccessToken: fakeMcAccessToken,
+        minecraftAccessToken: TestConstants.anyString,
       ),
       isPostRequest: true,
     );
@@ -446,7 +394,7 @@ void main() {
   });
 }
 
-void _tooManyRequestsTest(
+void _handleCommonFailuresTests(
   MockDio Function() mockDio,
   Future<void> Function() call, {
   required bool isPostRequest,
@@ -474,13 +422,7 @@ void _tooManyRequestsTest(
       );
     },
   );
-}
 
-void _unknownErrorTests(
-  MockDio Function() mockDio,
-  Future<void> Function() call, {
-  required bool isPostRequest,
-}) {
   test(
     'throws ${minecraft_account_api_exceptions.UnknownException} for unhandled or unknown errors with code and description when provided',
     () async {
@@ -551,13 +493,7 @@ void _unknownErrorTests(
       );
     },
   );
-}
 
-void _unauthorizedTest(
-  MockDio Function() mockDio,
-  Future<void> Function() call, {
-  required bool isPostRequest,
-}) {
   test(
     'throws ${minecraft_account_api_exceptions.UnauthorizedException} on HTTP ${HttpStatus.unauthorized}',
     () async {
@@ -576,6 +512,30 @@ void _unauthorizedTest(
       await expectLater(
         call,
         throwsA(isA<minecraft_account_api_exceptions.UnauthorizedException>()),
+      );
+    },
+  );
+
+  test(
+    'throws ${minecraft_account_api_exceptions.ServiceUnavailableException} on HTTP ${HttpStatus.serviceUnavailable}',
+    () async {
+      if (isPostRequest) {
+        mockDio().mockPostUriFailure<JsonObject>(
+          statusCode: HttpStatus.serviceUnavailable,
+          responseData: {},
+        );
+      } else {
+        mockDio().mockGetUriFailure<JsonObject>(
+          statusCode: HttpStatus.serviceUnavailable,
+          responseData: {},
+        );
+      }
+
+      await expectLater(
+        call,
+        throwsA(
+          isA<minecraft_account_api_exceptions.ServiceUnavailableException>(),
+        ),
       );
     },
   );

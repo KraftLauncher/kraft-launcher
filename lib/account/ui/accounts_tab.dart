@@ -27,73 +27,95 @@ class AccountsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountCubit, AccountState>(
-      builder: (context, state) {
-        if (state.status == AccountStatus.loading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (state.status == AccountStatus.loadFailure) {
-          return UnknownError(
-            onTryAgain: () => context.read<AccountCubit>().loadAccounts(),
-            message: context.loc.unknownErrorWhileLoadingAccounts,
-            exceptionWithStackTrace: state.exceptionWithStackTrace!,
-          );
-        }
-        if (state.accounts.list.isEmpty) {
-          return const _EmptyAccounts();
-        }
-        return SplitView(
-          primaryPaneTitle: context.loc.accounts,
-          primaryPane: SizedBox(
-            height: MediaQuery.sizeOf(context).height * 0.85,
-            child: Column(
-              children: [
-                SearchField(
-                  onSubmitted:
-                      (searchQuery) => context
-                          .read<AccountCubit>()
-                          .searchAccounts(searchQuery),
-                  onChanged:
-                      (searchQuery) => context
-                          .read<AccountCubit>()
-                          .searchAccounts(searchQuery),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 4,
-                      horizontal: 8,
-                    ),
-                    itemBuilder: (context, index) {
-                      final account = state.displayAccounts[index];
-                      return Padding(
-                        key: ValueKey('${account.id}/$index'),
-                        padding: const EdgeInsets.only(top: 8),
-                        child: AccountListTile(
-                          account: account,
-                          key: ValueKey(account.id),
-                          isSelected: state.selectedAccountId == account.id,
-                        ),
-                      );
-                    },
-                    itemCount: state.displayAccounts.length,
-                  ),
-                ),
+    final status = context.select((AccountCubit cubit) => cubit.state.status);
 
-                const _AddAccountButton(useFloatingActionButton: true),
-              ],
+    if (status == AccountStatus.loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (status == AccountStatus.loadFailure) {
+      final exceptionWithStackTrace = context.select(
+        (AccountCubit cubit) => cubit.state.exceptionWithStackTrace,
+      );
+      return UnknownError(
+        onTryAgain: () => context.read<AccountCubit>().loadAccounts(),
+        message: context.loc.unknownErrorWhileLoadingAccounts,
+        exceptionWithStackTrace: exceptionWithStackTrace!,
+      );
+    }
+
+    final hasNoAccounts = context.select(
+      (AccountCubit cubit) => cubit.state.accounts.list.isEmpty,
+    );
+
+    if (hasNoAccounts) {
+      return const _EmptyAccounts();
+    }
+
+    return SplitView(
+      primaryPaneTitle: context.loc.accounts,
+      primaryPane: SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.85,
+        child: Column(
+          children: [
+            SearchField(
+              onSubmitted:
+                  (searchQuery) =>
+                      context.read<AccountCubit>().searchAccounts(searchQuery),
+              onChanged:
+                  (searchQuery) =>
+                      context.read<AccountCubit>().searchAccounts(searchQuery),
             ),
-          ),
-          secondaryPane:
-              state.selectedAccountId != null
+            const _AccountsList(),
+
+            const _AddAccountButton(useFloatingActionButton: true),
+          ],
+        ),
+      ),
+      secondaryPane:
+          BlocSelector<AccountCubit, AccountState, MinecraftAccount?>(
+            selector: (state) => state.selectedAccount,
+            builder: (context, selectedAccount) {
+              return selectedAccount != null
                   ? AccountDetails(
-                    account: state.selectedAccountOrThrow,
+                    account: selectedAccount,
                     imagePicker: context.read<ImagePicker>(),
                   )
-                  : null,
-        );
-      },
+                  : const SizedBox();
+            },
+          ),
+    );
+  }
+}
+
+class _AccountsList extends StatelessWidget {
+  const _AccountsList();
+
+  @override
+  Widget build(BuildContext context) {
+    final displayAccounts = context.select(
+      (AccountCubit cubit) => cubit.state.displayAccounts,
+    );
+    final selectedAccountId = context.select(
+      (AccountCubit cubit) => cubit.state.selectedAccountId,
+    );
+    return Expanded(
+      child: ListView.builder(
+        shrinkWrap: true,
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        itemBuilder: (context, index) {
+          final account = displayAccounts[index];
+          return Padding(
+            key: ValueKey('${account.id}/$index'),
+            padding: const EdgeInsets.only(top: 8),
+            child: AccountListTile(
+              account: account,
+              key: ValueKey(account.id),
+              isSelected: selectedAccountId == account.id,
+            ),
+          );
+        },
+        itemCount: displayAccounts.length,
+      ),
     );
   }
 }
@@ -137,7 +159,7 @@ class _AddAccountButton extends StatelessWidget {
                   )
                   .toList(),
           builder:
-              (context, controller, child) => BlocConsumer<
+              (context, controller, child) => BlocListener<
                 MicrosoftAccountHandlerCubit,
                 MicrosoftAccountHandlerState
               >(
@@ -170,8 +192,10 @@ class _AddAccountButton extends StatelessWidget {
                               snackBarAction: SnackBarAction(
                                 label: context.loc.signInWithMicrosoft,
                                 onPressed:
-                                    () =>
-                                        LoginWithMicrosoftDialog.show(context),
+                                    () => LoginWithMicrosoftDialog.show(
+                                      context,
+                                      isRAauthentication: true,
+                                    ),
                               ),
                             );
                           case minecraft_account_refresher_exceptions.MicrosoftReAuthRequiredException():
@@ -180,8 +204,10 @@ class _AddAccountButton extends StatelessWidget {
                               snackBarAction: SnackBarAction(
                                 label: context.loc.signInWithMicrosoft,
                                 onPressed:
-                                    () =>
-                                        LoginWithMicrosoftDialog.show(context),
+                                    () => LoginWithMicrosoftDialog.show(
+                                      context,
+                                      isRAauthentication: true,
+                                    ),
                               ),
                             );
                         }
@@ -194,53 +220,60 @@ class _AddAccountButton extends StatelessWidget {
                         .resetRefreshStatus();
                   }
                 },
-                builder: (context, state) {
-                  final isRefreshingAccount =
-                      state.microsoftRefreshAccountStatus ==
-                      MicrosoftRefreshAccountStatus.loading;
-                  final onPressed =
-                      isRefreshingAccount
-                          ? null
-                          : () {
-                            final isAlreadyLoggingIn =
-                                state.microsoftLoginStatus ==
-                                MicrosoftLoginStatus.loading;
-                            if (isAlreadyLoggingIn) {
-                              context.scaffoldMessenger.showSnackBarText(
-                                context.loc.waitForOngoingTask,
-                              );
-                              return;
-                            }
-                            controller.isOpen
-                                ? controller.close()
-                                : controller.open();
-                          };
-                  final label = Text(context.loc.addAccount);
-                  const icon = Icon(Icons.add);
-                  if (useFloatingActionButton) {
-                    return FloatingActionButton.extended(
+                child: Builder(
+                  builder: (context) {
+                    void onPressed() {
+                      final state =
+                          context.read<MicrosoftAccountHandlerCubit>().state;
+
+                      final isRefreshingAccount =
+                          state.microsoftRefreshAccountStatus ==
+                          MicrosoftRefreshAccountStatus.loading;
+                      final isAlreadyLoggingIn =
+                          state.microsoftLoginStatus ==
+                          MicrosoftLoginStatus.loading;
+
+                      if (isAlreadyLoggingIn || isRefreshingAccount) {
+                        context.scaffoldMessenger.showSnackBarText(
+                          context.loc.waitForOngoingTask,
+                        );
+                        return;
+                      }
+
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
+                    }
+
+                    final label = Text(context.loc.addAccount);
+                    const icon = Icon(Icons.add);
+                    if (useFloatingActionButton) {
+                      return FloatingActionButton.extended(
+                        onPressed: onPressed,
+                        label: label,
+                        icon: icon,
+                        tooltip: context.loc.addAccount,
+                      );
+                    }
+                    return FilledButton.icon(
                       onPressed: onPressed,
                       label: label,
                       icon: icon,
-                      tooltip: context.loc.addAccount,
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32.0,
+                          vertical: 16.0,
+                        ),
+                        textStyle: const TextStyle(fontSize: 18.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
                     );
-                  }
-                  return FilledButton.icon(
-                    onPressed: onPressed,
-                    label: label,
-                    icon: icon,
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32.0,
-                        vertical: 16.0,
-                      ),
-                      textStyle: const TextStyle(fontSize: 18.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  );
-                },
+                  },
+                ),
               ),
         ),
       ),

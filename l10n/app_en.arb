@@ -314,5 +314,15 @@
     "reAuthRequiredDueToMissingAccountTokensFromFileStorage": "Account tokens are missing. Please sign in again to continue.",
     "@reAuthRequiredDueToMissingAccountTokensFromFileStorage": {
         "description": "Shown when account tokens cannot be found in file storage, which is only used when secure storage is disabled. Appears when the user attempts an action that requires Microsoft re-authentication."
+    },
+    "securityWarning": "Security Warning",
+    "secureStorageUnsupportedWarning": "Secure storage is not supported on this platform. Account tokens will be stored unencrypted in a local file. Be cautious with installed programs and Minecraft mods.",
+    "@secureStorageUnsupportedWarning": {
+        "description": "Displayed when the user's operating system does not support secure storage. Account tokens will be saved unencrypted in a local file, increasing the risk of unauthorized access. Users should be cautious with installed programs and mods."
+    },
+    "updateMicrosoftAccount": "Update Microsoft Account",
+    "minecraftAccountApiUnavailable": "Minecraft services are currently unavailable. Please try again in a few minutes.",
+    "@minecraftAccountApiUnavailable": {
+        "description": "Shown when a request to api.minecraftservices.com fails with a 503 Service Unavailable response. Indicates that Minecraft services are temporarily unavailable during communication with the API, such as login or other account-related operations."
     }
 }

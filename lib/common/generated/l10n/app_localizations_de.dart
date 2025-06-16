@@ -500,4 +500,18 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get reAuthRequiredDueToMissingAccountTokensFromFileStorage =>
       'Account tokens are missing. Please sign in again to continue.';
+
+  @override
+  String get securityWarning => 'Security Warning';
+
+  @override
+  String get secureStorageUnsupportedWarning =>
+      'Secure storage is not supported on this platform. Account tokens will be stored unencrypted in a local file. Be cautious with installed programs and Minecraft mods.';
+
+  @override
+  String get updateMicrosoftAccount => 'Update Microsoft Account';
+
+  @override
+  String get minecraftAccountApiUnavailable =>
+      'Minecraft services are currently unavailable. Please try again in a few minutes.';
 }

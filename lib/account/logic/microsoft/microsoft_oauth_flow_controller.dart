@@ -26,7 +26,7 @@ class MicrosoftOAuthFlowController {
     // The page content is not hardcoded for localization.
     required MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants,
   }) {
-    // TODO: Verify and test this code manually, should have the same behavior as before!!
+    // TODO: Verify and test this code manually, should have the same behavior as before!! (outdated)
     microsoftDeviceCodeFlow.cancelPollingTimer();
     return microsoftAuthCodeFlow.run(
       onProgress: onProgress,

@@ -9,6 +9,8 @@ import 'minecraft_account_api.dart';
 import 'minecraft_account_api_exceptions.dart'
     as minecraft_account_api_exceptions;
 
+const _minecraftServicesHost = 'api.minecraftservices.com';
+
 class MinecraftAccountApiImpl extends MinecraftAccountApi {
   MinecraftAccountApiImpl({required this.dio});
 
@@ -32,6 +34,10 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
 
       if (e.response?.statusCode == HttpStatus.unauthorized) {
         throw const minecraft_account_api_exceptions.UnauthorizedException();
+      }
+
+      if (e.response?.statusCode == HttpStatus.serviceUnavailable) {
+        throw const minecraft_account_api_exceptions.ServiceUnavailableException();
       }
 
       final errorBody = e.response?.data as JsonObject?;
@@ -63,7 +69,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
     required String xstsUserHash,
   }) async => _handleCommonFailures(() async {
     final response = await dio.postUri<JsonObject>(
-      Uri.https('api.minecraftservices.com', '/authentication/login_with_xbox'),
+      Uri.https(_minecraftServicesHost, '/authentication/login_with_xbox'),
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +87,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
   ) async => _handleCommonFailures(
     () async {
       final response = await dio.getUri<JsonObject>(
-        Uri.https('api.minecraftservices.com', '/minecraft/profile'),
+        Uri.https(_minecraftServicesHost, '/minecraft/profile'),
         options: Options(
           headers: {'Authorization': 'Bearer $minecraftAccessToken'},
         ),
@@ -103,7 +109,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
   Future<bool> checkMinecraftJavaOwnership(String minecraftAccessToken) =>
       _handleCommonFailures(() async {
         final response = await dio.getUri<JsonObject>(
-          Uri.https('api.minecraftservices.com', '/entitlements/mcstore'),
+          Uri.https(_minecraftServicesHost, '/entitlements/mcstore'),
           options: Options(
             headers: {'Authorization': 'Bearer $minecraftAccessToken'},
           ),
@@ -124,7 +130,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
   }) => _handleCommonFailures(
     () async {
       final response = await dio.postUri<JsonObject>(
-        Uri.https('api.minecraftservices.com', '/minecraft/profile/skins'),
+        Uri.https(_minecraftServicesHost, '/minecraft/profile/skins'),
         options: Options(
           headers: {'Authorization': 'Bearer $minecraftAccessToken'},
         ),

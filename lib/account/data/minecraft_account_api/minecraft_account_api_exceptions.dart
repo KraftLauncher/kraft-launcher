@@ -41,3 +41,10 @@ final class InvalidSkinImageDataException extends MinecraftAccountApiException {
   const InvalidSkinImageDataException()
     : super('The uploaded skin image data file is invalid.');
 }
+
+final class ServiceUnavailableException extends MinecraftAccountApiException {
+  const ServiceUnavailableException()
+    : super(
+        'Minecraft service is temporarily unavailable (503). Please try again later.',
+      );
+}

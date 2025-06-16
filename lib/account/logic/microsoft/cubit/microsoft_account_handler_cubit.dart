@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../common/logic/utils.dart';
 import '../../../data/minecraft_account/minecraft_account.dart';
 import '../../account_cubit/account_cubit.dart';
+import '../../platform_secure_storage_support.dart';
 import '../auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import '../auth_flows/device_code/microsoft_device_code_flow.dart';
 import '../minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
@@ -21,10 +22,16 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
   MicrosoftAccountHandlerCubit({
     required this.minecraftAccountService,
     required this.accountCubit,
-  }) : super(const MicrosoftAccountHandlerState());
+    required this.secureStorageSupport,
+  }) : super(const MicrosoftAccountHandlerState()) {
+    secureStorageSupport.isSupported().then(
+      (value) => emit(state.copyWith(supportsSecureStorage: value)),
+    );
+  }
 
   final MinecraftAccountService minecraftAccountService;
   final AccountCubit accountCubit;
+  final PlatformSecureStorageSupport secureStorageSupport;
 
   Future<void> _handleFailures(
     Future<void> Function() run, {
@@ -41,8 +48,6 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
         final refresherException = e.exception;
         if (refresherException
             is minecraft_account_refresher_exceptions.InvalidMicrosoftRefreshTokenException) {
-          // TODO: If Account refreshed moved into a new cubit, then extract this handling from it
-          // TODO: Test this change manually NEED_REAL_TEST_CONFIRMATION
           // TODO: We should not need this anymore due to AccountRepository, remove this when AccountCubit depends on AccountRepository. MicrosoftAccountHandlerCubit should not depend on AccountCubit directly.
           accountCubit.handleExternalAccountChange(
             account: refresherException.updatedAccount,
@@ -70,6 +75,7 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
             state.copyWith(
               authProgress: newProgress,
               microsoftLoginStatus: MicrosoftLoginStatus.loading,
+              authFlow: MicrosoftAuthFlow.authCode,
             ),
           ),
       onAuthCodeLoginUrlAvailable: (authCodeLoginUrl) {
@@ -115,6 +121,7 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
       state.copyWith(
         requestedDeviceCode: const Wrapped.value(null),
         deviceCodeStatus: DeviceCodeStatus.requestingCode,
+        authFlow: MicrosoftAuthFlow.deviceCode,
       ),
     );
     final deviceCodeResult = await minecraftAccountService
@@ -125,7 +132,7 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
                   authProgress: progress,
                   microsoftLoginStatus:
                       // Avoid showing loading, user may log in via auth or device code.
-                      (progress.deviceCodeProgress!.progress ==
+                      (progress.deviceCodeProgress?.progress ==
                               MicrosoftDeviceCodeProgress.waitingForUserLogin)
                           // TODO: Maybe set to MicrosoftLoginStatus.initial instead?
                           ? null
