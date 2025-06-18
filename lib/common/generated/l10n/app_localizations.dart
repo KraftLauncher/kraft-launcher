@@ -522,18 +522,6 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get close;
 
-  /// No description provided for @authProgressExchangingDeviceCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Exchanging device code...'**
-  String get authProgressExchangingDeviceCode;
-
-  /// No description provided for @authProgressRequestingDeviceCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Exchanging device code...'**
-  String get authProgressRequestingDeviceCode;
-
   /// No description provided for @or.
   ///
   /// In en, this message translates to:

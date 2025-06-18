@@ -228,12 +228,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get close => '关闭';
 
   @override
-  String get authProgressExchangingDeviceCode => '正在交换设备代码...';
-
-  @override
-  String get authProgressRequestingDeviceCode => '正在请求设备代码...';
-
-  @override
   String get or => '或';
 
   @override

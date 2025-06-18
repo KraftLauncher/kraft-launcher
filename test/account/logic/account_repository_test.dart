@@ -91,7 +91,7 @@ void main() {
   group('supportsSecureStorage', () {
     test('throws $StateError when not initialized', () {
       expect(
-        () => _accountRepository.requireSupportsSecureStorage,
+        () => _accountRepository.supportsSecureStorageOrThrow,
         throwsStateError,
       );
     });
@@ -101,9 +101,9 @@ void main() {
         _accountRepository.setSecureStorageSupportForTest(supported: value);
 
         final secureStorageSupported =
-            _accountRepository.requireSupportsSecureStorage;
+            _accountRepository.supportsSecureStorageOrThrow;
         expect(
-          _accountRepository.requireSupportsSecureStorage,
+          _accountRepository.supportsSecureStorageOrThrow,
           secureStorageSupported,
         );
       }
@@ -171,7 +171,7 @@ void main() {
 
           await loadAccountsWithFixedClock();
 
-          expect(_accountRepository.requireSupportsSecureStorage, value);
+          expect(_accountRepository.supportsSecureStorageOrThrow, value);
         }
       },
     );

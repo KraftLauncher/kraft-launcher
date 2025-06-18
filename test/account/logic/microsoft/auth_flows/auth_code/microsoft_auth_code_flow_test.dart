@@ -45,14 +45,14 @@ void main() {
     () => expect(flow.httpServer, null),
   );
 
-  group('requireServer', () {
+  group('serverOrThrow', () {
     test('throws $StateError if server has not been started', () {
-      expect(() => flow.requireServer, throwsStateError);
+      expect(() => flow.serverOrThrow, throwsStateError);
     });
 
     test('returns running server instance if already started', () async {
       final server = await flow.startServer();
-      expect(flow.requireServer, server);
+      expect(flow.serverOrThrow, server);
     });
   });
 

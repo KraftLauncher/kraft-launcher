@@ -115,8 +115,6 @@
     "customizeAccentColor": "Customize the accent color of the app theme.",
     "pickAColor": "Pick a Color",
     "close": "Close",
-    "authProgressExchangingDeviceCode": "Exchanging device code...",
-    "authProgressRequestingDeviceCode": "Exchanging device code...",
     "or": "OR",
     "loginDeviceCodeExpired": "The login code has expired. Please try again.",
     "tryAgain": "Try Again",

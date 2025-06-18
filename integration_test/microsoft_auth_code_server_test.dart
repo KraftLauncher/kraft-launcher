@@ -31,8 +31,8 @@ void main() {
   });
 
   (String, int) addressAndPort() => (
-    microsoftAuthCodeFlow.requireServer.address.address,
-    microsoftAuthCodeFlow.requireServer.port,
+    microsoftAuthCodeFlow.serverOrThrow.address.address,
+    microsoftAuthCodeFlow.serverOrThrow.port,
   );
 
   Future<void> startServer() async {

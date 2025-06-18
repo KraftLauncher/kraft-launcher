@@ -18,7 +18,7 @@ import 'account/logic/account_cubit/account_cubit.dart';
 import 'account/logic/account_repository.dart';
 import 'account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import 'account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
-import 'account/logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
+import 'account/logic/microsoft/cubit/microsoft_auth_cubit.dart';
 import 'account/logic/microsoft/microsoft_oauth_flow_controller.dart';
 import 'account/logic/microsoft/minecraft/account_refresher/image_cache_service/default_image_cache_service.dart';
 import 'account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher.dart';
@@ -212,10 +212,10 @@ class MainApp extends StatelessWidget {
       ),
       BlocProvider(
         create:
-            (context) => MicrosoftAccountHandlerCubit(
+            (context) => MicrosoftAuthCubit(
               minecraftAccountService: context.read(),
               // TODO: No bloc/cubit should depends on the other, avoid? See: https://bloclibrary.dev/architecture/#bloc-to-bloc-communication,
-              //  See also: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain and AccountRepository, this should be fixed once other related TODOs are fixed in AccountCubit and MicrosoftAccountHandlerCubit
+              //  See also: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain and AccountRepository, this should be fixed once other related TODOs are fixed in AccountCubit and MicrosoftAuthCubit
               accountCubit: context.read(),
               secureStorageSupport: context.read(),
             ),

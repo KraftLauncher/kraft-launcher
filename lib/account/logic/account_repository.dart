@@ -65,7 +65,7 @@ class AccountRepository {
   bool? _supportsSecureStorage;
 
   @visibleForTesting
-  bool get requireSupportsSecureStorage =>
+  bool get supportsSecureStorageOrThrow =>
       _supportsSecureStorage ??
       (throw StateError(
         '$AccountRepository.loadAccounts() must be called before accessing supportsSecureStorage.',
@@ -106,13 +106,13 @@ class AccountRepository {
   ) async {
     await fileAccountStorage.saveAccounts(
       updatedAccounts.toFileAccounts(
-        storeTokensInFile: !requireSupportsSecureStorage,
+        storeTokensInFile: !supportsSecureStorageOrThrow,
       ),
     );
   }
 
   Future<void> _saveSecureAccountData(MinecraftAccount account) async {
-    if (!requireSupportsSecureStorage) {
+    if (!supportsSecureStorageOrThrow) {
       return;
     }
     final microsoftAccountInfo = account.microsoftAccountInfo;
@@ -173,7 +173,7 @@ class AccountRepository {
       // file but not in secure storage (and it's supported), or vice versa.
       // This isn't needed at the moment.
 
-      if (requireSupportsSecureStorage) {
+      if (supportsSecureStorageOrThrow) {
         return fileAccounts.mapToAccountsAsync((fileAccount) async {
           return switch (fileAccount.accountType) {
             AccountType.microsoft => await () async {
@@ -217,7 +217,7 @@ class AccountRepository {
     }
 
     _supportsSecureStorage = await secureStorageSupport.isSupported();
-    if (!requireSupportsSecureStorage) {
+    if (!supportsSecureStorageOrThrow) {
       AppLogger.i(
         'Secure storage is not available on this platform. Falling back to file storage.',
       );
@@ -296,7 +296,7 @@ class AccountRepository {
     );
 
     await _saveAccountsInFileStorage(updatedAccounts);
-    if (requireSupportsSecureStorage) {
+    if (supportsSecureStorageOrThrow) {
       await secureAccountStorage.delete(accountId);
     }
 
