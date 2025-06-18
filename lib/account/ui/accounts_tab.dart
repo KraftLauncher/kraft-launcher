@@ -11,7 +11,7 @@ import '../../common/ui/widgets/split_view.dart';
 import '../../common/ui/widgets/unknown_error.dart';
 import '../data/minecraft_account/minecraft_account.dart';
 import '../logic/account_cubit/account_cubit.dart';
-import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
+import '../logic/microsoft/cubit/microsoft_auth_cubit.dart';
 import '../logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
     as minecraft_account_refresher_exceptions;
 import '../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
@@ -51,38 +51,42 @@ class AccountsTab extends StatelessWidget {
       return const _EmptyAccounts();
     }
 
-    return SplitView(
-      primaryPaneTitle: context.loc.accounts,
-      primaryPane: SizedBox(
-        height: MediaQuery.sizeOf(context).height * 0.85,
-        child: Column(
-          children: [
-            SearchField(
-              onSubmitted:
-                  (searchQuery) =>
-                      context.read<AccountCubit>().searchAccounts(searchQuery),
-              onChanged:
-                  (searchQuery) =>
-                      context.read<AccountCubit>().searchAccounts(searchQuery),
-            ),
-            const _AccountsList(),
+    return _AccountRefreshListener(
+      child: SplitView(
+        primaryPaneTitle: context.loc.accounts,
+        primaryPane: SizedBox(
+          height: MediaQuery.sizeOf(context).height * 0.85,
+          child: Column(
+            children: [
+              SearchField(
+                onSubmitted:
+                    (searchQuery) => context
+                        .read<AccountCubit>()
+                        .searchAccounts(searchQuery),
+                onChanged:
+                    (searchQuery) => context
+                        .read<AccountCubit>()
+                        .searchAccounts(searchQuery),
+              ),
+              const _AccountsList(),
 
-            const _AddAccountButton(useFloatingActionButton: true),
-          ],
-        ),
-      ),
-      secondaryPane:
-          BlocSelector<AccountCubit, AccountState, MinecraftAccount?>(
-            selector: (state) => state.selectedAccount,
-            builder: (context, selectedAccount) {
-              return selectedAccount != null
-                  ? AccountDetails(
-                    account: selectedAccount,
-                    imagePicker: context.read<ImagePicker>(),
-                  )
-                  : const SizedBox();
-            },
+              const _AddAccountButton(useFloatingActionButton: true),
+            ],
           ),
+        ),
+        secondaryPane:
+            BlocSelector<AccountCubit, AccountState, MinecraftAccount?>(
+              selector: (state) => state.selectedAccount,
+              builder: (context, selectedAccount) {
+                return selectedAccount != null
+                    ? AccountDetails(
+                      account: selectedAccount,
+                      imagePicker: context.read<ImagePicker>(),
+                    )
+                    : const SizedBox();
+              },
+            ),
+      ),
     );
   }
 }
@@ -158,122 +162,55 @@ class _AddAccountButton extends StatelessWidget {
                     },
                   )
                   .toList(),
-          builder:
-              (context, controller, child) => BlocListener<
-                MicrosoftAccountHandlerCubit,
-                MicrosoftAccountHandlerState
-              >(
-                listener: (context, state) {
-                  if (state.microsoftRefreshAccountStatus ==
-                      MicrosoftRefreshAccountStatus.success) {
-                    context.scaffoldMessenger.showSnackBarText(
-                      context.loc.accountRefreshedMessage(
-                        state.requireRecentAccount.username,
-                      ),
-                    );
-                    context
-                        .read<MicrosoftAccountHandlerCubit>()
-                        .resetRefreshStatus();
-                  }
-                  if (state.microsoftRefreshAccountStatus ==
-                      MicrosoftRefreshAccountStatus.failure) {
-                    final exception = state.exceptionOrThrow;
-                    final message = exception.getMessage(context.loc);
-                    final scaffoldMessenger = context.scaffoldMessenger;
+          builder: (context, controller, child) {
+            void onPressed() {
+              final state = context.read<MicrosoftAuthCubit>().state;
 
-                    // Handle special errors
-                    switch (exception) {
-                      case minecraft_account_service_exceptions.MinecraftAccountRefresherException():
-                        switch (exception.exception) {
-                          case minecraft_account_refresher_exceptions.InvalidMicrosoftRefreshTokenException():
-                            scaffoldMessenger.showSnackBarText(
-                              context.loc.sessionExpiredOrAccessRevoked,
-                              snackBarAction: SnackBarAction(
-                                label: context.loc.signInWithMicrosoft,
-                                onPressed:
-                                    () => LoginWithMicrosoftDialog.show(
-                                      context,
-                                      isReAuthentication: true,
-                                    ),
-                              ),
-                            );
-                          case minecraft_account_refresher_exceptions.MicrosoftReAuthRequiredException():
-                            scaffoldMessenger.showSnackBarText(
-                              message,
-                              snackBarAction: SnackBarAction(
-                                label: context.loc.signInWithMicrosoft,
-                                onPressed:
-                                    () => LoginWithMicrosoftDialog.show(
-                                      context,
-                                      isReAuthentication: true,
-                                    ),
-                              ),
-                            );
-                        }
-                      case _:
-                        scaffoldMessenger.showSnackBarText(message);
-                    }
+              final isRefreshingAccount =
+                  state.refreshStatus == MicrosoftRefreshAccountStatus.loading;
+              final isAlreadyLoggingIn =
+                  state.loginStatus == MicrosoftLoginStatus.loading;
 
-                    context
-                        .read<MicrosoftAccountHandlerCubit>()
-                        .resetRefreshStatus();
-                  }
-                },
-                child: Builder(
-                  builder: (context) {
-                    void onPressed() {
-                      final state =
-                          context.read<MicrosoftAccountHandlerCubit>().state;
+              if (isAlreadyLoggingIn || isRefreshingAccount) {
+                context.scaffoldMessenger.showSnackBarText(
+                  context.loc.waitForOngoingTask,
+                );
+                return;
+              }
 
-                      final isRefreshingAccount =
-                          state.microsoftRefreshAccountStatus ==
-                          MicrosoftRefreshAccountStatus.loading;
-                      final isAlreadyLoggingIn =
-                          state.microsoftLoginStatus ==
-                          MicrosoftLoginStatus.loading;
+              if (controller.isOpen) {
+                controller.close();
+              } else {
+                controller.open();
+              }
+            }
 
-                      if (isAlreadyLoggingIn || isRefreshingAccount) {
-                        context.scaffoldMessenger.showSnackBarText(
-                          context.loc.waitForOngoingTask,
-                        );
-                        return;
-                      }
-
-                      if (controller.isOpen) {
-                        controller.close();
-                      } else {
-                        controller.open();
-                      }
-                    }
-
-                    final label = Text(context.loc.addAccount);
-                    const icon = Icon(Icons.add);
-                    if (useFloatingActionButton) {
-                      return FloatingActionButton.extended(
-                        onPressed: onPressed,
-                        label: label,
-                        icon: icon,
-                        tooltip: context.loc.addAccount,
-                      );
-                    }
-                    return FilledButton.icon(
-                      onPressed: onPressed,
-                      label: label,
-                      icon: icon,
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32.0,
-                          vertical: 16.0,
-                        ),
-                        textStyle: const TextStyle(fontSize: 18.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                    );
-                  },
+            final label = Text(context.loc.addAccount);
+            const icon = Icon(Icons.add);
+            if (useFloatingActionButton) {
+              return FloatingActionButton.extended(
+                onPressed: onPressed,
+                label: label,
+                icon: icon,
+                tooltip: context.loc.addAccount,
+              );
+            }
+            return FilledButton.icon(
+              onPressed: onPressed,
+              label: label,
+              icon: icon,
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32.0,
+                  vertical: 16.0,
+                ),
+                textStyle: const TextStyle(fontSize: 18.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
+            );
+          },
         ),
       ),
     );
@@ -291,5 +228,81 @@ class _EmptyAccounts extends StatelessWidget {
       lottieAssetPath: Assets.lottie.noDataFound.noDataCoffee.path,
       bellowSubtitle: const _AddAccountButton(useFloatingActionButton: false),
     );
+  }
+}
+
+/// Listens for account refresh status and shows messages accordingly.
+///
+/// This is not in [AccountDetails] to ensure messages are shown
+/// even if the user switches accounts and [AccountDetails] is rebuilt
+/// since the refresh button is in [AccountDetails].
+class _AccountRefreshListener extends StatelessWidget {
+  const _AccountRefreshListener({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<MicrosoftAuthCubit, MicrosoftAuthState>(
+      listenWhen:
+          (previous, current) =>
+              // Prevent BlocListener from reacting again to a successful refresh,
+              // which could trigger a bug when opening the login dialog later.
+              previous.refreshStatus != current.refreshStatus,
+      listener: _onRefreshStatusChanged,
+      child: child,
+    );
+  }
+
+  void _onRefreshStatusChanged(BuildContext context, MicrosoftAuthState state) {
+    final scaffoldMessenger = context.scaffoldMessenger;
+
+    switch (state.refreshStatus) {
+      case MicrosoftRefreshAccountStatus.success:
+        scaffoldMessenger.showSnackBarText(
+          context.loc.accountRefreshedMessage(
+            state.recentAccountOrThrow.username,
+          ),
+        );
+      case MicrosoftRefreshAccountStatus.failure:
+        final exception = state.exceptionOrThrow;
+        final message = exception.getMessage(context.loc);
+
+        // Handle special errors
+        switch (exception) {
+          case minecraft_account_service_exceptions.MinecraftAccountRefresherException():
+            switch (exception.exception) {
+              case minecraft_account_refresher_exceptions.InvalidMicrosoftRefreshTokenException():
+                scaffoldMessenger.showSnackBarText(
+                  context.loc.sessionExpiredOrAccessRevoked,
+                  snackBarAction: SnackBarAction(
+                    label: context.loc.signInWithMicrosoft,
+                    onPressed:
+                        () => LoginWithMicrosoftDialog.show(
+                          context,
+                          isReAuthentication: true,
+                        ),
+                  ),
+                );
+              case minecraft_account_refresher_exceptions.MicrosoftReAuthRequiredException():
+                scaffoldMessenger.showSnackBarText(
+                  message,
+                  snackBarAction: SnackBarAction(
+                    label: context.loc.signInWithMicrosoft,
+                    onPressed:
+                        () => LoginWithMicrosoftDialog.show(
+                          context,
+                          isReAuthentication: true,
+                        ),
+                  ),
+                );
+            }
+          case _:
+            scaffoldMessenger.showSnackBarText(message);
+        }
+
+      case _:
+      // No action needed for other statuses
+    }
   }
 }

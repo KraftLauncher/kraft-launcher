@@ -14,16 +14,15 @@ import '../minecraft/account_service/minecraft_account_service.dart';
 import '../minecraft/account_service/minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
 import '../minecraft/account_service/minecraft_account_service_exceptions.dart';
-import '../minecraft/account_service/minecraft_full_auth_progress.dart';
 
-part 'microsoft_account_handler_state.dart';
+part 'microsoft_auth_state.dart';
 
-class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
-  MicrosoftAccountHandlerCubit({
+class MicrosoftAuthCubit extends Cubit<MicrosoftAuthState> {
+  MicrosoftAuthCubit({
     required this.minecraftAccountService,
     required this.accountCubit,
     required this.secureStorageSupport,
-  }) : super(const MicrosoftAccountHandlerState()) {
+  }) : super(const MicrosoftAuthState()) {
     secureStorageSupport.isSupported().then(
       (value) => emit(state.copyWith(supportsSecureStorage: value)),
     );
@@ -35,8 +34,8 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
 
   Future<void> _handleFailures(
     Future<void> Function() run, {
-    MicrosoftLoginStatus? microsoftLoginStatus,
-    MicrosoftRefreshAccountStatus? microsoftRefreshAccountStatus,
+    MicrosoftLoginStatus? loginStatus,
+    MicrosoftRefreshAccountStatus? refreshStatus,
   }) async {
     try {
       await run();
@@ -48,7 +47,7 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
         final refresherException = e.exception;
         if (refresherException
             is minecraft_account_refresher_exceptions.InvalidMicrosoftRefreshTokenException) {
-          // TODO: We should not need this anymore due to AccountRepository, remove this when AccountCubit depends on AccountRepository. MicrosoftAccountHandlerCubit should not depend on AccountCubit directly.
+          // TODO: We should not need this anymore due to AccountRepository, remove this when AccountCubit depends on AccountRepository. MicrosoftAuthCubit should not depend on AccountCubit directly.
           accountCubit.handleExternalAccountChange(
             account: refresherException.updatedAccount,
           );
@@ -57,8 +56,8 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
 
       emit(
         state.copyWith(
-          microsoftLoginStatus: microsoftLoginStatus,
-          microsoftRefreshAccountStatus: microsoftRefreshAccountStatus,
+          loginStatus: loginStatus,
+          refreshStatus: refreshStatus,
           exception: e,
         ),
       );
@@ -71,17 +70,17 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
   }) => _handleFailures(() async {
     final (result) = await minecraftAccountService.loginWithMicrosoftAuthCode(
       onProgress:
-          (newProgress) => emit(
+          (progress) => emit(
             state.copyWith(
-              authProgress: newProgress,
-              microsoftLoginStatus: MicrosoftLoginStatus.loading,
+              loginProgress: progress,
+              loginStatus: MicrosoftLoginStatus.loading,
               authFlow: MicrosoftAuthFlow.authCode,
             ),
           ),
       onAuthCodeLoginUrlAvailable: (authCodeLoginUrl) {
         emit(
           state.copyWith(
-            microsoftLoginStatus: MicrosoftLoginStatus.loading,
+            loginStatus: MicrosoftLoginStatus.loading,
             authCodeLoginUrl: authCodeLoginUrl,
           ),
         );
@@ -104,14 +103,14 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
 
     emit(
       state.copyWith(
-        microsoftLoginStatus:
+        loginStatus:
             hasUpdatedExistingAccount
-                ? MicrosoftLoginStatus.successAccountUpdated
-                : MicrosoftLoginStatus.successAccountAdded,
+                ? MicrosoftLoginStatus.successRefreshedExisting
+                : MicrosoftLoginStatus.successAddedNew,
         recentAccount: account,
       ),
     );
-  }, microsoftLoginStatus: MicrosoftLoginStatus.failure);
+  }, loginStatus: MicrosoftLoginStatus.failure);
 
   /// Starts polling the device code status every 5 seconds (depends on the server)
   /// using a timer, the timer can be cancelled using [cancelDeviceCodePollingTimer].
@@ -120,7 +119,7 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
     emit(
       state.copyWith(
         requestedDeviceCode: const Wrapped.value(null),
-        deviceCodeStatus: DeviceCodeStatus.requestingCode,
+        deviceCodeStatus: MicrosoftDeviceCodeStatus.requestingCode,
         authFlow: MicrosoftAuthFlow.deviceCode,
       ),
     );
@@ -129,12 +128,11 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
           onProgress:
               (progress) => emit(
                 state.copyWith(
-                  authProgress: progress,
-                  microsoftLoginStatus:
-                      // Avoid showing loading, user may log in via auth or device code.
-                      (progress.deviceCodeProgress?.progress ==
-                              MicrosoftDeviceCodeProgress.waitingForUserLogin)
-                          // TODO: Maybe set to MicrosoftLoginStatus.initial instead?
+                  loginProgress: progress,
+                  loginStatus:
+                      // Avoid showing loading. Device code is requested on login dialog open,
+                      // and the user may use auth/device code to login.
+                      (progress == MinecraftAuthProgress.waitingForUserLogin)
                           ? null
                           : MicrosoftLoginStatus.loading,
                 ),
@@ -143,7 +141,7 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
               (deviceCode) => emit(
                 state.copyWith(
                   requestedDeviceCode: Wrapped.value(deviceCode),
-                  deviceCodeStatus: DeviceCodeStatus.polling,
+                  deviceCodeStatus: MicrosoftDeviceCodeStatus.polling,
                 ),
               ),
         );
@@ -157,10 +155,14 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
       emit(
         state.copyWith(
           deviceCodeStatus: switch (closeReason) {
-            DeviceCodeTimerCloseReason.codeExpired => DeviceCodeStatus.expired,
-            DeviceCodeTimerCloseReason.declined => DeviceCodeStatus.declined,
-            DeviceCodeTimerCloseReason.approved => DeviceCodeStatus.idle,
-            DeviceCodeTimerCloseReason.cancelledByUser => DeviceCodeStatus.idle,
+            DeviceCodeTimerCloseReason.codeExpired =>
+              MicrosoftDeviceCodeStatus.expired,
+            DeviceCodeTimerCloseReason.declined =>
+              MicrosoftDeviceCodeStatus.declined,
+            DeviceCodeTimerCloseReason.approved =>
+              MicrosoftDeviceCodeStatus.idle,
+            DeviceCodeTimerCloseReason.cancelledByUser =>
+              MicrosoftDeviceCodeStatus.idle,
           },
           requestedDeviceCode: const Wrapped.value(null),
         ),
@@ -177,33 +179,33 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
 
     emit(
       state.copyWith(
-        deviceCodeStatus: DeviceCodeStatus.idle,
+        deviceCodeStatus: MicrosoftDeviceCodeStatus.idle,
         requestedDeviceCode: const Wrapped.value(null),
         recentAccount: account,
-        microsoftLoginStatus:
+        loginStatus:
             accountExists
-                ? MicrosoftLoginStatus.successAccountUpdated
-                : MicrosoftLoginStatus.successAccountAdded,
+                ? MicrosoftLoginStatus.successRefreshedExisting
+                : MicrosoftLoginStatus.successAddedNew,
       ),
     );
-  }, microsoftLoginStatus: MicrosoftLoginStatus.failure);
+  }, loginStatus: MicrosoftLoginStatus.failure);
 
   void cancelDeviceCodePollingTimer() {
     final cancelled = minecraftAccountService.cancelDeviceCodePollingTimer();
     if (cancelled) {
-      emit(state.copyWith(requestedDeviceCode: const Wrapped.value(null)));
+      emit(
+        state.copyWith(
+          requestedDeviceCode: const Wrapped.value(null),
+          loginStatus: MicrosoftLoginStatus.cancelled,
+        ),
+      );
     }
   }
 
-  Future<void> stopServerIfRunning() async {
+  Future<void> stopAuthCodeServerIfRunning() async {
     final stopped = await minecraftAccountService.stopAuthCodeServerIfRunning();
     if (stopped) {
-      emit(
-        state.copyWith(
-          microsoftLoginStatus: MicrosoftLoginStatus.cancelled,
-          authProgress: null,
-        ),
-      );
+      emit(state.copyWith(loginStatus: MicrosoftLoginStatus.cancelled));
     }
   }
 
@@ -215,9 +217,8 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
               onProgress:
                   (progress) => emit(
                     state.copyWith(
-                      microsoftRefreshAccountStatus:
-                          MicrosoftRefreshAccountStatus.loading,
-                      authProgress: progress,
+                      refreshStatus: MicrosoftRefreshAccountStatus.loading,
+                      refreshAccountProgress: progress,
                     ),
                   ),
             );
@@ -226,22 +227,16 @@ class MicrosoftAccountHandlerCubit extends Cubit<MicrosoftAccountHandlerState> {
 
         emit(
           state.copyWith(
-            microsoftRefreshAccountStatus:
-                MicrosoftRefreshAccountStatus.success,
+            refreshStatus: MicrosoftRefreshAccountStatus.success,
             recentAccount: refreshedAccount,
           ),
         );
-      }, microsoftRefreshAccountStatus: MicrosoftRefreshAccountStatus.failure);
+      }, refreshStatus: MicrosoftRefreshAccountStatus.failure);
 
-  // Reset to avoid repeated reactions to the same status after a successful login
+  // Reset to prevent BlocListener from reacting again to a successful login,
+  // which could cause a bug when opening the login dialog again.
   void resetLoginStatus() =>
-      emit(state.copyWith(microsoftLoginStatus: MicrosoftLoginStatus.initial));
-
-  void resetRefreshStatus() => emit(
-    state.copyWith(
-      microsoftRefreshAccountStatus: MicrosoftRefreshAccountStatus.initial,
-    ),
-  );
+      emit(state.copyWith(loginStatus: MicrosoftLoginStatus.initial));
 
   @override
   Future<void> close() async {

@@ -33,6 +33,11 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
+  // NOTE: The code of this file was implemented very quickly for prototyping,
+  // the code is far from being production ready and this will be replaced entirely
+  // later to implement it properly. The goal is to understand how the launch work
+  // to plan it properly.
+
   static const manifestUrl =
       'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json';
   static const javaRuntimesUrl =
@@ -66,6 +71,25 @@ class _ProfileTabState extends State<ProfileTab> {
         mainAxisSize: MainAxisSize.min,
         spacing: 12,
         children: [
+          const Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: 'IMPORTANT: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+                TextSpan(
+                  text:
+                      'This implementation is temporary and intended solely for early development and testing purposes. '
+                      'It is not final and will be completely replaced in future updates. '
+                      'This applies to the current implementation of the profile feature, Minecraft launcher, installer. BREAKING CHANGES WILL OCCUR.',
+                ),
+              ],
+            ),
+          ),
           TextField(
             controller: _versionController,
             decoration: const InputDecoration(

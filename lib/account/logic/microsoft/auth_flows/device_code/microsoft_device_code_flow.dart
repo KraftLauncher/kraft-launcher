@@ -169,8 +169,6 @@ class MicrosoftDeviceCodeFlow {
       return (null, closeReason);
     }
 
-    onProgress(MicrosoftDeviceCodeProgress.exchangingDeviceCode);
-
     return (tokenResponse, closeReason);
   }
 }
@@ -182,7 +180,7 @@ enum DeviceCodeTimerCloseReason {
   cancelledByUser,
 }
 
-enum MicrosoftDeviceCodeProgress { waitingForUserLogin, exchangingDeviceCode }
+enum MicrosoftDeviceCodeProgress { waitingForUserLogin }
 
 typedef DeviceCodeProgressCallback =
     void Function(MicrosoftDeviceCodeProgress progress);

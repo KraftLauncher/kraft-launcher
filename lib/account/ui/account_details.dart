@@ -10,8 +10,8 @@ import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/utils/scaffold_messenger_ext.dart';
 import '../data/minecraft_account/minecraft_account.dart';
 import '../logic/account_cubit/account_cubit.dart';
-import '../logic/microsoft/cubit/microsoft_account_handler_cubit.dart';
-import '../logic/microsoft/minecraft/account_service/minecraft_full_auth_progress.dart';
+import '../logic/microsoft/cubit/microsoft_auth_cubit.dart';
+import '../logic/microsoft/minecraft/account_service/minecraft_account_service.dart';
 import 'skin/full_skin_image.dart';
 import 'upsert_offline_account_dialog.dart';
 import 'utils/auth_progress_messages.dart';
@@ -93,13 +93,13 @@ class AccountDetails extends StatelessWidget {
                 ),
                 if (account.isMicrosoft)
                   BlocSelector<
-                    MicrosoftAccountHandlerCubit,
-                    MicrosoftAccountHandlerState,
+                    MicrosoftAuthCubit,
+                    MicrosoftAuthState,
                     MicrosoftRefreshAccountStatus
                   >(
-                    selector: (state) => state.microsoftRefreshAccountStatus,
-                    builder: (context, microsoftRefreshAccountStatus) {
-                      if (microsoftRefreshAccountStatus ==
+                    selector: (state) => state.refreshStatus,
+                    builder: (context, refreshStatus) {
+                      if (refreshStatus ==
                           MicrosoftRefreshAccountStatus.loading) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -107,11 +107,12 @@ class AccountDetails extends StatelessWidget {
                             spacing: 8,
                             children: [
                               BlocSelector<
-                                MicrosoftAccountHandlerCubit,
-                                MicrosoftAccountHandlerState,
-                                MinecraftFullAuthProgress?
+                                MicrosoftAuthCubit,
+                                MicrosoftAuthState,
+                                MinecraftAuthProgress?
                               >(
-                                selector: (state) => state.authProgress,
+                                selector:
+                                    (state) => state.refreshAccountProgress,
                                 builder:
                                     (context, authProgress) => Text(
                                       authProgress.getMessage(context.loc),
@@ -125,10 +126,21 @@ class AccountDetails extends StatelessWidget {
                       return ListTile(
                         title: Text(context.loc.refreshAccount),
                         leading: const Icon(Icons.refresh),
-                        onTap:
-                            () => context
-                                .read<MicrosoftAccountHandlerCubit>()
-                                .refreshMicrosoftAccount(account),
+                        onTap: () {
+                          final cubit = context.read<MicrosoftAuthCubit>();
+                          final state = cubit.state;
+                          final isLoggingIn =
+                              state.loginStatus == MicrosoftLoginStatus.loading;
+
+                          if (isLoggingIn) {
+                            context.scaffoldMessenger.showSnackBarText(
+                              context.loc.waitForOngoingTask,
+                            );
+                            return;
+                          }
+
+                          cubit.refreshMicrosoftAccount(account);
+                        },
                       );
                     },
                   ),

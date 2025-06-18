@@ -245,12 +245,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
-  String get authProgressExchangingDeviceCode => 'Exchanging device code...';
-
-  @override
-  String get authProgressRequestingDeviceCode => 'Exchanging device code...';
-
-  @override
   String get or => 'OR';
 
   @override

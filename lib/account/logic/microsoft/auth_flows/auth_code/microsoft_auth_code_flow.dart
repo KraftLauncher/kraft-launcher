@@ -54,7 +54,7 @@ class MicrosoftAuthCodeFlow {
   HttpServer? httpServer;
 
   @visibleForTesting
-  HttpServer get requireServer =>
+  HttpServer get serverOrThrow =>
       httpServer ??
       (throw StateError(
         'The auth code redirect HTTP server has not started yet which is required to handle auth code flow login result.',
@@ -72,7 +72,7 @@ class MicrosoftAuthCodeFlow {
       ProjectInfoConstants.microsoftLoginRedirectPort,
     );
     AppLogger.i('Starting Microsoft Auth Code server');
-    return requireServer;
+    return serverOrThrow;
   }
 
   Future<void> stopServer() async {
@@ -80,7 +80,7 @@ class MicrosoftAuthCodeFlow {
       isServerRunning,
       "The Microsoft Auth Redirect server cannot be stopped if it hasn't started yet.",
     );
-    await requireServer.close();
+    await serverOrThrow.close();
     httpServer = null;
     AppLogger.i('Stopping Microsoft Auth Code server');
   }
@@ -99,7 +99,7 @@ class MicrosoftAuthCodeFlow {
     // The page content is not hardcoded for localization.
     required MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants,
   }) async {
-    final server = requireServer;
+    final server = serverOrThrow;
 
     final authCodeLoginUrl = microsoftAuthApi.userLoginUrlWithAuthCode();
 

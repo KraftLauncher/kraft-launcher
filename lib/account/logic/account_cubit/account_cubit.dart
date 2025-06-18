@@ -75,7 +75,7 @@ class AccountCubit extends ExternalStreamCubit<AccountState> {
     );
   }
 
-  // TODO: Avoid handleExternalAccountChange?, use AccountRepository. This is used in MicrosoftAccountHandlerCubit. MicrosoftAccountHandlerCubit Should not depend on AccountCubit?
+  // TODO: Avoid handleExternalAccountChange?, use AccountRepository. This is used in MicrosoftAuthCubit. MicrosoftAuthCubit Should not depend on AccountCubit?
 
   void handleExternalAccountChange({required MinecraftAccount account}) =>
       _addOrUpdateAccountEmit(account: account, accountStatus: null);

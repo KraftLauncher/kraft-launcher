@@ -241,12 +241,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get close => 'إغلاق';
 
   @override
-  String get authProgressExchangingDeviceCode => 'جاري تبادل رمز الجهاز...';
-
-  @override
-  String get authProgressRequestingDeviceCode => 'جاري طلب رمز الجهاز...';
-
-  @override
   String get or => 'أو';
 
   @override

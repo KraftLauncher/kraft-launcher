@@ -20,7 +20,6 @@ import '../account_resolver/minecraft_account_resolver_exceptions.dart'
     as minecraft_account_resolver_exceptions;
 import 'minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
-import 'minecraft_full_auth_progress.dart';
 
 /// A service for logging into and managing Minecraft accounts via Microsoft.
 ///
@@ -85,7 +84,7 @@ class MinecraftAccountService {
   }
 
   Future<MinecraftLoginResult?> loginWithMicrosoftAuthCode({
-    required MinecraftFullAuthProgressCallback onProgress,
+    required MinecraftAuthProgressCallback onProgress,
     required AuthCodeLoginUrlAvailableCallback onAuthCodeLoginUrlAvailable,
     // The page content is not hardcoded for localization.
     required MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants,
@@ -94,7 +93,12 @@ class MinecraftAccountService {
     final tokenResponse = await microsoftOAuthFlowController
         .loginWithMicrosoftAuthCode(
           onProgress:
-              (progress) => onProgress(MinecraftFullAuthCodeProgress(progress)),
+              (progress) => onProgress(switch (progress) {
+                MicrosoftAuthCodeProgress.waitingForUserLogin =>
+                  MinecraftAuthProgress.waitingForUserLogin,
+                MicrosoftAuthCodeProgress.exchangingAuthCode =>
+                  MinecraftAuthProgress.exchangingAuthCode,
+              }),
           onAuthCodeLoginUrlAvailable: onAuthCodeLoginUrlAvailable,
           authCodeResponsePageVariants: authCodeResponsePageVariants,
         );
@@ -109,14 +113,16 @@ class MinecraftAccountService {
   });
 
   Future<MinecraftDeviceCodeLoginResult> requestLoginWithMicrosoftDeviceCode({
-    required MinecraftFullAuthProgressCallback onProgress,
+    required MinecraftAuthProgressCallback onProgress,
     required UserDeviceCodeAvailableCallback onUserDeviceCodeAvailable,
   }) => _transformExceptions(() async {
     final (tokenResponse, closeReason) = await microsoftOAuthFlowController
         .requestLoginWithMicrosoftDeviceCode(
           onProgress:
-              (progress) =>
-                  onProgress(MinecraftFullAuthProgress.deviceCode(progress)),
+              (progress) => onProgress(switch (progress) {
+                MicrosoftDeviceCodeProgress.waitingForUserLogin =>
+                  MinecraftAuthProgress.waitingForUserLogin,
+              }),
           onUserDeviceCodeAvailable: onUserDeviceCodeAvailable,
         );
     if (tokenResponse == null) {
@@ -139,13 +145,11 @@ class MinecraftAccountService {
 
   Future<MinecraftLoginResult> _resolveAndSave({
     required MicrosoftOAuthTokenResponse tokenResponse,
-    required MinecraftFullAuthProgressCallback onProgress,
+    required MinecraftAuthProgressCallback onProgress,
   }) async {
     final account = await minecraftAccountResolver.resolve(
       oauthTokenResponse: tokenResponse,
-      onProgress:
-          (progress) =>
-              onProgress(MinecraftFullAuthProgress.resolveAccount(progress)),
+      onProgress: (progress) => onProgress(_resolveToAuthProgress(progress)),
     );
     final accountExists = accountRepository.accountExists(account.id);
     if (accountExists) {
@@ -157,6 +161,24 @@ class MinecraftAccountService {
     return MinecraftLoginResult(account: account, accountExists: accountExists);
   }
 
+  // TODO: MinecraftAccountRefresher probably should not delegate to MinecraftAccountResolver directly??
+  //  Also refreshMinecraftAccessTokenIfExpired should depend on
+  //  MicrosoftAuthApi and MinecraftAccountApi directly? Since thoes are also dependencies of MinecraftAccountResolver.
+  MinecraftAuthProgress _resolveToAuthProgress(
+    ResolveMinecraftAccountProgress progress,
+  ) => switch (progress) {
+    ResolveMinecraftAccountProgress.requestingXboxToken =>
+      MinecraftAuthProgress.requestingXboxToken,
+    ResolveMinecraftAccountProgress.requestingXstsToken =>
+      MinecraftAuthProgress.requestingXstsToken,
+    ResolveMinecraftAccountProgress.loggingIntoMinecraft =>
+      MinecraftAuthProgress.loggingIntoMinecraft,
+    ResolveMinecraftAccountProgress.checkingMinecraftJavaOwnership =>
+      MinecraftAuthProgress.checkingMinecraftJavaOwnership,
+    ResolveMinecraftAccountProgress.fetchingProfile =>
+      MinecraftAuthProgress.fetchingProfile,
+  };
+
   Future<bool> stopAuthCodeServerIfRunning() =>
       microsoftOAuthFlowController.stopAuthCodeServerIfRunning();
 
@@ -165,19 +187,19 @@ class MinecraftAccountService {
 
   Future<MinecraftAccount> refreshMicrosoftAccount(
     MinecraftAccount account, {
-    required MinecraftFullAuthProgressCallback onProgress,
+    required MinecraftAuthProgressCallback onProgress,
   }) async => _transformExceptions(() async {
     try {
       final refreshedAccount = await minecraftAccountRefresher
           .refreshMicrosoftAccount(
             account,
             onRefreshProgress:
-                (progress) =>
-                    onProgress(MinecraftFullAuthProgress.refresh(progress)),
+                (progress) => onProgress(switch (progress) {
+                  RefreshMinecraftAccountProgress.refreshingMicrosoftTokens =>
+                    MinecraftAuthProgress.refreshingMicrosoftTokens,
+                }),
             onResolveAccountProgress:
-                (progress) => onProgress(
-                  MinecraftFullAuthProgress.resolveAccount(progress),
-                ),
+                (progress) => onProgress(_resolveToAuthProgress(progress)),
           );
 
       await accountRepository.updateAccount(refreshedAccount);
@@ -191,9 +213,6 @@ class MinecraftAccountService {
     }
   });
 }
-
-typedef MinecraftFullAuthProgressCallback =
-    void Function(MinecraftFullAuthProgress progress);
 
 @immutable
 class MinecraftLoginResult {
@@ -216,3 +235,17 @@ class MinecraftDeviceCodeLoginResult {
   final MinecraftLoginResult? loginResult;
   final DeviceCodeTimerCloseReason closeReason;
 }
+
+enum MinecraftAuthProgress {
+  waitingForUserLogin,
+  refreshingMicrosoftTokens,
+  exchangingAuthCode,
+  requestingXboxToken,
+  requestingXstsToken,
+  loggingIntoMinecraft,
+  fetchingProfile,
+  checkingMinecraftJavaOwnership,
+}
+
+typedef MinecraftAuthProgressCallback =
+    void Function(MinecraftAuthProgress progress);
