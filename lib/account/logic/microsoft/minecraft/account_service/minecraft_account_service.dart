@@ -162,7 +162,7 @@ class MinecraftAccountService {
   }
 
   // TODO: MinecraftAccountRefresher probably should not delegate to MinecraftAccountResolver directly??
-  //  Also refreshMinecraftAccessTokenIfExpired should depend on
+  //  Also refreshMinecraftAccessTokenIfExpired should not depend on
   //  MicrosoftAuthApi and MinecraftAccountApi directly? Since thoes are also dependencies of MinecraftAccountResolver.
   MinecraftAuthProgress _resolveToAuthProgress(
     ResolveMinecraftAccountProgress progress,

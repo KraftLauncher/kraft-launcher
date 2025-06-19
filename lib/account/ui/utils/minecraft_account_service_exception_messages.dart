@@ -108,6 +108,10 @@ extension AccountManagerExceptionMessages
       }(),
       minecraft_account_service_exceptions.MinecraftAccountApiException() =>
         switch (exception.exception) {
+          // TODO: unexpectedMinecraftApiError is used incorrectly here,
+          //  same as unexpectedMicrosoftApiError, should be used
+          //  only when the server respond with an unknown errror,
+          //  not when Dio throws DioException
           minecraft_account_api_exceptions.UnknownException() => loc
               .unexpectedMinecraftApiError(exception.message),
           minecraft_account_api_exceptions.UnauthorizedException() =>
