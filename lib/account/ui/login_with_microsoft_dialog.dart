@@ -49,37 +49,47 @@ class LoginWithMicrosoftDialog extends StatefulWidget {
 
 class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
   late final MicrosoftAuthCubit _microsoftAuthCubit;
-  bool _canUserClose = true;
 
   @override
-  Widget build(BuildContext context) => PopScope(
-    canPop: _canUserClose,
-    child: _MicrosoftLoginListener(
-      onLoadingChanged:
-          (isLoading) => setState(() => _canUserClose = !isLoading),
-      child: AlertDialog(
-        title: Text(
-          widget.isReAuthentication
-              ? context.loc.updateMicrosoftAccount
-              : context.loc.addMicrosoftAccount,
-        ),
-        content: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minWidth: 300,
-            minHeight: 100,
-            maxWidth: 350,
+  Widget build(BuildContext context) {
+    // NOTE: If you refactor to allow closing the dialog before login completes,
+    // ensure BlocListener is also updated to handle results correctly,
+    // since it lives inside this dialog and will be destroyed when the dialog closes.
+    // dialog and will be destroyed with it.
+    final isLoggingIn = context.select(
+      (MicrosoftAuthCubit cubit) =>
+          cubit.state.loginStatus == MicrosoftLoginStatus.loading &&
+          cubit.state.loginProgress !=
+              MinecraftAuthProgress.waitingForUserLogin,
+    );
+
+    return PopScope(
+      canPop: !isLoggingIn,
+      child: _MicrosoftLoginListener(
+        child: AlertDialog(
+          title: Text(
+            widget.isReAuthentication
+                ? context.loc.updateMicrosoftAccount
+                : context.loc.addMicrosoftAccount,
           ),
-          child: const SingleChildScrollView(child: _DialogContent()),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(context.loc.cancel),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minWidth: 300,
+              minHeight: 100,
+              maxWidth: 350,
+            ),
+            child: const SingleChildScrollView(child: _DialogContent()),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: isLoggingIn ? null : () => Navigator.pop(context),
+              child: Text(context.loc.cancel),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   @override
   void initState() {
@@ -92,9 +102,6 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
   void dispose() {
     _microsoftAuthCubit.stopAuthCodeServerIfRunning();
     _microsoftAuthCubit.cancelDeviceCodePollingTimer();
-    // TODO: BUG: when dialog is closed while login is not finished, and then attemp to refresh after it finishes,
-    //  a bug will happen on next time opening the dialog, state is incorrect!
-    //  BlocListener tried to close the dialog incorrectly and it still loading for login status. Also try to avoid resetRefreshStatus too.
     _microsoftAuthCubit.resetLoginStatus();
     super.dispose();
   }
@@ -414,94 +421,97 @@ class _SecureStorageUnsupportedWarning extends StatelessWidget {
 
 /// Listens for Microsoft login result and shows messages accordingly.
 ///
-/// Also closes the dialog on success or failure,
-/// and provides [onLoadingChanged] to inform the caller whether
-/// the login process is currently in a loading state.
+/// Also closes the dialog on success or failure.
+///
+/// The [LoginWithMicrosoftDialog] is currently not closable
+/// to ensure the [BlocListener] of this widget
+/// can reliably respond to the login result since it lives inside the dialog.
 class _MicrosoftLoginListener extends StatelessWidget {
-  const _MicrosoftLoginListener({
-    required this.child,
-    required this.onLoadingChanged,
-  });
+  const _MicrosoftLoginListener({required this.child});
 
   final Widget child;
-  final ValueChanged<bool> onLoadingChanged;
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<MicrosoftAuthCubit, MicrosoftAuthState>(
-      listener: _onStateChanged,
+      listenWhen:
+          (previous, current) => previous.loginStatus != current.loginStatus,
+      listener: _onLoginStatusChanged,
       child: child,
     );
   }
 
-  void _onStateChanged(BuildContext context, MicrosoftAuthState state) {
-    if (state.loginStatus == MicrosoftLoginStatus.loading) {
-      onLoadingChanged(true);
-      return;
-    }
+  void _onLoginStatusChanged(BuildContext context, MicrosoftAuthState state) {
+    switch (state.loginStatus) {
+      case MicrosoftLoginStatus.successAddedNew:
+      case MicrosoftLoginStatus.successRefreshedExisting:
+        final username = state.recentAccountOrThrow.username;
+        context.scaffoldMessenger.showSnackBarText(
+          state.loginStatus == MicrosoftLoginStatus.successAddedNew
+              ? context.loc.loginSuccessAccountAddedMessage(username)
+              : context.loc.loginSuccessAccountUpdatedMessage(username),
+        );
+        context.pop();
+        return;
+      case MicrosoftLoginStatus.failure:
+        final exception = state.exceptionOrThrow;
+        final message = exception.getMessage(context.loc);
+        final scaffoldMessenger = context.scaffoldMessenger;
 
-    onLoadingChanged(false);
+        context.pop();
 
-    if (state.loginStatus.isSuccess) {
-      final username = state.recentAccountOrThrow.username;
-      context.scaffoldMessenger.showSnackBarText(
-        state.loginStatus == MicrosoftLoginStatus.successAddedNew
-            ? context.loc.loginSuccessAccountAddedMessage(username)
-            : context.loc.loginSuccessAccountUpdatedMessage(username),
-      );
-      context.pop();
-      return;
-    }
+        // Handles special failures
+        switch (exception) {
+          case minecraft_account_service_exceptions.MicrosoftAuthApiException():
+            final microsoftAuthApiException = exception.exception;
+            switch (microsoftAuthApiException) {
+              case microsoft_auth_api_exceptions.XstsErrorException():
+                switch (microsoftAuthApiException.xstsError) {
+                  case microsoft_auth_api_exceptions
+                      .XstsError
+                      .accountCreationRequired:
+                    scaffoldMessenger.showSnackBarText(
+                      message,
+                      snackBarAction: SnackBarAction(
+                        label: context.loc.createXboxAccount,
+                        onPressed:
+                            () => launchUrl(
+                              Uri.parse(
+                                MicrosoftConstants.createXboxAccountLink,
+                              ),
+                            ),
+                      ),
+                    );
+                    return;
 
-    if (state.loginStatus == MicrosoftLoginStatus.failure) {
-      final exception = state.exceptionOrThrow;
-      final message = exception.getMessage(context.loc);
-      final scaffoldMessenger = context.scaffoldMessenger;
+                  case _:
+                    scaffoldMessenger.showSnackBarText(message);
+                    return;
+                }
+              case _:
+                scaffoldMessenger.showSnackBarText(message);
+                return;
+            }
 
-      context.pop();
+          case minecraft_account_service_exceptions.MinecraftAccountResolverException():
+            switch (exception.exception) {
+              case MinecraftJavaEntitlementAbsentException():
+                showDialog<void>(
+                  context: context,
+                  builder:
+                      (context) => const MinecraftJavaEntitlementAbsentDialog(),
+                );
+            }
+            return;
 
-      // Handles special failures
-      switch (exception) {
-        case minecraft_account_service_exceptions.MicrosoftAuthApiException():
-          final microsoftAuthApiException = exception.exception;
-          switch (microsoftAuthApiException) {
-            case microsoft_auth_api_exceptions.XstsErrorException():
-              switch (microsoftAuthApiException.xstsError) {
-                case microsoft_auth_api_exceptions
-                    .XstsError
-                    .accountCreationRequired:
-                  scaffoldMessenger.showSnackBarText(
-                    message,
-                    snackBarAction: SnackBarAction(
-                      label: context.loc.createXboxAccount,
-                      onPressed:
-                          () => launchUrl(
-                            Uri.parse(MicrosoftConstants.createXboxAccountLink),
-                          ),
-                    ),
-                  );
-
-                case _:
-                  scaffoldMessenger.showSnackBarText(message);
-              }
-            case _:
-              scaffoldMessenger.showSnackBarText(message);
-          }
-
-        case minecraft_account_service_exceptions.MinecraftAccountResolverException():
-          switch (exception.exception) {
-            case MinecraftJavaEntitlementAbsentException():
-              showDialog<void>(
-                context: context,
-                builder:
-                    (context) => const MinecraftJavaEntitlementAbsentDialog(),
-              );
-          }
-
-        case _:
-          // Handles common failures
-          scaffoldMessenger.showSnackBarText(message);
-      }
+          case _:
+            // Handles common failures
+            scaffoldMessenger.showSnackBarText(message);
+            return;
+        }
+      case _:
+        // No action needed for other statuses
+        return;
     }
   }
 }

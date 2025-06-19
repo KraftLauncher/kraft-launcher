@@ -264,6 +264,7 @@ class _AccountRefreshListener extends StatelessWidget {
             state.recentAccountOrThrow.username,
           ),
         );
+        return;
       case MicrosoftRefreshAccountStatus.failure:
         final exception = state.exceptionOrThrow;
         final message = exception.getMessage(context.loc);
@@ -284,6 +285,7 @@ class _AccountRefreshListener extends StatelessWidget {
                         ),
                   ),
                 );
+                return;
               case minecraft_account_refresher_exceptions.MicrosoftReAuthRequiredException():
                 scaffoldMessenger.showSnackBarText(
                   message,
@@ -296,13 +298,16 @@ class _AccountRefreshListener extends StatelessWidget {
                         ),
                   ),
                 );
+                return;
             }
           case _:
             scaffoldMessenger.showSnackBarText(message);
+            return;
         }
 
       case _:
-      // No action needed for other statuses
+        // No action needed for other statuses
+        return;
     }
   }
 }
