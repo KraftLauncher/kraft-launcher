@@ -147,14 +147,14 @@ class MainApp extends StatelessWidget {
 
   Widget di({required Widget child}) => MultiRepositoryProvider(
     providers: [
-      RepositoryProvider<MicrosoftAuthApi>.value(
-        value: MicrosoftAuthApiImpl(dio: DioClient.instance),
+      RepositoryProvider<MicrosoftAuthApi>(
+        create: (context) => MicrosoftAuthApiImpl(dio: DioClient.instance),
       ),
-      RepositoryProvider<MinecraftAccountApi>.value(
-        value: MinecraftAccountApiImpl(dio: DioClient.instance),
+      RepositoryProvider<MinecraftAccountApi>(
+        create: (context) => MinecraftAccountApiImpl(dio: DioClient.instance),
       ),
-      RepositoryProvider<PlatformSecureStorageSupport>.value(
-        value: PlatformSecureStorageSupport(),
+      RepositoryProvider<PlatformSecureStorageSupport>(
+        create: (context) => PlatformSecureStorageSupport(),
       ),
       RepositoryProvider<AccountRepository>(
         create:
@@ -196,7 +196,7 @@ class MainApp extends StatelessWidget {
               ),
             ),
       ),
-      RepositoryProvider.value(value: ImagePicker()),
+      RepositoryProvider(create: (context) => ImagePicker()),
     ],
     child: child,
   );

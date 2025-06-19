@@ -11,7 +11,7 @@ import '../../common/ui/utils/scaffold_messenger_ext.dart';
 import '../data/minecraft_account/minecraft_account.dart';
 import '../logic/account_cubit/account_cubit.dart';
 import '../logic/microsoft/cubit/microsoft_auth_cubit.dart';
-import '../logic/microsoft/minecraft/account_service/minecraft_account_service.dart';
+import '../logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
 import 'skin/full_skin_image.dart';
 import 'upsert_offline_account_dialog.dart';
 import 'utils/auth_progress_messages.dart';
