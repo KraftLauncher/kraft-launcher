@@ -20,6 +20,7 @@ import '../account_resolver/minecraft_account_resolver_exceptions.dart'
     as minecraft_account_resolver_exceptions;
 import 'minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
+import 'minecraft_auth_progress.dart';
 
 /// A service for logging into and managing Minecraft accounts via Microsoft.
 ///
@@ -234,17 +235,6 @@ class MinecraftDeviceCodeLoginResult {
 
   final MinecraftLoginResult? loginResult;
   final DeviceCodeTimerCloseReason closeReason;
-}
-
-enum MinecraftAuthProgress {
-  waitingForUserLogin,
-  refreshingMicrosoftTokens,
-  exchangingAuthCode,
-  requestingXboxToken,
-  requestingXstsToken,
-  loggingIntoMinecraft,
-  fetchingProfile,
-  checkingMinecraftJavaOwnership,
 }
 
 typedef MinecraftAuthProgressCallback =

@@ -14,6 +14,7 @@ import '../minecraft/account_service/minecraft_account_service.dart';
 import '../minecraft/account_service/minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
 import '../minecraft/account_service/minecraft_account_service_exceptions.dart';
+import '../minecraft/account_service/minecraft_auth_progress.dart';
 
 part 'microsoft_auth_state.dart';
 

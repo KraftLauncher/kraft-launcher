@@ -124,6 +124,10 @@ class MinecraftAccountRefresher {
         microsoftRefreshToken,
       );
 
+      // TODO: Part of  MinecraftAccountResolver logic (Xbox → XSTS → Login)
+      //  is duplicated in here just to avoid the full profile resolution.
+      //  We may need to refactor some of the code for a better solution.
+
       onRefreshProgress(
         RefreshMinecraftAccessTokenProgress.requestingXboxToken,
       );
@@ -171,7 +175,7 @@ class MinecraftAccountRefresher {
         reAuthRequiredReason,
       );
     }
-    // NOTE: Token expiration (after 90 days) is checked when loading accounts.
+    // NOTE: Microsoft refresh token expiration (after 90 days) is checked when loading accounts.
     // In rare cases, a token might expire shortly after loading but before use.
     // We accept this edge case to keep the logic simple.
   }

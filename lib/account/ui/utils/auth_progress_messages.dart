@@ -1,10 +1,9 @@
 import '../../../common/generated/l10n/app_localizations.dart';
-import '../../logic/microsoft/minecraft/account_service/minecraft_account_service.dart';
+import '../../logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
 
 extension AuthProgressMessagesExt on MinecraftAuthProgress? {
   String getMessage(AppLocalizations loc) {
-    final fullProgress = this;
-    final message = switch (fullProgress) {
+    return switch (this) {
       null =>
         throw StateError('The auth progress is unknown, this is likely a bug.'),
       MinecraftAuthProgress.waitingForUserLogin =>
@@ -24,6 +23,5 @@ extension AuthProgressMessagesExt on MinecraftAuthProgress? {
       MinecraftAuthProgress.refreshingMicrosoftTokens =>
         loc.authProgressRefreshingMicrosoftTokens,
     };
-    return message;
   }
 }

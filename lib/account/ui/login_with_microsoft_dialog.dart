@@ -18,9 +18,9 @@ import '../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
 import '../logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import '../logic/microsoft/cubit/microsoft_auth_cubit.dart';
 import '../logic/microsoft/minecraft/account_resolver/minecraft_account_resolver_exceptions.dart';
-import '../logic/microsoft/minecraft/account_service/minecraft_account_service.dart';
 import '../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
+import '../logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
 import 'minecraft_java_entitlement_absent_dialog.dart';
 import 'utils/auth_progress_messages.dart';
 import 'utils/minecraft_account_service_exception_messages.dart';
