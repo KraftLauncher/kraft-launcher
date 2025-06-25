@@ -33,7 +33,7 @@ class SettingsStorage {
     if (fileContent.isEmpty) {
       return saveDefault();
     }
-    return Settings.fromJson(jsonDecode(file.readAsStringSync()) as JsonObject);
+    return Settings.fromJson(jsonDecode(file.readAsStringSync()) as JsonMap);
   }
 
   // TODO: Avoid writeAsStringSync, read: https://dart.dev/tools/linter-rules/avoid_slow_async_io, review all usages of file sync operations

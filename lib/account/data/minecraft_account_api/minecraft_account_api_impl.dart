@@ -40,7 +40,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
         throw const minecraft_account_api_exceptions.ServiceUnavailableException();
       }
 
-      final errorBody = e.response?.data as JsonObject?;
+      final errorBody = e.response?.data as JsonMap?;
       final code = errorBody?['error'] as String?;
       final errorMessage = errorBody?['errorMessage'] as String?;
 
@@ -68,7 +68,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
     required String xstsToken,
     required String xstsUserHash,
   }) async => _handleCommonFailures(() async {
-    final response = await dio.postUri<JsonObject>(
+    final response = await dio.postUri<JsonMap>(
       Uri.https(_minecraftServicesHost, '/authentication/login_with_xbox'),
       options: Options(
         headers: {
@@ -86,7 +86,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
     String minecraftAccessToken,
   ) async => _handleCommonFailures(
     () async {
-      final response = await dio.getUri<JsonObject>(
+      final response = await dio.getUri<JsonMap>(
         Uri.https(_minecraftServicesHost, '/minecraft/profile'),
         options: Options(
           headers: {'Authorization': 'Bearer $minecraftAccessToken'},
@@ -95,7 +95,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
       return MinecraftProfileResponse.fromJson(response.dataOrThrow);
     },
     customHandle: (e) {
-      final errorBody = e.response?.data as JsonObject?;
+      final errorBody = e.response?.data as JsonMap?;
       final code = errorBody?['error'] as String?;
 
       if (code == 'NOT_FOUND') {
@@ -108,14 +108,14 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
   @override
   Future<bool> checkMinecraftJavaOwnership(String minecraftAccessToken) =>
       _handleCommonFailures(() async {
-        final response = await dio.getUri<JsonObject>(
+        final response = await dio.getUri<JsonMap>(
           Uri.https(_minecraftServicesHost, '/entitlements/mcstore'),
           options: Options(
             headers: {'Authorization': 'Bearer $minecraftAccessToken'},
           ),
         );
         return (response.dataOrThrow['items']! as List<dynamic>)
-            .cast<JsonObject>()
+            .cast<JsonMap>()
             .any(
               (jsonObject) =>
                   (jsonObject['name'] as String?) == 'game_minecraft',
@@ -129,7 +129,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
     required String minecraftAccessToken,
   }) => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonObject>(
+      final response = await dio.postUri<JsonMap>(
         Uri.https(_minecraftServicesHost, '/minecraft/profile/skins'),
         options: Options(
           headers: {'Authorization': 'Bearer $minecraftAccessToken'},

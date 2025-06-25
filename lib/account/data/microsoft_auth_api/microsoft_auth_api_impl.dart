@@ -36,7 +36,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       // that made to Microsoft, and not Xbox. Xbox APIs usually returns error details in the headers
       // and additionally in the response data (XErr) when requesting XSTS. It's handled
       // in requestXboxLiveToken() and requestXSTSToken().
-      final errorBody = e.response?.data as JsonObject?;
+      final errorBody = e.response?.data as JsonMap?;
       final code = errorBody?['error'] as String?;
       final errorDescription = errorBody?['error_description'] as String?;
 
@@ -75,7 +75,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
     String authCode,
   ) async => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonObject>(
+      final response = await dio.postUri<JsonMap>(
         Uri.https('login.live.com', '/oauth20_token.srf'),
         options: Options(
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -92,7 +92,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       return MicrosoftOAuthTokenResponse.fromJson(response.dataOrThrow);
     },
     customHandle: (e) {
-      final errorBody = e.response?.data as JsonObject?;
+      final errorBody = e.response?.data as JsonMap?;
       final code = errorBody?['error'] as String?;
       if (code == 'invalid_grant') {
         throw const microsoft_auth_api_exceptions.AuthCodeExpiredException();
@@ -108,7 +108,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   @override
   Future<MicrosoftRequestDeviceCodeResponse> requestDeviceCode() =>
       _handleCommonFailures(() async {
-        final response = await dio.postUri<JsonObject>(
+        final response = await dio.postUri<JsonMap>(
           Uri.https(
             'login.microsoftonline.com',
             '/consumers/oauth2/v2.0/devicecode',
@@ -131,7 +131,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
     MicrosoftRequestDeviceCodeResponse deviceCodeResponse,
   ) => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonObject>(
+      final response = await dio.postUri<JsonMap>(
         Uri.https('login.microsoftonline.com', '/consumers/oauth2/v2.0/token'),
         options: Options(
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -148,7 +148,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       );
     },
     customHandle: (e) {
-      final errorBody = e.response?.data as JsonObject?;
+      final errorBody = e.response?.data as JsonMap?;
       final code = errorBody?['error'] as String?;
       if (code == 'authorization_pending') {
         return MicrosoftCheckDeviceCodeStatusResult.authorizationPending();
@@ -173,7 +173,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
     String microsoftAccessToken,
   ) async => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonObject>(
+      final response = await dio.postUri<JsonMap>(
         Uri.https('user.auth.xboxlive.com', '/user/authenticate'),
         options: Options(
           headers: {
@@ -213,7 +213,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
     String xboxLiveToken,
   ) => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonObject>(
+      final response = await dio.postUri<JsonMap>(
         Uri.https('xsts.auth.xboxlive.com', '/xsts/authorize'),
         options: Options(
           headers: {
@@ -233,7 +233,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       return XboxLiveAuthTokenResponse.fromJson(response.dataOrThrow);
     },
     customHandle: (e) {
-      final errorBody = e.response?.data as JsonObject?;
+      final errorBody = e.response?.data as JsonMap?;
       final message = errorBody?['Message'] as String?;
       final xErr = errorBody?['XErr'] as int?;
       final xstsError =
@@ -265,7 +265,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
     String microsoftRefreshToken,
   ) => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonObject>(
+      final response = await dio.postUri<JsonMap>(
         Uri.https('login.live.com', '/oauth20_token.srf'),
         options: Options(
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -280,7 +280,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       return MicrosoftOAuthTokenResponse.fromJson(response.dataOrThrow);
     },
     customHandle: (e) {
-      final errorBody = e.response?.data as JsonObject?;
+      final errorBody = e.response?.data as JsonMap?;
       final code = errorBody?['error'] as String?;
       if (code == 'invalid_grant') {
         throw const microsoft_auth_api_exceptions.InvalidRefreshTokenException();

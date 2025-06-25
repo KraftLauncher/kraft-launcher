@@ -43,7 +43,7 @@ void main() {
     test(
       'uses expected request URI, headers, and body with xbox token and hash',
       () async {
-        mockDio.mockPostUriSuccess<JsonObject>(
+        mockDio.mockPostUriSuccess<JsonMap>(
           responseData: {'username': '', 'access_token': '', 'expires_in': -1},
         );
 
@@ -55,8 +55,7 @@ void main() {
           xstsToken: xboxLiveToken.xboxToken,
           xstsUserHash: xboxLiveToken.userHash,
         );
-        final captured =
-            mockDio.capturePostUriArguments<JsonObject, JsonObject>();
+        final captured = mockDio.capturePostUriArguments<JsonMap, JsonMap>();
 
         expect(captured.options?.headers, {
           'Content-Type': 'application/json',
@@ -79,7 +78,7 @@ void main() {
       const expiresIn = 3600;
       const accessToken = 'Example Access Token';
       const username = 'Example Username';
-      mockDio.mockPostUriSuccess<JsonObject>(
+      mockDio.mockPostUriSuccess<JsonMap>(
         responseData: {
           'access_token': accessToken,
           'username': username,
@@ -109,12 +108,12 @@ void main() {
 
   group('fetchMinecraftProfile', () {
     test('uses expected request URI, passes Authorization header', () async {
-      mockDio.mockGetUriSuccess<JsonObject>(
+      mockDio.mockGetUriSuccess<JsonMap>(
         responseData: {'id': '', 'name': '', 'skins': [], 'capes': []},
       );
 
       await minecraftAccountApi.fetchMinecraftProfile(fakeMcAccessToken);
-      final captured = mockDio.captureGetUriArguments<JsonObject, JsonObject>();
+      final captured = mockDio.captureGetUriArguments<JsonMap, JsonMap>();
 
       expect(captured.options?.headers, {
         'Authorization': 'Bearer $fakeMcAccessToken',
@@ -128,7 +127,7 @@ void main() {
     test('returns parsed $MinecraftProfileResponse on success', () async {
       const id = 'Minecraft ID';
       const name = 'Steve';
-      const skins = <JsonObject>[
+      const skins = <JsonMap>[
         {
           'id': '6baa3a08-0e6d-4067-b056-52abb5b2e913',
           'state': 'ACTIVE',
@@ -148,7 +147,7 @@ void main() {
           'variant': 'CLASSIC',
         },
       ];
-      const capes = <JsonObject>[
+      const capes = <JsonMap>[
         {
           'id': '1ed5269a-076e-4a3c-834a-2837d5b578f2',
           'state': 'INACTIVE',
@@ -171,7 +170,7 @@ void main() {
           'alias': 'Common',
         },
       ];
-      mockDio.mockGetUriSuccess<JsonObject>(
+      mockDio.mockGetUriSuccess<JsonMap>(
         responseData: {'id': id, 'name': name, 'skins': skins, 'capes': capes},
       );
 
@@ -199,7 +198,7 @@ void main() {
     test(
       'throws ${minecraft_account_api_exceptions.AccountNotFoundException} when the API indicates the account does not exist',
       () async {
-        mockDio.mockGetUriFailure<JsonObject>(
+        mockDio.mockGetUriFailure<JsonMap>(
           responseData: {'error': 'NOT_FOUND'},
         );
 
@@ -214,10 +213,10 @@ void main() {
   });
   group('checkMinecraftJavaOwnership', () {
     test('uses expected request URI, passes Authorization header', () async {
-      mockDio.mockGetUriSuccess<JsonObject>(responseData: {'items': []});
+      mockDio.mockGetUriSuccess<JsonMap>(responseData: {'items': []});
 
       await minecraftAccountApi.checkMinecraftJavaOwnership(fakeMcAccessToken);
-      final captured = mockDio.captureGetUriArguments<JsonObject, JsonObject>();
+      final captured = mockDio.captureGetUriArguments<JsonMap, JsonMap>();
 
       expect(captured.options?.headers, {
         'Authorization': 'Bearer $fakeMcAccessToken',
@@ -228,7 +227,7 @@ void main() {
       );
     });
     test('returns false when minecraft Java is not owned', () async {
-      mockDio.mockGetUriSuccess<JsonObject>(responseData: {'items': []});
+      mockDio.mockGetUriSuccess<JsonMap>(responseData: {'items': []});
 
       expect(
         await minecraftAccountApi.checkMinecraftJavaOwnership(
@@ -239,7 +238,7 @@ void main() {
     });
 
     test('returns true when minecraft Java is owned', () async {
-      mockDio.mockGetUriSuccess<JsonObject>(
+      mockDio.mockGetUriSuccess<JsonMap>(
         responseData: {
           'items': [
             {'name': 'game_minecraft'},
@@ -282,7 +281,7 @@ void main() {
     test(
       'uses expected request URI, passes Authorization header and body',
       () async {
-        mockDio.mockPostUriSuccess<JsonObject>(
+        mockDio.mockPostUriSuccess<JsonMap>(
           responseData: {'id': '', 'name': '', 'skins': [], 'capes': []},
         );
 
@@ -294,8 +293,7 @@ void main() {
           skinVariant: skinVariant,
           minecraftAccessToken: fakeMcAccessToken,
         );
-        final captured =
-            mockDio.capturePostUriArguments<FormData, JsonObject>();
+        final captured = mockDio.capturePostUriArguments<FormData, JsonMap>();
 
         expect(captured.options?.headers, {
           'Authorization': 'Bearer $fakeMcAccessToken',
@@ -330,7 +328,7 @@ void main() {
     test('returns parsed $MinecraftProfileResponse on success', () async {
       const id = 'Minecraft ID';
       const name = 'Steve';
-      final skins = <JsonObject>[
+      final skins = <JsonMap>[
         {
           'id': '432',
           'state': MinecraftCosmeticState.inactive.name.toUpperCase(),
@@ -340,7 +338,7 @@ void main() {
         },
       ];
       const capes = <MinecraftProfileCape>[];
-      mockDio.mockPostUriSuccess<JsonObject>(
+      mockDio.mockPostUriSuccess<JsonMap>(
         responseData: {'id': id, 'name': name, 'skins': skins, 'capes': capes},
       );
 
@@ -369,7 +367,7 @@ void main() {
     test(
       'throws ${minecraft_account_api_exceptions.InvalidSkinImageDataException} when uploading invalid Minecraft skin image',
       () async {
-        mockDio.mockPostUriFailure<JsonObject>(
+        mockDio.mockPostUriFailure<JsonMap>(
           statusCode: HttpStatus.badRequest,
           responseData: {
             'path': '/minecraft/profile/skins',
@@ -403,12 +401,12 @@ void _handleCommonFailuresTests(
     'throws ${minecraft_account_api_exceptions.TooManyRequestsException} on HTTP ${HttpStatus.tooManyRequests}',
     () async {
       if (isPostRequest) {
-        mockDio().mockPostUriFailure<JsonObject>(
+        mockDio().mockPostUriFailure<JsonMap>(
           statusCode: HttpStatus.tooManyRequests,
           responseData: {},
         );
       } else {
-        mockDio().mockGetUriFailure<JsonObject>(
+        mockDio().mockGetUriFailure<JsonMap>(
           responseData: {},
           statusCode: HttpStatus.tooManyRequests,
         );
@@ -429,11 +427,11 @@ void _handleCommonFailuresTests(
       const errorCode = 'unknown_error_code';
       const errorMessage = 'The unknown error message';
       if (isPostRequest) {
-        mockDio().mockPostUriFailure<JsonObject>(
+        mockDio().mockPostUriFailure<JsonMap>(
           responseData: {'error': errorCode, 'errorMessage': errorMessage},
         );
       } else {
-        mockDio().mockGetUriFailure<JsonObject>(
+        mockDio().mockGetUriFailure<JsonMap>(
           responseData: {'error': errorCode, 'errorMessage': errorMessage},
         );
       }
@@ -453,9 +451,9 @@ void _handleCommonFailuresTests(
     'throws ${minecraft_account_api_exceptions.UnknownException} for unhandled or unknown errors without code and description when not provided',
     () async {
       if (isPostRequest) {
-        mockDio().mockPostUriFailure<JsonObject>(responseData: {});
+        mockDio().mockPostUriFailure<JsonMap>(responseData: {});
       } else {
-        mockDio().mockGetUriFailure<JsonObject>(responseData: {});
+        mockDio().mockGetUriFailure<JsonMap>(responseData: {});
       }
 
       await expectLater(
@@ -470,12 +468,12 @@ void _handleCommonFailuresTests(
     () async {
       final exception = Exception('Example exception');
       if (isPostRequest) {
-        mockDio().mockPostUriFailure<JsonObject>(
+        mockDio().mockPostUriFailure<JsonMap>(
           responseData: null,
           customException: exception,
         );
       } else {
-        mockDio().mockGetUriFailure<JsonObject>(
+        mockDio().mockGetUriFailure<JsonMap>(
           responseData: null,
           customException: exception,
         );
@@ -498,12 +496,12 @@ void _handleCommonFailuresTests(
     'throws ${minecraft_account_api_exceptions.UnauthorizedException} on HTTP ${HttpStatus.unauthorized}',
     () async {
       if (isPostRequest) {
-        mockDio().mockPostUriFailure<JsonObject>(
+        mockDio().mockPostUriFailure<JsonMap>(
           statusCode: HttpStatus.unauthorized,
           responseData: {},
         );
       } else {
-        mockDio().mockGetUriFailure<JsonObject>(
+        mockDio().mockGetUriFailure<JsonMap>(
           statusCode: HttpStatus.unauthorized,
           responseData: {},
         );
@@ -520,12 +518,12 @@ void _handleCommonFailuresTests(
     'throws ${minecraft_account_api_exceptions.ServiceUnavailableException} on HTTP ${HttpStatus.serviceUnavailable}',
     () async {
       if (isPostRequest) {
-        mockDio().mockPostUriFailure<JsonObject>(
+        mockDio().mockPostUriFailure<JsonMap>(
           statusCode: HttpStatus.serviceUnavailable,
           responseData: {},
         );
       } else {
-        mockDio().mockGetUriFailure<JsonObject>(
+        mockDio().mockGetUriFailure<JsonMap>(
           statusCode: HttpStatus.serviceUnavailable,
           responseData: {},
         );

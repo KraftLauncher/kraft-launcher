@@ -168,19 +168,19 @@ class _ProfileTabState extends State<ProfileTab> {
     };
 
     final dio = DioClient.instance;
-    final response = await dio.getUri<JsonObject>(Uri.parse(manifestUrl));
+    final response = await dio.getUri<JsonMap>(Uri.parse(manifestUrl));
 
     print('Fetching version manifest...');
 
     final responseData = response.dataOrThrow;
     final versions =
-        (responseData['versions']! as List<dynamic>).cast<JsonObject>();
+        (responseData['versions']! as List<dynamic>).cast<JsonMap>();
     final version = versions.firstWhere(
       (version) => version['id'] == _versionController.text,
     );
     final versionUrl = version['url']! as String;
     final versionId = version['id']! as String;
-    final versionDetailsResponse = await dio.getUri<JsonObject>(
+    final versionDetailsResponse = await dio.getUri<JsonMap>(
       Uri.parse(versionUrl),
     );
 
@@ -188,7 +188,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
     final versionDetailsResponseData = versionDetailsResponse.dataOrThrow;
     final versionArguments =
-        versionDetailsResponseData['arguments']! as JsonObject;
+        versionDetailsResponseData['arguments']! as JsonMap;
 
     final mainClass = versionDetailsResponseData['mainClass']! as String;
 
@@ -232,7 +232,7 @@ class _ProfileTabState extends State<ProfileTab> {
         } else {
           gameArguments.add(argument);
         }
-      } else if (argumentJson is JsonObject) {
+      } else if (argumentJson is JsonMap) {
         // Ignores all arguments with rules for now (e..g, QuickPlay, custom resolution)
         // to keep the launch minimal.
         continue;
@@ -245,8 +245,8 @@ class _ProfileTabState extends State<ProfileTab> {
     final unhandledJvmArguments = versionArguments['jvm']! as List<dynamic>;
 
     final clientJarDownloadUrl =
-        ((versionDetailsResponseData['downloads']! as JsonObject)['client']!
-                as JsonObject)['url']!
+        ((versionDetailsResponseData['downloads']! as JsonMap)['client']!
+                as JsonMap)['url']!
             as String;
 
     final clientJarFile = File(
@@ -269,15 +269,15 @@ class _ProfileTabState extends State<ProfileTab> {
 
     final libraries =
         (versionDetailsResponseData['libraries']! as List<dynamic>)
-            .cast<JsonObject>()
+            .cast<JsonMap>()
             .where((jsonObject) {
               final rules =
-                  (jsonObject['rules'] as List<dynamic>?)?.cast<JsonObject>() ??
+                  (jsonObject['rules'] as List<dynamic>?)?.cast<JsonMap>() ??
                   [];
               if (rules.isEmpty) {
                 return true;
               }
-              final firstRule = rules.firstOrNull?['os'] as JsonObject?;
+              final firstRule = rules.firstOrNull?['os'] as JsonMap?;
               final targetOsName = firstRule?['name'] as String?;
               // final targetOsVersion = firstRule?['version'] as String?;
               if (targetOsName == osName) {
@@ -292,7 +292,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
     for (final libraryJson in libraries) {
       final artifact =
-          (libraryJson['downloads']! as JsonObject)['artifact']! as JsonObject;
+          (libraryJson['downloads']! as JsonMap)['artifact']! as JsonMap;
       final downloadUrl = artifact['url']! as String;
 
       final libraryPath = artifact['path']! as String;
@@ -306,13 +306,13 @@ class _ProfileTabState extends State<ProfileTab> {
     }
 
     final loggingClientJson =
-        (versionDetailsResponseData['logging']! as JsonObject)['client']!
-            as JsonObject;
+        (versionDetailsResponseData['logging']! as JsonMap)['client']!
+            as JsonMap;
 
     final logConfigFileDownloadUrl =
-        (loggingClientJson['file']! as JsonObject)['url']! as String;
+        (loggingClientJson['file']! as JsonMap)['url']! as String;
     final loggingFileId =
-        (loggingClientJson['file']! as JsonObject)['id']! as String;
+        (loggingClientJson['file']! as JsonMap)['id']! as String;
 
     final logConfigFile = File(
       p.join(assetsDirPath, 'log_configs', loggingFileId),
@@ -335,7 +335,7 @@ class _ProfileTabState extends State<ProfileTab> {
     jvmArguments.add(logConfigArgument);
 
     for (final argumentJson in unhandledJvmArguments) {
-      if (argumentJson is JsonObject) {
+      if (argumentJson is JsonMap) {
         final argumentValue = () {
           final value = argumentJson['value']!;
           if (value is List) {
@@ -350,9 +350,9 @@ class _ProfileTabState extends State<ProfileTab> {
         }();
         final os =
             (argumentJson['rules']! as List<dynamic>)
-                    .cast<JsonObject>()
+                    .cast<JsonMap>()
                     .first['os']!
-                as JsonObject;
+                as JsonMap;
         final targetOsName = os['name'] as String?;
         if (targetOsName == osName) {
           jvmArguments.add(argumentValue);
@@ -390,11 +390,10 @@ class _ProfileTabState extends State<ProfileTab> {
       }
     }
 
-    final assetIndexJson =
-        versionDetailsResponseData['assetIndex']! as JsonObject;
+    final assetIndexJson = versionDetailsResponseData['assetIndex']! as JsonMap;
     final assetIndexJsonDownloadUrl = assetIndexJson['url']! as String;
     final assetIndexResponseData =
-        (await dio.getUri<JsonObject>(
+        (await dio.getUri<JsonMap>(
           Uri.parse(assetIndexJsonDownloadUrl),
         )).dataOrThrow;
     final assetIndexFile = File(
@@ -410,9 +409,9 @@ class _ProfileTabState extends State<ProfileTab> {
     final assetsPool = Pool(10, timeout: const Duration(seconds: 30));
     final assetFutures = <Future<void>>[];
 
-    final assetObjects = assetIndexResponseData['objects']! as JsonObject;
+    final assetObjects = assetIndexResponseData['objects']! as JsonMap;
     for (final assetObject in assetObjects.entries) {
-      final assetObjectValue = assetObject.value! as JsonObject;
+      final assetObjectValue = assetObject.value! as JsonMap;
 
       final assetHash = assetObjectValue['hash']! as String;
       final firstTwo = assetHash.substring(0, 2);
@@ -438,11 +437,11 @@ class _ProfileTabState extends State<ProfileTab> {
     await assetsPool.close();
 
     final requiredJavaVersionComponent =
-        (versionDetailsResponseData['javaVersion']! as JsonObject)['component']!
+        (versionDetailsResponseData['javaVersion']! as JsonMap)['component']!
             as String;
 
     final javaRuntimesResponseData =
-        (await dio.getUri<JsonObject>(Uri.parse(javaRuntimesUrl))).dataOrThrow;
+        (await dio.getUri<JsonMap>(Uri.parse(javaRuntimesUrl))).dataOrThrow;
 
     final javaSystemRuntimeKey = switch (defaultTargetPlatform) {
       TargetPlatform.linux => () {
@@ -466,24 +465,23 @@ class _ProfileTabState extends State<ProfileTab> {
       }(),
       _ => throw UnimplementedError('Unsupported OS: $defaultTargetPlatform'),
     };
-    final runtimes =
-        javaRuntimesResponseData[javaSystemRuntimeKey]! as JsonObject;
+    final runtimes = javaRuntimesResponseData[javaSystemRuntimeKey]! as JsonMap;
     // This will throw Bad state when there is no supported Java version on this machine,
     // for example, jre-legacy is required for Minecraft 1.16.5 but unsupported on macOS arm64.
     final runtimeDetails =
         (runtimes[requiredJavaVersionComponent]! as List<dynamic>).first
-            as JsonObject;
+            as JsonMap;
     final javaRuntimeManifestUrl =
-        (runtimeDetails['manifest']! as JsonObject)['url']! as String;
+        (runtimeDetails['manifest']! as JsonMap)['url']! as String;
 
     final javaRuntimeManifestResponseData =
-        (await dio.getUri<JsonObject>(
+        (await dio.getUri<JsonMap>(
           Uri.parse(javaRuntimeManifestUrl),
         )).dataOrThrow;
     final javaRuntimeFilesWithDirectories =
-        javaRuntimeManifestResponseData['files']! as JsonObject;
+        javaRuntimeManifestResponseData['files']! as JsonMap;
     final javaRuntimeFiles = javaRuntimeFilesWithDirectories.entries.where(
-      (e) => (e.value! as JsonObject)['type'] == 'file',
+      (e) => (e.value! as JsonMap)['type'] == 'file',
     );
 
     print(
@@ -502,7 +500,7 @@ class _ProfileTabState extends State<ProfileTab> {
     }
 
     for (final javaRuntimeDetails in javaRuntimeFiles) {
-      final runtimeValue = javaRuntimeDetails.value! as JsonObject;
+      final runtimeValue = javaRuntimeDetails.value! as JsonMap;
       final filePath = javaRuntimeDetails.key;
 
       final runtimeFile = File(p.join(javaRuntimeHomeDirectory.path, filePath));
@@ -511,8 +509,7 @@ class _ProfileTabState extends State<ProfileTab> {
         continue;
       }
       final downloadUrl =
-          ((runtimeValue['downloads']! as JsonObject)['raw']!
-                  as JsonObject)['url']!
+          ((runtimeValue['downloads']! as JsonMap)['raw']! as JsonMap)['url']!
               as String;
 
       final future = javaRuntimePool.withResource(() async {

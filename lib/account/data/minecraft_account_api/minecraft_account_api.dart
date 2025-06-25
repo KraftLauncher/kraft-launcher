@@ -16,7 +16,7 @@ class MinecraftLoginResponse {
     required this.expiresIn,
   });
 
-  factory MinecraftLoginResponse.fromJson(JsonObject json) =>
+  factory MinecraftLoginResponse.fromJson(JsonMap json) =>
       MinecraftLoginResponse(
         username: json['username']! as String,
         accessToken: json['access_token']! as String,
@@ -41,18 +41,18 @@ class MinecraftProfileResponse {
     required this.capes,
   });
 
-  factory MinecraftProfileResponse.fromJson(JsonObject json) =>
+  factory MinecraftProfileResponse.fromJson(JsonMap json) =>
       MinecraftProfileResponse(
         id: json['id']! as String,
         name: json['name']! as String,
         skins:
             (json['skins']! as List<dynamic>)
-                .cast<JsonObject>()
+                .cast<JsonMap>()
                 .map((jsonObject) => MinecraftProfileSkin.fromJson(jsonObject))
                 .toList(),
         capes:
             (json['capes']! as List<dynamic>)
-                .cast<JsonObject>()
+                .cast<JsonMap>()
                 .map((jsonObject) => MinecraftProfileCape.fromJson(jsonObject))
                 .toList(),
       );
@@ -77,14 +77,13 @@ class MinecraftProfileSkin extends Equatable {
     required this.variant,
   });
 
-  factory MinecraftProfileSkin.fromJson(JsonObject json) =>
-      MinecraftProfileSkin(
-        id: json['id']! as String,
-        state: MinecraftApiCosmeticState.fromJson(json['state']! as String),
-        url: json['url']! as String,
-        textureKey: json['textureKey']! as String,
-        variant: MinecraftApiSkinVariant.fromJson(json['variant']! as String),
-      );
+  factory MinecraftProfileSkin.fromJson(JsonMap json) => MinecraftProfileSkin(
+    id: json['id']! as String,
+    state: MinecraftApiCosmeticState.fromJson(json['state']! as String),
+    url: json['url']! as String,
+    textureKey: json['textureKey']! as String,
+    variant: MinecraftApiSkinVariant.fromJson(json['variant']! as String),
+  );
 
   final String id;
   final MinecraftApiCosmeticState state;
@@ -105,13 +104,12 @@ class MinecraftProfileCape extends Equatable {
     required this.alias,
   });
 
-  factory MinecraftProfileCape.fromJson(JsonObject json) =>
-      MinecraftProfileCape(
-        id: json['id']! as String,
-        state: MinecraftApiCosmeticState.fromJson(json['state']! as String),
-        url: json['url']! as String,
-        alias: json['alias']! as String,
-      );
+  factory MinecraftProfileCape.fromJson(JsonMap json) => MinecraftProfileCape(
+    id: json['id']! as String,
+    state: MinecraftApiCosmeticState.fromJson(json['state']! as String),
+    url: json['url']! as String,
+    alias: json['alias']! as String,
+  );
 
   final String id;
   final MinecraftApiCosmeticState state;

@@ -22,7 +22,7 @@ class FileAccountStorage {
       return null;
     }
 
-    return FileAccounts.fromJson(jsonDecode(fileContent) as JsonObject);
+    return FileAccounts.fromJson(jsonDecode(fileContent) as JsonMap);
   }
 
   Future<void> saveAccounts(FileAccounts accounts) =>

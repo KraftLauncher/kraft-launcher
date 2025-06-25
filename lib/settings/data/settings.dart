@@ -10,13 +10,13 @@ export 'app_language.dart';
 class Settings extends Equatable {
   const Settings({this.general = const GeneralSettings()});
 
-  factory Settings.fromJson(JsonObject json) => Settings(
-    general: GeneralSettings.fromJson((json['general'] as JsonObject?) ?? {}),
+  factory Settings.fromJson(JsonMap json) => Settings(
+    general: GeneralSettings.fromJson((json['general'] as JsonMap?) ?? {}),
   );
 
   final GeneralSettings general;
 
-  JsonObject toJson() => {'general': general.toJson()};
+  JsonMap toJson() => {'general': general.toJson()};
 
   Settings copyWith({GeneralSettings? general}) =>
       Settings(general: general ?? this.general);
@@ -39,7 +39,7 @@ class GeneralSettings extends Equatable {
     this.defaultTab = HomeScreenTab.profiles,
   });
 
-  factory GeneralSettings.fromJson(JsonObject json) => GeneralSettings(
+  factory GeneralSettings.fromJson(JsonMap json) => GeneralSettings(
     appLanguage: AppLanguage.values.firstWhere(
       (language) => language.name == json['appLanguage'] as String?,
       orElse: () => AppLanguage.system,
@@ -69,7 +69,7 @@ class GeneralSettings extends Equatable {
   final bool useAccentColor;
   final HomeScreenTab defaultTab;
 
-  JsonObject toJson() => {
+  JsonMap toJson() => {
     'themeMode': themeMode.name,
     'appLanguage': appLanguage.name,
     'useDynamicColor': useDynamicColor,

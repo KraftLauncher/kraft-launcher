@@ -22,12 +22,12 @@ class FileAccount extends Equatable {
     required this.ownsMinecraftJava,
   });
 
-  factory FileAccount.fromJson(JsonObject json) => FileAccount(
+  factory FileAccount.fromJson(JsonMap json) => FileAccount(
     id: json['id']! as String,
     accountType: _AccountTypeJson.fromJson(json['accountType']! as String),
     username: json['username']! as String,
     microsoftAccountInfo: () {
-      final jsonObject = json['microsoftAccountInfo'] as JsonObject?;
+      final jsonObject = json['microsoftAccountInfo'] as JsonMap?;
       if (jsonObject == null) {
         return null;
       }
@@ -35,12 +35,12 @@ class FileAccount extends Equatable {
     }(),
     skins:
         (json['skins']! as List<dynamic>)
-            .cast<JsonObject>()
+            .cast<JsonMap>()
             .map((jsonObject) => _MinecraftSkinJson.fromJson(jsonObject))
             .toList(),
     capes:
         (json['capes']! as List<dynamic>)
-            .cast<JsonObject>()
+            .cast<JsonMap>()
             .map((jsonObject) => _MinecraftCapeJson.fromJson(jsonObject))
             .toList(),
     ownsMinecraftJava: json['ownsMinecraftJava'] as bool?,
@@ -57,7 +57,7 @@ class FileAccount extends Equatable {
 
   final bool? ownsMinecraftJava;
 
-  JsonObject toJson() => {
+  JsonMap toJson() => {
     'id': id,
     'username': username,
     'accountType': accountType.toJson(),
@@ -87,13 +87,13 @@ class FileMicrosoftAccountInfo extends Equatable {
     required this.accessRevoked,
   });
 
-  factory FileMicrosoftAccountInfo.fromJson(JsonObject json) =>
+  factory FileMicrosoftAccountInfo.fromJson(JsonMap json) =>
       FileMicrosoftAccountInfo(
         microsoftRefreshToken: FileExpirableToken.fromJson(
-          json['microsoftRefreshToken']! as JsonObject,
+          json['microsoftRefreshToken']! as JsonMap,
         ),
         minecraftAccessToken: FileExpirableToken.fromJson(
-          json['minecraftAccessToken']! as JsonObject,
+          json['minecraftAccessToken']! as JsonMap,
         ),
         accessRevoked: json['accessRevoked']! as bool,
       );
@@ -106,7 +106,7 @@ class FileMicrosoftAccountInfo extends Equatable {
   /// of [microsoftRefreshToken].
   final bool accessRevoked;
 
-  JsonObject toJson() => {
+  JsonMap toJson() => {
     'microsoftRefreshToken': microsoftRefreshToken.toJson(),
     'minecraftAccessToken': minecraftAccessToken.toJson(),
     'accessRevoked': accessRevoked,
@@ -127,7 +127,7 @@ class FileMicrosoftAccountInfo extends Equatable {
 class FileExpirableToken extends Equatable {
   const FileExpirableToken({required this.value, required this.expiresAt});
 
-  factory FileExpirableToken.fromJson(JsonObject json) => FileExpirableToken(
+  factory FileExpirableToken.fromJson(JsonMap json) => FileExpirableToken(
     expiresAt: DateTime.parse(json['expiresAt']! as String),
     value: json['value'] as String?,
   );
@@ -136,7 +136,7 @@ class FileExpirableToken extends Equatable {
   // TODO: Should we consider storing issuedAt and expiresIn instead?
   final DateTime expiresAt;
 
-  JsonObject toJson() => {
+  JsonMap toJson() => {
     'value': value,
     'expiresAt': expiresAt.toIso8601String(),
   };
@@ -146,14 +146,14 @@ class FileExpirableToken extends Equatable {
 }
 
 extension _MinecraftCapeJson on MinecraftCape {
-  static MinecraftCape fromJson(JsonObject json) => MinecraftCape(
+  static MinecraftCape fromJson(JsonMap json) => MinecraftCape(
     id: json['id']! as String,
     state: _MinecraftCosmeticStateJson.fromJson(json['state']! as String),
     url: json['url']! as String,
     alias: json['alias']! as String,
   );
 
-  JsonObject toJson() => {
+  JsonMap toJson() => {
     'id': id,
     'state': switch (state) {
       MinecraftCosmeticState.active => 'active',
@@ -165,7 +165,7 @@ extension _MinecraftCapeJson on MinecraftCape {
 }
 
 extension _MinecraftSkinJson on MinecraftSkin {
-  static MinecraftSkin fromJson(JsonObject json) => MinecraftSkin(
+  static MinecraftSkin fromJson(JsonMap json) => MinecraftSkin(
     id: json['id']! as String,
     state: _MinecraftCosmeticStateJson.fromJson(json['state']! as String),
     textureKey: json['textureKey']! as String,
@@ -183,7 +183,7 @@ extension _MinecraftSkinJson on MinecraftSkin {
     }(),
   );
 
-  JsonObject toJson() => {
+  JsonMap toJson() => {
     'id': id,
     'state': state.toJson(),
     'url': url,

@@ -12,7 +12,7 @@ class MicrosoftRequestDeviceCodeResponse {
     required this.interval,
   });
 
-  factory MicrosoftRequestDeviceCodeResponse.fromJson(JsonObject json) =>
+  factory MicrosoftRequestDeviceCodeResponse.fromJson(JsonMap json) =>
       MicrosoftRequestDeviceCodeResponse(
         userCode: json['user_code']! as String,
         deviceCode: json['device_code']! as String,

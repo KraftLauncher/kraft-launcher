@@ -8,11 +8,11 @@ import 'file_account.dart';
 class FileAccounts extends Equatable {
   const FileAccounts({required this.accounts, required this.defaultAccountId});
 
-  factory FileAccounts.fromJson(JsonObject json) => FileAccounts(
+  factory FileAccounts.fromJson(JsonMap json) => FileAccounts(
     defaultAccountId: json['defaultAccountId'] as String?,
     accounts:
         (json['accounts']! as List<dynamic>)
-            .cast<JsonObject>()
+            .cast<JsonMap>()
             .map((jsonObject) => FileAccount.fromJson(jsonObject))
             .toList(),
   );
@@ -20,7 +20,7 @@ class FileAccounts extends Equatable {
   final List<FileAccount> accounts;
   final String? defaultAccountId;
 
-  JsonObject toJson() => {
+  JsonMap toJson() => {
     'accounts': accounts.map((account) => account.toJson()).toList(),
     'defaultAccountId': defaultAccountId,
   };

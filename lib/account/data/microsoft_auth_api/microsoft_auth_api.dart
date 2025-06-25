@@ -17,7 +17,7 @@ class MicrosoftOAuthTokenResponse {
     required this.expiresIn,
   });
 
-  factory MicrosoftOAuthTokenResponse.fromJson(JsonObject json) =>
+  factory MicrosoftOAuthTokenResponse.fromJson(JsonMap json) =>
       MicrosoftOAuthTokenResponse(
         accessToken: json['access_token']! as String,
         refreshToken: json['refresh_token']! as String,
@@ -40,13 +40,12 @@ class XboxLiveAuthTokenResponse {
     required this.userHash,
   });
 
-  factory XboxLiveAuthTokenResponse.fromJson(JsonObject json) =>
+  factory XboxLiveAuthTokenResponse.fromJson(JsonMap json) =>
       XboxLiveAuthTokenResponse(
         xboxToken: json['Token']! as String,
         userHash: () {
-          final displayClaims = json['DisplayClaims']! as JsonObject;
-          final xui =
-              (displayClaims['xui']! as List<dynamic>).cast<JsonObject>();
+          final displayClaims = json['DisplayClaims']! as JsonMap;
+          final xui = (displayClaims['xui']! as List<dynamic>).cast<JsonMap>();
           final uhs = xui.first['uhs']! as String;
           return uhs;
         }(),

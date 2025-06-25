@@ -20,7 +20,7 @@ class SecureAccountStorage {
     if (jsonString == null) {
       return null;
     }
-    return SecureAccountData.fromJson(jsonDecode(jsonString) as JsonObject);
+    return SecureAccountData.fromJson(jsonDecode(jsonString) as JsonMap);
   }
 
   Future<void> delete(String accountId) =>

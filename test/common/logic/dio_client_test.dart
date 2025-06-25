@@ -41,15 +41,15 @@ void main() {
       DioClient.instance = mockDio;
 
       final uri = Uri.https('example.com');
-      final expectedResponse = Response<JsonObject>(
+      final expectedResponse = Response<JsonMap>(
         requestOptions: RequestOptions(),
         data: {'username': 'Alex'},
       );
       when(
-        () => mockDio.getUri<JsonObject>(uri),
+        () => mockDio.getUri<JsonMap>(uri),
       ).thenAnswer((_) async => expectedResponse);
 
-      final actualResponse = await DioClient.instance.getUri<JsonObject>(uri);
+      final actualResponse = await DioClient.instance.getUri<JsonMap>(uri);
       expect(actualResponse.dataOrThrow, expectedResponse.data);
     });
 

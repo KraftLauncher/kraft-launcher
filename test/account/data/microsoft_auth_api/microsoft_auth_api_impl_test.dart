@@ -43,7 +43,7 @@ void main() {
     test(
       'uses expected request URI, headers, and body with the auth code',
       () async {
-        mockDio.mockPostUriSuccess<JsonObject>(
+        mockDio.mockPostUriSuccess<JsonMap>(
           responseData: {
             'access_token': 'Access Token',
             'refresh_token': 'Refresh TOken',
@@ -52,8 +52,7 @@ void main() {
         );
 
         await microsoftAuthApi.exchangeAuthCodeForTokens(fakeAuthCode);
-        final captured =
-            mockDio.capturePostUriArguments<JsonObject, JsonObject>();
+        final captured = mockDio.capturePostUriArguments<JsonMap, JsonMap>();
 
         expect(
           captured.options?.headers,
@@ -77,7 +76,7 @@ void main() {
       const expiresIn = 3600;
       const accessToken = 'Example Access Token';
       const refreshToken = 'Example Refresh Token';
-      mockDio.mockPostUriSuccess<JsonObject>(
+      mockDio.mockPostUriSuccess<JsonMap>(
         responseData: {
           'access_token': accessToken,
           'refresh_token': refreshToken,
@@ -97,7 +96,7 @@ void main() {
     test(
       'throws ${microsoft_auth_api_exceptions.AuthCodeExpiredException} when auth code expires',
       () async {
-        mockDio.mockPostUriFailure<JsonObject>(
+        mockDio.mockPostUriFailure<JsonMap>(
           responseData: {'error': 'invalid_grant'},
         );
 
@@ -127,7 +126,7 @@ void main() {
 
   group('requestDeviceCode', () {
     test('uses expected request URI, headers, and body', () async {
-      mockDio.mockPostUriSuccess<JsonObject>(
+      mockDio.mockPostUriSuccess<JsonMap>(
         responseData: {
           'user_code': 'User code',
           'device_code': 'Device Code',
@@ -137,8 +136,7 @@ void main() {
       );
 
       await microsoftAuthApi.requestDeviceCode();
-      final captured =
-          mockDio.capturePostUriArguments<JsonObject, JsonObject>();
+      final captured = mockDio.capturePostUriArguments<JsonMap, JsonMap>();
 
       expect(
         captured.options?.headers,
@@ -166,7 +164,7 @@ void main() {
         const interval = 5;
         const userCode = 'User code';
         const deviceCode = 'Device code';
-        mockDio.mockPostUriSuccess<JsonObject>(
+        mockDio.mockPostUriSuccess<JsonMap>(
           responseData: {
             'user_code': userCode,
             'device_code': deviceCode,
@@ -206,7 +204,7 @@ void main() {
     test(
       'uses expected request URI, headers, and body with the device code',
       () async {
-        mockDio.mockPostUriSuccess<JsonObject>(
+        mockDio.mockPostUriSuccess<JsonMap>(
           responseData: {
             'access_token': 'Access token',
             'refresh_token': 'Refresh Token',
@@ -218,8 +216,7 @@ void main() {
         await microsoftAuthApi.checkDeviceCodeStatus(
           requestDeviceCodeResponse(deviceCode: deviceCode),
         );
-        final captured =
-            mockDio.capturePostUriArguments<JsonObject, JsonObject>();
+        final captured = mockDio.capturePostUriArguments<JsonMap, JsonMap>();
 
         expect(
           captured.options?.headers,
@@ -249,7 +246,7 @@ void main() {
         const accessToken = 'Example access token';
         const refreshToken = 'Example refresh token';
         const expiresIn = 3600;
-        mockDio.mockPostUriSuccess<JsonObject>(
+        mockDio.mockPostUriSuccess<JsonMap>(
           responseData: {
             'access_token': accessToken,
             'refresh_token': refreshToken,
@@ -275,7 +272,7 @@ void main() {
     test(
       'returns $MicrosoftDeviceCodeDeclined when the user declines the authorization request',
       () async {
-        mockDio.mockPostUriFailure<JsonObject>(
+        mockDio.mockPostUriFailure<JsonMap>(
           responseData: {'error': 'authorization_declined'},
         );
 
@@ -289,7 +286,7 @@ void main() {
     test(
       'returns $MicrosoftDeviceCodeAuthorizationPending when Microsoft awaiting the user',
       () async {
-        mockDio.mockPostUriFailure<JsonObject>(
+        mockDio.mockPostUriFailure<JsonMap>(
           responseData: {'error': 'authorization_pending'},
         );
 
@@ -302,7 +299,7 @@ void main() {
     test(
       'returns $MicrosoftDeviceCodeExpired when user device code expires',
       () async {
-        mockDio.mockPostUriFailure<JsonObject>(
+        mockDio.mockPostUriFailure<JsonMap>(
           responseData: {'error': 'expired_token'},
         );
 
@@ -336,7 +333,7 @@ void main() {
     test(
       'uses expected request URI, headers, and body with the Microsoft access token',
       () async {
-        mockDio.mockPostUriSuccess<JsonObject>(
+        mockDio.mockPostUriSuccess<JsonMap>(
           responseData: {
             'Token': TestConstants.anyString,
             'DisplayClaims': {
@@ -349,8 +346,7 @@ void main() {
 
         const microsoftAccessToken = 'Example Access Token';
         await microsoftAuthApi.requestXboxLiveToken(microsoftAccessToken);
-        final captured =
-            mockDio.capturePostUriArguments<JsonObject, JsonObject>();
+        final captured = mockDio.capturePostUriArguments<JsonMap, JsonMap>();
 
         expect(
           captured.options?.headers,
@@ -366,7 +362,7 @@ void main() {
           Uri.https('user.auth.xboxlive.com', '/user/authenticate'),
         );
         expect(
-          (captured.requestData['Properties'] as JsonObject?)?['RpsTicket'],
+          (captured.requestData['Properties'] as JsonMap?)?['RpsTicket'],
           'd=$microsoftAccessToken',
         );
         expect(captured.requestData, {
@@ -384,7 +380,7 @@ void main() {
     test('returns parsed $XboxLiveAuthTokenResponse on success', () async {
       const token = 'Xbox Live token';
       const userHash = 'User Hash';
-      mockDio.mockPostUriSuccess<JsonObject>(
+      mockDio.mockPostUriSuccess<JsonMap>(
         responseData: {
           'Token': token,
           'DisplayClaims': {
@@ -406,7 +402,7 @@ void main() {
     test(
       'throws ${microsoft_auth_api_exceptions.XboxTokenMicrosoftAccessTokenExpiredException} when Microsoft OAuth access token expires',
       () async {
-        mockDio.mockPostUriFailure<JsonObject>(
+        mockDio.mockPostUriFailure<JsonMap>(
           headers: Headers.fromMap({
             'Www-Authenticate': ['XASU error=token_expired'],
           }),
@@ -438,7 +434,7 @@ void main() {
     test(
       'uses expected request URI, headers, and body with the Xbox Live token',
       () async {
-        mockDio.mockPostUriSuccess<JsonObject>(
+        mockDio.mockPostUriSuccess<JsonMap>(
           responseData: {
             'Token': TestConstants.anyString,
             'DisplayClaims': {
@@ -451,8 +447,7 @@ void main() {
 
         const xboxLiveToken = 'Example Xbox Live Token';
         await microsoftAuthApi.requestXSTSToken(xboxLiveToken);
-        final captured =
-            mockDio.capturePostUriArguments<JsonObject, JsonObject>();
+        final captured = mockDio.capturePostUriArguments<JsonMap, JsonMap>();
 
         expect(
           captured.options?.headers,
@@ -468,7 +463,7 @@ void main() {
           Uri.https('xsts.auth.xboxlive.com', '/xsts/authorize'),
         );
         expect(
-          ((captured.requestData['Properties'] as JsonObject?)!['UserTokens']!
+          ((captured.requestData['Properties'] as JsonMap?)!['UserTokens']!
                   as List)
               .firstOrNull,
           xboxLiveToken,
@@ -487,7 +482,7 @@ void main() {
     test('returns parsed $XboxLiveAuthTokenResponse on success', () async {
       const token = 'Xbox Live token';
       const userHash = 'User Hash';
-      mockDio.mockPostUriSuccess<JsonObject>(
+      mockDio.mockPostUriSuccess<JsonMap>(
         responseData: {
           'Token': token,
           'DisplayClaims': {
@@ -521,7 +516,7 @@ void main() {
         for (final xstsError
             in microsoft_auth_api_exceptions.XstsError.values) {
           const message = 'An unknown error';
-          mockDio.mockPostUriFailure<JsonObject>(
+          mockDio.mockPostUriFailure<JsonMap>(
             statusCode: HttpStatus.unauthorized,
             responseData: {'Message': message, 'XErr': xstsError.xErr},
           );
@@ -546,7 +541,7 @@ void main() {
     test(
       'uses expected request URI, headers, and body with the refresh token',
       () async {
-        mockDio.mockPostUriSuccess<JsonObject>(
+        mockDio.mockPostUriSuccess<JsonMap>(
           responseData: {
             'access_token': TestConstants.anyString,
             'refresh_token': TestConstants.anyString,
@@ -559,8 +554,7 @@ void main() {
         await microsoftAuthApi.getNewTokensFromRefreshToken(
           microsoftRefreshToken,
         );
-        final captured =
-            mockDio.capturePostUriArguments<JsonObject, JsonObject>();
+        final captured = mockDio.capturePostUriArguments<JsonMap, JsonMap>();
 
         expect(
           captured.options?.headers,
@@ -582,7 +576,7 @@ void main() {
       const expiresIn = 3600;
       const accessToken = 'Example Microsoft Access Token';
       const refreshToken = 'Example Microsoft Refresh Token';
-      mockDio.mockPostUriSuccess<JsonObject>(
+      mockDio.mockPostUriSuccess<JsonMap>(
         responseData: {
           'access_token': accessToken,
           'refresh_token': refreshToken,
@@ -602,7 +596,7 @@ void main() {
     test(
       'throws ${microsoft_auth_api_exceptions.InvalidRefreshTokenException} when refresh token expires',
       () async {
-        mockDio.mockPostUriFailure<JsonObject>(
+        mockDio.mockPostUriFailure<JsonMap>(
           responseData: {'error': 'invalid_grant'},
         );
 
@@ -640,7 +634,7 @@ void _tooManyRequestsTest(
   test(
     'throws ${microsoft_auth_api_exceptions.TooManyRequestsException} on HTTP ${HttpStatus.tooManyRequests}',
     () async {
-      mockDio().mockPostUriFailure<JsonObject>(
+      mockDio().mockPostUriFailure<JsonMap>(
         statusCode: HttpStatus.tooManyRequests,
         responseData: {},
       );
@@ -662,7 +656,7 @@ void _unknownErrorTests(
     () async {
       const errorCode = 'unknown_error_code';
       const errorDescription = 'The unknown error description';
-      mockDio().mockPostUriFailure<JsonObject>(
+      mockDio().mockPostUriFailure<JsonMap>(
         responseData: {
           'error': errorCode,
           'error_description': errorDescription,
@@ -687,7 +681,7 @@ void _unknownErrorTests(
   test(
     'throws ${microsoft_auth_api_exceptions.UnknownException} for unhandled or unknown errors without code and description when not provided',
     () async {
-      mockDio().mockPostUriFailure<JsonObject>(responseData: {});
+      mockDio().mockPostUriFailure<JsonMap>(responseData: {});
 
       await expectLater(
         call,
@@ -700,7 +694,7 @@ void _unknownErrorTests(
     'throws ${microsoft_auth_api_exceptions.UnknownException} when catching $Exception',
     () async {
       final exception = Exception('Example exception');
-      mockDio().mockPostUriFailure<JsonObject>(
+      mockDio().mockPostUriFailure<JsonMap>(
         responseData: null,
         customException: exception,
       );

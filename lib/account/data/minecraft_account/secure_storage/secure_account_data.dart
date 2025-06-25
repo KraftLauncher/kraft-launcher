@@ -10,7 +10,7 @@ class SecureAccountData extends Equatable {
     required this.minecraftAccessToken,
   });
 
-  factory SecureAccountData.fromJson(JsonObject json) => SecureAccountData(
+  factory SecureAccountData.fromJson(JsonMap json) => SecureAccountData(
     microsoftRefreshToken: json['msRefreshToken']! as String,
     minecraftAccessToken: json['mcAccessToken']! as String,
   );
@@ -18,7 +18,7 @@ class SecureAccountData extends Equatable {
   final String microsoftRefreshToken;
   final String minecraftAccessToken;
 
-  JsonObject toJson() => {
+  JsonMap toJson() => {
     'msRefreshToken': microsoftRefreshToken,
     'mcAccessToken': minecraftAccessToken,
   };
