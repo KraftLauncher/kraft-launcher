@@ -10,7 +10,7 @@
 <a href="https://github.com/KraftLauncher/kraft-launcher"><img src="https://img.shields.io/github/languages/code-size/KraftLauncher/kraft-launcher" alt="GitHub code size in bytes"></a>
 </p>
 
-An unofficial, open-source launcher for [Minecraft Java](https://www.minecraft.net/en-us/store/minecraft-java-bedrock-edition-pc) that provides profile isolation, seamless profile sharing with other players, and installing mods with ease.
+An open-source launcher for [Minecraft Java](https://www.minecraft.net/en-us/store/minecraft-java-bedrock-edition-pc) that provides instance isolation, seamless instance sharing with other players, and installing mods with ease.
 
 > [!WARNING]
 > This project is in its early stages and not yet ready for general use. For updates and progress, see [#1 Kraft Launcher progress](https://github.com/KraftLauncher/kraft-launcher/issues/1). **Breaking changes** are likely to be introduced at this point, which means your data will be lost once the launcher is released.
@@ -21,9 +21,9 @@ subsidiaries.**
 
 ## 📖 About
 
-**Kraft Launcher** addresses the same issue as [Kraft Sync](https://github.com/FreshKernel/kraft-sync) for sharing and syncing profiles (AKA instances). Due to limitations of the previous approach, a custom Minecraft launcher was developed to automate steps for a more user-friendly experience.
+**Kraft Launcher** addresses the same issue as [Kraft Sync](https://github.com/FreshKernel/kraft-sync) for sharing and syncing instances. Due to limitations of the previous approach, a custom Minecraft launcher was developed to automate steps for a more user-friendly experience.
 
-Our goal is to support standard features across most launchers while enabling players to share profiles with others. This includes mods, resource packs, data packs, shaders, configs, key binds, and more, all kept in sync with automatic updates.
+Our goal is to support standard features across most launchers while enabling players to share instances with others. This includes mods, resource packs, data packs, shaders, configs, key binds, and more, all kept in sync with automatic updates.
 
 ## 🖼️ Screenshots
 
@@ -50,11 +50,11 @@ Our goal is to support standard features across most launchers while enabling pl
 
 * 🔄 **Account Switching**: Seamlessly switch between multiple Microsoft accounts.
 * 🔐 **Secure Authentication**: Microsoft account credentials are never exposed to the launcher — authentication is completed in the system browser. Account tokens are securely stored using the system’s secure storage (Windows Credential Manager, KDE Wallet, GNOME Keyring, or Apple Keychain).
-* 📁 **Profile Isolation**: Each profile has its own data — separate mods, worlds, configs, and more.
-* 🔗 **Profile Sharing & Syncing**: Effortlessly share complete profiles with others, including mods, resource packs, configs, key binds, Java version, Minecraft version, mod loader versions, and more.
+* 📁 **Instance Isolation**: Each instance has its own data — separate mods, worlds, configs, and more.
+* 🔗 **Instance Sharing & Syncing**: Effortlessly share complete instances with others, including mods, resource packs, configs, key binds, Java version, Minecraft version, mod loader versions, and more.
 * 🔧 **Customizable Syncing**: Choose which mods, resource packs, and configurations to sync, or exclude specific ones for a more personalized experience.
-* 🗂️ **Profile Groups**: Organize your profiles using custom categories or labels.
-* ☕ **Built-in Java Installer**: Automatically installs the right Java version per profile, cross-platform.
+* 🗂️ **Instance Groups**: Organize your instances using custom categories or labels.
+* ☕ **Built-in Java Installer**: Automatically installs the right Java version per instance, cross-platform.
 * 📦 **Modrinth + CurseForge Integration**: Install, update, and manage mods from both platforms.
 * 🛠️ **Crash-Resistant**: View, copy, and share logs easily. Optionally upload to [mclo.gs](https://mclo.gs/) or similar services.
 * 📥 **Import from Other Launchers**: Bring your instances and files from MultiMC or other launchers.
