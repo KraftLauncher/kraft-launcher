@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:kraft_launcher/account/data/minecraft_account/secure_storage/secure_account_data.dart';
-import 'package:kraft_launcher/account/data/minecraft_account/secure_storage/secure_account_storage.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_data.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_storage.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';

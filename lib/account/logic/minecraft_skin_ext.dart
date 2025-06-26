@@ -1,4 +1,4 @@
-import '../data/minecraft_account/minecraft_account.dart';
+import '../data/launcher_minecraft_account/minecraft_account.dart';
 
 extension MinecraftSkinExt on MinecraftAccount {
   static const _steveUserId = 'f498513c-e8c8-3773-be26-ecfc7ed5185d';

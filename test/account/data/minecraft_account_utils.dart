@@ -1,5 +1,5 @@
-import 'package:kraft_launcher/account/data/minecraft_account/minecraft_account.dart';
-import 'package:kraft_launcher/account/data/minecraft_account/minecraft_accounts.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/minecraft_accounts.dart';
 
 MinecraftAccounts createMinecraftAccounts({
   List<MinecraftAccount> list = const [],

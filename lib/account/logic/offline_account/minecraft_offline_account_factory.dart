@@ -1,6 +1,6 @@
 import 'package:uuid/uuid.dart';
 
-import '../../data/minecraft_account/minecraft_account.dart';
+import '../../data/launcher_minecraft_account/minecraft_account.dart';
 
 class MinecraftOfflineAccountFactory {
   Future<MinecraftAccount> createOfflineAccount({

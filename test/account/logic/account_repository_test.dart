@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:clock/clock.dart';
-import 'package:kraft_launcher/account/data/minecraft_account/local_file_storage/file_account_storage.dart';
-import 'package:kraft_launcher/account/data/minecraft_account/local_file_storage/file_accounts.dart';
-import 'package:kraft_launcher/account/data/minecraft_account/mappers/accounts_to_file_accounts_mapper.dart';
-import 'package:kraft_launcher/account/data/minecraft_account/minecraft_account.dart';
-import 'package:kraft_launcher/account/data/minecraft_account/minecraft_accounts.dart';
-import 'package:kraft_launcher/account/data/minecraft_account/secure_storage/secure_account_data.dart';
-import 'package:kraft_launcher/account/data/minecraft_account/secure_storage/secure_account_storage.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_accounts.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/mappers/accounts_to_file_accounts_mapper.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/minecraft_accounts.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_data.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_storage.dart';
 import 'package:kraft_launcher/account/logic/account_repository.dart';
 import 'package:kraft_launcher/account/logic/account_utils.dart';
 import 'package:kraft_launcher/account/logic/platform_secure_storage_support.dart';

@@ -4,7 +4,7 @@ import '../../../../../common/logic/utils.dart';
 import '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
 import '../../../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
-import '../../../../data/minecraft_account/minecraft_account.dart';
+import '../../../../data/launcher_minecraft_account/minecraft_account.dart';
 import '../../../../data/minecraft_account_api/minecraft_account_api.dart';
 import '../../../minecraft_skin_ext.dart';
 import '../../microsoft_refresh_token_expiration.dart';

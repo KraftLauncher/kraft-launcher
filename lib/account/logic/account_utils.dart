@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 
 import '../../common/logic/utils.dart';
-import '../data/minecraft_account/minecraft_account.dart';
+import '../data/launcher_minecraft_account/minecraft_account.dart';
 
 // TODO: Unit tests
 

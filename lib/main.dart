@@ -10,8 +10,8 @@ import 'package:path_provider/path_provider.dart';
 
 import 'account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
-import 'account/data/minecraft_account/local_file_storage/file_account_storage.dart';
-import 'account/data/minecraft_account/secure_storage/secure_account_storage.dart';
+import 'account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
+import 'account/data/launcher_minecraft_account/secure_storage/secure_account_storage.dart';
 import 'account/data/minecraft_account_api/minecraft_account_api.dart';
 import 'account/data/minecraft_account_api/minecraft_account_api_impl.dart';
 import 'account/logic/account_cubit/account_cubit.dart';

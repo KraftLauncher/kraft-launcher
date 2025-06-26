@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 
 import '../../../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
-import '../../../../data/minecraft_account/minecraft_account.dart';
+import '../../../../data/launcher_minecraft_account/minecraft_account.dart';
 
 @immutable
 sealed class MinecraftAccountRefresherException implements Exception {

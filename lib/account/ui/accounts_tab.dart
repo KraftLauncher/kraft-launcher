@@ -9,7 +9,7 @@ import '../../common/ui/widgets/info_text_with_lottie.dart';
 import '../../common/ui/widgets/search_field.dart';
 import '../../common/ui/widgets/split_view.dart';
 import '../../common/ui/widgets/unknown_error.dart';
-import '../data/minecraft_account/minecraft_account.dart';
+import '../data/launcher_minecraft_account/minecraft_account.dart';
 import '../logic/account_cubit/account_cubit.dart';
 import '../logic/microsoft/cubit/microsoft_auth_cubit.dart';
 import '../logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'

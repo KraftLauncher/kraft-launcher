@@ -4,15 +4,15 @@ import 'package:meta/meta.dart';
 
 import '../../common/logic/app_logger.dart';
 import '../../common/logic/utils.dart';
-import '../data/minecraft_account/local_file_storage/file_account.dart';
-import '../data/minecraft_account/local_file_storage/file_account_storage.dart';
-import '../data/minecraft_account/local_file_storage/file_accounts.dart';
-import '../data/minecraft_account/mappers/accounts_to_file_accounts_mapper.dart';
-import '../data/minecraft_account/mappers/file_accounts_to_accounts_mapper.dart';
-import '../data/minecraft_account/minecraft_account.dart';
-import '../data/minecraft_account/minecraft_accounts.dart';
-import '../data/minecraft_account/secure_storage/secure_account_data.dart';
-import '../data/minecraft_account/secure_storage/secure_account_storage.dart';
+import '../data/launcher_minecraft_account/local_file_storage/file_account.dart';
+import '../data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
+import '../data/launcher_minecraft_account/local_file_storage/file_accounts.dart';
+import '../data/launcher_minecraft_account/mappers/accounts_to_file_accounts_mapper.dart';
+import '../data/launcher_minecraft_account/mappers/file_accounts_to_accounts_mapper.dart';
+import '../data/launcher_minecraft_account/minecraft_account.dart';
+import '../data/launcher_minecraft_account/minecraft_accounts.dart';
+import '../data/launcher_minecraft_account/secure_storage/secure_account_data.dart';
+import '../data/launcher_minecraft_account/secure_storage/secure_account_storage.dart';
 import 'account_utils.dart';
 import 'platform_secure_storage_support.dart';
 
