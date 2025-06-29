@@ -7,8 +7,10 @@ analyzer:
     strict-raw-types: true
   exclude:
     # Ignore generated files
-    - '**/*.g.dart'
-    - '**/*.mocks.dart' # Mockito (https://pub.dev/packages/mockito)
+    - '**/*.g.dart' # https://pub.dev/packages/json_serializable
+    - '**/*.freezed.dart' # https://pub.dev/packages/freezed
+    - '**/*.mapper.dart' # https://pub.dev/packages/dart_mappable
+    - '**/*.mocks.dart' # https://pub.dev/packages/mockito
 
 # Based on https://github.com/flutter/packages/blob/main/analysis_options.yaml with modifications
 linter:

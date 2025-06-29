@@ -10,20 +10,26 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:file_executable/file_executable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path/path.dart' as p;
 import 'package:pool/pool.dart';
 
-import '../account/data/launcher_minecraft_account/minecraft_account.dart';
-import '../account/logic/account_cubit/account_cubit.dart';
-import '../common/constants/project_info_constants.dart';
-import '../common/logic/app_data_paths.dart';
-import '../common/logic/dio_client.dart';
-import '../common/logic/json.dart';
-import '../common/ui/utils/build_context_ext.dart';
-import '../common/ui/utils/scaffold_messenger_ext.dart';
+import '../../account/data/launcher_minecraft_account/minecraft_account.dart';
+import '../../account/logic/account_cubit/account_cubit.dart';
+import '../../common/constants/project_info_constants.dart';
+import '../../common/logic/app_data_paths.dart';
+import '../../common/logic/dio_client.dart';
+import '../../common/logic/json.dart' show JsonMap, jsonEncodePretty;
+import '../../common/models/either.dart';
+import '../../common/ui/utils/build_context_ext.dart';
+import '../../common/ui/utils/scaffold_messenger_ext.dart';
+import '../data/minecraft_versions_api/asset_index/minecraft_asset_index.dart';
+import '../data/minecraft_versions_api/version_details/minecraft_version_args.dart';
+import '../data/minecraft_versions_api/version_details/minecraft_version_details.dart';
+import '../data/minecraft_versions_api/version_manifest/minecraft_version_manifest.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -52,7 +58,7 @@ class _ProfileTabState extends State<ProfileTab> {
   @override
   void initState() {
     super.initState();
-    _versionController.text = '1.21.5';
+    _versionController.text = '1.21.6';
   }
 
   @override
@@ -172,82 +178,85 @@ class _ProfileTabState extends State<ProfileTab> {
 
     print('Fetching version manifest...');
 
-    final responseData = response.dataOrThrow;
-    final versions =
-        (responseData['versions']! as List<dynamic>).cast<JsonMap>();
-    final version = versions.firstWhere(
-      (version) => version['id'] == _versionController.text,
+    final versionManifest = MinecraftVersionManifest.fromJson(
+      response.dataOrThrow,
     );
-    final versionUrl = version['url']! as String;
-    final versionId = version['id']! as String;
+    final versions = versionManifest.versions;
+    final version = versions.firstWhere(
+      (version) => version.id == _versionController.text,
+    );
+    final versionUrl = version.url;
+    final versionId = version.id;
     final versionDetailsResponse = await dio.getUri<JsonMap>(
       Uri.parse(versionUrl),
     );
 
     print('Fetching version details...');
 
-    final versionDetailsResponseData = versionDetailsResponse.dataOrThrow;
+    final versionDetails = MinecraftVersionDetails.fromJson(
+      versionDetailsResponse.dataOrThrow,
+    );
     final versionArguments =
-        versionDetailsResponseData['arguments']! as JsonMap;
+        versionDetails.arguments ??
+        (throw UnimplementedError(
+          'Older Minecraft versions are not supported right now, this is a prototype.',
+        ));
 
-    final mainClass = versionDetailsResponseData['mainClass']! as String;
+    final mainClass = versionDetails.mainClass;
 
-    final unhandledGameArguments = versionArguments['game']! as List<dynamic>;
+    final unhandledGameArguments = versionArguments.game;
     final gameArguments = <String>[];
     final classpath = <String>[];
 
-    for (final argumentJson in unhandledGameArguments) {
+    for (final either in unhandledGameArguments) {
       // Each item can be a Map or String
-      if (argumentJson is String) {
-        final argument = argumentJson;
+      switch (either) {
+        case EitherLeft<String, MinecraftConditionalArg>():
+          final argument = either.leftValue;
 
-        if (argument.startsWith(r'${') && argument.endsWith('}')) {
-          final argumentName = argument
-              .replaceFirst(r'${', '')
-              .replaceAll('}', '');
-          final map = <String, String?>{
-            'auth_player_name': account.username,
-            'version_name': versionId,
-            'game_directory': gameDir.absolute.path,
-            'assets_root': File(assetsDirPath).absolute.path,
-            'assets_index_name':
-                versionDetailsResponseData['assets']! as String,
-            'auth_uuid': account.id,
-            'auth_access_token':
-                account.microsoftAccountInfo!.minecraftAccessToken.value,
-            'clientid': 'null',
-            'auth_xuid': '0',
-            'user_type': 'msa',
-            'version_type': versionDetailsResponseData['type']! as String,
-          };
-          final argumentValue =
-              map.entries.firstWhereOrNull((e) => e.key == argumentName)?.value;
-          if (argumentValue == null) {
-            continue;
+          if (argument.startsWith(r'${') && argument.endsWith('}')) {
+            final argumentName = argument
+                .replaceFirst(r'${', '')
+                .replaceAll('}', '');
+            final map = <String, String?>{
+              'auth_player_name': account.username,
+              'version_name': versionId,
+              'game_directory': gameDir.absolute.path,
+              'assets_root': File(assetsDirPath).absolute.path,
+              'assets_index_name': versionDetails.assets,
+              'auth_uuid': account.id,
+              'auth_access_token':
+                  account.microsoftAccountInfo!.minecraftAccessToken.value,
+              // Not a TO-DO: maybe we should store these account fields just in case they are needed?
+              'clientid': 'null',
+              'auth_xuid': '0',
+              'user_type': 'msa',
+              'version_type': versionDetails.type.toJson(),
+            };
+            final argumentValue =
+                map.entries
+                    .firstWhereOrNull((e) => e.key == argumentName)
+                    ?.value;
+            if (argumentValue == null) {
+              continue;
+            }
+
+            gameArguments.add(
+              argument.replaceFirst('\${$argumentName}', argumentValue),
+            );
+          } else {
+            gameArguments.add(argument);
           }
-
-          gameArguments.add(
-            argument.replaceFirst('\${$argumentName}', argumentValue),
-          );
-        } else {
-          gameArguments.add(argument);
-        }
-      } else if (argumentJson is JsonMap) {
-        // Ignores all arguments with rules for now (e..g, QuickPlay, custom resolution)
-        // to keep the launch minimal.
-        continue;
-      } else {
-        throw UnimplementedError(
-          'Unknown game argument type: ${argumentJson.runtimeType}',
-        );
+        case EitherRight<String, MinecraftConditionalArg>():
+          // Ignores all arguments with rules for now (e..g, QuickPlay, custom resolution)
+          // to keep the launch minimal.
+          continue;
       }
     }
-    final unhandledJvmArguments = versionArguments['jvm']! as List<dynamic>;
 
-    final clientJarDownloadUrl =
-        ((versionDetailsResponseData['downloads']! as JsonMap)['client']!
-                as JsonMap)['url']!
-            as String;
+    final unhandledJvmArguments = versionArguments.jvm;
+
+    final clientJarDownloadUrl = versionDetails.downloads.client.url;
 
     final clientJarFile = File(
       p.join(mcDirPath, 'versions', versionId, '$versionId.jar'),
@@ -263,39 +272,33 @@ class _ProfileTabState extends State<ProfileTab> {
       );
     }
     clientJsonFile.writeAsStringSync(
-      jsonEncodePretty(versionDetailsResponseData),
+      jsonEncodePretty(versionDetailsResponse.dataOrThrow),
     );
     classpath.add(clientJarFile.absolute.path);
 
     final libraries =
-        (versionDetailsResponseData['libraries']! as List<dynamic>)
-            .cast<JsonMap>()
-            .where((jsonObject) {
-              final rules =
-                  (jsonObject['rules'] as List<dynamic>?)?.cast<JsonMap>() ??
-                  [];
-              if (rules.isEmpty) {
-                return true;
-              }
-              final firstRule = rules.firstOrNull?['os'] as JsonMap?;
-              final targetOsName = firstRule?['name'] as String?;
-              // final targetOsVersion = firstRule?['version'] as String?;
-              if (targetOsName == osName) {
-                return true;
-              }
-              print(
-                'Ignoring this library since it is not for this os: ${jsonObject['name']! as String}',
-              );
-              return false;
-            })
-            .toList();
+        versionDetails.libraries.where((jsonObject) {
+          final rules = jsonObject.rules ?? [];
+          if (rules.isEmpty) {
+            return true;
+          }
+          final firstRule = rules.firstOrNull?.os;
+          final targetOsName = firstRule?.name;
+          // final targetOsVersion = firstRule?['version'] as String?;
+          if (targetOsName == osName) {
+            return true;
+          }
+          print(
+            'Ignoring this library since it is not for this os: ${jsonObject.name}',
+          );
+          return false;
+        }).toList();
 
     for (final libraryJson in libraries) {
-      final artifact =
-          (libraryJson['downloads']! as JsonMap)['artifact']! as JsonMap;
-      final downloadUrl = artifact['url']! as String;
+      final artifact = libraryJson.downloads.artifact;
+      final downloadUrl = artifact!.url;
 
-      final libraryPath = artifact['path']! as String;
+      final libraryPath = artifact.path;
       final libraryFile = File(p.join(librariesDirPath, libraryPath));
       if (!libraryFile.existsSync()) {
         libraryFile.parent.createSync(recursive: true);
@@ -305,14 +308,10 @@ class _ProfileTabState extends State<ProfileTab> {
       classpath.add(libraryFile.absolute.path);
     }
 
-    final loggingClientJson =
-        (versionDetailsResponseData['logging']! as JsonMap)['client']!
-            as JsonMap;
+    final loggingClientJson = versionDetails.logging.client;
 
-    final logConfigFileDownloadUrl =
-        (loggingClientJson['file']! as JsonMap)['url']! as String;
-    final loggingFileId =
-        (loggingClientJson['file']! as JsonMap)['id']! as String;
+    final logConfigFileDownloadUrl = loggingClientJson.file.url;
+    final loggingFileId = loggingClientJson.file.id;
 
     final logConfigFile = File(
       p.join(assetsDirPath, 'log_configs', loggingFileId),
@@ -329,79 +328,69 @@ class _ProfileTabState extends State<ProfileTab> {
 
     final jvmArguments = <String>[];
 
-    final logConfigArgument = (loggingClientJson['argument']! as String)
-        .replaceFirst(r'${path}', logConfigFile.absolute.path);
+    final logConfigArgument = loggingClientJson.argument.replaceFirst(
+      r'${path}',
+      logConfigFile.absolute.path,
+    );
 
     jvmArguments.add(logConfigArgument);
 
-    for (final argumentJson in unhandledJvmArguments) {
-      if (argumentJson is JsonMap) {
-        final argumentValue = () {
-          final value = argumentJson['value']!;
-          if (value is List) {
-            return value.first as String;
-          } else if (value is String) {
-            return value;
-          } else {
-            throw UnimplementedError(
-              'Unknown JVM value argument type: ${value.runtimeType}',
-            );
-          }
-        }();
-        final os =
-            (argumentJson['rules']! as List<dynamic>)
-                    .cast<JsonMap>()
-                    .first['os']!
-                as JsonMap;
-        final targetOsName = os['name'] as String?;
-        if (targetOsName == osName) {
+    for (final either in unhandledJvmArguments) {
+      switch (either) {
+        case EitherLeft<String, MinecraftConditionalArg>():
+          assert(
+            classpath.isNotEmpty,
+            'The classpath should be builded and not empty',
+          );
+          final environmentSeparator = Platform.isWindows ? ';' : ':';
+          final argumentValue = either.leftValue
+              .replaceAll(r'${natives_directory}', nativesTempDir.absolute.path)
+              .replaceAll(r'${launcher_name}', ProjectInfoConstants.displayName)
+              .replaceAll(r'${launcher_version}', 'stable')
+              .replaceAll(
+                r'${classpath}',
+                classpath.join(environmentSeparator),
+              );
           jvmArguments.add(argumentValue);
-        } else {
-          // The only argument that uses this key is for x86 systems, and
-          // this launcher doesn't support x86, ignoring this argument
-          // since it's not useful.
-          final targetOsArch = os['arch'] as String?;
-          if (targetOsArch != null) {
-            print(
-              'Ignoring game argument `$argumentValue` since it is for os arch `$targetOsArch`',
-            );
+
+        case EitherRight<String, MinecraftConditionalArg>():
+          final arg = either.rightValue;
+          final argValue = arg.value;
+          final argumentValue = switch (argValue) {
+            EitherLeft<String, List<String>>() => argValue.leftValue,
+            EitherRight<String, List<String>>() => argValue.rightValue.first,
+          };
+
+          final os = arg.rules.first.os!;
+          final targetOsName = os.name;
+          if (targetOsName == osName) {
+            jvmArguments.add(argumentValue);
           } else {
-            print(
-              'Ignoring game argument `$argumentValue` as it is not for this os',
-            );
+            // The only argument that uses this key is for x86 systems, and
+            // this launcher doesn't support x86, ignoring this argument
+            // since it's not useful.
+            final targetOsArch = os.arch;
+            if (targetOsArch != null) {
+              print(
+                'Ignoring game argument `$argumentValue` since it is for os arch `$targetOsArch`',
+              );
+            } else {
+              print(
+                'Ignoring game argument `$argumentValue` as it is not for this os',
+              );
+            }
           }
-        }
-      } else if (argumentJson is String) {
-        assert(
-          classpath.isNotEmpty,
-          'The classpath should be builded and not empty',
-        );
-        final environmentSeparator = Platform.isWindows ? ';' : ':';
-        final argumentValue = argumentJson
-            .replaceAll(r'${natives_directory}', nativesTempDir.absolute.path)
-            .replaceAll(r'${launcher_name}', ProjectInfoConstants.displayName)
-            .replaceAll(r'${launcher_version}', 'stable')
-            .replaceAll(r'${classpath}', classpath.join(environmentSeparator));
-        jvmArguments.add(argumentValue);
-      } else {
-        throw UnimplementedError(
-          'Unknown jvm argument type: ${argumentJson.runtimeType}',
-        );
       }
     }
 
-    final assetIndexJson = versionDetailsResponseData['assetIndex']! as JsonMap;
-    final assetIndexJsonDownloadUrl = assetIndexJson['url']! as String;
+    final assetIndexJson = versionDetails.assetIndex;
+    final assetIndexJsonDownloadUrl = assetIndexJson.url;
     final assetIndexResponseData =
         (await dio.getUri<JsonMap>(
           Uri.parse(assetIndexJsonDownloadUrl),
         )).dataOrThrow;
     final assetIndexFile = File(
-      p.join(
-        assetsDirPath,
-        'indexes',
-        '${assetIndexJson['id']! as String}.json',
-      ),
+      p.join(assetsDirPath, 'indexes', '${assetIndexJson.id}.json'),
     );
     assetIndexFile.createSync(recursive: true);
     assetIndexFile.writeAsStringSync(jsonEncodePretty(assetIndexResponseData));
@@ -409,11 +398,10 @@ class _ProfileTabState extends State<ProfileTab> {
     final assetsPool = Pool(10, timeout: const Duration(seconds: 30));
     final assetFutures = <Future<void>>[];
 
-    final assetObjects = assetIndexResponseData['objects']! as JsonMap;
+    final assetObjects =
+        MinecraftAssetIndex.fromJson(assetIndexResponseData).objects;
     for (final assetObject in assetObjects.entries) {
-      final assetObjectValue = assetObject.value! as JsonMap;
-
-      final assetHash = assetObjectValue['hash']! as String;
+      final assetHash = assetObject.value.hash;
       final firstTwo = assetHash.substring(0, 2);
       final downloadUrl =
           'https://resources.download.minecraft.net/$firstTwo/$assetHash';
@@ -436,9 +424,7 @@ class _ProfileTabState extends State<ProfileTab> {
     await Future.wait(assetFutures);
     await assetsPool.close();
 
-    final requiredJavaVersionComponent =
-        (versionDetailsResponseData['javaVersion']! as JsonMap)['component']!
-            as String;
+    final requiredJavaVersionComponent = versionDetails.javaVersion.component;
 
     final javaRuntimesResponseData =
         (await dio.getUri<JsonMap>(Uri.parse(javaRuntimesUrl))).dataOrThrow;
@@ -469,8 +455,11 @@ class _ProfileTabState extends State<ProfileTab> {
     // This will throw Bad state when there is no supported Java version on this machine,
     // for example, jre-legacy is required for Minecraft 1.16.5 but unsupported on macOS arm64.
     final runtimeDetails =
-        (runtimes[requiredJavaVersionComponent]! as List<dynamic>).first
-            as JsonMap;
+        (runtimes[requiredJavaVersionComponent]! as List<dynamic>).firstOrNull
+            as JsonMap? ??
+        (throw Exception(
+          'Unsupported java version component: $requiredJavaVersionComponent on this OS ($javaSystemRuntimeKey). Available components: $runtimes',
+        ));
     final javaRuntimeManifestUrl =
         (runtimeDetails['manifest']! as JsonMap)['url']! as String;
 
@@ -512,6 +501,8 @@ class _ProfileTabState extends State<ProfileTab> {
           ((runtimeValue['downloads']! as JsonMap)['raw']! as JsonMap)['url']!
               as String;
 
+      final fileExecutable = FileExecutable();
+
       final future = javaRuntimePool.withResource(() async {
         print('Downloading runtime file `${javaRuntimeDetails.key}`...');
         await dio.downloadUri(Uri.parse(downloadUrl), runtimeFile.path);
@@ -519,15 +510,24 @@ class _ProfileTabState extends State<ProfileTab> {
           final executable = runtimeValue['executable']! as bool;
           if (executable) {
             print('Making file executable: ${['+x', runtimeFile.path]}');
-            final result = await Process.run('chmod', [
-              '+x',
-              runtimeFile.absolute.path,
-            ]);
-            if (result.exitCode != 0) {
+
+            if (!fileExecutable.makeExecutable(runtimeFile.absolute.path)) {
               throw Exception(
-                'Failed to make file executable: ${result.stderr}',
+                'Failed to make file executable: ${runtimeFile.absolute.path}',
               );
             }
+
+            // Alternative solution that's less efficient:
+            // // Improve: We could make this a single system call instead of many for each file.
+            // final result = await Process.run('chmod', [
+            //   '+x',
+            //   runtimeFile.absolute.path,
+            // ]);
+            // if (result.exitCode != 0) {
+            //   throw Exception(
+            //     'Failed to make file executable: ${result.stderr}',
+            //   );
+            // }
           }
         }
       });

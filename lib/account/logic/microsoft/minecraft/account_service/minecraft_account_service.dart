@@ -1,9 +1,9 @@
 import 'package:meta/meta.dart';
 
+import '../../../../data/launcher_minecraft_account/minecraft_account.dart';
 import '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
 import '../../../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
-import '../../../../data/launcher_minecraft_account/minecraft_account.dart';
 import '../../../../data/minecraft_account_api/minecraft_account_api_exceptions.dart'
     as minecraft_account_api_exceptions;
 import '../../../account_repository.dart';

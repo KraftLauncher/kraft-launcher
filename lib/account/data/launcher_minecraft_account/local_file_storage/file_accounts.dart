@@ -13,7 +13,7 @@ class FileAccounts extends Equatable {
     accounts:
         (json['accounts']! as List<dynamic>)
             .cast<JsonMap>()
-            .map((jsonObject) => FileAccount.fromJson(jsonObject))
+            .map((accountMap) => FileAccount.fromJson(accountMap))
             .toList(),
   );
 

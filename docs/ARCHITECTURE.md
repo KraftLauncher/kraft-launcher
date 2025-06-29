@@ -1,6 +1,8 @@
 # Architecture
 
-This project splits code into features (e.g., `account`), where [each feature contains 3 layers](https://docs.flutter.dev/app-architecture/concepts#layered-architecture):
+![Layered architecture](https://docs.flutter.dev/assets/images/docs/app-architecture/common-architecture-concepts/horizontal-layers-with-icons.png)
+
+This project follows layer architecture and splits code into features (e.g., `account`), where [each feature contains 3 layers](https://docs.flutter.dev/app-architecture/concepts#layered-architecture):
 
 ## `data`
 
@@ -45,13 +47,11 @@ Accounts loadAccounts() {
   }
 
   if (!file.existsSync()) {
-    // BAD: Read the explanation for details.
     return saveEmpty();
   }
 
   final fileContent = file.readAsStringSync().trim();
   if (fileContent.isEmpty) {
-    // BAD: Read the explanation for details.
     return saveEmpty();
   }
 
@@ -175,5 +175,6 @@ This architecture is different from Uncle Bob's Clean Architecture. Clean Archit
 
 See also:
 
-* [Bloc Architecture](https://bloclibrary.dev/architecture/)
-* [Flutter App Architecture](https://docs.flutter.dev/app-architecture)
+* [Bloc Architecture Guide](https://bloclibrary.dev/architecture/)
+* [Flutter App Architecture Guide](https://docs.flutter.dev/app-architecture)
+* [Android App Architecture Guide](https://developer.android.com/topic/architecture)

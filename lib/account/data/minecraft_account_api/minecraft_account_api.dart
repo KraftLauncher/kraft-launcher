@@ -48,12 +48,12 @@ class MinecraftProfileResponse {
         skins:
             (json['skins']! as List<dynamic>)
                 .cast<JsonMap>()
-                .map((jsonObject) => MinecraftProfileSkin.fromJson(jsonObject))
+                .map((skinMap) => MinecraftProfileSkin.fromJson(skinMap))
                 .toList(),
         capes:
             (json['capes']! as List<dynamic>)
                 .cast<JsonMap>()
-                .map((jsonObject) => MinecraftProfileCape.fromJson(jsonObject))
+                .map((capeMap) => MinecraftProfileCape.fromJson(capeMap))
                 .toList(),
       );
 

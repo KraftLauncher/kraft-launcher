@@ -7,5 +7,15 @@
         "Mojang",
         "pubspec",
         "xsts"
-    ]
+    ],
+    "files.exclude": {
+        // Generated files of https://pub.dev/packages/json_serializable
+        "**/*.g.dart": true,
+        // Generated files of https://pub.dev/packages/freezed
+        "**/*.freezed.dart": true,
+        // Generated files of https://pub.dev/packages/dart_mappable
+        "**/*.mapper.dart": true,
+        // Generated files of https://pub.dev/packages/mockito
+        "**/*.mocks.dart": true,
+    }
 }

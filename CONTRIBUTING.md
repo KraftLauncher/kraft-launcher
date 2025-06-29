@@ -76,3 +76,6 @@ To run tests:
 - Run `flutter gen-l10n` when updating localization `.arb` files in [l10n](./l10n/) directory. Also update `AppLanguage` enum when adding new localizations, a unit test will fails if not in sync.
 - Run `dart run build_runner build --delete-conflicting-outputs` or [`fluttergen`](https://pub.dev/packages/flutter_gen#usage) when adding and deleting files inside the `assets` directory.
 - Run `dart ./scripts/generate_pubspec_dart_code.dart` when updating `pubspec.yaml`.
+
+> [!NOTE]
+> To reduce visual clutter in the editor, generated files like `*.g.dart` and `*.freezed.dart` are hidden from the VS Code Explorer via project-specific settings in `.vscode/settings.json`. These files are **not removed**—they're still part of the codebase and used during compilation. You can temporarily unhide them by modifying or disabling the `files.exclude` setting in VS Code if needed.

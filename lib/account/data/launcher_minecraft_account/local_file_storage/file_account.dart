@@ -36,12 +36,12 @@ class FileAccount extends Equatable {
     skins:
         (json['skins']! as List<dynamic>)
             .cast<JsonMap>()
-            .map((jsonObject) => _MinecraftSkinJson.fromJson(jsonObject))
+            .map((skinMap) => _MinecraftSkinJson.fromJson(skinMap))
             .toList(),
     capes:
         (json['capes']! as List<dynamic>)
             .cast<JsonMap>()
-            .map((jsonObject) => _MinecraftCapeJson.fromJson(jsonObject))
+            .map((capeMap) => _MinecraftCapeJson.fromJson(capeMap))
             .toList(),
     ownsMinecraftJava: json['ownsMinecraftJava'] as bool?,
   );

@@ -42,6 +42,8 @@ dependencies:
   process: ^5.0.3
   flutter_secure_storage: ^10.0.0-beta.4
   dbus: ^0.7.11
+  file_executable:
+    path: packages/file_executable
 
 dev_dependencies:
   flutter_test:
