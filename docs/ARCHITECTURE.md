@@ -6,13 +6,24 @@ This project follows layer architecture and splits code into features (e.g., `ac
 
 ## `data`
 
-Network requests, I/O operations, data sources, data classes, enums, and data types.
+Data sources (e.g., Network requests, File I/O operations, Databases), data classes, enums, and data types.
 
 * **Usually returns raw data from APIs**, but may perform minor transformations or response mappings when needed—for example, in `checkMinecraftJavaOwnership` for simplicity.
-* **Response data classes include only relevant fields**. Unused fields from APIs are not parsed and are silently ignored.
+* **Response data classes may contain only relevant fields**. Sometimes, unused fields from external APIs are not fully parsed and are silently ignored.
 * **Data sources should be minimal, generic, and free of side effects or business logic.**  
 Their responsibility is limited to low-level interactions with storage mechanisms (e.g., database, network, filesystem).  
 For example, `readAccounts` in `FileAccountStorage` should simply return `null` if the file doesn’t exist, without creating it—even if that’s the intended behavior. Such logic should be handled in higher-level components like `AccountRepository`, which coordinates data sources and enforces application-specific rules.
+<!-- TODO: I'm considering to change this to move entities from data to logic layer. However, I'm not considering this for MinecraftVersionManifest and related classes as they are too many (and will be * 2). Need more consideration. Update this bellow with the table if this was ever done. -->
+* **Usually contains both entities and models.**  
+  * A **model** represents data structures specific to a data source, also known as DTOs (Data Transfer Objects). It may include serialization and deserialization logic (e.g., from JSON). Data sources typically return models.  
+  * An **entity** represents the business logic and rules of the application and is not tied to any data source. If an external API changes its structure, only the related model needs to be updated—not the entity. Entities are often used by the [`logic`](#logic) and [`ui`](#ui).
+
+| Layer     | Uses Entities? | Uses Models? | Why? |
+|-----------|----------------|--------------|------|
+| **Data**  | ❌ No           | ✅ Yes        | Models represent raw data from data sources (e.g., API, DB, etc). |
+| **Logic** | ✅ Yes          | ✅ Sometimes  | Work with entities for clean business logic to stay independent from the data sources. May map models from the data sources to entities. |
+| **UI**    | ✅ Yes          | ❌ No         | UI displays domain concepts, not raw API data. The UI is independent of the data sources. |
+
 
 ### Example
 
