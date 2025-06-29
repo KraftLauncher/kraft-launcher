@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kraft_launcher/settings/data/settings.dart';
 import 'package:kraft_launcher/settings/data/settings_storage.dart';
-import 'package:kraft_launcher/settings/logic/cubit/settings_cubit.dart';
+import 'package:kraft_launcher/settings/ui/cubit/settings_cubit.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 

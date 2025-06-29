@@ -2,19 +2,19 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../common/logic/utils.dart';
-import '../../../data/launcher_minecraft_account/minecraft_account.dart';
-import '../../account_cubit/account_cubit.dart';
-import '../../platform_secure_storage_support.dart';
-import '../auth_flows/auth_code/microsoft_auth_code_flow.dart';
-import '../auth_flows/device_code/microsoft_device_code_flow.dart';
-import '../minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
+import '../../../common/logic/utils.dart';
+import '../../data/launcher_minecraft_account/minecraft_account.dart';
+import '../../logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
+import '../../logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
+import '../../logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
     as minecraft_account_refresher_exceptions;
-import '../minecraft/account_service/minecraft_account_service.dart';
-import '../minecraft/account_service/minecraft_account_service_exceptions.dart'
+import '../../logic/microsoft/minecraft/account_service/minecraft_account_service.dart';
+import '../../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
-import '../minecraft/account_service/minecraft_account_service_exceptions.dart';
-import '../minecraft/account_service/minecraft_auth_progress.dart';
+import '../../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart';
+import '../../logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
+import '../../logic/platform_secure_storage_support.dart';
+import '../account_cubit/account_cubit.dart';
 
 part 'microsoft_auth_state.dart';
 

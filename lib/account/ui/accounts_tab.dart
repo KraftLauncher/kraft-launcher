@@ -10,15 +10,15 @@ import '../../common/ui/widgets/search_field.dart';
 import '../../common/ui/widgets/split_view.dart';
 import '../../common/ui/widgets/unknown_error.dart';
 import '../data/launcher_minecraft_account/minecraft_account.dart';
-import '../logic/account_cubit/account_cubit.dart';
-import '../logic/microsoft/cubit/microsoft_auth_cubit.dart';
 import '../logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
     as minecraft_account_refresher_exceptions;
 import '../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
+import 'account_cubit/account_cubit.dart';
 import 'account_details.dart';
 import 'account_list_tile.dart';
 import 'login_with_microsoft_dialog.dart';
+import 'microsoft_auth_cubit/microsoft_auth_cubit.dart';
 import 'upsert_offline_account_dialog.dart';
 import 'utils/minecraft_account_service_exception_messages.dart';
 

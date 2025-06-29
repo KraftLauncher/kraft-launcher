@@ -116,10 +116,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
         );
         return (response.dataOrThrow['items']! as List<dynamic>)
             .cast<JsonMap>()
-            .any(
-              (jsonObject) =>
-                  (jsonObject['name'] as String?) == 'game_minecraft',
-            );
+            .any((itemMap) => (itemMap['name'] as String?) == 'game_minecraft');
       });
 
   @override

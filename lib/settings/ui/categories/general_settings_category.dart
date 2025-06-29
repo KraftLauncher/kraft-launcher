@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../common/ui/utils/build_context_ext.dart';
 import '../../../common/ui/utils/home_screen_tab_ext.dart';
 import '../../data/settings.dart';
-import '../../logic/cubit/settings_cubit.dart';
+import '../cubit/settings_cubit.dart';
 import '../settings_section.dart';
 
 class GeneralSettingsCategory extends StatelessWidget {

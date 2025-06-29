@@ -18,7 +18,7 @@ import 'package:path/path.dart' as p;
 import 'package:pool/pool.dart';
 
 import '../../account/data/launcher_minecraft_account/minecraft_account.dart';
-import '../../account/logic/account_cubit/account_cubit.dart';
+import '../../account/ui/account_cubit/account_cubit.dart';
 import '../../common/constants/project_info_constants.dart';
 import '../../common/logic/app_data_paths.dart';
 import '../../common/logic/dio_client.dart';
@@ -277,8 +277,8 @@ class _ProfileTabState extends State<ProfileTab> {
     classpath.add(clientJarFile.absolute.path);
 
     final libraries =
-        versionDetails.libraries.where((jsonObject) {
-          final rules = jsonObject.rules ?? [];
+        versionDetails.libraries.where((library) {
+          final rules = library.rules ?? [];
           if (rules.isEmpty) {
             return true;
           }
@@ -289,7 +289,7 @@ class _ProfileTabState extends State<ProfileTab> {
             return true;
           }
           print(
-            'Ignoring this library since it is not for this os: ${jsonObject.name}',
+            'Ignoring this library since it is not for this os: ${library.name}',
           );
           return false;
         }).toList();

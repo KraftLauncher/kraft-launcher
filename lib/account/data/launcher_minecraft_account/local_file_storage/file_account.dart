@@ -27,11 +27,11 @@ class FileAccount extends Equatable {
     accountType: _AccountTypeJson.fromJson(json['accountType']! as String),
     username: json['username']! as String,
     microsoftAccountInfo: () {
-      final jsonObject = json['microsoftAccountInfo'] as JsonMap?;
-      if (jsonObject == null) {
+      final microsoftAccountInfoMap = json['microsoftAccountInfo'] as JsonMap?;
+      if (microsoftAccountInfoMap == null) {
         return null;
       }
-      return FileMicrosoftAccountInfo.fromJson(jsonObject);
+      return FileMicrosoftAccountInfo.fromJson(microsoftAccountInfoMap);
     }(),
     skins:
         (json['skins']! as List<dynamic>)

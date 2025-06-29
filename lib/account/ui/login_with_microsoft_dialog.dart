@@ -12,15 +12,15 @@ import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/utils/scaffold_messenger_ext.dart';
 import '../../common/ui/widgets/alert_card.dart';
 import '../../common/ui/widgets/copy_code_block.dart';
-import '../../settings/logic/cubit/settings_cubit.dart';
+import '../../settings/ui/cubit/settings_cubit.dart';
 import '../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
 import '../logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
-import '../logic/microsoft/cubit/microsoft_auth_cubit.dart';
 import '../logic/microsoft/minecraft/account_resolver/minecraft_account_resolver_exceptions.dart';
 import '../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
 import '../logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
+import 'microsoft_auth_cubit/microsoft_auth_cubit.dart';
 import 'minecraft_java_entitlement_absent_dialog.dart';
 import 'utils/auth_progress_messages.dart';
 import 'utils/minecraft_account_service_exception_messages.dart';

@@ -14,11 +14,9 @@ import 'account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
 import 'account/data/minecraft_account_api/minecraft_account_api.dart';
 import 'account/data/minecraft_account_api/minecraft_account_api_impl.dart';
-import 'account/logic/account_cubit/account_cubit.dart';
 import 'account/logic/account_repository.dart';
 import 'account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import 'account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
-import 'account/logic/microsoft/cubit/microsoft_auth_cubit.dart';
 import 'account/logic/microsoft/microsoft_oauth_flow_controller.dart';
 import 'account/logic/microsoft/minecraft/account_refresher/image_cache_service/default_image_cache_service.dart';
 import 'account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher.dart';
@@ -26,8 +24,10 @@ import 'account/logic/microsoft/minecraft/account_resolver/minecraft_account_res
 import 'account/logic/microsoft/minecraft/account_service/minecraft_account_service.dart';
 import 'account/logic/offline_account/minecraft_offline_account_factory.dart';
 import 'account/logic/platform_secure_storage_support.dart';
+import 'account/ui/account_cubit/account_cubit.dart';
 import 'account/ui/account_switcher_icon_button.dart';
 import 'account/ui/accounts_tab.dart';
+import 'account/ui/microsoft_auth_cubit/microsoft_auth_cubit.dart';
 import 'common/constants/project_info_constants.dart';
 import 'common/generated/l10n/app_localizations.dart';
 import 'common/logic/app_data_paths.dart';
@@ -40,7 +40,7 @@ import 'common/ui/widgets/scaffold_with_tabs.dart';
 import 'launcher/ui/profile_tab.dart';
 import 'settings/data/settings.dart';
 import 'settings/data/settings_storage.dart';
-import 'settings/logic/cubit/settings_cubit.dart';
+import 'settings/ui/cubit/settings_cubit.dart';
 import 'settings/ui/settings_tab.dart';
 
 Future<void> main() async {

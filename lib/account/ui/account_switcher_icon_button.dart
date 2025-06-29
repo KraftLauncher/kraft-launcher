@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../common/ui/utils/build_context_ext.dart';
-import '../logic/account_cubit/account_cubit.dart';
+import 'account_cubit/account_cubit.dart';
 import 'skin/skin_icon_image.dart';
 
 class AccountSwitcherIconButton extends StatelessWidget {

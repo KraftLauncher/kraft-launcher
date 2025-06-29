@@ -8,9 +8,9 @@ import '../../../common/logic/utils.dart';
 import '../../../common/ui/utils/exception_with_stacktrace.dart';
 import '../../data/launcher_minecraft_account/minecraft_account.dart';
 import '../../data/launcher_minecraft_account/minecraft_accounts.dart';
-import '../account_repository.dart';
-import '../account_utils.dart';
-import '../offline_account/minecraft_offline_account_factory.dart';
+import '../../logic/account_repository.dart';
+import '../../logic/account_utils.dart';
+import '../../logic/offline_account/minecraft_offline_account_factory.dart';
 
 part 'account_state.dart';
 
