@@ -2,6 +2,10 @@
 
 ![Layered architecture](https://docs.flutter.dev/assets/images/docs/app-architecture/common-architecture-concepts/horizontal-layers-with-icons.png)
 
+> [!TIP]
+> A feature is a group of related code inside a directory, one special exception is the `common` directory which contains common code
+> to be used across different features.
+
 This project follows layer architecture and splits code into features (e.g., `account`), where [each feature contains 3 layers](https://docs.flutter.dev/app-architecture/concepts#layered-architecture):
 
 ## `data`
@@ -184,11 +188,9 @@ Widgets, UI logic (e.g., localization, error messages) and state management (e.g
 
 **Coming soon.**
 
-> [!TIP]
-> A feature is a group of related code inside a directory, one special exception is the `common` directory which contains common code
-> to be used across different features.
+## Clean Architecture?
 
-This architecture is different from [Uncle Bob's Clean Architecture](https://en.wikipedia.org/wiki/Robert_C._Martin). Clean Architecture follows stricter rules, has more abstractions, and is more generic. We also use fewer classes and avoid verbose suffixes like `DataSource` or `UseCase`.
+This architecture is different from [Uncle Bob's Clean Architecture](https://en.wikipedia.org/wiki/Robert_C._Martin). Clean Architecture follows stricter rules, has more abstractions, and is more generic. We also use fewer classes and avoid verbose suffixes like `DataSource` or `UseCase`. We prefer names like `VersionManifestFetcher` rather than `GetVersionManifestUseCase`.
 
 ## Resources
 
