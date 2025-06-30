@@ -4,7 +4,8 @@ import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_flows/microsoft_device_code_flow_api.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
-import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_exceptions.dart' as microsoft_auth_api_exceptions;
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
+    as microsoft_auth_api_exceptions;
 import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/logic/dio_client.dart';

@@ -19,7 +19,8 @@ import 'package:kraft_launcher/account/ui/account_cubit/account_cubit.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 import 'package:kraft_launcher/common/logic/dio_client.dart';
-import 'package:kraft_launcher/common/logic/json.dart' show JsonMap, jsonEncodePretty;
+import 'package:kraft_launcher/common/logic/json.dart'
+    show JsonMap, jsonEncodePretty;
 import 'package:kraft_launcher/common/models/either.dart';
 import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 import 'package:kraft_launcher/common/ui/utils/scaffold_messenger_ext.dart';
