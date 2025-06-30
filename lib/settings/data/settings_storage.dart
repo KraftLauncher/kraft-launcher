@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:kraft_launcher/common/logic/app_data_paths.dart';
+import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/settings/data/settings.dart';
 import 'package:meta/meta.dart';
-
-import '../../common/logic/app_data_paths.dart';
-import '../../common/logic/json.dart';
-import 'settings.dart';
 
 // TODO: Refactor this class to be more like FileAccountStorage, to follow the Architecture, should readSettings, not loadSettings, avoid creating it when doesn't exist, maybe SettingRepository?
 

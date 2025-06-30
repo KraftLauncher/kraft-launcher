@@ -1,13 +1,12 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-
-import '../../../common/logic/dio_client.dart';
-import '../../../common/logic/file_utils.dart';
-import '../../../common/logic/json.dart';
-import 'minecraft_account_api.dart';
-import 'minecraft_account_api_exceptions.dart'
+import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api.dart';
+import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_exceptions.dart'
     as minecraft_account_api_exceptions;
+import 'package:kraft_launcher/common/logic/dio_client.dart';
+import 'package:kraft_launcher/common/logic/file_utils.dart';
+import 'package:kraft_launcher/common/logic/json.dart';
 
 const _minecraftServicesHost = 'api.minecraftservices.com';
 

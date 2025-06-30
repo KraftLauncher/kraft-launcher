@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 import 'package:lottie/lottie.dart';
-
-import '../utils/build_context_ext.dart';
 
 class InfoTextWithLottie extends StatelessWidget {
   const InfoTextWithLottie({

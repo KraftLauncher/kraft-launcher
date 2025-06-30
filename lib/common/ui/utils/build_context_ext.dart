@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../generated/l10n/app_localizations.dart';
+import 'package:kraft_launcher/common/generated/l10n/app_localizations.dart';
 
 extension BuildContextExt on BuildContext {
   AppLocalizations get loc =>

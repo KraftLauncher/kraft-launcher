@@ -1,18 +1,17 @@
-/// @docImport '../../microsoft_oauth_flow_controller.dart';
-/// @docImport '../device_code/microsoft_device_code_flow.dart';
+/// @docImport 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
+/// @docImport 'package:kraft_launcher/account/logic/microsoft/microsoft_oauth_flow_controller.dart';
 library;
 
 import 'dart:async';
 import 'dart:io';
 
-import 'package:meta/meta.dart';
-
-import '../../../../../common/constants/constants.dart';
-import '../../../../../common/constants/project_info_constants.dart';
-import '../../../../../common/logic/app_logger.dart';
-import '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
-import 'microsoft_auth_code_flow_exceptions.dart'
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow_exceptions.dart'
     as microsoft_auth_code_flow_exceptions;
+import 'package:kraft_launcher/common/constants/constants.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/logic/app_logger.dart';
+import 'package:meta/meta.dart';
 
 @visibleForTesting
 typedef HttpServerFactory =

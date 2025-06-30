@@ -1,26 +1,25 @@
-import 'package:meta/meta.dart';
-
-import '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
-import '../../../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
-import '../../../../data/minecraft_account_api/minecraft_account_api_exceptions.dart'
+import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_exceptions.dart'
     as minecraft_account_api_exceptions;
-import '../../../account_repository.dart';
-import '../../../launcher_minecraft_account/minecraft_account.dart';
-import '../../auth_flows/auth_code/microsoft_auth_code_flow.dart';
-import '../../auth_flows/auth_code/microsoft_auth_code_flow_exceptions.dart'
+import 'package:kraft_launcher/account/logic/account_repository.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
+import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow_exceptions.dart'
     as microsoft_auth_code_flow_exceptions;
-import '../../auth_flows/device_code/microsoft_device_code_flow.dart';
-import '../../microsoft_oauth_flow_controller.dart';
-import '../account_refresher/minecraft_account_refresher.dart';
-import '../account_refresher/minecraft_account_refresher_exceptions.dart'
+import 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
+import 'package:kraft_launcher/account/logic/microsoft/microsoft_oauth_flow_controller.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
     as minecraft_account_refresher_exceptions;
-import '../account_resolver/minecraft_account_resolver.dart';
-import '../account_resolver/minecraft_account_resolver_exceptions.dart'
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_resolver/minecraft_account_resolver.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_resolver/minecraft_account_resolver_exceptions.dart'
     as minecraft_account_resolver_exceptions;
-import 'minecraft_account_service_exceptions.dart'
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
-import 'minecraft_auth_progress.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
+import 'package:meta/meta.dart';
 
 /// A service for logging into and managing Minecraft accounts via Microsoft.
 ///

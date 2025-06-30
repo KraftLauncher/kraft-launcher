@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:meta/meta.dart';
-
-import '../../../../common/logic/json.dart';
 
 @immutable
 class MinecraftAssetIndex extends Equatable {

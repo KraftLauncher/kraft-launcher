@@ -1,14 +1,13 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
-
-import '../../../../common/logic/json.dart';
-import '../../../logic/launcher_minecraft_account/minecraft_account.dart'
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart'
     show
         AccountType,
         MinecraftCape,
         MinecraftCosmeticState,
         MinecraftSkin,
         MinecraftSkinVariant;
+import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:meta/meta.dart';
 
 @immutable
 class FileAccount extends Equatable {

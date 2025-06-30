@@ -3,27 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
+    as microsoft_auth_api_exceptions;
+import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_resolver/minecraft_account_resolver_exceptions.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
+    as minecraft_account_service_exceptions;
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
+import 'package:kraft_launcher/account/ui/microsoft_auth_cubit/microsoft_auth_cubit.dart';
+import 'package:kraft_launcher/account/ui/minecraft_java_entitlement_absent_dialog.dart';
+import 'package:kraft_launcher/account/ui/utils/auth_progress_messages.dart';
+import 'package:kraft_launcher/account/ui/utils/minecraft_account_service_exception_messages.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/utils/scaffold_messenger_ext.dart';
+import 'package:kraft_launcher/common/ui/widgets/alert_card.dart';
+import 'package:kraft_launcher/common/ui/widgets/copy_code_block.dart';
+import 'package:kraft_launcher/settings/ui/cubit/settings_cubit.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../common/constants/constants.dart';
-import '../../common/constants/project_info_constants.dart';
-import '../../common/ui/utils/build_context_ext.dart';
-import '../../common/ui/utils/scaffold_messenger_ext.dart';
-import '../../common/ui/widgets/alert_card.dart';
-import '../../common/ui/widgets/copy_code_block.dart';
-import '../../settings/ui/cubit/settings_cubit.dart';
-import '../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
-    as microsoft_auth_api_exceptions;
-import '../logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
-import '../logic/microsoft/minecraft/account_resolver/minecraft_account_resolver_exceptions.dart';
-import '../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
-    as minecraft_account_service_exceptions;
-import '../logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
-import 'microsoft_auth_cubit/microsoft_auth_cubit.dart';
-import 'minecraft_java_entitlement_absent_dialog.dart';
-import 'utils/auth_progress_messages.dart';
-import 'utils/minecraft_account_service_exception_messages.dart';
 
 class LoginWithMicrosoftDialog extends StatefulWidget {
   const LoginWithMicrosoftDialog({super.key, required this.isReAuthentication});

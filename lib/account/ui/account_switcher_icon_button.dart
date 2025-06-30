@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../common/ui/utils/build_context_ext.dart';
-import 'account_cubit/account_cubit.dart';
-import 'skin/skin_icon_image.dart';
+import 'package:kraft_launcher/account/ui/account_cubit/account_cubit.dart';
+import 'package:kraft_launcher/account/ui/skin/skin_icon_image.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 
 class AccountSwitcherIconButton extends StatelessWidget {
   const AccountSwitcherIconButton({super.key});

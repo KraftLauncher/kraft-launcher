@@ -1,15 +1,14 @@
-/// @docImport '../../microsoft_oauth_flow_controller.dart';
-/// @docImport '../auth_code/microsoft_auth_code_flow.dart';
+/// @docImport 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
+/// @docImport 'package:kraft_launcher/account/logic/microsoft/microsoft_oauth_flow_controller.dart';
 library;
 
 import 'package:clock/clock.dart';
+import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_flows/microsoft_device_code_flow_api.dart';
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/async_timer.dart';
+import 'package:kraft_launcher/common/logic/app_logger.dart';
+import 'package:kraft_launcher/common/logic/utils.dart';
 import 'package:meta/meta.dart';
-
-import '../../../../../common/logic/app_logger.dart';
-import '../../../../../common/logic/utils.dart';
-import '../../../../data/microsoft_auth_api/auth_flows/microsoft_device_code_flow_api.dart';
-import '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
-import 'async_timer.dart';
 
 /// Handles Microsoft OAuth device code flow (not specific to Minecraft).
 ///

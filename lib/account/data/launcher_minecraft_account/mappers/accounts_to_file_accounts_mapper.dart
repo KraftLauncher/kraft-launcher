@@ -1,7 +1,7 @@
-import '../../../logic/launcher_minecraft_account/minecraft_account.dart';
-import '../../../logic/launcher_minecraft_account/minecraft_accounts.dart';
-import '../local_file_storage/file_account.dart';
-import '../local_file_storage/file_accounts.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_accounts.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_accounts.dart';
 
 extension AccountsMapper on MinecraftAccounts {
   FileAccounts toFileAccounts({

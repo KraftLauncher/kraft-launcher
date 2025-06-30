@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
+import 'package:kraft_launcher/common/generated/assets.gen.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/utils/exception_with_stacktrace.dart';
+import 'package:kraft_launcher/common/ui/widgets/copy_code_block.dart';
+import 'package:kraft_launcher/common/ui/widgets/info_text_with_lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../constants/constants.dart';
-import '../../generated/assets.gen.dart';
-import '../utils/build_context_ext.dart';
-import '../utils/exception_with_stacktrace.dart';
-import 'copy_code_block.dart';
-import 'info_text_with_lottie.dart';
 
 // TODO: Probably invalid, is this for errors (bugs) or failures (expected)?
 

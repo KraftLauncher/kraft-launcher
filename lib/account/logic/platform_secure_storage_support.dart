@@ -1,7 +1,7 @@
 import 'package:dbus/dbus.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../common/logic/platform_check.dart';
+import 'package:kraft_launcher/common/logic/platform_check.dart';
 
 class PlatformSecureStorageSupport {
   PlatformSecureStorageSupport({

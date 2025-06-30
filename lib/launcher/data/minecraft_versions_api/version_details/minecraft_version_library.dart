@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/minecraft_rule.dart';
 import 'package:meta/meta.dart';
-
-import '../../../../common/logic/json.dart';
-import '../minecraft_rule.dart';
 
 @immutable
 class MinecraftVersionLibrary extends Equatable {

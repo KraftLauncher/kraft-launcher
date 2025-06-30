@@ -60,12 +60,11 @@ minecraft_exceptions.UserNotFoundException();
 
 Including the sealed class name in subclasses can become very verbose, making the code harder to maintain, read, and refactor.
 
-## Prefer `@docImport` over `import` when referencing APIs in Dart doc comment
+## Prefer [`@docImport`](https://dart.dev/tools/doc-comments/references#doc-imports) over `import` when referencing APIs in Dart doc comment
 
 #### ✅ Preferred
 
 ```dart
-/// @docImport '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
 /// @docImport 'minecraft_account_refresher.dart';
 library;
 ```
@@ -73,7 +72,6 @@ library;
 #### 🚫 Avoid
 
 ```dart
-import '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'minecraft_account_refresher.dart';
 ```
 
@@ -82,6 +80,6 @@ import 'minecraft_account_refresher.dart';
 Prefer `import` over `@docImport` when using prefixes since `@docImport` doesn't support `as`:
 
 ```dart
-import '../../../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
+import 'microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
 ```

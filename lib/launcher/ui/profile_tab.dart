@@ -14,22 +14,21 @@ import 'package:file_executable/file_executable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/ui/account_cubit/account_cubit.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/logic/app_data_paths.dart';
+import 'package:kraft_launcher/common/logic/dio_client.dart';
+import 'package:kraft_launcher/common/logic/json.dart' show JsonMap, jsonEncodePretty;
+import 'package:kraft_launcher/common/models/either.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/utils/scaffold_messenger_ext.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/asset_index/minecraft_asset_index.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_details/minecraft_version_args.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_details/minecraft_version_details.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_manifest/minecraft_version_manifest.dart';
 import 'package:path/path.dart' as p;
 import 'package:pool/pool.dart';
-
-import '../../account/logic/launcher_minecraft_account/minecraft_account.dart';
-import '../../account/ui/account_cubit/account_cubit.dart';
-import '../../common/constants/project_info_constants.dart';
-import '../../common/logic/app_data_paths.dart';
-import '../../common/logic/dio_client.dart';
-import '../../common/logic/json.dart' show JsonMap, jsonEncodePretty;
-import '../../common/models/either.dart';
-import '../../common/ui/utils/build_context_ext.dart';
-import '../../common/ui/utils/scaffold_messenger_ext.dart';
-import '../data/minecraft_versions_api/asset_index/minecraft_asset_index.dart';
-import '../data/minecraft_versions_api/version_details/minecraft_version_args.dart';
-import '../data/minecraft_versions_api/version_details/minecraft_version_details.dart';
-import '../data/minecraft_versions_api/version_manifest/minecraft_version_manifest.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});

@@ -1,5 +1,5 @@
-import '../generated/pubspec.g.dart';
-import 'project_info_constants.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/generated/pubspec.g.dart';
 
 abstract final class Constants {
   // TODO: Once a bug template is created, make this link more specific

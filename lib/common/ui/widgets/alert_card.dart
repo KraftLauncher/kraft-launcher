@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 
 enum AlertType { danger, note }
 

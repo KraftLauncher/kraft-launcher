@@ -1,5 +1,5 @@
-import '../../../../common/constants/constants.dart';
-import '../microsoft_auth_api.dart';
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
 
 abstract class MicrosoftAuthCodeFlowApi {
   /// Returns the login URL that the user needs to open to start logging in.

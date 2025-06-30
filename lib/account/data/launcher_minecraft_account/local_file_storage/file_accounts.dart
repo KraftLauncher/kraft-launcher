@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account.dart';
+import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:meta/meta.dart';
-
-import '../../../../common/logic/json.dart';
-import 'file_account.dart';
 
 @immutable
 class FileAccounts extends Equatable {

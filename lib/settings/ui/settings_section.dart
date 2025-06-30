@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../common/ui/utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 
 class SettingsSection extends StatelessWidget {
   const SettingsSection({required this.title, required this.tiles, super.key});

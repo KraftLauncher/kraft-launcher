@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
-
-import '../../common/logic/utils.dart';
-import 'launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/common/logic/utils.dart';
 
 // TODO: Unit tests
 

@@ -1,8 +1,7 @@
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
+import 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
 import 'package:meta/meta.dart';
-
-import '../../data/microsoft_auth_api/microsoft_auth_api.dart';
-import 'auth_flows/auth_code/microsoft_auth_code_flow.dart';
-import 'auth_flows/device_code/microsoft_device_code_flow.dart';
 
 /// Manages Microsoft OAuth authentication supporting both
 /// authorization code and device code flows.

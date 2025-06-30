@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
+import 'package:kraft_launcher/account/ui/account_cubit/account_cubit.dart';
+import 'package:kraft_launcher/account/ui/microsoft_auth_cubit/microsoft_auth_cubit.dart';
+import 'package:kraft_launcher/account/ui/skin/full_skin_image.dart';
+import 'package:kraft_launcher/account/ui/upsert_offline_account_dialog.dart';
+import 'package:kraft_launcher/account/ui/utils/auth_progress_messages.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/utils/scaffold_messenger_ext.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../common/constants/constants.dart';
-import '../../common/constants/project_info_constants.dart';
-import '../../common/ui/utils/build_context_ext.dart';
-import '../../common/ui/utils/scaffold_messenger_ext.dart';
-import '../logic/launcher_minecraft_account/minecraft_account.dart';
-import '../logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
-import 'account_cubit/account_cubit.dart';
-import 'microsoft_auth_cubit/microsoft_auth_cubit.dart';
-import 'skin/full_skin_image.dart';
-import 'upsert_offline_account_dialog.dart';
-import 'utils/auth_progress_messages.dart';
 
 class AccountDetails extends StatelessWidget {
   const AccountDetails({

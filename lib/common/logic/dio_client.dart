@@ -2,11 +2,10 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/generated/pubspec.g.dart';
 import 'package:talker_dio_logger/talker_dio_logger_interceptor.dart';
 import 'package:talker_dio_logger/talker_dio_logger_settings.dart';
-
-import '../constants/project_info_constants.dart';
-import '../generated/pubspec.g.dart';
 
 abstract final class DioClient {
   static Dio _instance = _createDio();

@@ -60,7 +60,8 @@ linter:
     - prefer_foreach
     - prefer_final_in_for_each
     - prefer_final_locals
-    - prefer_relative_imports
+    - avoid_relative_lib_imports
+    - always_use_package_imports
     - prefer_single_quotes
     # - prefer_expression_function_bodies
     - prefer_const_literals_to_create_immutables

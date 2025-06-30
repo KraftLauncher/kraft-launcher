@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
     show BaseCacheManager;
 
-import 'image_cache_service.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/image_cache_service/image_cache_service.dart';
 
 class DefaultImageCacheService implements ImageCacheService {
   DefaultImageCacheService({this.cacheManager});

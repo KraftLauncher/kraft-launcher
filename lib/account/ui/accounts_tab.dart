@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../common/generated/assets.gen.dart';
-import '../../common/ui/utils/build_context_ext.dart';
-import '../../common/ui/utils/scaffold_messenger_ext.dart';
-import '../../common/ui/widgets/info_text_with_lottie.dart';
-import '../../common/ui/widgets/search_field.dart';
-import '../../common/ui/widgets/split_view.dart';
-import '../../common/ui/widgets/unknown_error.dart';
-import '../logic/launcher_minecraft_account/minecraft_account.dart';
-import '../logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
     as minecraft_account_refresher_exceptions;
-import '../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
-import 'account_cubit/account_cubit.dart';
-import 'account_details.dart';
-import 'account_list_tile.dart';
-import 'login_with_microsoft_dialog.dart';
-import 'microsoft_auth_cubit/microsoft_auth_cubit.dart';
-import 'upsert_offline_account_dialog.dart';
-import 'utils/minecraft_account_service_exception_messages.dart';
+import 'package:kraft_launcher/account/ui/account_cubit/account_cubit.dart';
+import 'package:kraft_launcher/account/ui/account_details.dart';
+import 'package:kraft_launcher/account/ui/account_list_tile.dart';
+import 'package:kraft_launcher/account/ui/login_with_microsoft_dialog.dart';
+import 'package:kraft_launcher/account/ui/microsoft_auth_cubit/microsoft_auth_cubit.dart';
+import 'package:kraft_launcher/account/ui/upsert_offline_account_dialog.dart';
+import 'package:kraft_launcher/account/ui/utils/minecraft_account_service_exception_messages.dart';
+import 'package:kraft_launcher/common/generated/assets.gen.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/utils/scaffold_messenger_ext.dart';
+import 'package:kraft_launcher/common/ui/widgets/info_text_with_lottie.dart';
+import 'package:kraft_launcher/common/ui/widgets/search_field.dart';
+import 'package:kraft_launcher/common/ui/widgets/split_view.dart';
+import 'package:kraft_launcher/common/ui/widgets/unknown_error.dart';
 
 class AccountsTab extends StatelessWidget {
   const AccountsTab({super.key});

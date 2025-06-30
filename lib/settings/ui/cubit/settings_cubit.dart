@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../data/settings.dart';
-import '../../data/settings_storage.dart';
+import 'package:kraft_launcher/settings/data/settings.dart';
+import 'package:kraft_launcher/settings/data/settings_storage.dart';
 
 part 'settings_state.dart';
 

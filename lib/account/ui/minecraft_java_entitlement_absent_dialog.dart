@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../common/constants/constants.dart';
-import '../../common/ui/utils/build_context_ext.dart';
 
 class MinecraftJavaEntitlementAbsentDialog extends StatelessWidget {
   const MinecraftJavaEntitlementAbsentDialog({super.key});

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../common/ui/utils/build_context_ext.dart';
-import '../../common/ui/widgets/split_view.dart';
-import 'categories/about_settings_category.dart';
-import 'categories/general_settings_category.dart';
-import 'cubit/settings_cubit.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/widgets/split_view.dart';
+import 'package:kraft_launcher/settings/ui/categories/about_settings_category.dart';
+import 'package:kraft_launcher/settings/ui/categories/general_settings_category.dart';
+import 'package:kraft_launcher/settings/ui/cubit/settings_cubit.dart';
 
 class SettingsTab extends StatelessWidget {
   const SettingsTab({super.key});

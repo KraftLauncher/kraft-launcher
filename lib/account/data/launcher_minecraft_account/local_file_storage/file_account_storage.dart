@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import '../../../../common/logic/app_data_paths.dart';
-import '../../../../common/logic/json.dart';
-import 'file_accounts.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_accounts.dart';
+import 'package:kraft_launcher/common/logic/app_data_paths.dart';
+import 'package:kraft_launcher/common/logic/json.dart';
 
 class FileAccountStorage {
   FileAccountStorage({required this.file});

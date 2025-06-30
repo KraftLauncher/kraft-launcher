@@ -1,10 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import '../../../../common/constants/project_info_constants.dart';
-import '../../../../common/logic/json.dart';
-import 'secure_account_data.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_data.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/logic/json.dart';
 
 class SecureAccountStorage {
   SecureAccountStorage({required FlutterSecureStorage flutterSecureStorage})

@@ -1,17 +1,17 @@
-import '../../../common/generated/l10n/app_localizations.dart';
-import '../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
-import '../../data/minecraft_account_api/minecraft_account_api_exceptions.dart'
+import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_exceptions.dart'
     as minecraft_account_api_exceptions;
-import '../../logic/launcher_minecraft_account/minecraft_account.dart';
-import '../../logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow_exceptions.dart'
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow_exceptions.dart'
     as microsoft_auth_code_flow_exceptions;
-import '../../logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
     as minecraft_account_refresher_exceptions;
-import '../../logic/microsoft/minecraft/account_resolver/minecraft_account_resolver_exceptions.dart'
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_resolver/minecraft_account_resolver_exceptions.dart'
     as minecraft_account_resolver_exceptions;
-import '../../logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_service/minecraft_account_service_exceptions.dart'
     as minecraft_account_service_exceptions;
+import 'package:kraft_launcher/common/generated/l10n/app_localizations.dart';
 
 extension AccountManagerExceptionMessages
     on minecraft_account_service_exceptions.MinecraftAccountServiceException {

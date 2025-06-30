@@ -1,5 +1,5 @@
-import '../../../common/generated/l10n/app_localizations.dart';
-import '../../logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
+import 'package:kraft_launcher/common/generated/l10n/app_localizations.dart';
 
 extension AuthProgressMessagesExt on MinecraftAuthProgress? {
   String getMessage(AppLocalizations loc) {

@@ -1,12 +1,11 @@
-/// @docImport '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
-/// @docImport 'minecraft_account_refresher.dart';
+/// @docImport 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+/// @docImport 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher.dart';
 library;
 
-import 'package:meta/meta.dart';
-
-import '../../../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
-import '../../../launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:meta/meta.dart';
 
 @immutable
 sealed class MinecraftAccountRefresherException implements Exception {

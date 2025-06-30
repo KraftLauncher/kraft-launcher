@@ -1,16 +1,38 @@
-/// @docImport '../microsoft_auth_api/microsoft_auth_api.dart';
+/// @docImport 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
 library;
 
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:meta/meta.dart';
 
-import '../../../common/logic/json.dart';
+/// See also:
+///  * https://minecraft.wiki/w/Mojang_API
+///  * [MicrosoftAuthApi]
+abstract class MinecraftAccountApi {
+  Future<MinecraftLoginResponse> loginToMinecraftWithXbox({
+    required String xstsToken,
+    required String xstsUserHash,
+  });
+
+  /// [minecraftAccessToken] is the same as [MinecraftLoginResponse.accessToken]
+  Future<MinecraftProfileResponse> fetchMinecraftProfile(
+    String minecraftAccessToken,
+  );
+
+  Future<bool> checkMinecraftJavaOwnership(String minecraftAccessToken);
+
+  Future<MinecraftProfileResponse> uploadSkin(
+    File skinFile, {
+    required MinecraftApiSkinVariant skinVariant,
+    required String minecraftAccessToken,
+  });
+}
 
 // TODO: Extract these models from this file, ensure they are close to the data source
-// (raw data or source data rather than an app model) and map them in one place
-// to follow Architecture. Make similar changes to all APIs, including MinecraftAccountApi and MicrosoftAuthApi
+//  (raw data or source data rather than an app model) and map them in one place
+//  to follow Architecture. Make similar changes to all APIs, including MinecraftAccountApi and MicrosoftAuthApi
 
 @immutable
 class MinecraftLoginResponse {
@@ -153,27 +175,4 @@ enum MinecraftApiCosmeticState {
         'Unknown Minecraft cosmetic state from the API: $json',
       ),
   };
-}
-
-/// See also:
-///  * https://minecraft.wiki/w/Mojang_API
-///  * [MicrosoftAuthApi]
-abstract class MinecraftAccountApi {
-  Future<MinecraftLoginResponse> loginToMinecraftWithXbox({
-    required String xstsToken,
-    required String xstsUserHash,
-  });
-
-  /// [minecraftAccessToken] is the same as [MinecraftLoginResponse.accessToken]
-  Future<MinecraftProfileResponse> fetchMinecraftProfile(
-    String minecraftAccessToken,
-  );
-
-  Future<bool> checkMinecraftJavaOwnership(String minecraftAccessToken);
-
-  Future<MinecraftProfileResponse> uploadSkin(
-    File skinFile, {
-    required MinecraftApiSkinVariant skinVariant,
-    required String minecraftAccessToken,
-  });
 }

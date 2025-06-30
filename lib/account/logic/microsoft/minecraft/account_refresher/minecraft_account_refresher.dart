@@ -1,17 +1,16 @@
-import 'package:meta/meta.dart';
-
-import '../../../../../common/logic/utils.dart';
-import '../../../../data/microsoft_auth_api/microsoft_auth_api.dart';
-import '../../../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
-import '../../../../data/minecraft_account_api/minecraft_account_api.dart';
-import '../../../launcher_minecraft_account/minecraft_account.dart';
-import '../../../minecraft_skin_ext.dart';
-import '../../microsoft_refresh_token_expiration.dart';
-import '../account_resolver/minecraft_account_resolver.dart';
-import 'image_cache_service/image_cache_service.dart';
-import 'minecraft_account_refresher_exceptions.dart'
+import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/logic/microsoft/microsoft_refresh_token_expiration.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/image_cache_service/image_cache_service.dart';
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'
     as minecraft_account_refresher_exceptions;
+import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_resolver/minecraft_account_resolver.dart';
+import 'package:kraft_launcher/account/logic/minecraft_skin_ext.dart';
+import 'package:kraft_launcher/common/logic/utils.dart';
+import 'package:meta/meta.dart';
 
 /// Handles the token refresh flow for Microsoft-based Minecraft
 /// accounts authenticated via Microsoft OAuth.

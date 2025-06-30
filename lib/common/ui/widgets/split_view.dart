@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 
 /// A responsive layout with a primary pane (e.g. sidebar) and a secondary pane (e.g. content),
 /// displayed side-by-side on large screens. This is not designed for small screens.

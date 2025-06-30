@@ -1,14 +1,13 @@
 import 'package:equatable/equatable.dart';
+import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/minecraft_version_type.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_details/minecraft_java_version_info.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_details/minecraft_version_args.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_details/minecraft_version_asset_index_info.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_details/minecraft_version_downloads.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_details/minecraft_version_library.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_details/minecraft_version_logging_config.dart';
 import 'package:meta/meta.dart';
-
-import '../../../../common/logic/json.dart';
-import '../minecraft_version_type.dart';
-import 'minecraft_java_version_info.dart';
-import 'minecraft_version_args.dart';
-import 'minecraft_version_asset_index_info.dart';
-import 'minecraft_version_downloads.dart';
-import 'minecraft_version_library.dart';
-import 'minecraft_version_logging_config.dart';
 
 // See: https://minecraft.wiki/w/Client.json
 @immutable

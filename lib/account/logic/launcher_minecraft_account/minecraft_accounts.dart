@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/common/logic/utils.dart';
 import 'package:meta/meta.dart';
-
-import '../../../common/logic/utils.dart';
-import 'minecraft_account.dart';
 
 @immutable
 class MinecraftAccounts extends Equatable {

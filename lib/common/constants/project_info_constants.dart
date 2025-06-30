@@ -1,5 +1,5 @@
-import '../generated/pubspec.g.dart';
-import 'constants.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
+import 'package:kraft_launcher/common/generated/pubspec.g.dart';
 
 /// Constants that contain values specific to this project
 /// and should always be updated when forking, especially [microsoftLoginClientId].

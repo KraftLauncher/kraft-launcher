@@ -1,6 +1,6 @@
 import 'package:clock/clock.dart';
 
-import '../../../common/constants/constants.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
 
 // This file shares a common function between MinecraftAccountResolver and MinecraftAccountRefresher,
 // if it's no longer used in MinecraftAccountRefresher, move it to MinecraftAccountResolver

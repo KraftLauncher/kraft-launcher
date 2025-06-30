@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
+import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/generated/assets.gen.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../../common/constants/constants.dart';
-import '../../../common/constants/project_info_constants.dart';
-import '../../../common/generated/assets.gen.dart';
-import '../../../common/ui/utils/build_context_ext.dart';
 
 class AboutSettingsCategory extends StatelessWidget {
   const AboutSettingsCategory({super.key});

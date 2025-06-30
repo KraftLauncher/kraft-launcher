@@ -1,10 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
-import '../../../common/ui/utils/build_context_ext.dart';
-import '../../../common/ui/widgets/image_error_builder.dart';
-import '../../logic/launcher_minecraft_account/minecraft_account.dart';
-import '../../logic/minecraft_skin_ext.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/logic/minecraft_skin_ext.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/widgets/image_error_builder.dart';
 
 class SkinIconImage extends StatelessWidget {
   const SkinIconImage({

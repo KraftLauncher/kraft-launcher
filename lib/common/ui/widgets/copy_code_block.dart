@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../utils/build_context_ext.dart';
-import 'copy_text_icon_button.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/widgets/copy_text_icon_button.dart';
 
 class CopyCodeBlock extends StatelessWidget {
   const CopyCodeBlock({super.key, required this.code});

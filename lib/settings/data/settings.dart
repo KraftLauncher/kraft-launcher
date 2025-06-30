@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart' show Color, Colors, ThemeMode;
+import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/settings/data/app_language.dart';
 import 'package:meta/meta.dart';
 
-import '../../common/logic/json.dart';
-import 'app_language.dart';
 export 'app_language.dart';
 
 @immutable

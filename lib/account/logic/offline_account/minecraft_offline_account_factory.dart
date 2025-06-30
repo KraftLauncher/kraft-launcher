@@ -1,6 +1,5 @@
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:uuid/uuid.dart';
-
-import '../launcher_minecraft_account/minecraft_account.dart';
 
 class MinecraftOfflineAccountFactory {
   Future<MinecraftAccount> createOfflineAccount({

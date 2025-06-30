@@ -2,11 +2,11 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../common/ui/utils/build_context_ext.dart';
-import '../../../common/ui/utils/home_screen_tab_ext.dart';
-import '../../data/settings.dart';
-import '../cubit/settings_cubit.dart';
-import '../settings_section.dart';
+import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
+import 'package:kraft_launcher/common/ui/utils/home_screen_tab_ext.dart';
+import 'package:kraft_launcher/settings/data/settings.dart';
+import 'package:kraft_launcher/settings/ui/cubit/settings_cubit.dart';
+import 'package:kraft_launcher/settings/ui/settings_section.dart';
 
 class GeneralSettingsCategory extends StatelessWidget {
   const GeneralSettingsCategory({super.key, required this.generalSettings});
