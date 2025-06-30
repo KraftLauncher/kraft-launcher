@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/logic/utils.dart';
-import '../../data/launcher_minecraft_account/minecraft_account.dart';
+import '../../logic/launcher_minecraft_account/minecraft_account.dart';
 import '../../logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import '../../logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
 import '../../logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'

@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../common/logic/json.dart';
-import '../minecraft_account.dart'
+import '../../../logic/launcher_minecraft_account/minecraft_account.dart'
     show
         AccountType,
         MinecraftCape,

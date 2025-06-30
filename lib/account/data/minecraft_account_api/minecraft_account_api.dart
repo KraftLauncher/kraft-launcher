@@ -8,6 +8,10 @@ import 'package:meta/meta.dart';
 
 import '../../../common/logic/json.dart';
 
+// TODO: Extract these models from this file, ensure they are close to the data source
+// (raw data or source data rather than an app model) and map them in one place
+// to follow Architecture. Make similar changes to all APIs, including MinecraftAccountApi and MicrosoftAuthApi
+
 @immutable
 class MinecraftLoginResponse {
   const MinecraftLoginResponse({
@@ -120,6 +124,8 @@ class MinecraftProfileCape extends Equatable {
   List<Object?> get props => [id, state, url, alias];
 }
 
+// TODO: Also rename the other classes if needed, solve the first TODO in this file
+// TODO: Rename to ApiMinecraftSkinVariant to follow convnetions
 enum MinecraftApiSkinVariant {
   classic,
   slim;
@@ -134,6 +140,7 @@ enum MinecraftApiSkinVariant {
   };
 }
 
+// TODO: Rename to ApiMinecraftCosmeticState to follow convnetions
 enum MinecraftApiCosmeticState {
   active,
   inactive;

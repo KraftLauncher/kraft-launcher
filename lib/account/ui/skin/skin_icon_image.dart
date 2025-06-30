@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../common/ui/utils/build_context_ext.dart';
 import '../../../common/ui/widgets/image_error_builder.dart';
-import '../../data/launcher_minecraft_account/minecraft_account.dart';
+import '../../logic/launcher_minecraft_account/minecraft_account.dart';
 import '../../logic/minecraft_skin_ext.dart';
 
 class SkinIconImage extends StatelessWidget {

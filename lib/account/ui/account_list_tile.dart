@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../common/constants/constants.dart';
 import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/widgets/split_view.dart';
-import '../data/launcher_minecraft_account/minecraft_account.dart';
+import '../logic/launcher_minecraft_account/minecraft_account.dart';
 import 'account_cubit/account_cubit.dart';
 import 'skin/skin_icon_image.dart';
 

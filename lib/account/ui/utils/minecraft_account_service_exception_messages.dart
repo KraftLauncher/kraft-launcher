@@ -1,9 +1,9 @@
 import '../../../common/generated/l10n/app_localizations.dart';
-import '../../data/launcher_minecraft_account/minecraft_account.dart';
 import '../../data/microsoft_auth_api/microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
 import '../../data/minecraft_account_api/minecraft_account_api_exceptions.dart'
     as minecraft_account_api_exceptions;
+import '../../logic/launcher_minecraft_account/minecraft_account.dart';
 import '../../logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow_exceptions.dart'
     as microsoft_auth_code_flow_exceptions;
 import '../../logic/microsoft/minecraft/account_refresher/minecraft_account_refresher_exceptions.dart'

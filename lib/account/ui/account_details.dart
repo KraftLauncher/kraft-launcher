@@ -8,7 +8,7 @@ import '../../common/constants/constants.dart';
 import '../../common/constants/project_info_constants.dart';
 import '../../common/ui/utils/build_context_ext.dart';
 import '../../common/ui/utils/scaffold_messenger_ext.dart';
-import '../data/launcher_minecraft_account/minecraft_account.dart';
+import '../logic/launcher_minecraft_account/minecraft_account.dart';
 import '../logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
 import 'account_cubit/account_cubit.dart';
 import 'microsoft_auth_cubit/microsoft_auth_cubit.dart';

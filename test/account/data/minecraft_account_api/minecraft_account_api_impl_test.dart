@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart'
     as microsoft_api
     show XboxLiveAuthTokenResponse;
@@ -282,7 +281,12 @@ void main() {
       'uses expected request URI, passes Authorization header and body',
       () async {
         mockDio.mockPostUriSuccess<JsonMap>(
-          responseData: {'id': '', 'name': '', 'skins': [], 'capes': []},
+          responseData: {
+            'id': TestConstants.anyString,
+            'name': TestConstants.anyString,
+            'skins': TestConstants.anyList,
+            'capes': TestConstants.anyList,
+          },
         );
 
         const skinFileContent = 'Raw Skin Image content';
@@ -331,13 +335,20 @@ void main() {
       final skins = <JsonMap>[
         {
           'id': '432',
-          'state': MinecraftCosmeticState.inactive.name.toUpperCase(),
-          'url': 'https://',
+          'state': MinecraftApiCosmeticState.inactive.name.toUpperCase(),
+          'url': 'https://skin.png',
           'textureKey': '123',
-          'variant': MinecraftSkinVariant.classic.name.toUpperCase(),
+          'variant': MinecraftApiSkinVariant.classic.name.toUpperCase(),
         },
       ];
-      const capes = <MinecraftProfileCape>[];
+      final capes = <JsonMap>[
+        {
+          'id': 'example',
+          'state': MinecraftApiCosmeticState.active.name.toUpperCase(),
+          'url': 'https://cape.png',
+          'alias': 'Migrator',
+        },
+      ];
       mockDio.mockPostUriSuccess<JsonMap>(
         responseData: {'id': id, 'name': name, 'skins': skins, 'capes': capes},
       );
@@ -350,8 +361,14 @@ void main() {
 
       expect(response.id, id);
       expect(response.name, name);
-      expect(response.skins.length, skins.length);
-      expect(response.capes.length, capes.length);
+      expect(
+        response.skins,
+        skins.map((skipMap) => MinecraftProfileSkin.fromJson(skipMap)),
+      );
+      expect(
+        response.capes,
+        capes.map((capeMap) => MinecraftProfileCape.fromJson(capeMap)),
+      );
     });
 
     _handleCommonFailuresTests(

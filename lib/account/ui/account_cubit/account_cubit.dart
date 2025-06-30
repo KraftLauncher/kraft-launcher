@@ -6,10 +6,10 @@ import 'package:meta/meta.dart';
 import '../../../common/logic/external_stream_cubit.dart';
 import '../../../common/logic/utils.dart';
 import '../../../common/ui/utils/exception_with_stacktrace.dart';
-import '../../data/launcher_minecraft_account/minecraft_account.dart';
-import '../../data/launcher_minecraft_account/minecraft_accounts.dart';
 import '../../logic/account_repository.dart';
 import '../../logic/account_utils.dart';
+import '../../logic/launcher_minecraft_account/minecraft_account.dart';
+import '../../logic/launcher_minecraft_account/minecraft_accounts.dart';
 import '../../logic/offline_account/minecraft_offline_account_factory.dart';
 
 part 'account_state.dart';

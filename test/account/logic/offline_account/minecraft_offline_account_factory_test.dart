@@ -1,4 +1,4 @@
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/minecraft_account.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/logic/offline_account/minecraft_offline_account_factory.dart';
 import 'package:test/test.dart';
 

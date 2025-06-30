@@ -1,7 +1,7 @@
 import 'package:clock/clock.dart';
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_resolver/minecraft_account_resolver.dart';
 import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_resolver/minecraft_account_resolver_exceptions.dart'
     as minecraft_account_resolver_exceptions;

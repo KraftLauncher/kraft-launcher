@@ -7,4 +7,7 @@ abstract final class TestConstants {
 
   /// An indicator that this bool value is irrelevant.
   static const anyBool = false;
+
+  /// An indicator that this List value is irrelevant.
+  static const anyList = <dynamic>[];
 }

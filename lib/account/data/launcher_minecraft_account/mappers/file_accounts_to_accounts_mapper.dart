@@ -1,7 +1,7 @@
+import '../../../logic/launcher_minecraft_account/minecraft_account.dart';
+import '../../../logic/launcher_minecraft_account/minecraft_accounts.dart';
 import '../local_file_storage/file_account.dart';
 import '../local_file_storage/file_accounts.dart';
-import '../minecraft_account.dart';
-import '../minecraft_accounts.dart';
 import '../secure_storage/secure_account_data.dart';
 
 extension FileAccountsMapper on FileAccounts {
