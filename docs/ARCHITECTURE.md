@@ -36,7 +36,7 @@ For example, `readAccounts` in `FileAccountStorage` should simply return `null` 
   The only exception is for mappers that convert **source models** to **app models**, which need to import the app model from the [`logic`](#logic) layer.
 
   **Note**: In Clean Architecture, the Data Layer depends on interfaces defined in the Domain Layer, while the Domain Layer remains independent of the Data Layer.
-   However, this is not the case in this project, which follows a layered architecture.
+   However, this is not the case in this project, which follows Layered Architecture and **not Clean Architecture**.
 * **Never depends on the [`ui`](#ui) layer.**
 
 ### Source models VS App models
@@ -132,6 +132,16 @@ Business logic should remain decoupled from the Flutter framework to improve tes
 In rare cases, using Flutter APIs is acceptable—primarily when integrating with platform-dependent plugins (e.g., [`shared_preferences`](https://pub.dev/packages/shared_preferences)). However, this should be avoided for plugins that perform UI-related tasks or navigation (e.g., [`url_launcher`](https://pub.dev/packages/url_launcher)) to keep the business logic layer free from UI dependencies.
 * **Defines only **app models** and types used by this layer and the [`ui`](#ui) layer.**  
   For more info, read [Source models VS App models](#source-models-vs-app-models).
+* **Contains Repositories.**  
+  Repositories depend on one or more data sources and return data that meets the requirements. Data sources return source models, which repositories use and map to app models. The mappers that convert source models to app models are part of the [`data`](#data) layer but are only called within repositories.
+
+  See also:
+
+  * https://bloclibrary.dev/architecture/#repository
+  * https://docs.flutter.dev/app-architecture/concepts#single-source-of-truth
+  * https://docs.flutter.dev/app-architecture/guide#repositories
+
+  **Note**: In Clean Architecture, the Domain Layer defines the repository interface and depends on it, while the Data Layer implements it so the Domain Layer remains independent of the Data Layer. Repository implementations are under the Data Layer. However, this project follows Layered Architecture and **not Clean Architecture**.
 
 This layer is optional and is not always required, see also:
 
@@ -145,7 +155,7 @@ This layer is optional and is not always required, see also:
   It should not heavily depend on the source models to minimize the changes needed when an external API introduces changes to its data structure.
 
   **Note**: In Clean Architecture, the Domain layer defines interfaces that the Data layer needs to implement so the Domain layer remains independent of the data layer.
-   However, this is not the case in this project, which follows a layered architecture.
+   However, this is not the case in this project, which follows Layered Architecture and **not Clean Architecture**.
 * **Never depends on the [`ui`](#ui) layer.**
 
 ### Example
