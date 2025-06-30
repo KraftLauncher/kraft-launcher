@@ -16,6 +16,8 @@ class Settings extends Equatable {
 
   final GeneralSettings general;
 
+  // TODO: Add FileSettings and apply the necessary changes. See TODOs of SettingsStorage.
+
   JsonMap toJson() => {'general': general.toJson()};
 
   Settings copyWith({GeneralSettings? general}) =>

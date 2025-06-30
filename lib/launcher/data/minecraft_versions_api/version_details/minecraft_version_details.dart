@@ -31,42 +31,43 @@ class MinecraftVersionDetails extends Equatable {
     required this.type,
   });
 
-  factory MinecraftVersionDetails.fromJson(JsonMap json) =>
-      MinecraftVersionDetails(
-        legacyArguments: json['minecraftArguments'] as String?,
-        arguments: () {
-          final argumentsMap = json['arguments'] as JsonMap?;
-          if (argumentsMap == null) {
-            return null;
-          }
-          return MinecraftVersionArgs.fromJson(argumentsMap);
-        }(),
-        assetIndex: MinecraftVersionAssetIndexInfo.fromJson(
-          json['assetIndex']! as JsonMap,
-        ),
-        assets: json['assets']! as String,
-        complianceLevel: json['complianceLevel']! as int,
-        downloads: MinecraftVersionDownloads.fromJson(
-          json['downloads']! as JsonMap,
-        ),
-        id: json['id']! as String,
-        javaVersion: MinecraftJavaVersionInfo.fromJson(
-          json['javaVersion']! as JsonMap,
-        ),
-        libraries:
-            (json['libraries']! as List<dynamic>)
-                .cast<JsonMap>()
-                .map(
-                  (libraryMap) => MinecraftVersionLibrary.fromJson(libraryMap),
-                )
-                .toList(),
-        logging: MinecraftLoggingConfig.fromJson(json['logging']! as JsonMap),
-        mainClass: json['mainClass']! as String,
-        minimumLauncherVersion: json['minimumLauncherVersion']! as int,
-        releaseTime: DateTime.parse(json['releaseTime']! as String),
-        time: DateTime.parse(json['time']! as String),
-        type: MinecraftVersionType.fromJson(json['type']! as String),
-      );
+  factory MinecraftVersionDetails.fromJson(
+    JsonMap json,
+  ) => MinecraftVersionDetails(
+    // TODO: If this raw data model was separated from app model, then it should stay close to the source (minecraftArguments rather than legacyArguments)
+    //  just document it and make it clear in the one we care about
+    legacyArguments: json['minecraftArguments'] as String?,
+    arguments: () {
+      final argumentsMap = json['arguments'] as JsonMap?;
+      if (argumentsMap == null) {
+        return null;
+      }
+      return MinecraftVersionArgs.fromJson(argumentsMap);
+    }(),
+    assetIndex: MinecraftVersionAssetIndexInfo.fromJson(
+      json['assetIndex']! as JsonMap,
+    ),
+    assets: json['assets']! as String,
+    complianceLevel: json['complianceLevel']! as int,
+    downloads: MinecraftVersionDownloads.fromJson(
+      json['downloads']! as JsonMap,
+    ),
+    id: json['id']! as String,
+    javaVersion: MinecraftJavaVersionInfo.fromJson(
+      json['javaVersion']! as JsonMap,
+    ),
+    libraries:
+        (json['libraries']! as List<dynamic>)
+            .cast<JsonMap>()
+            .map((libraryMap) => MinecraftVersionLibrary.fromJson(libraryMap))
+            .toList(),
+    logging: MinecraftLoggingConfig.fromJson(json['logging']! as JsonMap),
+    mainClass: json['mainClass']! as String,
+    minimumLauncherVersion: json['minimumLauncherVersion']! as int,
+    releaseTime: DateTime.parse(json['releaseTime']! as String),
+    time: DateTime.parse(json['time']! as String),
+    type: MinecraftVersionType.fromJson(json['type']! as String),
+  );
 
   /// The old Minecraft arguments used in versions before 1.13.
   /// Replaced by [arguments] in newer versions.
