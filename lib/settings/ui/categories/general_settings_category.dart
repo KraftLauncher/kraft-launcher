@@ -46,10 +46,10 @@ class _AppearanceSection extends StatelessWidget {
                   .map(
                     (language) => DropdownMenuEntry(
                       value: language,
-                      label:
-                          language == AppLanguage.system
-                              ? context.loc.system
-                              : language.labelText,
+                      label: switch (language) {
+                        AppLanguage.system => context.loc.system,
+                        _ => language.labelText,
+                      },
                     ),
                   )
                   .toList(),
