@@ -113,9 +113,9 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
             headers: {'Authorization': 'Bearer $minecraftAccessToken'},
           ),
         );
-        return (response.dataOrThrow['items']! as List<dynamic>)
-            .cast<JsonMap>()
-            .any((itemMap) => (itemMap['name'] as String?) == 'game_minecraft');
+        return (response.dataOrThrow['items']! as JsonList).cast<JsonMap>().any(
+          (itemMap) => (itemMap['name'] as String?) == 'game_minecraft',
+        );
       });
 
   @override

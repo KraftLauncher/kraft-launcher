@@ -20,7 +20,7 @@ import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 import 'package:kraft_launcher/common/logic/dio_client.dart';
 import 'package:kraft_launcher/common/logic/json.dart'
-    show JsonMap, jsonEncodePretty;
+    show JsonList, JsonMap, jsonEncodePretty;
 import 'package:kraft_launcher/common/models/either.dart';
 import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 import 'package:kraft_launcher/common/ui/utils/scaffold_messenger_ext.dart';
@@ -455,7 +455,7 @@ class _ProfileTabState extends State<ProfileTab> {
     // This will throw Bad state when there is no supported Java version on this machine,
     // for example, jre-legacy is required for Minecraft 1.16.5 but unsupported on macOS arm64.
     final runtimeDetails =
-        (runtimes[requiredJavaVersionComponent]! as List<dynamic>).firstOrNull
+        (runtimes[requiredJavaVersionComponent]! as JsonList).firstOrNull
             as JsonMap? ??
         (throw Exception(
           'Unsupported java version component: $requiredJavaVersionComponent on this OS ($javaSystemRuntimeKey). Available components: $runtimes',

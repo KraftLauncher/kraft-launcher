@@ -20,7 +20,7 @@ class MinecraftVersionLibrary extends Equatable {
         ),
         name: json['name']! as String,
         rules:
-            (json['rules'] as List<dynamic>?)
+            (json['rules'] as JsonList?)
                 ?.cast<JsonMap>()
                 .map((ruleMap) => MinecraftRule.fromJson(ruleMap))
                 .toList(),
@@ -126,7 +126,7 @@ class MinecraftNativesExtractionRules extends Equatable {
 
   factory MinecraftNativesExtractionRules.fromJson(JsonMap json) =>
       MinecraftNativesExtractionRules(
-        exclude: (json['exclude']! as List<dynamic>).cast<String>(),
+        exclude: (json['exclude']! as JsonList).cast<String>(),
       );
 
   final List<String> exclude;

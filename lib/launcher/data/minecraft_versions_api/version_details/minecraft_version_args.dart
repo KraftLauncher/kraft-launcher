@@ -9,13 +9,11 @@ class MinecraftVersionArgs extends Equatable {
   const MinecraftVersionArgs({required this.game, required this.jvm});
 
   factory MinecraftVersionArgs.fromJson(JsonMap json) => MinecraftVersionArgs(
-    game: _parse(json['game']! as List<dynamic>),
-    jvm: _parse(json['jvm']! as List<dynamic>),
+    game: _parse(json['game']! as JsonList),
+    jvm: _parse(json['jvm']! as JsonList),
   );
 
-  static List<Either<String, MinecraftConditionalArg>> _parse(
-    List<dynamic> value,
-  ) {
+  static List<Either<String, MinecraftConditionalArg>> _parse(JsonList value) {
     return value.cast<Object>().map((Object object) {
       if (object is String) {
         return Either<String, MinecraftConditionalArg>.left(object);
@@ -46,7 +44,7 @@ class MinecraftConditionalArg extends Equatable {
     JsonMap json,
   ) => MinecraftConditionalArg(
     rules:
-        (json['rules']! as List<dynamic>)
+        (json['rules']! as JsonList)
             .cast<JsonMap>()
             .map((ruleMap) => MinecraftRule.fromJson(ruleMap))
             .toList(),

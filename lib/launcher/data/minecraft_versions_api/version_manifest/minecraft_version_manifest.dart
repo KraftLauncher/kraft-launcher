@@ -15,7 +15,7 @@ class MinecraftVersionManifest extends Equatable {
       MinecraftVersionManifest(
         latest: MinecraftLatestVersions.fromJson(json['latest']! as JsonMap),
         versions:
-            (json['versions']! as List<dynamic>)
+            (json['versions']! as JsonList)
                 .cast<JsonMap>()
                 .map(
                   (versionMap) => MinecraftManifestVersion.fromJson(versionMap),

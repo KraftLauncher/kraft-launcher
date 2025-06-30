@@ -63,7 +63,7 @@ class XboxLiveAuthTokenResponse {
         xboxToken: json['Token']! as String,
         userHash: () {
           final displayClaims = json['DisplayClaims']! as JsonMap;
-          final xui = (displayClaims['xui']! as List<dynamic>).cast<JsonMap>();
+          final xui = (displayClaims['xui']! as JsonList).cast<JsonMap>();
           final uhs = xui.first['uhs']! as String;
           return uhs;
         }(),

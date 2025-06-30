@@ -33,12 +33,12 @@ class FileAccount extends Equatable {
       return FileMicrosoftAccountInfo.fromJson(microsoftAccountInfoMap);
     }(),
     skins:
-        (json['skins']! as List<dynamic>)
+        (json['skins']! as JsonList)
             .cast<JsonMap>()
             .map((skinMap) => _MinecraftSkinJson.fromJson(skinMap))
             .toList(),
     capes:
-        (json['capes']! as List<dynamic>)
+        (json['capes']! as JsonList)
             .cast<JsonMap>()
             .map((capeMap) => _MinecraftCapeJson.fromJson(capeMap))
             .toList(),

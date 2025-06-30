@@ -10,7 +10,7 @@ class FileAccounts extends Equatable {
   factory FileAccounts.fromJson(JsonMap json) => FileAccounts(
     defaultAccountId: json['defaultAccountId'] as String?,
     accounts:
-        (json['accounts']! as List<dynamic>)
+        (json['accounts']! as JsonList)
             .cast<JsonMap>()
             .map((accountMap) => FileAccount.fromJson(accountMap))
             .toList(),

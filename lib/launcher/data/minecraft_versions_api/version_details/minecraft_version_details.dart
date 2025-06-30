@@ -56,7 +56,7 @@ class MinecraftVersionDetails extends Equatable {
       json['javaVersion']! as JsonMap,
     ),
     libraries:
-        (json['libraries']! as List<dynamic>)
+        (json['libraries']! as JsonList)
             .cast<JsonMap>()
             .map((libraryMap) => MinecraftVersionLibrary.fromJson(libraryMap))
             .toList(),
