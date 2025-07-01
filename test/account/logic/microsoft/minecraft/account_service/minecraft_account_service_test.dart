@@ -1,4 +1,4 @@
-import 'package:kraft_launcher/account/logic/account_repository.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/account_repository.dart';
 import 'package:kraft_launcher/account/logic/microsoft/microsoft_oauth_flow_controller.dart';
 import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher.dart';
 import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_resolver/minecraft_account_resolver.dart';

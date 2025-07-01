@@ -12,7 +12,7 @@ import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_ap
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api.dart';
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_impl.dart';
-import 'package:kraft_launcher/account/logic/account_repository.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/account_repository.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
 import 'package:kraft_launcher/account/logic/microsoft/microsoft_oauth_flow_controller.dart';

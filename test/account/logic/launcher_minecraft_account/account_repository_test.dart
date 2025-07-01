@@ -6,8 +6,8 @@ import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_fil
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/mappers/accounts_to_file_accounts_mapper.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_data.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_storage.dart';
-import 'package:kraft_launcher/account/logic/account_repository.dart';
 import 'package:kraft_launcher/account/logic/account_utils.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/account_repository.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_accounts.dart';
 import 'package:kraft_launcher/account/logic/platform_secure_storage_support.dart';
@@ -15,9 +15,9 @@ import 'package:kraft_launcher/common/logic/utils.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import '../../common/test_constants.dart';
-import '../data/minecraft_account_utils.dart';
-import '../data/minecraft_dummy_accounts.dart';
+import '../../../common/test_constants.dart';
+import '../../data/minecraft_account_utils.dart';
+import '../../data/minecraft_dummy_accounts.dart';
 
 late AccountRepository _accountRepository;
 

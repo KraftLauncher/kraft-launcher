@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:kraft_launcher/account/logic/account_repository.dart';
 import 'package:kraft_launcher/account/logic/account_utils.dart';
+import 'package:kraft_launcher/account/logic/launcher_minecraft_account/account_repository.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_accounts.dart';
 import 'package:kraft_launcher/account/logic/offline_account/minecraft_offline_account_factory.dart';
