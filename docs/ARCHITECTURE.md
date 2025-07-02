@@ -32,7 +32,7 @@ For example, `readAccounts` in `FileAccountStorage` should simply return `null` 
 
 ### Dependencies
 
-* **Does not depend on on the [`logic`](#logic) layer.**  
+* **Does not depend on the [`logic`](#logic) layer.**  
   The only exception is for mappers that convert **source models** to **app models**, which need to import the app model from the [`logic`](#logic) layer.
 
   **Note**: In Clean Architecture, the Data Layer depends on interfaces defined in the Domain Layer, while the Domain Layer remains independent of the Data Layer.
@@ -257,7 +257,7 @@ The **Layered architecture** is different from [Uncle Bob's **Clean Architecture
 * The domain layer defines interfaces that it uses to communicate with the data layer. The data layer implements the interfaces.
 * Dependencies must point inward (towards the domain).
 * Usually has more classes (use cases) where each use case has a single responsibility and must define only one public method/function (e.g. `UserFetcher.execute()`).
-* Domain Layer is independent of any other layer.
+* The domain Layer is independent of any other layer.
 
 While it's a matter of coding style and not related to any architecture, we avoid verbose suffixes like `DataSource` or `UseCase`. We prefer names like `VersionManifestFetcher` over `GetVersionManifestUseCase` and `OrderValidator` over `ValidateOrderUseCase`. Those naming conventions are commonly used in Flutter and Android apps that follow the Clean Architecture.
 
