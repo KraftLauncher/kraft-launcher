@@ -241,11 +241,108 @@ Widgets, UI logic (e.g., localization, error messages), state management (e.g., 
 ### Dependencies
 
 * **Depends on the [`logic`](#logic) layer.**  
-* **Never depends on the [`data`](#data) layer.**
+* **Does not depend on the [`data`](#data) layer.**  There is [one exception](#ui-layer-depends-on-the-failure-classes-of-the-data-source-of-the-data-layer) when handling errors coming from external APIs.
 
 ### Example
 
 **Coming soon.**
+
+## Violations
+
+### [`ui`](#ui) layer depends on the failure classes of the data source of the [`data`](#data) layer
+
+The `ui` layer may import some files from the `data` layer for the sealed classes that represent
+the possible failures or errors coming from an external API, we will provide a full example
+and explain why we think this approach is OK.
+
+Assuming we have a data source called `MojangAuthApi`,
+which could be a class that communicates with the Minecraft authentication APIs
+and not the Api itself, it's more like `MojangAuthApiClient` for a consumer of the API.
+
+```dart
+class MojangAuthApi {
+  MojangAuthApi(this.client);
+
+  final HttpClient client;
+
+  Future<Result<ApiAccount, MojangAuthFailure>> login(String username, String password) {
+    try {
+      final response = await client.post(
+        Uri.https('api.minecraftservices.com', '/login'),
+        data: {'username': username, 'password': password},
+      );
+    } on HttpClient catch(e) {
+      if (e.response.statusCode == HttpStatus.tooManyRequests) {
+        return Result.failure(TooManyRequestsFailure());
+      }
+      if (e.response.body['code'] == 'invalid_minecraft_credentials') {
+        return Result.failure(InvalidCredentialsFailure());
+      }
+    }
+    // ...
+  }
+}
+```
+
+The `MojangAuthFailure` could be something like:
+
+```dart
+@immutable
+sealed class MojangAuthFailure {
+  const MojangAuthFailure();
+}
+
+class NetworkFailure extends MojangAuthFailure {}
+class TooManyRequestsFailure extends MojangAuthFailure {}
+class InvalidCredentialsFailure extends MojangAuthFailure {}
+class UnknownServerFailure extends MojangAuthFailure {
+  final int code;
+  const UnknownServerFailure(this.code);
+}
+class ParsingFailure extends MojangAuthFailure {}
+class UnknownFailure extends MojangAuthFailure {}
+```
+
+Then in the repository:
+
+```dart
+class MojangAuthRepository {
+  MojangAuthRepository({
+    required this.mojangAuthApi
+  });
+  final MojangAuthApi mojangAuthApi;
+
+  Future<Result<Account, MojangAuthFailure>> login(String username, String password) {
+    final result = mojangAuthApi.login(username, password);
+    return switch(result) {
+      // 1. OK: Map ApiAccount to Account in case of success
+      // 2. Violation: Return MojangAuthFailure from data layer without any mapping in case of failure
+    };
+  }
+}
+```
+
+Although this is a violation of [separation-of-concerns](https://en.wikipedia.org/wiki/Separation_of_concerns)
+and the `MojangAuthRepository` should map the failure class that's specific to the data layer into a format that's
+for the app to be used and handled in `ui` layer (to resolve the error messages), we do prefer it this way for two reasons:
+
+1. We're already transforming the HTTP statuses and server codes that are low-level details and specific to the API in `MojangAuthApi`
+   into a format that's suitable for the app.
+2. The app functionality is already tightly coupled to this external API. If the API `api.minecraftservices.com` (`MojangAuthApi`)
+   added new types of errors, removed or changed some, we're always affected by their decisions, and there is no use in
+   mapping the sealed failure class.
+
+However, the response `ApiAccount` should be mapped to `Account` since it's possible to decouple
+their data structure from the app's data structure, and often it can be useful, especially
+when they change their internal details, so we only need to update `ApiAccount`, which is only used by
+`MojangAuthApi` and `MojangAuthRepository`, not the whole app code.
+
+If the failure result class of `MojangAuthApi.login` exposes low-level details such as HTTP status or
+server response body or other internal details, then yes, it should not be exposed to the `ui`, and
+it should be mapped in `MojangAuthRepository`.
+
+> [!TIP]
+> If you think something can be improved or this design is invalid or an anti-pattern, we're open for discussion if you [open an issue](https://github.com/KraftLauncher/kraft-launcher/issues).
 
 ## Clean Architecture?
 
