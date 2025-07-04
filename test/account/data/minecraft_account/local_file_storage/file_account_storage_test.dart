@@ -17,7 +17,7 @@ void main() {
     );
   });
 
-  final dummyAccounts = MinecraftDummyAccounts.accounts.toFileAccounts(
+  final dummyAccounts = MinecraftDummyAccounts.accounts.toFileModel(
     storeTokensInFile: true,
   );
 

@@ -3,17 +3,13 @@ import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_fil
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_accounts.dart';
 
-// TODO: Maybe name these functions toAppModel and toSourceModel instead
-
 extension AccountsMapper on MinecraftAccounts {
-  FileAccounts toFileAccounts({
-    required bool storeTokensInFile,
-  }) => FileAccounts(
+  FileAccounts toFileModel({required bool storeTokensInFile}) => FileAccounts(
     accounts:
         list
             .map(
               (account) =>
-                  account.toFileAccount(storeTokensInFile: storeTokensInFile),
+                  account.toFileModel(storeTokensInFile: storeTokensInFile),
             )
             .toList(),
     defaultAccountId: defaultAccountId,
@@ -21,11 +17,11 @@ extension AccountsMapper on MinecraftAccounts {
 }
 
 extension AccountMapper on MinecraftAccount {
-  FileAccount toFileAccount({required bool storeTokensInFile}) => FileAccount(
+  FileAccount toFileModel({required bool storeTokensInFile}) => FileAccount(
     id: id,
     username: username,
     accountType: accountType,
-    microsoftAccountInfo: microsoftAccountInfo?.toFileMicrosoftAccountInfo(
+    microsoftAccountInfo: microsoftAccountInfo?.toFileModel(
       storeTokensInFile: storeTokensInFile,
     ),
     skins: skins,
@@ -35,22 +31,21 @@ extension AccountMapper on MinecraftAccount {
 }
 
 extension _MicrosoftAccountInfoMapper on MicrosoftAccountInfo {
-  FileMicrosoftAccountInfo toFileMicrosoftAccountInfo({
-    required bool storeTokensInFile,
-  }) => FileMicrosoftAccountInfo(
-    microsoftRefreshToken: microsoftRefreshToken.toFileExpirableToken(
-      storeTokenInFile: storeTokensInFile,
-    ),
-    minecraftAccessToken: minecraftAccessToken.toFileExpirableToken(
-      storeTokenInFile: storeTokensInFile,
-    ),
-    accessRevoked:
-        reauthRequiredReason == MicrosoftReauthRequiredReason.accessRevoked,
-  );
+  FileMicrosoftAccountInfo toFileModel({required bool storeTokensInFile}) =>
+      FileMicrosoftAccountInfo(
+        microsoftRefreshToken: microsoftRefreshToken.toFileModel(
+          storeTokenInFile: storeTokensInFile,
+        ),
+        minecraftAccessToken: minecraftAccessToken.toFileModel(
+          storeTokenInFile: storeTokensInFile,
+        ),
+        accessRevoked:
+            reauthRequiredReason == MicrosoftReauthRequiredReason.accessRevoked,
+      );
 }
 
 extension _ExpirableToken on ExpirableToken {
-  FileExpirableToken toFileExpirableToken({required bool storeTokenInFile}) =>
+  FileExpirableToken toFileModel({required bool storeTokenInFile}) =>
       FileExpirableToken(
         value: storeTokenInFile ? value : null,
         expiresAt: expiresAt,

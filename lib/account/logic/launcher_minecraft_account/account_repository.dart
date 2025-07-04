@@ -105,7 +105,7 @@ class AccountRepository {
     MinecraftAccounts updatedAccounts,
   ) async {
     await fileAccountStorage.saveAccounts(
-      updatedAccounts.toFileAccounts(
+      updatedAccounts.toFileModel(
         storeTokensInFile: !supportsSecureStorageOrThrow,
       ),
     );
@@ -174,12 +174,12 @@ class AccountRepository {
       // This isn't needed at the moment.
 
       if (supportsSecureStorageOrThrow) {
-        return fileAccounts.mapToAccountsAsync((fileAccount) async {
+        return fileAccounts.mapToAppModelAsync((fileAccount) async {
           return switch (fileAccount.accountType) {
             AccountType.microsoft => await () async {
               final data = await secureAccountStorage.read(fileAccount.id);
               if (data != null) {
-                return fileAccount.toAccount(
+                return fileAccount.toAppModel(
                   secureAccountData: data,
                   microsoftReauthRequiredReason: getReauthRequiredReason(
                     fileAccount,
@@ -188,7 +188,7 @@ class AccountRepository {
                 );
               }
 
-              final account = fileAccount.toAccount(
+              final account = fileAccount.toAppModel(
                 // The user needs to re-authenticate
                 secureAccountData: null,
                 microsoftReauthRequiredReason: getReauthRequiredReason(
@@ -199,14 +199,14 @@ class AccountRepository {
 
               return account;
             }(),
-            AccountType.offline => fileAccount.toAccount(
+            AccountType.offline => fileAccount.toAppModel(
               secureAccountData: null,
               microsoftReauthRequiredReason: null,
             ),
           };
         });
       }
-      return fileAccounts.toAccounts(
+      return fileAccounts.toAppModel(
         resolveMicrosoftReauthReason:
             (account) => getReauthRequiredReason(
               account,

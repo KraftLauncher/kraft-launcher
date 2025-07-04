@@ -5,7 +5,7 @@ import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraf
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_accounts.dart';
 
 extension FileAccountsMapper on FileAccounts {
-  Future<MinecraftAccounts> mapToAccountsAsync(
+  Future<MinecraftAccounts> mapToAppModelAsync(
     Future<MinecraftAccount> Function(FileAccount account) transform,
   ) async {
     final futures = accounts.map(transform);
@@ -15,14 +15,14 @@ extension FileAccountsMapper on FileAccounts {
     );
   }
 
-  MinecraftAccounts toAccounts({
+  MinecraftAccounts toAppModel({
     required MicrosoftReauthRequiredReason? Function(FileAccount account)
     resolveMicrosoftReauthReason,
   }) => MinecraftAccounts(
     list:
         accounts
             .map(
-              (account) => account.toAccount(
+              (account) => account.toAppModel(
                 secureAccountData: null,
                 microsoftReauthRequiredReason: resolveMicrosoftReauthReason(
                   account,
@@ -35,7 +35,7 @@ extension FileAccountsMapper on FileAccounts {
 }
 
 extension FileAccountMapper on FileAccount {
-  MinecraftAccount toAccount({
+  MinecraftAccount toAppModel({
     required SecureAccountData? secureAccountData,
     required MicrosoftReauthRequiredReason? microsoftReauthRequiredReason,
   }) {
@@ -59,7 +59,7 @@ extension FileAccountMapper on FileAccount {
       id: id,
       username: username,
       accountType: accountType,
-      microsoftAccountInfo: microsoftAccountInfo?.toMicrosoftAccountInfo(
+      microsoftAccountInfo: microsoftAccountInfo?.toAppModel(
         secureAccountData: secureAccountData,
         reauthRequiredReason: microsoftReauthRequiredReason,
       ),
@@ -71,14 +71,14 @@ extension FileAccountMapper on FileAccount {
 }
 
 extension _FileMicrosoftAccountInfoMapper on FileMicrosoftAccountInfo {
-  MicrosoftAccountInfo toMicrosoftAccountInfo({
+  MicrosoftAccountInfo toAppModel({
     required SecureAccountData? secureAccountData,
     required MicrosoftReauthRequiredReason? reauthRequiredReason,
   }) => MicrosoftAccountInfo(
-    microsoftRefreshToken: microsoftRefreshToken.toExpirableToken(
+    microsoftRefreshToken: microsoftRefreshToken.toAppModel(
       secureAccountData?.microsoftRefreshToken,
     ),
-    minecraftAccessToken: minecraftAccessToken.toExpirableToken(
+    minecraftAccessToken: minecraftAccessToken.toAppModel(
       secureAccountData?.minecraftAccessToken,
     ),
     reauthRequiredReason: reauthRequiredReason,
@@ -86,7 +86,7 @@ extension _FileMicrosoftAccountInfoMapper on FileMicrosoftAccountInfo {
 }
 
 extension _FileExpirableToken on FileExpirableToken {
-  ExpirableToken toExpirableToken(String? overrideTokenValue) => ExpirableToken(
+  ExpirableToken toAppModel(String? overrideTokenValue) => ExpirableToken(
     value: overrideTokenValue ?? value,
     // Previously, the launcher didn't handle the case where the tokens are null in secure storage.
     // This issue will happen in portable mode so it has be handled.
