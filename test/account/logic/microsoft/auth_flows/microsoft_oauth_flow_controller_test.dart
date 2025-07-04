@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
-import 'package:kraft_launcher/account/logic/microsoft/microsoft_oauth_flow_controller.dart';
+import 'package:kraft_launcher/account/logic/microsoft/auth_flows/microsoft_oauth_flow_controller.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import '../../data/microsoft_auth_api/microsoft_auth_api_dummy_values.dart';
+import '../../../data/microsoft_auth_api/microsoft_auth_api_dummy_values.dart';
 
 void main() {
   late _MockMicrosoftAuthCodeFlow mockMicrosoftAuthCodeFlow;
