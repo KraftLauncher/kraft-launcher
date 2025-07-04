@@ -16,18 +16,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/ui/account_cubit/account_cubit.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 import 'package:kraft_launcher/common/logic/dio_client.dart';
+import 'package:kraft_launcher/common/logic/dio_helpers.dart';
 import 'package:kraft_launcher/common/logic/json.dart'
     show JsonList, JsonMap, jsonEncodePretty;
 import 'package:kraft_launcher/common/models/either.dart';
 import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 import 'package:kraft_launcher/common/ui/utils/scaffold_messenger_ext.dart';
-import 'package:kraft_launcher/launcher/data/minecraft_versions_api/asset_index/minecraft_asset_index.dart';
-import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_details/minecraft_version_args.dart';
-import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_details/minecraft_version_details.dart';
-import 'package:kraft_launcher/launcher/data/minecraft_versions_api/version_manifest/minecraft_version_manifest.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/cache/minecraft_version_details_file_cache.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/cache/minecraft_versions_file_cache.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/minecraft_versions_api.dart';
+import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/asset_index/api_minecraft_asset_index.dart';
+import 'package:kraft_launcher/launcher/logic/minecraft_versions/minecraft_versions_repository.dart';
+import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/version_details/minecraft_version_args.dart';
 import 'package:path/path.dart' as p;
 import 'package:pool/pool.dart';
 
@@ -44,8 +48,6 @@ class _ProfileTabState extends State<ProfileTab> {
   // later to implement it properly. The goal is to understand how the launch work
   // to plan it properly.
 
-  static const manifestUrl =
-      'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json';
   static const javaRuntimesUrl =
       'https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json';
 
@@ -58,7 +60,7 @@ class _ProfileTabState extends State<ProfileTab> {
   @override
   void initState() {
     super.initState();
-    _versionController.text = '1.21.6';
+    _versionController.text = '1.21.7';
   }
 
   @override
@@ -141,16 +143,19 @@ class _ProfileTabState extends State<ProfileTab> {
   // NOTE: This is dummy code and will be replaced fully later, it's for prototyping only
   // and not final.
   Future<void> launchGame({required MinecraftAccount account}) async {
-    final mcDirPath = p.join(
-      AppDataPaths.instance.workingDirectory.path,
-      'minecraft',
-    );
+    final mcDirPath = AppDataPaths.instance.game.path;
     print('MC Dir: ${File(mcDirPath).absolute.path}');
     final librariesDirPath = p.join(mcDirPath, 'libraries');
     final assetsDirPath = p.join(mcDirPath, 'assets');
-    final javaRuntimesDirPath = Directory(p.join(mcDirPath, 'runtimes'));
+    final javaRuntimesDirPath = AppDataPaths.instance.runtimes;
 
-    final gameDir = Directory(p.join(mcDirPath, 'game'));
+    final gameDir = Directory(
+      p.join(
+        // ignore: invalid_use_of_visible_for_testing_member
+        AppDataPaths.instance.workingDirectory.path,
+        'single_instance',
+      ),
+    );
     if (!gameDir.existsSync()) {
       gameDir.createSync(recursive: true);
     }
@@ -173,29 +178,37 @@ class _ProfileTabState extends State<ProfileTab> {
       TargetPlatform.iOS => throw UnimplementedError(),
     };
 
-    final dio = DioClient.instance;
-    final response = await dio.getUri<JsonMap>(Uri.parse(manifestUrl));
-
     print('Fetching version manifest...');
 
-    final versionManifest = MinecraftVersionManifest.fromJson(
-      response.dataOrThrow,
+    final dio = DioClient.instance;
+    final minecraftVersionsApi = MinecraftVersionsApi(dio: dio);
+    final minecraftVersionsRepository = MinecraftVersionsRepository(
+      minecraftVersionsApi: minecraftVersionsApi,
+      minecraftVersionsFileCache: MinecraftVersionsFileCache.fromAppDataPaths(
+        AppDataPaths.instance,
+      ),
+      minecraftVersionDetailsFileCache:
+          MinecraftVersionDetailsFileCache.fromAppDataPaths(
+            AppDataPaths.instance,
+          ),
     );
+
+    final versionManifest =
+        (await minecraftVersionsRepository.fetchVersionManifest()).valueOrThrow;
     final versions = versionManifest.versions;
     final version = versions.firstWhere(
       (version) => version.id == _versionController.text,
     );
-    final versionUrl = version.url;
+    final versionUrl = version.detailsUrl;
     final versionId = version.id;
-    final versionDetailsResponse = await dio.getUri<JsonMap>(
-      Uri.parse(versionUrl),
-    );
 
     print('Fetching version details...');
 
-    final versionDetails = MinecraftVersionDetails.fromJson(
-      versionDetailsResponse.dataOrThrow,
-    );
+    final versionDetails =
+        (await minecraftVersionsRepository.fetchVersionDetails(
+          versionUrl,
+          versionId: versionId,
+        )).valueOrThrow;
     final versionArguments =
         versionDetails.arguments ??
         (throw UnimplementedError(
@@ -223,7 +236,7 @@ class _ProfileTabState extends State<ProfileTab> {
               'version_name': versionId,
               'game_directory': gameDir.absolute.path,
               'assets_root': File(assetsDirPath).absolute.path,
-              'assets_index_name': versionDetails.assets,
+              'assets_index_name': versionDetails.assetsVersion,
               'auth_uuid': account.id,
               'auth_access_token':
                   account.microsoftAccountInfo!.minecraftAccessToken.value,
@@ -231,7 +244,7 @@ class _ProfileTabState extends State<ProfileTab> {
               'clientid': 'null',
               'auth_xuid': '0',
               'user_type': 'msa',
-              'version_type': versionDetails.type.toJson(),
+              'version_type': versionDetails.type.toLaunchArgument(),
             };
             final argumentValue =
                 map.entries
@@ -258,22 +271,16 @@ class _ProfileTabState extends State<ProfileTab> {
 
     final clientJarDownloadUrl = versionDetails.downloads.client.url;
 
-    final clientJarFile = File(
-      p.join(mcDirPath, 'versions', versionId, '$versionId.jar'),
-    );
-    final clientJsonFile = File(
-      p.join(mcDirPath, 'versions', versionId, '$versionId.json'),
-    );
+    final clientJarFile = AppDataPaths.instance.versionClientJarFile(versionId);
+
     if (!clientJarFile.existsSync()) {
       print('Downloading client JAR file...');
       await dio.downloadUri(
         Uri.parse(clientJarDownloadUrl),
-        p.join(mcDirPath, 'versions', versionId, '$versionId.jar'),
+        clientJarFile.path,
       );
     }
-    clientJsonFile.writeAsStringSync(
-      jsonEncodePretty(versionDetailsResponse.dataOrThrow),
-    );
+
     classpath.add(clientJarFile.absolute.path);
 
     final libraries =
@@ -361,15 +368,15 @@ class _ProfileTabState extends State<ProfileTab> {
             EitherRight<String, List<String>>() => argValue.rightValue.first,
           };
 
-          final os = arg.rules.first.os!;
-          final targetOsName = os.name;
+          final os = arg.rules.first.os;
+          final targetOsName = os?.name;
           if (targetOsName == osName) {
             jvmArguments.add(argumentValue);
           } else {
             // The only argument that uses this key is for x86 systems, and
             // this launcher doesn't support x86, ignoring this argument
             // since it's not useful.
-            final targetOsArch = os.arch;
+            final targetOsArch = os?.arch;
             if (targetOsArch != null) {
               print(
                 'Ignoring game argument `$argumentValue` since it is for os arch `$targetOsArch`',
@@ -399,12 +406,14 @@ class _ProfileTabState extends State<ProfileTab> {
     final assetFutures = <Future<void>>[];
 
     final assetObjects =
-        MinecraftAssetIndex.fromJson(assetIndexResponseData).objects;
+        ApiMinecraftAssetIndex.fromJson(assetIndexResponseData).objects;
     for (final assetObject in assetObjects.entries) {
       final assetHash = assetObject.value.hash;
       final firstTwo = assetHash.substring(0, 2);
-      final downloadUrl =
-          'https://resources.download.minecraft.net/$firstTwo/$assetHash';
+      final downloadUri = Uri.https(
+        StaticHosts.minecraftAssets,
+        '$firstTwo/$assetHash',
+      );
 
       final assetFile = File(
         p.join(assetsDirPath, 'objects', firstTwo, assetHash),
@@ -416,7 +425,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
       final future = assetsPool.withResource(() async {
         print('Downloading asset `${assetObject.key}`...');
-        await dio.downloadUri(Uri.parse(downloadUrl), assetFile.path);
+        await dio.downloadUri(downloadUri, assetFile.path);
       });
       assetFutures.add(future);
     }

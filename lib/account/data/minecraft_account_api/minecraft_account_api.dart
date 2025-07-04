@@ -7,6 +7,8 @@ import 'package:equatable/equatable.dart';
 import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:meta/meta.dart';
 
+/// A client for the `api.minecraftservices.com` API.
+///
 /// See also:
 ///  * https://minecraft.wiki/w/Mojang_API
 ///  * [MicrosoftAuthApi]

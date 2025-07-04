@@ -8,12 +8,14 @@ import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_ap
     as microsoft_auth_api_exceptions;
 import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
-import 'package:kraft_launcher/common/logic/dio_client.dart';
+import 'package:kraft_launcher/common/logic/dio_helpers.dart';
 import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:meta/meta.dart';
 
 class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   MicrosoftAuthApiImpl({required this.dio});
 
+  @visibleForTesting
   final Dio dio;
 
   Future<T> _handleCommonFailures<T>(
@@ -52,6 +54,10 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       };
       throw exception;
     } on Exception catch (e, stackTrace) {
+      // TODO: Avoid handling Exception everywhere where DioException is handled? See also: https://pub.dev/packages/dio#handling-errors
+      // TODO: Improve UnknownException, is it parsing error OR server unknown error?
+      //  throwing any exception that might not be from Dio will result "Unknown error from API X" in the UI
+      //  TODO: Avoid suffixing Exception? Update docs/CODE_STYLE.md with latest style about desiging failures
       throw microsoft_auth_api_exceptions.UnknownException(
         e.toString(),
         stackTrace,
@@ -63,7 +69,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
 
   @override
   String userLoginUrlWithAuthCode() =>
-      Uri.https('login.live.com', '/oauth20_authorize.srf', {
+      Uri.https(ApiHosts.microsoftLoginLive, 'oauth20_authorize.srf', {
         'client_id': ProjectInfoConstants.microsoftLoginClientId,
         'response_type': 'code',
         'redirect_uri': MicrosoftConstants.loginRedirectUrl,
@@ -76,7 +82,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   ) async => _handleCommonFailures(
     () async {
       final response = await dio.postUri<JsonMap>(
-        Uri.https('login.live.com', '/oauth20_token.srf'),
+        Uri.https(ApiHosts.microsoftLoginLive, 'oauth20_token.srf'),
         options: Options(
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         ),
@@ -110,8 +116,8 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       _handleCommonFailures(() async {
         final response = await dio.postUri<JsonMap>(
           Uri.https(
-            'login.microsoftonline.com',
-            '/consumers/oauth2/v2.0/devicecode',
+            ApiHosts.loginMicrosoftOnline,
+            'consumers/oauth2/v2.0/devicecode',
           ),
           options: Options(
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -132,7 +138,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   ) => _handleCommonFailures(
     () async {
       final response = await dio.postUri<JsonMap>(
-        Uri.https('login.microsoftonline.com', '/consumers/oauth2/v2.0/token'),
+        Uri.https(ApiHosts.loginMicrosoftOnline, 'consumers/oauth2/v2.0/token'),
         options: Options(
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         ),
@@ -174,7 +180,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   ) async => _handleCommonFailures(
     () async {
       final response = await dio.postUri<JsonMap>(
-        Uri.https('user.auth.xboxlive.com', '/user/authenticate'),
+        Uri.https(ApiHosts.xboxLiveUserAuth, 'user/authenticate'),
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -214,7 +220,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   ) => _handleCommonFailures(
     () async {
       final response = await dio.postUri<JsonMap>(
-        Uri.https('xsts.auth.xboxlive.com', '/xsts/authorize'),
+        Uri.https(ApiHosts.xboxLiveXstsAuth, 'xsts/authorize'),
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -266,7 +272,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   ) => _handleCommonFailures(
     () async {
       final response = await dio.postUri<JsonMap>(
-        Uri.https('login.live.com', '/oauth20_token.srf'),
+        Uri.https(ApiHosts.microsoftLoginLive, 'oauth20_token.srf'),
         options: Options(
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         ),

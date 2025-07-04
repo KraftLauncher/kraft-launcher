@@ -3,14 +3,14 @@ import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class MinecraftJavaVersionInfo extends Equatable {
-  const MinecraftJavaVersionInfo({
+class ApiMinecraftJavaVersionInfo extends Equatable {
+  const ApiMinecraftJavaVersionInfo({
     required this.component,
     required this.majorVersion,
   });
 
-  factory MinecraftJavaVersionInfo.fromJson(JsonMap json) =>
-      MinecraftJavaVersionInfo(
+  factory ApiMinecraftJavaVersionInfo.fromJson(JsonMap json) =>
+      ApiMinecraftJavaVersionInfo(
         component: json['component']! as String,
         majorVersion: json['majorVersion']! as int,
       );

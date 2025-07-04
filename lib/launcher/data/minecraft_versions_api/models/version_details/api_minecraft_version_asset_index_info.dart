@@ -3,8 +3,8 @@ import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class MinecraftVersionAssetIndexInfo extends Equatable {
-  const MinecraftVersionAssetIndexInfo({
+class ApiMinecraftVersionAssetIndexInfo extends Equatable {
+  const ApiMinecraftVersionAssetIndexInfo({
     required this.id,
     required this.sha1,
     required this.size,
@@ -12,8 +12,8 @@ class MinecraftVersionAssetIndexInfo extends Equatable {
     required this.url,
   });
 
-  factory MinecraftVersionAssetIndexInfo.fromJson(JsonMap json) =>
-      MinecraftVersionAssetIndexInfo(
+  factory ApiMinecraftVersionAssetIndexInfo.fromJson(JsonMap json) =>
+      ApiMinecraftVersionAssetIndexInfo(
         id: json['id']! as String,
         sha1: json['sha1']! as String,
         size: json['size']! as int,
@@ -23,7 +23,11 @@ class MinecraftVersionAssetIndexInfo extends Equatable {
 
   final String id;
   final String sha1;
+
+  /// The asset index file size of the version.
   final int size;
+
+  /// The total assets size of the version.
   final int totalSize;
   final String url;
 

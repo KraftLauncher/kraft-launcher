@@ -44,3 +44,16 @@ abstract final class MicrosoftConstants {
   // The app will always need to handle the case where it's expired or access is revoked when sending the request.
   static const refreshTokenExpiresInDays = 90;
 }
+
+abstract final class ApiHosts {
+  static const pistonMetaMojang = 'piston-meta.mojang.com';
+  static const minecraftServices = 'api.minecraftservices.com';
+  static const microsoftLoginLive = 'login.live.com';
+  static const loginMicrosoftOnline = 'login.microsoftonline.com';
+  static const xboxLiveUserAuth = 'user.auth.xboxlive.com';
+  static const xboxLiveXstsAuth = 'xsts.auth.xboxlive.com';
+}
+
+class StaticHosts {
+  static const minecraftAssets = 'resources.download.minecraft.net';
+}

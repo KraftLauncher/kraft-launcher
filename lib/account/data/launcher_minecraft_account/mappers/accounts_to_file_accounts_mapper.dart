@@ -3,6 +3,10 @@ import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_fil
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_accounts.dart';
 
+// TODO: Move mappers directory to local_file_storage?
+// TODO: Rename the files in this directory?
+// TODO: Maybe name these functions toAppModel and toSourceModel instead
+
 extension AccountsMapper on MinecraftAccounts {
   FileAccounts toFileAccounts({
     required bool storeTokensInFile,

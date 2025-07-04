@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_accounts.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:meta/meta.dart';
 
 class FileAccountStorage {
   FileAccountStorage({required this.file});
   factory FileAccountStorage.fromAppDataPaths(AppDataPaths appDataPaths) =>
       FileAccountStorage(file: appDataPaths.accounts);
 
+  @visibleForTesting
   final File file;
 
   Future<FileAccounts?> readAccounts() async {

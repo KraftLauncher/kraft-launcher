@@ -9,8 +9,13 @@ void main() {
   late AppDataPaths appDataPaths;
 
   setUp(() {
-    workingDirectory = Directory('/path/to/example');
+    workingDirectory = Directory('/path/to/any');
     appDataPaths = AppDataPaths(workingDirectory: workingDirectory);
+  });
+
+  test('sets the instance correctly', () {
+    AppDataPaths.instance = appDataPaths;
+    expect(AppDataPaths.instance, appDataPaths);
   });
 
   test('returns the correct working directory', () {
@@ -31,8 +36,62 @@ void main() {
     );
   });
 
-  test('sets the instance correctly', () {
-    AppDataPaths.instance = appDataPaths;
-    expect(AppDataPaths.instance, appDataPaths);
+  test('returns the correct path for versions directory', () {
+    expect(
+      appDataPaths.versions.path,
+      p.join(workingDirectory.path, 'versions'),
+    );
+  });
+
+  test('returns the correct path for versionManifestV2 file', () {
+    expect(
+      appDataPaths.versionManifestV2.path,
+      p.join(appDataPaths.versions.path, 'version_manifest_v2.json'),
+    );
+  });
+
+  test('returns correct path for a version details file', () {
+    const versionId = '1.20.1';
+    expect(
+      appDataPaths.versionDetailsFile(versionId).path,
+      p.join(appDataPaths.versions.path, versionId, '$versionId.json'),
+    );
+  });
+
+  test('returns correct path for a version client JAR file', () {
+    const versionId = '1.20.1';
+    expect(
+      appDataPaths.versionClientJarFile(versionId).path,
+      p.join(appDataPaths.versions.path, versionId, '$versionId.jar'),
+    );
+  });
+
+  test('returns the correct path for jreManifest file', () {
+    expect(
+      appDataPaths.jreManifest.path,
+      p.join(appDataPaths.versions.path, 'jre_manifest.json'),
+    );
+  });
+
+  test('returns the correct path for runtimes directory', () {
+    expect(
+      appDataPaths.runtimes.path,
+      p.join(workingDirectory.path, 'runtimes'),
+    );
+  });
+
+  test('returns correct path for a runtime component directory', () {
+    const runtimeComponentName = 'java-runtime-delta';
+    expect(
+      appDataPaths.runtimeComponentDirectory(runtimeComponentName).path,
+      p.join(appDataPaths.runtimes.path, runtimeComponentName),
+    );
+  });
+
+  test('returns the correct path for game directory', () {
+    expect(
+      appDataPaths.game.path,
+      p.join(appDataPaths.workingDirectory.path, 'game'),
+    );
   });
 }

@@ -45,6 +45,7 @@ typedef AccountsStreamControllerFactory = StreamController<MinecraftAccounts>;
 /// await repository.removeAccount(...);
 /// ```
 class AccountRepository {
+  // TODO: Rename to AccountsRepository to be consistent with MinecraftVersionsRepository
   AccountRepository({
     required this.fileAccountStorage,
     required this.secureAccountStorage,
@@ -75,7 +76,7 @@ class AccountRepository {
     _supportsSecureStorage = supported;
   }
 
-  // TODO: We might not use this approach or might not use Stream at all? Also see https://pub.dev/documentation/rxdart/latest/rx/BehaviorSubject-class.html
+  // TODO: We might not use this approach or might not use Stream at all? See also: https://pub.dev/documentation/rxdart/latest/rx/BehaviorSubject-class.html
   final StreamController<MinecraftAccounts> _accountsController;
   Stream<MinecraftAccounts> get accountsStream => _accountsController.stream;
 
@@ -256,7 +257,7 @@ class AccountRepository {
     );
   }
 
-  // Shared for both addAccount and updateAccount
+  // Shared for both [addAccount] and [updateAccount].
   Future<void> _modifyAndSaveAccount({
     required MinecraftAccount account,
     required List<MinecraftAccount> Function(MinecraftAccounts existingAccounts)

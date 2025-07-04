@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
-import 'package:kraft_launcher/launcher/data/minecraft_versions_api/minecraft_rule.dart';
+import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/minecraft_rule.dart';
 import 'package:meta/meta.dart';
 
 @immutable
@@ -12,29 +11,6 @@ class MinecraftVersionLibrary extends Equatable {
     required this.natives,
     required this.extract,
   });
-
-  factory MinecraftVersionLibrary.fromJson(JsonMap json) =>
-      MinecraftVersionLibrary(
-        downloads: MinecraftLibraryDownloads.fromJson(
-          json['downloads']! as JsonMap,
-        ),
-        name: json['name']! as String,
-        rules:
-            (json['rules'] as JsonList?)
-                ?.cast<JsonMap>()
-                .map((ruleMap) => MinecraftRule.fromJson(ruleMap))
-                .toList(),
-        natives: (json['natives'] as Map<String, dynamic>?)
-            ?.cast<String, Object>()
-            .map((k, v) => MapEntry(k, v as String)),
-        extract: () {
-          final extractMap = json['extract'] as JsonMap?;
-          if (extractMap == null) {
-            return null;
-          }
-          return MinecraftNativesExtractionRules.fromJson(extractMap);
-        }(),
-      );
 
   final MinecraftLibraryDownloads downloads;
   final String name;
@@ -70,20 +46,6 @@ class MinecraftLibraryDownloads extends Equatable {
     required this.classifiers,
   });
 
-  factory MinecraftLibraryDownloads.fromJson(JsonMap json) =>
-      MinecraftLibraryDownloads(
-        artifact: () {
-          final artifactMap = json['artifact'] as JsonMap?;
-          if (artifactMap == null) {
-            return null;
-          }
-          return MinecraftLibraryArtifact.fromJson(artifactMap);
-        }(),
-        classifiers: (json['classifiers'] as Map<String, dynamic>?)
-            ?.cast<String, JsonMap>()
-            .map((k, v) => MapEntry(k, MinecraftLibraryArtifact.fromJson(v))),
-      );
-
   final MinecraftLibraryArtifact? artifact;
 
   // The last version where this is not null is `22w19a`.
@@ -103,14 +65,6 @@ class MinecraftLibraryArtifact extends Equatable {
     required this.url,
   });
 
-  factory MinecraftLibraryArtifact.fromJson(JsonMap json) =>
-      MinecraftLibraryArtifact(
-        path: json['path']! as String,
-        sha1: json['sha1']! as String,
-        size: json['size']! as int,
-        url: json['url']! as String,
-      );
-
   final String path;
   final String sha1;
   final int size;
@@ -123,11 +77,6 @@ class MinecraftLibraryArtifact extends Equatable {
 @immutable
 class MinecraftNativesExtractionRules extends Equatable {
   const MinecraftNativesExtractionRules({required this.exclude});
-
-  factory MinecraftNativesExtractionRules.fromJson(JsonMap json) =>
-      MinecraftNativesExtractionRules(
-        exclude: (json['exclude']! as JsonList).cast<String>(),
-      );
 
   final List<String> exclude;
 

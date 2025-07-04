@@ -3,37 +3,37 @@ import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class MinecraftLoggingConfig extends Equatable {
-  const MinecraftLoggingConfig({required this.client});
+class ApiMinecraftLoggingConfig extends Equatable {
+  const ApiMinecraftLoggingConfig({required this.client});
 
-  factory MinecraftLoggingConfig.fromJson(JsonMap json) =>
-      MinecraftLoggingConfig(
-        client: MinecraftClientLogging.fromJson(json['client']! as JsonMap),
+  factory ApiMinecraftLoggingConfig.fromJson(JsonMap json) =>
+      ApiMinecraftLoggingConfig(
+        client: ApiMinecraftClientLogging.fromJson(json['client']! as JsonMap),
       );
 
-  final MinecraftClientLogging client;
+  final ApiMinecraftClientLogging client;
 
   @override
   List<Object?> get props => [client];
 }
 
 @immutable
-class MinecraftClientLogging extends Equatable {
-  const MinecraftClientLogging({
+class ApiMinecraftClientLogging extends Equatable {
+  const ApiMinecraftClientLogging({
     required this.argument,
     required this.file,
     required this.type,
   });
 
-  factory MinecraftClientLogging.fromJson(JsonMap json) =>
-      MinecraftClientLogging(
+  factory ApiMinecraftClientLogging.fromJson(JsonMap json) =>
+      ApiMinecraftClientLogging(
         argument: json['argument']! as String,
-        file: MinecraftClientLoggingFile.fromJson(json['file']! as JsonMap),
+        file: ApiMinecraftClientLoggingFile.fromJson(json['file']! as JsonMap),
         type: json['type']! as String,
       );
 
   final String argument;
-  final MinecraftClientLoggingFile file;
+  final ApiMinecraftClientLoggingFile file;
   final String type;
 
   @override
@@ -41,16 +41,16 @@ class MinecraftClientLogging extends Equatable {
 }
 
 @immutable
-class MinecraftClientLoggingFile extends Equatable {
-  const MinecraftClientLoggingFile({
+class ApiMinecraftClientLoggingFile extends Equatable {
+  const ApiMinecraftClientLoggingFile({
     required this.id,
     required this.sha1,
     required this.size,
     required this.url,
   });
 
-  factory MinecraftClientLoggingFile.fromJson(JsonMap json) =>
-      MinecraftClientLoggingFile(
+  factory ApiMinecraftClientLoggingFile.fromJson(JsonMap json) =>
+      ApiMinecraftClientLoggingFile(
         id: json['id']! as String,
         sha1: json['sha1']! as String,
         size: json['size']! as int,

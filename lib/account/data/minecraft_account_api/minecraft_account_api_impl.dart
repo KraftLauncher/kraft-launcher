@@ -4,15 +4,18 @@ import 'package:dio/dio.dart';
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api.dart';
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_exceptions.dart'
     as minecraft_account_api_exceptions;
-import 'package:kraft_launcher/common/logic/dio_client.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
+import 'package:kraft_launcher/common/logic/dio_helpers.dart';
 import 'package:kraft_launcher/common/logic/file_utils.dart';
 import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:meta/meta.dart';
 
-const _minecraftServicesHost = 'api.minecraftservices.com';
+const _host = ApiHosts.minecraftServices;
 
 class MinecraftAccountApiImpl extends MinecraftAccountApi {
   MinecraftAccountApiImpl({required this.dio});
 
+  @visibleForTesting
   final Dio dio;
 
   Future<T> _handleCommonFailures<T>(
@@ -55,6 +58,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
       };
       throw exception;
     } on Exception catch (e, stackTrace) {
+      // TODO: Avoid handling Exception in MicrosoftAuthApi and MinecraftAccountApi, DioException != HttpException like Ktor client, see also: https://pub.dev/packages/dio#handling-errors
       throw minecraft_account_api_exceptions.UnknownException(
         e.toString(),
         stackTrace,
@@ -68,7 +72,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
     required String xstsUserHash,
   }) async => _handleCommonFailures(() async {
     final response = await dio.postUri<JsonMap>(
-      Uri.https(_minecraftServicesHost, '/authentication/login_with_xbox'),
+      Uri.https(_host, 'authentication/login_with_xbox'),
       options: Options(
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +90,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
   ) async => _handleCommonFailures(
     () async {
       final response = await dio.getUri<JsonMap>(
-        Uri.https(_minecraftServicesHost, '/minecraft/profile'),
+        Uri.https(_host, 'minecraft/profile'),
         options: Options(
           headers: {'Authorization': 'Bearer $minecraftAccessToken'},
         ),
@@ -108,7 +112,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
   Future<bool> checkMinecraftJavaOwnership(String minecraftAccessToken) =>
       _handleCommonFailures(() async {
         final response = await dio.getUri<JsonMap>(
-          Uri.https(_minecraftServicesHost, '/entitlements/mcstore'),
+          Uri.https(_host, 'entitlements/mcstore'),
           options: Options(
             headers: {'Authorization': 'Bearer $minecraftAccessToken'},
           ),
@@ -126,7 +130,7 @@ class MinecraftAccountApiImpl extends MinecraftAccountApi {
   }) => _handleCommonFailures(
     () async {
       final response = await dio.postUri<JsonMap>(
-        Uri.https(_minecraftServicesHost, '/minecraft/profile/skins'),
+        Uri.https(_host, 'minecraft/profile/skins'),
         options: Options(
           headers: {'Authorization': 'Bearer $minecraftAccessToken'},
         ),

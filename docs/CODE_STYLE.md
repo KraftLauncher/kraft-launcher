@@ -12,6 +12,9 @@ current conventions but will we rewritten fully in the future.**
 ### Always import `*_exceptions.dart` files with a prefix
 
 <!-- TODO: We might want to apply this for all public sealed classes? See also https://docs.flutter.dev/app-architecture/design-patterns/result#putting-it-all-together
+
+TODO: Actually, we probably want to use prefixes only when needed, we may want to avoid Failure/Exception at the end?
+Review all `*_exceptions.dart` files since we're migrating to `*_failures.dart`, ensure consistent naming and imports, and optionally avoid using exceptions and use failures instead
  -->
 
 #### ✅ Preferred

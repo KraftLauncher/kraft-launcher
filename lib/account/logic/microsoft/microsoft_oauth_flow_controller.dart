@@ -3,6 +3,8 @@ import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/micr
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
 import 'package:meta/meta.dart';
 
+// TODO: Move this file to auth_flows directory.
+
 /// Manages Microsoft OAuth authentication supporting both
 /// authorization code and device code flows.
 ///

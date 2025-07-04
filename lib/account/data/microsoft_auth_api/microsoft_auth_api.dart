@@ -6,6 +6,13 @@ import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_flows/micros
 import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:meta/meta.dart';
 
+/// A client for authenticating with Microsoft and Xbox using the following APIs:
+///
+/// * `login.live.com`
+/// * `login.microsoftonline.com`
+/// * `user.auth.xboxlive.com`
+/// * `xsts.auth.xboxlive.com`
+///
 /// See also:
 ///  * https://minecraft.wiki/w/Microsoft_authentication
 ///  * [MinecraftAccountApi]
