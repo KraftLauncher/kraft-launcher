@@ -4,6 +4,22 @@ import 'package:meta/meta.dart';
 
 enum AccountType { microsoft, offline }
 
+/// A model specific to this launcher, not part of the official Minecraft game or its APIs.
+///
+/// This model does **not** originate from the Minecraft game or any single API.
+/// It is a custom format defined by this launcher to store relevant account data,
+/// including values from multiple APIs.
+///
+/// Includes:
+///
+/// * The Minecraft access token
+/// * The Microsoft refresh token
+/// * Minecraft profile information (e.g., skin, capes, name, ID)
+///
+/// This format may vary between launchers. While the Minecraft game itself only
+/// requires the access token and profile ID to launch, this model aggregates additional
+/// data to support extended features such as refreshing the access token (using the
+/// Microsoft refresh token) or managing the skin/profile.
 @immutable
 class MinecraftAccount extends Equatable {
   const MinecraftAccount({
