@@ -28,7 +28,8 @@ For example, `readAccounts` in `FileAccountStorage` should simply return `null` 
 * **Defines only source models and types used by data sources.**  
   This layer includes data classes, enums, and types that represent how data is structured at the source level (e.g., API responses, local storage formats).  
   This layer does not include app models that are used by the [`logic`](#logic) and [`ui`](#ui) layers. For more info, refer to [Source models VS App models](#source-models-vs-app-models).
-* **Defines the mappers that map source models to app models and vice versa.**
+* **Defines the mappers that map source models to app models and vice versa.**   
+  To do this, the mappers need to import the app models from the [`logic`](#logic) layer, this is **not a violation** since the mappers are only called inside repositories to map the source models (e.g., `FileAccount`) to app models (e.g., `Account`).
 
 ### Dependencies
 
@@ -133,7 +134,17 @@ In rare cases, using Flutter APIs is acceptable—primarily when integrating wit
 * **Defines only **app models** and types used by this layer and the [`ui`](#ui) layer.**  
   For more info, read [Source models VS App models](#source-models-vs-app-models).
 * **Contains Repositories.**  
-  Repositories depend on one or more data sources and return data that meets the requirements. Data sources return source models, which repositories use and map to app models. The mappers that convert source models to app models are part of the [`data`](#data) layer but are only called within repositories.
+  * Repositories depend on one or more data sources and return data that meets the requirements. Data sources return source models (e.g., `FileAccount`), which repositories use and map to app models (e.g., `Account`). 
+
+  * Data sources and repositories have a many-to-many relationship. A single Repository can use several Data sources, and a data source can be used by multiple repositories.
+
+  * The mappers that convert source models to app models are part of the [`data`](#data) layer but are only called within repositories.
+
+  See more about [Repositories from Flutter docs](https://docs.flutter.dev/app-architecture/guide#repositories):
+
+  > The models output by repositories are consumed by view models. Repositories and view models have a many-to-many relationship. A view model can use many repositories to get the data it needs, and a repository can be used by many view models.
+  >
+  > Repositories should never be aware of each other. If your application has business logic that needs data from two repositories, you should combine the data in the view model or in the domain layer, especially if your repository-to-view-model relationship is complex.
 
   See also:
 
@@ -237,6 +248,8 @@ Widgets, UI logic (e.g., localization, error messages), state management (e.g., 
 
 * **Should not depend directly on data sources or source models from the [`data`](#data) layer**, even when no state is required. Instead, it should depend on a business logic-specific class (e.g., `AccountRepository`). This layer usually doesn't need to depend on the `data` layer. UI code should not be affected when an external API makes changes to its data structure.
 * **Prefers separating business logic from state management** to simplify testing and allow actions without triggering state changes when needed in the UI. Such logic belongs to the [`logic`](#logic) layer.
+* **Flutter blocs/cubits serve as View Models.**  
+Which can be [confusing due to the name BLoC (Business Logic Components)](https://taej0127.medium.com/the-biggest-problem-of-bloc-is-the-name-bloc-1ba1522be5e2). These components typically [respond to input from the presentation layer (i.e., widgets) by emitting new states](https://bloclibrary.dev/architecture/#business-logic-layer). The blocs/cubits serve as [state holders](https://developer.android.com/topic/architecture#ui-layer) or controllers for widgets, [similar to how Android ViewModels are used](https://developer.android.com/topic/libraries/architecture/viewmodel). For more info, refer to the [the command pattern by Flutter docs](https://docs.flutter.dev/app-architecture/design-patterns/command).
 
 ### Dependencies
 
