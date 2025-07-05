@@ -4,7 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 import 'package:kraft_launcher/common/ui/utils/home_screen_tab_ext.dart';
-import 'package:kraft_launcher/settings/data/settings.dart';
+import 'package:kraft_launcher/settings/logic/settings.dart';
+import 'package:kraft_launcher/settings/ui/app_language_labels.dart';
 import 'package:kraft_launcher/settings/ui/cubit/settings_cubit.dart';
 import 'package:kraft_launcher/settings/ui/settings_section.dart';
 
@@ -48,7 +49,7 @@ class _AppearanceSection extends StatelessWidget {
                       value: language,
                       label: switch (language) {
                         AppLanguage.system => context.loc.system,
-                        _ => language.labelText,
+                        _ => language.label,
                       },
                     ),
                   )
@@ -64,37 +65,32 @@ class _AppearanceSection extends StatelessWidget {
               : Icons.wb_sunny_outlined,
         ),
         onTap: () {
-          final newThemeMode = switch (generalSettings.themeMode) {
-            ThemeMode.system => ThemeMode.light,
-            ThemeMode.light => ThemeMode.dark,
-            ThemeMode.dark => ThemeMode.system,
-          };
+          final newThemeMode = generalSettings.themeMode;
           context.read<SettingsCubit>().updateSettings(
             general: generalSettings.copyWith(themeMode: newThemeMode),
           );
         },
-        trailing: SegmentedButton<ThemeMode>(
-          segments: <ButtonSegment<ThemeMode>>[
-            ButtonSegment<ThemeMode>(
-              value: ThemeMode.dark,
+        trailing: SegmentedButton<AppThemeMode>(
+          segments: <ButtonSegment<AppThemeMode>>[
+            ButtonSegment<AppThemeMode>(
+              value: AppThemeMode.dark,
               icon: const Icon(Icons.nightlight_round),
               tooltip: context.loc.dark,
             ),
-            ButtonSegment<ThemeMode>(
-              value: ThemeMode.light,
+            ButtonSegment<AppThemeMode>(
+              value: AppThemeMode.light,
               icon: const Icon(Icons.wb_sunny),
               tooltip: context.loc.light,
             ),
-            ButtonSegment<ThemeMode>(
-              value: ThemeMode.system,
-
+            ButtonSegment<AppThemeMode>(
+              value: AppThemeMode.system,
               icon: const Icon(Icons.settings),
               tooltip: context.loc.system,
             ),
           ],
-          selected: <ThemeMode>{generalSettings.themeMode},
+          selected: <AppThemeMode>{generalSettings.themeMode},
           onSelectionChanged:
-              (Set<ThemeMode> newSelection) =>
+              (Set<AppThemeMode> newSelection) =>
                   context.read<SettingsCubit>().updateSettings(
                     general: generalSettings.copyWith(
                       themeMode: newSelection.first,
@@ -125,7 +121,7 @@ class _AppearanceSection extends StatelessWidget {
               width: 30,
               height: 30,
               borderRadius: 32,
-              color: generalSettings.accentColor,
+              color: Color(generalSettings.accentColor),
               onSelect: () async {
                 final accountCubit = context.read<SettingsCubit>();
 
@@ -143,7 +139,7 @@ class _AppearanceSection extends StatelessWidget {
                           ),
                           child: SingleChildScrollView(
                             child: ColorPicker(
-                              color: generalSettings.accentColor,
+                              color: Color(generalSettings.accentColor),
                               onColorChanged: (color) => pickedColor = color,
                               pickersEnabled: const {
                                 ColorPickerType.wheel: true,
@@ -159,9 +155,13 @@ class _AppearanceSection extends StatelessWidget {
                         ],
                       ),
                 );
-                if (pickedColor != null) {
-                  accountCubit.updateSettings(
-                    general: generalSettings.copyWith(accentColor: pickedColor),
+
+                final newColor = pickedColor;
+                if (newColor != null) {
+                  await accountCubit.updateSettings(
+                    general: generalSettings.copyWith(
+                      accentColor: newColor.toARGB32(),
+                    ),
                   );
                 }
               },

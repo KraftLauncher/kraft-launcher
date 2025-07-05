@@ -52,7 +52,7 @@ class SettingsTab extends StatelessWidget {
           ),
           secondaryPane: switch (state.selectedCategory) {
             SettingsCategory.general => GeneralSettingsCategory(
-              generalSettings: state.settings.general,
+              generalSettings: state.settingsOrThrow.general,
             ),
             SettingsCategory.launcher => const Text('Launcher'),
             SettingsCategory.java => const Text('Java'),

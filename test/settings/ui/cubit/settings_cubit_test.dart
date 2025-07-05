@@ -1,53 +1,74 @@
-import 'package:flutter/material.dart';
-import 'package:kraft_launcher/settings/data/settings.dart';
-import 'package:kraft_launcher/settings/data/settings_storage.dart';
+import 'package:kraft_launcher/settings/logic/settings.dart';
+import 'package:kraft_launcher/settings/logic/settings_repository.dart';
 import 'package:kraft_launcher/settings/ui/cubit/settings_cubit.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-class MockSettingsStorage extends Mock implements SettingsStorage {}
+class _MockSettingsRepository extends Mock implements SettingsRepository {}
 
 void main() {
-  late MockSettingsStorage mockSettingsStorage;
+  late _MockSettingsRepository mockSettingsRepository;
   late SettingsCubit settingsCubit;
   late Settings existingSettings;
 
   setUp(() {
-    mockSettingsStorage = MockSettingsStorage();
-    existingSettings = const Settings(
-      general: GeneralSettings(themeMode: ThemeMode.dark),
-    );
+    mockSettingsRepository = _MockSettingsRepository();
+    existingSettings = Settings.defaultSettings();
+
     when(
-      () => mockSettingsStorage.loadSettings(),
-    ).thenAnswer((_) => existingSettings);
-    settingsCubit = SettingsCubit(settingsStorage: mockSettingsStorage);
-    verify(() => mockSettingsStorage.loadSettings()).called(1);
+      () => mockSettingsRepository.loadSettings(),
+    ).thenAnswer((_) async => existingSettings);
+    when(
+      () => mockSettingsRepository.saveSettings(any()),
+    ).thenAnswer((_) async {});
+
+    settingsCubit = SettingsCubit(settingsRepository: mockSettingsRepository);
+
+    // loadSettings is called in the constructor, ignore it in all tests.
+    verify(() => mockSettingsRepository.loadSettings()).called(1);
   });
 
-  test('loads the settings initially', () {
-    settingsCubit = SettingsCubit(settingsStorage: mockSettingsStorage);
-    verify(() => mockSettingsStorage.loadSettings()).called(1);
-    expect(settingsCubit.state.settings, existingSettings);
-    verifyNoMoreInteractions(mockSettingsStorage);
+  final defaultSettings = Settings.defaultSettings();
+
+  setUpAll(() {
+    // Dummy value
+    registerFallbackValue(defaultSettings);
   });
 
-  test('loadSettings updates the settings correctly', () {
-    existingSettings = const Settings(
-      general: GeneralSettings(
+  test('loads the settings initially', () async {
+    settingsCubit = SettingsCubit(settingsRepository: mockSettingsRepository);
+
+    // Awaits the loadSettings call that's called in the constructor.
+    await Future<void>.delayed(Duration.zero);
+
+    final expectedSettings = existingSettings;
+
+    when(
+      () => mockSettingsRepository.loadSettings(),
+    ).thenAnswer((_) async => expectedSettings);
+    verify(() => mockSettingsRepository.loadSettings()).called(1);
+
+    expect(settingsCubit.state.settings, expectedSettings);
+    verifyNoMoreInteractions(mockSettingsRepository);
+  });
+
+  test('loadSettings updates the settings correctly', () async {
+    existingSettings = defaultSettings.copyWith(
+      general: defaultSettings.general.copyWith(
         appLanguage: AppLanguage.de,
         useAccentColor: true,
       ),
     );
     when(
-      () => mockSettingsStorage.loadSettings(),
-    ).thenAnswer((_) => existingSettings);
+      () => mockSettingsRepository.loadSettings(),
+    ).thenAnswer((_) async => existingSettings);
 
-    settingsCubit.loadSettings();
+    await settingsCubit.loadSettings();
 
-    verify(() => mockSettingsStorage.loadSettings()).called(1);
+    verify(() => mockSettingsRepository.loadSettings()).called(1);
     expect(settingsCubit.state.settings, existingSettings);
 
-    verifyNoMoreInteractions(mockSettingsStorage);
+    verifyNoMoreInteractions(mockSettingsRepository);
   });
 
   test('loadSettings preserves current UI state', () {
@@ -62,15 +83,19 @@ void main() {
   });
 
   test('updateSettings updates the settings correctly', () {
-    const generalSettings = GeneralSettings(useClassicMaterialDesign: false);
+    final generalSettings = defaultSettings.general.copyWith(
+      useClassicMaterialDesign: false,
+    );
 
     settingsCubit.updateSettings(general: generalSettings);
-    final newExpectedSettings = settingsCubit.state.settings.copyWith(
+    final newExpectedSettings = settingsCubit.state.settingsOrThrow.copyWith(
       general: generalSettings,
     );
+
     verify(
-      () => mockSettingsStorage.saveSettings(newExpectedSettings),
+      () => mockSettingsRepository.saveSettings(newExpectedSettings),
     ).called(1);
-    verifyNoMoreInteractions(mockSettingsStorage);
+
+    verifyNoMoreInteractions(mockSettingsRepository);
   });
 }

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:kraft_launcher/settings/data/app_language.dart';
+import 'package:kraft_launcher/settings/logic/app_language.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 

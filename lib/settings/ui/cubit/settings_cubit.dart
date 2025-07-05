@@ -1,30 +1,38 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:kraft_launcher/settings/data/settings.dart';
-import 'package:kraft_launcher/settings/data/settings_storage.dart';
+import 'package:kraft_launcher/settings/logic/settings.dart';
+import 'package:kraft_launcher/settings/logic/settings_repository.dart';
 
 part 'settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit({required this.settingsStorage})
+  SettingsCubit({required this.settingsRepository})
     : super(const SettingsState()) {
     loadSettings();
   }
 
-  final SettingsStorage settingsStorage;
+  final SettingsRepository settingsRepository;
 
   void updateSelectedCategory(SettingsCategory newCategory) =>
       emit(state.copyWith(selectedCategory: newCategory));
 
-  void loadSettings() {
-    final settings = settingsStorage.loadSettings();
+  Future<void> loadSettings() async {
+    final settings = await settingsRepository.loadSettings();
     emit(state.copyWith(settings: settings));
   }
 
-  void updateSettings({GeneralSettings? general}) {
-    final settings = state.settings.copyWith(general: general);
+  // TODO: COMPLETE FULLY, whether we should use settings from repository or cubit as single source of truth to update existing with new fields
+  Future<void> updateSettings({GeneralSettings? general}) async {
+    final initialSettings = state.settings;
+    if (initialSettings == null) {
+      throw StateError(
+        'Cannot update the settings until they have been loaded.',
+      );
+    }
+
+    final settings = initialSettings.copyWith(general: general);
     emit(state.copyWith(settings: settings));
-    settingsStorage.saveSettings(settings);
+    await settingsRepository.saveSettings(settings);
   }
 }

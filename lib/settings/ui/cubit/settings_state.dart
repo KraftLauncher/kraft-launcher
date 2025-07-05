@@ -4,15 +4,22 @@ enum SettingsCategory { general, launcher, java, advanced, about }
 
 final class SettingsState extends Equatable {
   const SettingsState({
-    this.settings = const Settings(),
+    this.settings,
     this.selectedCategory = SettingsCategory.general,
   });
 
-  final Settings settings;
+  // Null while loading.
+  final Settings? settings;
   final SettingsCategory selectedCategory;
 
+  Settings get settingsOrThrow =>
+      settings ??
+      (throw StateError(
+        'The settings should be be loaded and not null at this point.',
+      ));
+
   @override
-  List<Object> get props => [settings, selectedCategory];
+  List<Object?> get props => [settings, selectedCategory];
 
   SettingsState copyWith({
     Settings? settings,

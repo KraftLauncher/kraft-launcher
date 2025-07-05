@@ -36,11 +36,17 @@ import 'package:kraft_launcher/common/ui/utils/home_screen_tab_ext.dart';
 import 'package:kraft_launcher/common/ui/widgets/optional_dynamic_color_builder.dart';
 import 'package:kraft_launcher/common/ui/widgets/scaffold_with_tabs.dart';
 import 'package:kraft_launcher/launcher/ui/profile_tab.dart';
-import 'package:kraft_launcher/settings/data/settings.dart';
-import 'package:kraft_launcher/settings/data/settings_storage.dart';
+import 'package:kraft_launcher/settings/data/file_settings_storage.dart';
+import 'package:kraft_launcher/settings/logic/settings.dart';
+import 'package:kraft_launcher/settings/logic/settings_repository.dart';
 import 'package:kraft_launcher/settings/ui/cubit/settings_cubit.dart';
 import 'package:kraft_launcher/settings/ui/settings_tab.dart';
 import 'package:path_provider/path_provider.dart';
+
+// TODO: Replace all occurrences of Enum.values.firstWhere(...) with Enum.byName(...)
+//  because Enum.byName is a built-in, more efficient, and safer way to get enum
+//  values by their name string. It avoids manual iteration and potential errors.
+// TODO: Read: https://dart.dev/tools/linter-rules/avoid_slow_async_io, review all usages of file sync operations
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,9 +84,14 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return di(
       child: blocProviders(
-        child: BlocSelector<SettingsCubit, SettingsState, GeneralSettings>(
-          selector: (state) => state.settings.general,
+        child: BlocSelector<SettingsCubit, SettingsState, GeneralSettings?>(
+          selector: (state) => state.settings?.general,
           builder: (context, generalSettings) {
+            if (generalSettings == null) {
+              return const MaterialApp(
+                home: Center(child: CircularProgressIndicator()),
+              );
+            }
             final listTileTheme = ListTileThemeData(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -100,7 +111,7 @@ class MainApp extends StatelessWidget {
                 ColorScheme.fromSeed(
                   seedColor:
                       generalSettings.useAccentColor
-                          ? generalSettings.accentColor
+                          ? Color(generalSettings.accentColor)
                           : Colors.lightBlue,
                   brightness: brightness,
                 );
@@ -128,7 +139,11 @@ class MainApp extends StatelessWidget {
                       progressIndicatorTheme: progressIndicatorTheme,
                       sliderTheme: sliderTheme,
                     ),
-                    themeMode: generalSettings.themeMode,
+                    themeMode: switch (generalSettings.themeMode) {
+                      AppThemeMode.system => ThemeMode.system,
+                      AppThemeMode.light => ThemeMode.light,
+                      AppThemeMode.dark => ThemeMode.dark,
+                    },
                     localizationsDelegates:
                         AppLocalizations.localizationsDelegates,
                     supportedLocales: AppLocalizations.supportedLocales,
@@ -222,8 +237,10 @@ class MainApp extends StatelessWidget {
       BlocProvider(
         create:
             (context) => SettingsCubit(
-              settingsStorage: SettingsStorage.fromAppDataPaths(
-                AppDataPaths.instance,
+              settingsRepository: SettingsRepository(
+                fileSettingsStorage: FileSettingsStorage.fromAppDataPaths(
+                  AppDataPaths.instance,
+                ),
               ),
             ),
         lazy: true,
@@ -240,7 +257,12 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) => ScaffoldWithTabs(
     defaultIndex: () {
       final defaultTab =
-          context.read<SettingsCubit>().state.settings.general.defaultTab;
+          context
+              .read<SettingsCubit>()
+              .state
+              .settingsOrThrow
+              .general
+              .defaultTab;
       final index = HomeScreenTab.values.indexOf(defaultTab);
       return index;
     }(),

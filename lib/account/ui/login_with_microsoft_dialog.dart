@@ -297,7 +297,7 @@ class _AuthCodeSection extends StatelessWidget {
             context
                 .read<SettingsCubit>()
                 .state
-                .settings
+                .settingsOrThrow
                 .general
                 .appLanguage
                 .localeCode;

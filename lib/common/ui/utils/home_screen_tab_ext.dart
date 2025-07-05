@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kraft_launcher/common/generated/l10n/app_localizations.dart';
-import 'package:kraft_launcher/settings/data/settings.dart';
+import 'package:kraft_launcher/settings/logic/settings.dart';
 
 extension HomeScreenTabExt on HomeScreenTab {
   String getLabel(AppLocalizations loc) => switch (this) {
