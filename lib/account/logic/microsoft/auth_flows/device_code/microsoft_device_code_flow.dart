@@ -1,5 +1,5 @@
 /// @docImport 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
-/// @docImport 'package:kraft_launcher/account/logic/microsoft/microsoft_oauth_flow_controller.dart';
+/// @docImport 'package:kraft_launcher/account/logic/microsoft/auth_flows/microsoft_oauth_flow_controller.dart';
 library;
 
 import 'package:clock/clock.dart';

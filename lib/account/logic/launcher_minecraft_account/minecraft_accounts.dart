@@ -10,6 +10,7 @@ class MinecraftAccounts extends Equatable {
   factory MinecraftAccounts.empty() =>
       const MinecraftAccounts(list: [], defaultAccountId: null);
 
+  // TODO: Use UnmodifiableListView<MinecraftAccount> instead?
   final List<MinecraftAccount> list;
   final String? defaultAccountId;
 

@@ -22,17 +22,10 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(state.copyWith(settings: settings));
   }
 
-  // TODO: COMPLETE FULLY, whether we should use settings from repository or cubit as single source of truth to update existing with new fields
   Future<void> updateSettings({GeneralSettings? general}) async {
-    final initialSettings = state.settings;
-    if (initialSettings == null) {
-      throw StateError(
-        'Cannot update the settings until they have been loaded.',
-      );
-    }
-
-    final settings = initialSettings.copyWith(general: general);
-    emit(state.copyWith(settings: settings));
-    await settingsRepository.saveSettings(settings);
+    final updatedSettings = await settingsRepository.saveSettings(
+      general: general,
+    );
+    emit(state.copyWith(settings: updatedSettings));
   }
 }

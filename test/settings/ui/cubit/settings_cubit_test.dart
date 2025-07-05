@@ -19,8 +19,8 @@ void main() {
       () => mockSettingsRepository.loadSettings(),
     ).thenAnswer((_) async => existingSettings);
     when(
-      () => mockSettingsRepository.saveSettings(any()),
-    ).thenAnswer((_) async {});
+      () => mockSettingsRepository.saveSettings(general: any(named: 'general')),
+    ).thenAnswer((_) async => _dummySettings);
 
     settingsCubit = SettingsCubit(settingsRepository: mockSettingsRepository);
 
@@ -31,8 +31,7 @@ void main() {
   final defaultSettings = Settings.defaultSettings();
 
   setUpAll(() {
-    // Dummy value
-    registerFallbackValue(defaultSettings);
+    registerFallbackValue(_dummySettings);
   });
 
   test('loads the settings initially', () async {
@@ -82,20 +81,27 @@ void main() {
     expect(settingsCubit.state.selectedCategory, currentSelectedCategory);
   });
 
-  test('updateSettings updates the settings correctly', () {
-    final generalSettings = defaultSettings.general.copyWith(
-      useClassicMaterialDesign: false,
+  test('updateSettings updates the settings correctly', () async {
+    final initialSettings = defaultSettings;
+    final updatedSettings = initialSettings.copyWith(
+      general: initialSettings.general.copyWith(
+        useClassicMaterialDesign: false,
+      ),
     );
 
-    settingsCubit.updateSettings(general: generalSettings);
-    final newExpectedSettings = settingsCubit.state.settingsOrThrow.copyWith(
-      general: generalSettings,
-    );
+    when(
+      () => mockSettingsRepository.saveSettings(general: any(named: 'general')),
+    ).thenAnswer((_) async => updatedSettings);
+
+    await settingsCubit.updateSettings(general: updatedSettings.general);
 
     verify(
-      () => mockSettingsRepository.saveSettings(newExpectedSettings),
+      () =>
+          mockSettingsRepository.saveSettings(general: updatedSettings.general),
     ).called(1);
 
     verifyNoMoreInteractions(mockSettingsRepository);
   });
 }
+
+Settings _dummySettings = Settings.defaultSettings();

@@ -1,5 +1,5 @@
 /// @docImport 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
-/// @docImport 'package:kraft_launcher/account/logic/microsoft/microsoft_oauth_flow_controller.dart';
+/// @docImport 'package:kraft_launcher/account/logic/microsoft/auth_flows/microsoft_oauth_flow_controller.dart';
 library;
 
 import 'dart:async';
