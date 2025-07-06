@@ -292,6 +292,11 @@ class _AuthCodeSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return FilledButton.icon(
       onPressed: () {
+        // TODO: An improvement we could make is:
+        //  1. Avoid requiring pageDir and pageLangCode in each instance of MicrosoftAuthCodeResponsePageContent.
+        //  It should be required only once.
+        //  2. Avoid requiring pageLangCode and reading SettingsCubit, instead
+        //  make MicrosoftAuthCubit dependent on SettingsRepository and access the value internally.
         final pageDir = Directionality.of(context).name;
         final pageLangCode =
             context
