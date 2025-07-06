@@ -143,16 +143,17 @@ class _ProfileTabState extends State<ProfileTab> {
   // NOTE: This is dummy code and will be replaced fully later, it's for prototyping only
   // and not final.
   Future<void> launchGame({required MinecraftAccount account}) async {
-    final mcDirPath = AppDataPaths.instance.game.path;
+    final appDataPaths = context.read<AppDataPaths>();
+    final mcDirPath = appDataPaths.game.path;
     print('MC Dir: ${File(mcDirPath).absolute.path}');
     final librariesDirPath = p.join(mcDirPath, 'libraries');
     final assetsDirPath = p.join(mcDirPath, 'assets');
-    final javaRuntimesDirPath = AppDataPaths.instance.runtimes;
+    final javaRuntimesDirPath = appDataPaths.runtimes;
 
     final gameDir = Directory(
       p.join(
         // ignore: invalid_use_of_visible_for_testing_member
-        AppDataPaths.instance.workingDirectory.path,
+        appDataPaths.workingDirectory.path,
         'single_instance',
       ),
     );
@@ -185,12 +186,10 @@ class _ProfileTabState extends State<ProfileTab> {
     final minecraftVersionsRepository = MinecraftVersionsRepository(
       minecraftVersionsApi: minecraftVersionsApi,
       minecraftVersionsFileCache: MinecraftVersionsFileCache.fromAppDataPaths(
-        AppDataPaths.instance,
+        appDataPaths,
       ),
       minecraftVersionDetailsFileCache:
-          MinecraftVersionDetailsFileCache.fromAppDataPaths(
-            AppDataPaths.instance,
-          ),
+          MinecraftVersionDetailsFileCache.fromAppDataPaths(appDataPaths),
     );
 
     final versionManifest =
@@ -271,7 +270,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
     final clientJarDownloadUrl = versionDetails.downloads.client.url;
 
-    final clientJarFile = AppDataPaths.instance.versionClientJarFile(versionId);
+    final clientJarFile = appDataPaths.versionClientJarFile(versionId);
 
     if (!clientJarFile.existsSync()) {
       print('Downloading client JAR file...');

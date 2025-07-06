@@ -33,24 +33,27 @@ import 'package:provider/provider.dart'
     show MultiProvider, Provider, ReadContext;
 
 class AppDi extends StatelessWidget {
-  const AppDi({super.key, required this.child});
+  const AppDi({super.key, required this.child, required this.appDataPaths});
 
   final Widget child;
+  final AppDataPaths appDataPaths;
 
   @override
   Widget build(BuildContext context) {
-    return _CommonDi(
-      child: _AccountFeatureInjector(
-        child: _SettingsFeatureInjector(child: child),
+    return _CommonProviders(
+      appDataPaths: appDataPaths,
+      child: _AccountFeatureProviders(
+        child: _SettingsFeatureProviders(child: child),
       ),
     );
   }
 }
 
-class _CommonDi extends StatelessWidget {
-  const _CommonDi({required this.child});
+class _CommonProviders extends StatelessWidget {
+  const _CommonProviders({required this.child, required this.appDataPaths});
 
   final Widget child;
+  final AppDataPaths appDataPaths;
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +61,15 @@ class _CommonDi extends StatelessWidget {
       providers: [
         Provider(create: (context) => ImagePicker()),
         Provider(create: (context) => const FlutterSecureStorage()),
+        Provider.value(value: appDataPaths),
       ],
       child: child,
     );
   }
 }
 
-abstract class _FeatureInjector extends StatelessWidget {
-  const _FeatureInjector({required this.child});
+abstract class _FeatureProviders extends StatelessWidget {
+  const _FeatureProviders({required this.child});
 
   final Widget child;
 
@@ -81,8 +85,8 @@ abstract class _FeatureInjector extends StatelessWidget {
 
 // NOTE: The difference between RepositoryProvider and Provider is semantic.
 
-class _AccountFeatureInjector extends _FeatureInjector {
-  const _AccountFeatureInjector({required super.child});
+class _AccountFeatureProviders extends _FeatureProviders {
+  const _AccountFeatureProviders({required super.child});
 
   @override
   Widget _dataLayer({required Widget child}) => MultiProvider(
@@ -101,8 +105,7 @@ class _AccountFeatureInjector extends _FeatureInjector {
       ),
       RepositoryProvider<FileAccountStorage>(
         create:
-            (context) =>
-                FileAccountStorage.fromAppDataPaths(AppDataPaths.instance),
+            (context) => FileAccountStorage.fromAppDataPaths(context.read()),
       ),
       RepositoryProvider(
         create:
@@ -182,16 +185,15 @@ class _AccountFeatureInjector extends _FeatureInjector {
   );
 }
 
-class _SettingsFeatureInjector extends _FeatureInjector {
-  const _SettingsFeatureInjector({required super.child});
+class _SettingsFeatureProviders extends _FeatureProviders {
+  const _SettingsFeatureProviders({required super.child});
 
   @override
   Widget _dataLayer({required Widget child}) => MultiProvider(
     providers: [
       Provider(
         create:
-            (context) =>
-                FileSettingsStorage.fromAppDataPaths(AppDataPaths.instance),
+            (context) => FileSettingsStorage.fromAppDataPaths(context.read()),
       ),
     ],
     child: child,

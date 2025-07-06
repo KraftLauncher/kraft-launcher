@@ -4,9 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
 class AppDataPaths {
-  AppDataPaths({required this.workingDirectory});
-
-  static late AppDataPaths instance;
+  const AppDataPaths({required this.workingDirectory});
 
   @visibleForTesting
   final Directory workingDirectory;

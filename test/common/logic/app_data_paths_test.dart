@@ -13,11 +13,6 @@ void main() {
     appDataPaths = AppDataPaths(workingDirectory: workingDirectory);
   });
 
-  test('sets the instance correctly', () {
-    AppDataPaths.instance = appDataPaths;
-    expect(AppDataPaths.instance, appDataPaths);
-  });
-
   test('returns the correct working directory', () {
     expect(appDataPaths.workingDirectory, workingDirectory);
   });
