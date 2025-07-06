@@ -366,10 +366,13 @@ The **Layered architecture** is different from [Uncle Bob's **Clean Architecture
 * Has more abstractions, makes use of **interfaces/abstractions** in inner layers and implements them in outer layers.
 * The domain layer defines interfaces that it uses to communicate with the data layer. The data layer implements the interfaces.
 * Dependencies must point inward (towards the domain).
-* Usually has more classes (use cases) where each use case has a single responsibility and must define only one public method/function (e.g. `UserFetcher.execute()`).
+* Usually has more classes (use cases) where each use case has a single responsibility and must define only one public method/function (e.g. `KillGameUseCase.execute()` instead of `GameLauncher.kill()`).
 * The domain Layer is independent of any other layer.
 
-While it's a matter of coding style and not related to any architecture, we avoid verbose suffixes like `DataSource` or `UseCase`. We prefer names like `VersionManifestFetcher` over `GetVersionManifestUseCase` and `OrderValidator` over `ValidateOrderUseCase`. Those naming conventions are commonly used in Flutter and Android apps that follow the Clean Architecture.
+**Minor naming differences**:
+
+* While it's a matter of coding style and not related to any architecture, we avoid verbose suffixes like `DataSource`.
+* We prefer class names like `VersionManifestFetcher` over `GetVersionManifestUseCase` and `OrderValidator` over `ValidateOrderUseCase`. Those naming conventions are commonly used in Flutter and Android apps that follow Clean Architecture. These names clearly indicate that `GetVersionManifestUseCase` has a single responsibility (use case), but we don't use the use-case pattern, so `VersionManifestFetcher` can have different related responsibilities in a way that makes sense, and is also easy to test and maintain.
 
 The Layered architecture is suggested by both Android and Flutter:
 
