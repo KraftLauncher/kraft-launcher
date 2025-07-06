@@ -54,6 +54,10 @@ abstract final class ApiHosts {
   static const xboxLiveXstsAuth = 'xsts.auth.xboxlive.com';
 }
 
-class StaticHosts {
+abstract final class StaticHosts {
   static const minecraftAssets = 'resources.download.minecraft.net';
+}
+
+abstract final class DbusConstants {
+  static const linuxDBusSecretServiceName = 'org.freedesktop.secrets';
 }

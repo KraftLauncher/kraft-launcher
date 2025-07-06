@@ -1,7 +1,16 @@
 import 'package:dbus/dbus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:kraft_launcher/common/constants/constants.dart';
 
 import 'package:kraft_launcher/common/logic/platform_check.dart';
+
+// TODO: Not part of the logic/domain layer, move it to the data layer.
+//  Refactor it a bit if needed:
+//  1. Move the caching outside of the data source and keep it stateless, and introduce it somewhere else?
+//  2. Always setting false to macOS (even if temporarily) can be a sign that this is not a data source or an external data,
+//  and is app-specific. Same for Windows.
+//  3. Maybe make this Linux specific and use it in another class, or use it directly and ignore macOS and Windows?
+//  Maybe introduce a repository with a Data source specific to Linux to fix such issues?
 
 class PlatformSecureStorageSupport {
   PlatformSecureStorageSupport({
@@ -23,7 +32,9 @@ class PlatformSecureStorageSupport {
         final dbusClient = _linuxDBusClientFactory();
         try {
           final names = await dbusClient.listNames();
-          final available = names.contains('org.freedesktop.secrets');
+          final available = names.contains(
+            DbusConstants.linuxDBusSecretServiceName,
+          );
           cachedLinuxSecretServiceAvailable = available;
           return available;
         } finally {
