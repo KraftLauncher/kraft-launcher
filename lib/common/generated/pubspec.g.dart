@@ -1,10 +1,12 @@
-// GENERATED FILE, don't modify directly, instead update pubspec.yaml and run the
-// following script:
-// dart ./scripts/generate_pubspec_dart_code.dart
-
+// dart format off
 // coverage:ignore-file
 
+// GENERATED FILE - Don't modify by hand.
+// Update pubspec.yaml and run the following script:
+// dart ./scripts/generate_pubspec_dart_code.dart
+
 abstract final class Pubspec {
+
   static const name = 'kraft_launcher';
   static const fullVersion = '0.1.0+1';
   static const version = '0.1.0';

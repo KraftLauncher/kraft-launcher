@@ -11,6 +11,7 @@ analyzer:
     - '**/*.freezed.dart' # https://pub.dev/packages/freezed
     - '**/*.mapper.dart' # https://pub.dev/packages/dart_mappable
     - '**/*.mocks.dart' # https://pub.dev/packages/mockito
+    - 'lib/common/generated/*'
 
 # Based on https://github.com/flutter/packages/blob/main/analysis_options.yaml with modifications
 linter:

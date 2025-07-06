@@ -1,3 +1,6 @@
+// dart format off
+// coverage:ignore-file
+
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
@@ -60,36 +63,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deviceCodeStepEnter => '2. Enter the code below:';
 
   @override
-  String get deviceCodeQrInstruction =>
-      'Scan to open the link on another device.\nYou’ll still need to enter the code above.';
+  String get deviceCodeQrInstruction => 'Scan to open the link on another device.\nYou’ll still need to enter the code above.';
 
   @override
-  String get loggingInWithMicrosoftAccount =>
-      'Logging in with Microsoft account';
+  String get loggingInWithMicrosoftAccount => 'Logging in with Microsoft account';
 
   @override
-  String get authProgressWaitingForUserLogin =>
-      'Waiting for user authentication...';
+  String get authProgressWaitingForUserLogin => 'Waiting for user authentication...';
 
   @override
-  String get authProgressExchangingAuthCode =>
-      'Exchanging authorization code...';
+  String get authProgressExchangingAuthCode => 'Exchanging authorization code...';
 
   @override
-  String get authProgressRequestingXboxLiveToken =>
-      'Requesting Xbox Live access...';
+  String get authProgressRequestingXboxLiveToken => 'Requesting Xbox Live access...';
 
   @override
-  String get authProgressRequestingXstsToken =>
-      'Authorizing Xbox Live session...';
+  String get authProgressRequestingXstsToken => 'Authorizing Xbox Live session...';
 
   @override
-  String get authProgressLoggingIntoMinecraft =>
-      'Logging into Minecraft services...';
+  String get authProgressLoggingIntoMinecraft => 'Logging into Minecraft services...';
 
   @override
-  String get authProgressFetchingMinecraftProfile =>
-      'Retrieving Minecraft profile...';
+  String get authProgressFetchingMinecraftProfile => 'Retrieving Minecraft profile...';
 
   @override
   String loginSuccessAccountAddedMessage(String username) {
@@ -116,20 +111,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get missingAuthCodeError =>
-      'Auth code not provided. Sign-in must be restarted.';
+  String get missingAuthCodeError => 'Auth code not provided. Sign-in must be restarted.';
 
   @override
-  String get expiredAuthCodeError =>
-      'Auth code has expired. Please restart sign-in process.';
+  String get expiredAuthCodeError => 'Auth code has expired. Please restart sign-in process.';
 
   @override
-  String get expiredMicrosoftAccessTokenError =>
-      'Microsoft OAuth access token expired. New sign-in required.';
+  String get expiredMicrosoftAccessTokenError => 'Microsoft OAuth access token expired. New sign-in required.';
 
   @override
-  String get unauthorizedMinecraftAccessError =>
-      'Unauthorized access to Minecraft. Authorization is expired or invalid.';
+  String get unauthorizedMinecraftAccessError => 'Unauthorized access to Minecraft. Authorization is expired or invalid.';
 
   @override
   String get createOfflineAccount => 'Create Offline Account';
@@ -138,8 +129,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateOfflineAccount => 'Update Offline Account';
 
   @override
-  String get offlineMinecraftAccountCreationNotice =>
-      'Enter your desired Minecraft username. Offline accounts are stored locally and can\'t access online servers or Realms.';
+  String get offlineMinecraftAccountCreationNotice => 'Enter your desired Minecraft username. Offline accounts are stored locally and can\'t access online servers or Realms.';
 
   @override
   String get create => 'Create';
@@ -157,12 +147,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get usernameTooLongError => 'Username must be at most 16 characters';
 
   @override
-  String get usernameInvalidCharactersError =>
-      'Username can only contain letters, numbers, and underscores.';
+  String get usernameInvalidCharactersError => 'Username can only contain letters, numbers, and underscores.';
 
   @override
-  String get usernameContainsWhitespacesError =>
-      'Username cannot contain spaces.';
+  String get usernameContainsWhitespacesError => 'Username cannot contain spaces.';
 
   @override
   String get update => 'Update';
@@ -174,8 +162,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removeAccountConfirmation => 'Remove Account?';
 
   @override
-  String get removeAccountConfirmationNotice =>
-      'This account will be removed from the launcher.\nYou\'ll need to add it again to use it for playing.';
+  String get removeAccountConfirmationNotice => 'This account will be removed from the launcher.\nYou\'ll need to add it again to use it for playing.';
 
   @override
   String get remove => 'Remove';
@@ -193,22 +180,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeMode => 'Theme Mode';
 
   @override
-  String get selectDarkLightOrSystemTheme =>
-      'Select dark, light, or system theme';
+  String get selectDarkLightOrSystemTheme => 'Select dark, light, or system theme';
 
   @override
   String get classicMaterialDesign => 'Classic Material Design';
 
   @override
-  String get useClassicMaterialDesignTheme =>
-      'Use the classic Material Design theme';
+  String get useClassicMaterialDesignTheme => 'Use the classic Material Design theme';
 
   @override
   String get dynamicColor => 'Dynamic Color';
 
   @override
-  String get automaticallyAdaptToSystemColors =>
-      'Automatically adapt to the system colors';
+  String get automaticallyAdaptToSystemColors => 'Automatically adapt to the system colors';
 
   @override
   String get general => 'General';
@@ -235,8 +219,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customAccentColor => 'Custom Accent Color';
 
   @override
-  String get customizeAccentColor =>
-      'Customize the accent color of the app theme.';
+  String get customizeAccentColor => 'Customize the accent color of the app theme.';
 
   @override
   String get pickAColor => 'Pick a Color';
@@ -248,8 +231,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get or => 'OR';
 
   @override
-  String get loginDeviceCodeExpired =>
-      'The login code has expired. Please try again.';
+  String get loginDeviceCodeExpired => 'The login code has expired. Please try again.';
 
   @override
   String get tryAgain => 'Try Again';
@@ -261,8 +243,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get defaultTab => 'Default Tab';
 
   @override
-  String get initialTabSelectionDescription =>
-      'Choose the tab shown first when the app opens';
+  String get initialTabSelectionDescription => 'Choose the tab shown first when the app opens';
 
   @override
   String get search => 'Search';
@@ -271,8 +252,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refreshAccount => 'Refresh Account';
 
   @override
-  String get sessionExpiredOrAccessRevoked =>
-      'The account session has expired or access was revoked. Please log in again to continue.';
+  String get sessionExpiredOrAccessRevoked => 'The account session has expired or access was revoked. Please log in again to continue.';
 
   @override
   String accountRefreshedMessage(String username) {
@@ -283,27 +263,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get revokeAccess => 'Revoke Access';
 
   @override
-  String get microsoftRequestLimitError =>
-      'Request limit reached while communicating with Microsoft authentication servers. Please try again shortly.';
+  String get microsoftRequestLimitError => 'Request limit reached while communicating with Microsoft authentication servers. Please try again shortly.';
 
   @override
-  String get authProgressRefreshingMicrosoftTokens =>
-      'Refreshing Microsoft tokens...';
+  String get authProgressRefreshingMicrosoftTokens => 'Refreshing Microsoft tokens...';
 
   @override
-  String get authProgressCheckingMinecraftJavaOwnership =>
-      'Checking Minecraft Java ownership...';
+  String get authProgressCheckingMinecraftJavaOwnership => 'Checking Minecraft Java ownership...';
 
   @override
-  String get waitForOngoingTask =>
-      'Please hold on while the current task finishes.';
+  String get waitForOngoingTask => 'Please hold on while the current task finishes.';
 
   @override
   String get accountsEmptyTitle => 'Manage Minecraft Accounts';
 
   @override
-  String get accountsEmptySubtitle =>
-      'Add Minecraft accounts for seamless switching. Accounts are stored securely on this device.';
+  String get accountsEmptySubtitle => 'Add Minecraft accounts for seamless switching. Accounts are stored securely on this device.';
 
   @override
   String get authCodeRedirectPageLoginSuccessTitle => 'Successful Login';
@@ -320,12 +295,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportBug => 'Report Bug';
 
   @override
-  String get unknownErrorWhileLoadingAccounts =>
-      'An unknown error occurred while loading the accounts. Please try again later.';
+  String get unknownErrorWhileLoadingAccounts => 'An unknown error occurred while loading the accounts. Please try again later.';
 
   @override
-  String get minecraftRequestLimitError =>
-      'Request limit reached while communicating with Minecraft servers. Please try again shortly.';
+  String get minecraftRequestLimitError => 'Request limit reached while communicating with Minecraft servers. Please try again shortly.';
 
   @override
   String unexpectedMinecraftApiError(Object message) {
@@ -355,8 +328,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateSkin => 'Update Skin';
 
   @override
-  String get featureUnsupportedYet =>
-      'This feature is not supported yet. Stay tuned for future updates!';
+  String get featureUnsupportedYet => 'This feature is not supported yet. Stay tuned for future updates!';
 
   @override
   String get news => 'News';
@@ -385,8 +357,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sourceCode => 'Source Code';
 
   @override
-  String get invalidMinecraftSkinFile =>
-      'Invalid skin image. Please upload a valid Minecraft skin file.';
+  String get invalidMinecraftSkinFile => 'Invalid skin image. Please upload a valid Minecraft skin file.';
 
   @override
   String get manageSkins => 'Manage Skins';
@@ -400,43 +371,34 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get xstsAccountCreationRequiredError =>
-      'This account is not linked to Xbox services. Please sign in to Xbox to continue.';
+  String get xstsAccountCreationRequiredError => 'This account is not linked to Xbox services. Please sign in to Xbox to continue.';
 
   @override
-  String get xstsRegionNotSupportedError =>
-      'Xbox Live isn\'t available in your Microsoft account\'s region.';
+  String get xstsRegionNotSupportedError => 'Xbox Live isn\'t available in your Microsoft account\'s region.';
 
   @override
-  String get xstsAdultVerificationRequiredError =>
-      'Your Microsoft account needs adult verification.';
+  String get xstsAdultVerificationRequiredError => 'Your Microsoft account needs adult verification.';
 
   @override
-  String get xstsAgeVerificationRequiredError =>
-      'Your Microsoft account needs age verification.';
+  String get xstsAgeVerificationRequiredError => 'Your Microsoft account needs age verification.';
 
   @override
-  String get xstsRequiresAdultConsentRequiredError =>
-      'This account is under 18. An adult needs to add the account to a Microsoft family group to continue.';
+  String get xstsRequiresAdultConsentRequiredError => 'This account is under 18. An adult needs to add the account to a Microsoft family group to continue.';
 
   @override
-  String get xstsAccountBannedError =>
-      'This Xbox account is permanently banned for violating community standards.';
+  String get xstsAccountBannedError => 'This Xbox account is permanently banned for violating community standards.';
 
   @override
-  String get xstsTermsNotAcceptedError =>
-      'This Microsoft account has not accepted the Xbox Terms of Service.';
+  String get xstsTermsNotAcceptedError => 'This Microsoft account has not accepted the Xbox Terms of Service.';
 
   @override
   String get createXboxAccount => 'Create Xbox Account';
 
   @override
-  String get minecraftAccountNotFoundError =>
-      'Minecraft account was not found. Please ensure you are logged in with the correct Microsoft account.';
+  String get minecraftAccountNotFoundError => 'Minecraft account was not found. Please ensure you are logged in with the correct Microsoft account.';
 
   @override
-  String get minecraftOwnershipRequiredError =>
-      'This Microsoft account does not have a valid Minecraft: Java Edition license. Please purchase or redeem the game to continue.';
+  String get minecraftOwnershipRequiredError => 'This Microsoft account does not have a valid Minecraft: Java Edition license. Please purchase or redeem the game to continue.';
 
   @override
   String get loginAttemptRejected => 'The login attempt was rejected.';
@@ -456,8 +418,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redeemCode => 'Redeem';
 
   @override
-  String get sessionExpired =>
-      'The account session has expired. Please log in again to continue.';
+  String get sessionExpired => 'The account session has expired. Please log in again to continue.';
 
   @override
   String get expired => 'Expired';
@@ -471,38 +432,32 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get reAuthRequiredDueToAccessRevoked =>
-      'Access to your account has been revoked. Please sign in again to continue.';
+  String get reAuthRequiredDueToAccessRevoked => 'Access to your account has been revoked. Please sign in again to continue.';
 
   @override
   String get signInViaBrowser => 'Sign in via Browser';
 
   @override
-  String get reAuthRequiredDueToMissingSecureAccountDataDetailed =>
-      'Secure account data is missing. This can happen if you\'re using a different system user, desktop environment, or operating system. Please sign in again to continue.';
+  String get reAuthRequiredDueToMissingSecureAccountDataDetailed => 'Secure account data is missing. This can happen if you\'re using a different system user, desktop environment, or operating system. Please sign in again to continue.';
 
   @override
-  String get reAuthRequiredDueToMissingSecureAccountData =>
-      'Secure account data is missing. Please sign in again to continue.';
+  String get reAuthRequiredDueToMissingSecureAccountData => 'Secure account data is missing. Please sign in again to continue.';
 
   @override
   String get unavailable => 'Unavailable';
 
   @override
-  String get reAuthRequiredDueToMissingAccountTokensFromFileStorage =>
-      'Account tokens are missing. Please sign in again to continue.';
+  String get reAuthRequiredDueToMissingAccountTokensFromFileStorage => 'Account tokens are missing. Please sign in again to continue.';
 
   @override
   String get securityWarning => 'Security Warning';
 
   @override
-  String get secureStorageUnsupportedWarning =>
-      'Secure storage is not supported on this platform. Account tokens will be stored unencrypted in a local file. Be cautious with installed programs and Minecraft mods.';
+  String get secureStorageUnsupportedWarning => 'Secure storage is not supported on this platform. Account tokens will be stored unencrypted in a local file. Be cautious with installed programs and Minecraft mods.';
 
   @override
   String get updateMicrosoftAccount => 'Update Microsoft Account';
 
   @override
-  String get minecraftAccountApiUnavailable =>
-      'Minecraft services are currently unavailable. Please try again in a few minutes.';
+  String get minecraftAccountApiUnavailable => 'Minecraft services are currently unavailable. Please try again in a few minutes.';
 }
