@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 // TODO: Try to use this function in MicrosoftAuthApi and MinecraftAccountApi.
-// TODO: Handle onDeserializationFailure also in everywhere where jsonDecode is used, also in MicrosoftAuthApi and MinecraftAccountApi. (Unrelated to code in this file).
+// TODO: Handle FormatException also in everywhere where jsonDecode is used, also in MicrosoftAuthApi and MinecraftAccountApi. (Unrelated to code in this file).
 
 // Common failures when sending a request using Dio.
 Future<T> handleCommonDioFailures<T>(

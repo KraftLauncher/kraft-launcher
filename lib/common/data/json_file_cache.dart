@@ -19,6 +19,8 @@ class JsonFileCache<T> {
       if (!file.existsSync()) {
         return null;
       }
+      // TODO: Unrelated to this file: All File IO operations should handle FileSystemException, currently
+      //  FileSettingsStorage.readSettings and FileAccountStorage.readAccounts does not.
       final content = await file.readAsString();
       final json = jsonDecode(content) as JsonMap;
       return fromJson(json);
