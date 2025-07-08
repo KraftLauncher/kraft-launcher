@@ -8,7 +8,7 @@ import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_ap
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
 import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/common/data/json.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 

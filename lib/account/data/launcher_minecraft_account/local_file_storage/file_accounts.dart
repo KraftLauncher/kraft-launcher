@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/common/data/json.dart';
 import 'package:meta/meta.dart';
 
 @immutable

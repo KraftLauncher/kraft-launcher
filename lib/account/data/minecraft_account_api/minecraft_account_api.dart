@@ -4,7 +4,7 @@ library;
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/common/data/json.dart';
 import 'package:meta/meta.dart';
 
 /// A client for the `api.minecraftservices.com` API.

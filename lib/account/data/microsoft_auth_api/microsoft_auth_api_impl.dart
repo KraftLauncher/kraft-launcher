@@ -8,8 +8,8 @@ import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_ap
     as microsoft_auth_api_exceptions;
 import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
-import 'package:kraft_launcher/common/logic/dio_helpers.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/common/data/json.dart';
+import 'package:kraft_launcher/common/data/network/dio_helpers.dart';
 import 'package:meta/meta.dart';
 
 class MicrosoftAuthApiImpl implements MicrosoftAuthApi {

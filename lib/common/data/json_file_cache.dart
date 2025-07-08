@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/common/data/json.dart';
 import 'package:meta/meta.dart';
 
 typedef FromJson<T> = T Function(JsonMap json);

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:kraft_launcher/common/logic/dio_helpers.dart';
+import 'package:kraft_launcher/common/data/network/dio_helpers.dart';
 import 'package:test/test.dart';
 
 void main() {

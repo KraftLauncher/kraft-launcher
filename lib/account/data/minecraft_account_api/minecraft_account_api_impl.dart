@@ -5,9 +5,9 @@ import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_acco
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_exceptions.dart'
     as minecraft_account_api_exceptions;
 import 'package:kraft_launcher/common/constants/constants.dart';
-import 'package:kraft_launcher/common/logic/dio_helpers.dart';
+import 'package:kraft_launcher/common/data/json.dart';
+import 'package:kraft_launcher/common/data/network/dio_helpers.dart';
 import 'package:kraft_launcher/common/logic/file_utils.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:meta/meta.dart';
 
 const _host = ApiHosts.minecraftServices;

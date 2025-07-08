@@ -3,7 +3,7 @@ library;
 
 import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_flows/microsoft_auth_code_flow_api.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/auth_flows/microsoft_device_code_flow_api.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/common/data/json.dart';
 import 'package:meta/meta.dart';
 
 /// A client for authenticating with Microsoft and Xbox using the following APIs:

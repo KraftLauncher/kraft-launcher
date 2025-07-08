@@ -1,4 +1,4 @@
-import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/common/data/json.dart';
 import 'package:test/test.dart';
 
 void main() {

@@ -19,6 +19,13 @@ final class InternalServerFailure extends MinecraftVersionsApiFailure {
     : super('Internal Mojang server error: $message');
 }
 
+final class ServiceUnavailable extends MinecraftVersionsApiFailure {
+  const ServiceUnavailable(int? retryAfterInSeconds)
+    : super(
+        'Mojang servers are temporarily unavailable. Please try again in $retryAfterInSeconds',
+      );
+}
+
 final class ConnectionFailure extends MinecraftVersionsApiFailure {
   const ConnectionFailure(String message)
     : super('Failed to connect to Mojang servers: $message');

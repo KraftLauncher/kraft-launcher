@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:kraft_launcher/common/constants/constants.dart';
-import 'package:kraft_launcher/common/logic/dio_helpers.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/common/data/json.dart';
+import 'package:kraft_launcher/common/data/network/dio_helpers.dart';
 import 'package:kraft_launcher/common/models/result.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/minecraft_versions_api_failures.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/asset_index/api_minecraft_asset_index.dart';
@@ -38,17 +38,17 @@ class MinecraftVersionsApi {
 
   Future<Result<T, MinecraftVersionsApiFailure>> _handleCommonFailures<T>(
     Future<T> Function() run,
-  ) async => handleCommonDioFailures(
+  ) async => safeHttpApiCall(
     () async {
-      return Result.success(await run());
+      return run();
     },
-    onDeserializationFailure:
-        (message) => Result.failure(DeserializationFailure(message)),
-    onConnectionFailure:
-        (message) => Result.failure(ConnectionFailure(message)),
-    onTooManyRequestsFailure:
-        () => Result.failure(const TooManyRequestsFailure()),
-    onUnknownFailure: (e) => Result.failure(UnknownFailure(e.userErrorMessage)),
+    onDeserializationFailure: (message) => DeserializationFailure(message),
+    onConnectionFailure: (message) => ConnectionFailure(message),
+    onTooManyRequestsFailure: () => const TooManyRequestsFailure(),
+    onInternalServerError: (message, _) => InternalServerFailure(message),
+    onServiceUnavailable:
+        (retryAfterInSeconds) => ServiceUnavailable(retryAfterInSeconds),
+    onUnknownFailure: (e) => UnknownFailure(e.userErrorMessage),
   );
 
   Future<Result<ManifestWithJsonMap, MinecraftVersionsApiFailure>>

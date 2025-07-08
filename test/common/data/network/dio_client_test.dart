@@ -4,14 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/data/json.dart';
+import 'package:kraft_launcher/common/data/network/dio_client.dart';
+import 'package:kraft_launcher/common/data/network/dio_helpers.dart';
 import 'package:kraft_launcher/common/generated/pubspec.g.dart';
-import 'package:kraft_launcher/common/logic/dio_client.dart';
-import 'package:kraft_launcher/common/logic/dio_helpers.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:talker_dio_logger/talker_dio_logger_interceptor.dart';
 
-import '../helpers/dio_utils.dart';
+import '../../helpers/dio_utils.dart';
 
 void main() {
   tearDown(() => DioClient.instance = null);

@@ -21,8 +21,8 @@ import 'package:kraft_launcher/account/logic/offline_account/minecraft_offline_a
 import 'package:kraft_launcher/account/logic/platform_secure_storage_support.dart';
 import 'package:kraft_launcher/account/ui/account_cubit/account_cubit.dart';
 import 'package:kraft_launcher/account/ui/microsoft_auth_cubit/microsoft_auth_cubit.dart';
+import 'package:kraft_launcher/common/data/network/dio_client.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
-import 'package:kraft_launcher/common/logic/dio_client.dart';
 import 'package:kraft_launcher/settings/data/file_settings_storage.dart';
 import 'package:kraft_launcher/settings/logic/settings_repository.dart';
 import 'package:kraft_launcher/settings/ui/cubit/settings_cubit.dart';

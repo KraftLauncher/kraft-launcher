@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:kraft_launcher/common/data/json.dart';
 import 'package:kraft_launcher/common/data/json_file_cache.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/version_details/api_minecraft_version_details.dart';
 import 'package:meta/meta.dart';
 

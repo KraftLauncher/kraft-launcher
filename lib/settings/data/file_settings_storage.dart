@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:kraft_launcher/common/data/json.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
 import 'package:kraft_launcher/settings/data/file_settings.dart';
 import 'package:meta/meta.dart';
 

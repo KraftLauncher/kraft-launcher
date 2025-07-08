@@ -6,7 +6,7 @@ import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraf
         MinecraftCosmeticState,
         MinecraftSkin,
         MinecraftSkinVariant;
-import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/common/data/json.dart';
 import 'package:meta/meta.dart';
 
 @immutable

@@ -8,7 +8,7 @@ import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_acco
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_exceptions.dart'
     as minecraft_account_api_exceptions;
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_impl.dart';
-import 'package:kraft_launcher/common/logic/json.dart';
+import 'package:kraft_launcher/common/data/json.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
