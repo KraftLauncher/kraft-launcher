@@ -10,8 +10,8 @@ import 'package:kraft_launcher/common/data/json.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class FileAccount extends Equatable {
-  const FileAccount({
+class FileMinecraftAccount extends Equatable {
+  const FileMinecraftAccount({
     required this.id,
     required this.username,
     required this.accountType,
@@ -21,7 +21,7 @@ class FileAccount extends Equatable {
     required this.ownsMinecraftJava,
   });
 
-  factory FileAccount.fromJson(JsonMap json) => FileAccount(
+  factory FileMinecraftAccount.fromJson(JsonMap json) => FileMinecraftAccount(
     id: json['id']! as String,
     accountType: _AccountTypeJson.fromJson(json['accountType']! as String),
     username: json['username']! as String,

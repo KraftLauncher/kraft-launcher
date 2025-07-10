@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_accounts.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_account.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_accounts.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/mappers/accounts_mapper.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/mappers/file_accounts_mapper.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_data.dart';
@@ -142,10 +142,10 @@ class AccountRepository {
     }
 
     Future<MinecraftAccounts> mapFileAccountsToAccounts(
-      FileAccounts fileAccounts,
+      FileMinecraftAccounts fileAccounts,
     ) async {
       MicrosoftReauthRequiredReason? getReauthRequiredReason(
-        FileAccount account, {
+        FileMinecraftAccount account, {
         bool? accountTokensMissingFromSecureStorage,
         bool? accountTokensMissingFromFileStorage,
       }) {

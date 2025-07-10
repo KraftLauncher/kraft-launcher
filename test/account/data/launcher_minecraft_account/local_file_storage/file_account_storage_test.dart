@@ -1,6 +1,6 @@
 import 'package:file/memory.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_accounts.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_accounts.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/mappers/accounts_mapper.dart';
 import 'package:test/test.dart';
 
@@ -21,7 +21,7 @@ void main() {
     storeTokensInFile: true,
   );
 
-  Future<FileAccounts> readAccountsNotNull() async {
+  Future<FileMinecraftAccounts> readAccountsNotNull() async {
     final accounts = await fileAccountStorage.readAccounts();
 
     if (accounts == null) {

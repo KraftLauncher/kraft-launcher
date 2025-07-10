@@ -1,22 +1,25 @@
 import 'package:equatable/equatable.dart';
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_account.dart';
 import 'package:kraft_launcher/common/data/json.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class FileAccounts extends Equatable {
-  const FileAccounts({required this.accounts, required this.defaultAccountId});
+class FileMinecraftAccounts extends Equatable {
+  const FileMinecraftAccounts({
+    required this.accounts,
+    required this.defaultAccountId,
+  });
 
-  factory FileAccounts.fromJson(JsonMap json) => FileAccounts(
+  factory FileMinecraftAccounts.fromJson(JsonMap json) => FileMinecraftAccounts(
     defaultAccountId: json['defaultAccountId'] as String?,
     accounts:
         (json['accounts']! as JsonList)
             .cast<JsonMap>()
-            .map((accountMap) => FileAccount.fromJson(accountMap))
+            .map((accountMap) => FileMinecraftAccount.fromJson(accountMap))
             .toList(),
   );
 
-  final List<FileAccount> accounts;
+  final List<FileMinecraftAccount> accounts;
   final String? defaultAccountId;
 
   JsonMap toJson() => {

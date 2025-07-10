@@ -1,12 +1,13 @@
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account.dart';
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_accounts.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_account.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_accounts.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_data.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_accounts.dart';
 
-extension FileAccountsMapper on FileAccounts {
+// TODO: Rename all extension and file names of mappers
+extension FileAccountsMapper on FileMinecraftAccounts {
   Future<MinecraftAccounts> mapToAppModelAsync(
-    Future<MinecraftAccount> Function(FileAccount account) transform,
+    Future<MinecraftAccount> Function(FileMinecraftAccount account) transform,
   ) async {
     final futures = accounts.map(transform);
     return MinecraftAccounts(
@@ -16,7 +17,9 @@ extension FileAccountsMapper on FileAccounts {
   }
 
   MinecraftAccounts toAppModel({
-    required MicrosoftReauthRequiredReason? Function(FileAccount account)
+    required MicrosoftReauthRequiredReason? Function(
+      FileMinecraftAccount account,
+    )
     resolveMicrosoftReauthReason,
   }) => MinecraftAccounts(
     list:
@@ -34,7 +37,7 @@ extension FileAccountsMapper on FileAccounts {
   );
 }
 
-extension FileAccountMapper on FileAccount {
+extension FileAccountMapper on FileMinecraftAccount {
   MinecraftAccount toAppModel({
     required SecureAccountData? secureAccountData,
     required MicrosoftReauthRequiredReason? microsoftReauthRequiredReason,

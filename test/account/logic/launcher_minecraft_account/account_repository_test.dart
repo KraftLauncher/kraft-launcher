@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:clock/clock.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_accounts.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_accounts.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/mappers/accounts_mapper.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_data.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_storage.dart';
@@ -1104,7 +1104,7 @@ void _saveAccountsInFileStorageTests(
     );
 
     final capturedSavedAccounts =
-        verificationResult.captured.first as FileAccounts;
+        verificationResult.captured.first as FileMinecraftAccounts;
     expect(
       capturedSavedAccounts,
       expectedAccounts.toFileDto(storeTokensInFile: !secureStorageAvailable),
