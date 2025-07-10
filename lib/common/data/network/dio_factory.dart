@@ -7,17 +7,8 @@ import 'package:kraft_launcher/common/generated/pubspec.g.dart';
 import 'package:talker_dio_logger/talker_dio_logger_interceptor.dart';
 import 'package:talker_dio_logger/talker_dio_logger_settings.dart';
 
-abstract final class DioClient {
-  static Dio _instance = _createDio();
-  static Dio get instance => _instance;
-
-  /// Allows overriding the instance for testing.
-  /// Pass `null` to restore the default instance.
-  @visibleForTesting
-  static set instance(Dio? newInstance) =>
-      _instance = newInstance ?? _createDio();
-
-  static Dio _createDio() {
+abstract final class DioFactory {
+  static Dio newClient() {
     final dio = Dio();
     if (kDebugMode) {
       // These hosts get frequent requests; skip logging to avoid console spam.

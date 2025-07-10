@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -23,7 +24,7 @@ import 'package:kraft_launcher/account/logic/offline_account/minecraft_offline_a
 import 'package:kraft_launcher/account/logic/platform_secure_storage_support.dart';
 import 'package:kraft_launcher/account/ui/account_cubit/account_cubit.dart';
 import 'package:kraft_launcher/account/ui/microsoft_auth_cubit/microsoft_auth_cubit.dart';
-import 'package:kraft_launcher/common/data/network/dio_client.dart';
+import 'package:kraft_launcher/common/data/network/dio_factory.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 import 'package:kraft_launcher/settings/data/file_settings_storage.dart';
 import 'package:kraft_launcher/settings/logic/settings_repository.dart';
@@ -64,6 +65,7 @@ class _CommonProviders extends StatelessWidget {
         Provider(create: (context) => ImagePicker()),
         Provider(create: (context) => const FlutterSecureStorage()),
         Provider.value(value: appDataPaths),
+        Provider<Dio>(create: (context) => DioFactory.newClient()),
       ],
       child: child,
     );
@@ -97,10 +99,10 @@ class _AccountFeatureProviders extends _FeatureProviders {
   Widget _dataLayer({required Widget child}) => MultiProvider(
     providers: [
       Provider<MicrosoftAuthApi>(
-        create: (context) => MicrosoftAuthApiImpl(dio: DioClient.instance),
+        create: (context) => MicrosoftAuthApiImpl(dio: context.read()),
       ),
       Provider<MinecraftAccountApi>(
-        create: (context) => MinecraftAccountApiImpl(dio: DioClient.instance),
+        create: (context) => MinecraftAccountApiImpl(dio: context.read()),
       ),
 
       Provider<ImageCacheService>(

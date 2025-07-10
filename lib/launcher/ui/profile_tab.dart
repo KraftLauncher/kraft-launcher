@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:dio/dio.dart';
 import 'package:file_executable/file_executable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,6 @@ import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/data/json.dart'
     show JsonList, JsonMap, jsonEncodePretty;
-import 'package:kraft_launcher/common/data/network/dio_client.dart';
 import 'package:kraft_launcher/common/data/network/dio_helpers.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 import 'package:kraft_launcher/common/models/either.dart';
@@ -181,7 +181,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
     print('Fetching version manifest...');
 
-    final dio = DioClient.instance;
+    final dio = context.read<Dio>();
     final minecraftVersionsApi = MinecraftVersionsApi(dio: dio);
     final minecraftVersionsRepository = MinecraftVersionsRepository(
       minecraftVersionsApi: minecraftVersionsApi,
