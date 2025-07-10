@@ -140,6 +140,7 @@ class _AccountFeatureProviders extends _FeatureProviders {
               secureAccountStorage: context.read(),
               secureStorageSupport: context.read(),
             ),
+        dispose: (repository) => repository.dispose(),
       ),
       Provider<MinecraftAccountResolver>(
         create:

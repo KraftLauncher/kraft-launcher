@@ -1029,6 +1029,19 @@ void main() {
       expect(_accountRepository.accountExists(TestConstants.anyString), false);
     });
   });
+
+  group('dispose', () {
+    test('closes the $StreamController correctly', () async {
+      when(
+        () => _mockAccountsStreamController.close(),
+      ).thenAnswer((_) async => TestConstants.anyString);
+
+      await _accountRepository.dispose();
+
+      verify(() => _mockAccountsStreamController.close()).called(1);
+      verifyNoMoreInteractions(_mockAccountsStreamController);
+    });
+  });
 }
 
 void _throwsStateErrorIfAccountsNotLoadedTest(
