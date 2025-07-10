@@ -4,12 +4,12 @@ import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraf
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_accounts.dart';
 
 extension AccountsMapper on MinecraftAccounts {
-  FileAccounts toFileModel({required bool storeTokensInFile}) => FileAccounts(
+  FileAccounts toFileDto({required bool storeTokensInFile}) => FileAccounts(
     accounts:
         list
             .map(
               (account) =>
-                  account.toFileModel(storeTokensInFile: storeTokensInFile),
+                  account.toFileDto(storeTokensInFile: storeTokensInFile),
             )
             .toList(),
     defaultAccountId: defaultAccountId,
@@ -17,11 +17,11 @@ extension AccountsMapper on MinecraftAccounts {
 }
 
 extension AccountMapper on MinecraftAccount {
-  FileAccount toFileModel({required bool storeTokensInFile}) => FileAccount(
+  FileAccount toFileDto({required bool storeTokensInFile}) => FileAccount(
     id: id,
     username: username,
     accountType: accountType,
-    microsoftAccountInfo: microsoftAccountInfo?.toFileModel(
+    microsoftAccountInfo: microsoftAccountInfo?.toFileDto(
       storeTokensInFile: storeTokensInFile,
     ),
     skins: skins,
@@ -31,12 +31,12 @@ extension AccountMapper on MinecraftAccount {
 }
 
 extension _MicrosoftAccountInfoMapper on MicrosoftAccountInfo {
-  FileMicrosoftAccountInfo toFileModel({required bool storeTokensInFile}) =>
+  FileMicrosoftAccountInfo toFileDto({required bool storeTokensInFile}) =>
       FileMicrosoftAccountInfo(
-        microsoftRefreshToken: microsoftRefreshToken.toFileModel(
+        microsoftRefreshToken: microsoftRefreshToken.toFileDto(
           storeTokenInFile: storeTokensInFile,
         ),
-        minecraftAccessToken: minecraftAccessToken.toFileModel(
+        minecraftAccessToken: minecraftAccessToken.toFileDto(
           storeTokenInFile: storeTokensInFile,
         ),
         accessRevoked:
@@ -45,7 +45,7 @@ extension _MicrosoftAccountInfoMapper on MicrosoftAccountInfo {
 }
 
 extension _ExpirableToken on ExpirableToken {
-  FileExpirableToken toFileModel({required bool storeTokenInFile}) =>
+  FileExpirableToken toFileDto({required bool storeTokenInFile}) =>
       FileExpirableToken(
         value: storeTokenInFile ? value : null,
         expiresAt: expiresAt,

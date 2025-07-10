@@ -41,7 +41,7 @@ class SettingsRepository {
     }
     final updatedSettings = initialSettings.copyWith(general: general);
     _settings = updatedSettings;
-    await fileSettingsStorage.saveSettings(updatedSettings.toFileModel());
+    await fileSettingsStorage.saveSettings(updatedSettings.toFileDto());
     return updatedSettings;
   }
 }

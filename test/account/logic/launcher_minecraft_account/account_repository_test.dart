@@ -52,7 +52,7 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(
-      MinecraftAccounts.empty().toFileModel(
+      MinecraftAccounts.empty().toFileDto(
         storeTokensInFile: _dummyStoreTokensInFile,
       ),
     );
@@ -218,7 +218,7 @@ void main() {
         when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((
           _,
         ) async {
-          return accounts.toFileModel(storeTokensInFile: true);
+          return accounts.toFileDto(storeTokensInFile: true);
         });
       });
 
@@ -337,7 +337,7 @@ void main() {
             when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((
               _,
             ) async {
-              return accounts.toFileModel(storeTokensInFile: false);
+              return accounts.toFileDto(storeTokensInFile: false);
             });
 
             final loadedAccounts = await loadAccountsWithFixedClock();
@@ -388,7 +388,7 @@ void main() {
                     ),
                   ),
                 ],
-              ).toFileModel(storeTokensInFile: true),
+              ).toFileDto(storeTokensInFile: true),
             );
 
             final loadedAccounts = await loadAccountsWithFixedClock();
@@ -428,7 +428,7 @@ void main() {
                         ),
                       ),
                     ],
-                  ).toFileModel(storeTokensInFile: _dummyStoreTokensInFile),
+                  ).toFileDto(storeTokensInFile: _dummyStoreTokensInFile),
                 );
 
                 final accounts = await loadAccountsWithFixedClock();
@@ -467,7 +467,7 @@ void main() {
                         ),
                       ),
                     ],
-                  ).toFileModel(storeTokensInFile: _dummyStoreTokensInFile),
+                  ).toFileDto(storeTokensInFile: _dummyStoreTokensInFile),
                 );
 
                 final accounts = await loadAccountsWithFixedClock(
@@ -490,7 +490,7 @@ void main() {
 
     test('accounts list is unmodifiable', () async {
       when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((_) async {
-        return MinecraftDummyAccounts.accounts.toFileModel(
+        return MinecraftDummyAccounts.accounts.toFileDto(
           storeTokensInFile: _dummyStoreTokensInFile,
         );
       });
@@ -511,7 +511,7 @@ void main() {
 
     _setAccountsAndNotifyTests((existingAccounts) async {
       when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((_) async {
-        return existingAccounts.toFileModel(storeTokensInFile: true);
+        return existingAccounts.toFileDto(storeTokensInFile: true);
       });
 
       await loadAccountsWithFixedClock();
@@ -1107,7 +1107,7 @@ void _saveAccountsInFileStorageTests(
         verificationResult.captured.first as FileAccounts;
     expect(
       capturedSavedAccounts,
-      expectedAccounts.toFileModel(storeTokensInFile: !secureStorageAvailable),
+      expectedAccounts.toFileDto(storeTokensInFile: !secureStorageAvailable),
     );
 
     verificationResult.called(1);

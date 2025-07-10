@@ -105,7 +105,7 @@ class AccountRepository {
     MinecraftAccounts updatedAccounts,
   ) async {
     await fileAccountStorage.saveAccounts(
-      updatedAccounts.toFileModel(
+      updatedAccounts.toFileDto(
         storeTokensInFile: !supportsSecureStorageOrThrow,
       ),
     );

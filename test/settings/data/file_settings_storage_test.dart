@@ -28,7 +28,7 @@ void main() {
     return settings;
   }
 
-  final dummySettings = Settings.defaultSettings().toFileModel();
+  final dummySettings = Settings.defaultSettings().toFileDto();
 
   group('readSettings', () {
     test('returns null if file does not exist', () async {
