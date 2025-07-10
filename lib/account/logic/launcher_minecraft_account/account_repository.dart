@@ -18,7 +18,8 @@ import 'package:meta/meta.dart';
 @visibleForTesting
 typedef AccountsStreamControllerFactory = StreamController<MinecraftAccounts>;
 
-/// A repository for managing Minecraft accounts.
+/// Manages storage and retrieval of Minecraft accounts
+/// locally within the app on this device. See also: [MinecraftAccount].
 ///
 /// Handles account data storage and retrieval, combining both file and secure storage
 /// for account info.

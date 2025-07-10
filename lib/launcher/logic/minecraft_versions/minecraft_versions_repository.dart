@@ -13,7 +13,7 @@ import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/version_
 import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/version_manifest/minecraft_version_manifest.dart';
 import 'package:meta/meta.dart';
 
-/// A repository that provides Minecraft version data for the app,
+/// Provides Minecraft version data for the app,
 /// containing the necessary information to download any Minecraft version.
 ///
 /// Responsibilities:

@@ -4,7 +4,7 @@ import 'package:kraft_launcher/settings/data/mappers/settings_mapper.dart';
 import 'package:kraft_launcher/settings/logic/settings.dart';
 import 'package:meta/meta.dart';
 
-/// A repository that provides the app settings.
+/// Manages in-app settings stored locally on this device.
 ///
 /// Provides a single source of truth for the settings data, ensuring a consistent state across the app.
 ///
