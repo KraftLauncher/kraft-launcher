@@ -83,14 +83,14 @@ class AccountRepository {
 
   MinecraftAccounts? _accounts;
 
-  MinecraftAccounts get _requireAccounts =>
+  MinecraftAccounts get _accountsOrThrow =>
       _accounts ??
       (throw StateError(
         '$AccountRepository.loadAccounts() must be called before accessing accounts.',
       ));
 
   MinecraftAccounts get accounts =>
-      _requireAccounts.copyWith(list: List.unmodifiable(_requireAccounts.list));
+      _accountsOrThrow.copyWith(list: List.unmodifiable(_accountsOrThrow.list));
 
   @visibleForTesting
   void setAccountsForTest(MinecraftAccounts accounts) {
@@ -264,7 +264,7 @@ class AccountRepository {
     required List<MinecraftAccount> Function(MinecraftAccounts existingAccounts)
     buildList,
   }) async {
-    final existingAccounts = _requireAccounts;
+    final existingAccounts = _accountsOrThrow;
 
     final updatedAccounts = existingAccounts.copyWith(
       list: buildList(existingAccounts),
@@ -280,7 +280,7 @@ class AccountRepository {
   }
 
   Future<void> removeAccount(String accountId) async {
-    final existingAccounts = _requireAccounts;
+    final existingAccounts = _accountsOrThrow;
 
     final existingAccountIndex = existingAccounts.list.findIndexById(accountId);
 
@@ -312,7 +312,7 @@ class AccountRepository {
         'Account ID not found in current account list.',
       );
     }
-    final updatedAccounts = _requireAccounts.copyWith(
+    final updatedAccounts = _accountsOrThrow.copyWith(
       defaultAccountId: Wrapped.value(accountId),
     );
 
@@ -322,7 +322,7 @@ class AccountRepository {
   }
 
   bool accountExists(String accountId) =>
-      _requireAccounts.list.any((account) => account.id == accountId);
+      _accountsOrThrow.list.any((account) => account.id == accountId);
 
   Future<void> dispose() async {
     await _accountsController.close();
