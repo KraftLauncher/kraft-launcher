@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,20 +17,20 @@ class MinecraftJavaEntitlementAbsentDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
           child: Text(context.loc.close),
         ),
         TextButton(
           onPressed: () {
             launchUrl(Uri.parse(MinecraftConstants.redeemMinecraftLink));
-            Navigator.pop(context);
+            context.pop();
           },
           child: Text(context.loc.redeemCode),
         ),
         TextButton(
           onPressed: () {
             launchUrl(Uri.parse(MinecraftConstants.buyMinecraftLink));
-            Navigator.pop(context);
+            context.pop();
           },
           child: Text(context.loc.visitMinecraftStore),
         ),

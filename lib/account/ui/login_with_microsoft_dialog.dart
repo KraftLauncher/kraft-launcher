@@ -81,7 +81,7 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
           ),
           actions: [
             TextButton(
-              onPressed: isLoggingIn ? null : () => Navigator.pop(context),
+              onPressed: isLoggingIn ? null : () => context.pop(),
               child: Text(context.loc.cancel),
             ),
           ],

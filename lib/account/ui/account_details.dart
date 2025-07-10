@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_service/minecraft_auth_progress.dart';
@@ -181,14 +182,11 @@ class AccountDetails extends StatelessWidget {
                                 ),
                                 actions: [
                                   TextButton(
-                                    onPressed:
-                                        () => Navigator.pop(context, false),
-
+                                    onPressed: () => context.pop(false),
                                     child: Text(context.loc.cancel),
                                   ),
                                   TextButton(
-                                    onPressed:
-                                        () => Navigator.pop(context, true),
+                                    onPressed: () => context.pop(true),
                                     style: TextButton.styleFrom(
                                       foregroundColor:
                                           context.theme.colorScheme.error,

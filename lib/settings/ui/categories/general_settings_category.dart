@@ -1,6 +1,7 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 import 'package:kraft_launcher/common/ui/utils/home_screen_tab_ext.dart';
@@ -149,7 +150,7 @@ class _AppearanceSection extends StatelessWidget {
                         ),
                         actions: [
                           TextButton(
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () => context.pop(),
                             child: Text(context.loc.close),
                           ),
                         ],
