@@ -12,7 +12,7 @@ import 'package:meta/meta.dart';
 
 const _host = ApiHosts.minecraftServices;
 
-class MinecraftAccountApiImpl extends MinecraftAccountApi {
+class MinecraftAccountApiImpl implements MinecraftAccountApi {
   MinecraftAccountApiImpl({required this.dio});
 
   @visibleForTesting
