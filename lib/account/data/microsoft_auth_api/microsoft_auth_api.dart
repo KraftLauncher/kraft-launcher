@@ -16,7 +16,7 @@ import 'package:meta/meta.dart';
 /// See also:
 ///  * https://minecraft.wiki/w/Microsoft_authentication
 ///  * [MinecraftAccountApi]
-abstract class MicrosoftAuthApi
+abstract interface class MicrosoftAuthApi
     implements MicrosoftAuthCodeFlowApi, MicrosoftDeviceCodeFlowApi {
   Future<XboxLiveAuthTokenResponse> requestXboxLiveToken(
     String microsoftAccessToken,

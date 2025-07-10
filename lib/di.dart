@@ -4,6 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_storage.dart';
+import 'package:kraft_launcher/account/data/linux_secret_service/dbus_linux_secret_service_checker.dart';
+import 'package:kraft_launcher/account/data/linux_secret_service/linux_secret_service_checker.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api.dart';
@@ -73,6 +75,7 @@ abstract class _FeatureProviders extends StatelessWidget {
 
   final Widget child;
 
+  // TODO: In the new architecture, data layer depends on the interfaces from the logic layer
   @nonVirtual
   @override
   Widget build(BuildContext context) =>
@@ -84,6 +87,8 @@ abstract class _FeatureProviders extends StatelessWidget {
 }
 
 // NOTE: The difference between RepositoryProvider and Provider is semantic.
+
+// TODO: Move things for clarity after changing the architecture
 
 class _AccountFeatureProviders extends _FeatureProviders {
   const _AccountFeatureProviders({required super.child});
@@ -97,20 +102,21 @@ class _AccountFeatureProviders extends _FeatureProviders {
       Provider<MinecraftAccountApi>(
         create: (context) => MinecraftAccountApiImpl(dio: DioClient.instance),
       ),
-      Provider<PlatformSecureStorageSupport>(
-        create: (context) => PlatformSecureStorageSupport(),
-      ),
-      RepositoryProvider<ImageCacheService>(
+
+      Provider<ImageCacheService>(
         create: (context) => DefaultImageCacheService(),
       ),
-      RepositoryProvider<FileAccountStorage>(
+      Provider<FileAccountStorage>(
         create:
             (context) => FileAccountStorage.fromAppDataPaths(context.read()),
       ),
-      RepositoryProvider(
+      Provider(
         create:
             (context) =>
                 SecureAccountStorage(flutterSecureStorage: context.read()),
+      ),
+      Provider<LinuxSecretServiceChecker>(
+        create: (context) => DbusLinuxSecretServiceChecker(),
       ),
     ],
     child: child,
@@ -119,6 +125,12 @@ class _AccountFeatureProviders extends _FeatureProviders {
   @override
   Widget _logicLayer({required Widget child}) => MultiProvider(
     providers: [
+      Provider<PlatformSecureStorageSupport>(
+        create:
+            (context) => PlatformSecureStorageSupport(
+              linuxSecretServiceChecker: context.read(),
+            ),
+      ),
       RepositoryProvider<AccountRepository>(
         create:
             (context) => AccountRepository(
@@ -202,7 +214,7 @@ class _SettingsFeatureProviders extends _FeatureProviders {
   @override
   Widget _logicLayer({required Widget child}) => MultiProvider(
     providers: [
-      Provider(
+      RepositoryProvider(
         create:
             (context) =>
                 SettingsRepository(fileSettingsStorage: context.read()),

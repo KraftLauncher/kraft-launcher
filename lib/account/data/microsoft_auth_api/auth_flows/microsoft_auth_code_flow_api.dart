@@ -1,7 +1,7 @@
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'package:kraft_launcher/common/constants/constants.dart';
 
-abstract class MicrosoftAuthCodeFlowApi {
+abstract interface class MicrosoftAuthCodeFlowApi {
   /// Returns the login URL that the user needs to open to start logging in.
   ///
   /// This doesn't start the redirect server which the API will redirect to

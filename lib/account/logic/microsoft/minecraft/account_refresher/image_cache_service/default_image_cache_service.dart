@@ -5,6 +5,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart'
 
 import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/image_cache_service/image_cache_service.dart';
 
+// TODO: Part of the data layer, move it away from logic
+
 class DefaultImageCacheService implements ImageCacheService {
   DefaultImageCacheService({this.cacheManager});
 

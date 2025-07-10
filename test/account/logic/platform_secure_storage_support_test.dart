@@ -1,4 +1,4 @@
-import 'package:dbus/dbus.dart';
+import 'package:kraft_launcher/account/data/linux_secret_service/linux_secret_service_checker.dart';
 import 'package:kraft_launcher/account/logic/platform_secure_storage_support.dart';
 import 'package:kraft_launcher/common/logic/platform_check.dart';
 import 'package:mocktail/mocktail.dart';
@@ -8,12 +8,12 @@ import '../../common/helpers/platform_utils.dart';
 
 void main() {
   late PlatformSecureStorageSupport secureStorageSupport;
-  late _MockDBusClient mockDBusClient;
+  late _MockLinuxSecretServiceChecker mockLinuxSecretServiceChecker;
 
   setUp(() {
-    mockDBusClient = _MockDBusClient();
+    mockLinuxSecretServiceChecker = _MockLinuxSecretServiceChecker();
     secureStorageSupport = PlatformSecureStorageSupport(
-      linuxDBusClientFactory: () => mockDBusClient,
+      linuxSecretServiceChecker: mockLinuxSecretServiceChecker,
     );
   });
 
@@ -36,10 +36,6 @@ void main() {
   );
 
   group('linux', () {
-    setUp(() {
-      when(() => mockDBusClient.close()).thenAnswer((_) async {});
-    });
-
     setUpAll(() {
       overrideCurrentDesktopPlatform = DesktopPlatform.linux;
     });
@@ -48,59 +44,69 @@ void main() {
       overrideCurrentDesktopPlatform = null;
     });
 
-    void verifyDBusInteractions() {
-      verifyInOrder([
-        () => mockDBusClient.listNames(),
-        () => mockDBusClient.close(),
-      ]);
-      verifyNoMoreInteractions(mockDBusClient);
+    void verifyLinuxSystemCallInteraction() {
+      verify(
+        () => mockLinuxSecretServiceChecker.isSecretServiceAvailable(),
+      ).called(1);
+      verifyNoMoreInteractions(mockLinuxSecretServiceChecker);
     }
 
-    void mockSecretServiceSupported({required bool secretServiceAvailable}) {
-      when(() => mockDBusClient.listNames()).thenAnswer(
-        (_) async => secretServiceAvailable ? ['org.freedesktop.secrets'] : [],
-      );
+    void mockSecretServiceAvailable({required bool secretServiceAvailable}) {
+      when(
+        () => mockLinuxSecretServiceChecker.isSecretServiceAvailable(),
+      ).thenAnswer((_) async => secretServiceAvailable);
     }
 
-    test('returns true when Secret Service is available', () async {
-      mockSecretServiceSupported(secretServiceAvailable: true);
+    test(
+      'returns true when $LinuxSecretServiceChecker reports available',
+      () async {
+        mockSecretServiceAvailable(secretServiceAvailable: true);
 
-      expect(await secureStorageSupport.isSupported(), true);
+        expect(await secureStorageSupport.isSupported(), true);
 
-      verifyDBusInteractions();
-    });
+        verifyLinuxSystemCallInteraction();
+      },
+    );
 
-    test('returns false when Secret Service is not available', () async {
-      mockSecretServiceSupported(secretServiceAvailable: false);
+    test(
+      'returns false when $LinuxSecretServiceChecker reports unavailable',
+      () async {
+        mockSecretServiceAvailable(secretServiceAvailable: false);
 
-      expect(await secureStorageSupport.isSupported(), false);
+        expect(await secureStorageSupport.isSupported(), false);
 
-      verifyDBusInteractions();
-    });
+        verifyLinuxSystemCallInteraction();
+      },
+    );
 
-    test('caches DBus call result after first isSupported check', () async {
-      mockSecretServiceSupported(secretServiceAvailable: false);
+    test(
+      'caches result from $LinuxSecretServiceChecker after first check',
+      () async {
+        mockSecretServiceAvailable(secretServiceAvailable: false);
 
-      expect(secureStorageSupport.cachedLinuxSecretServiceAvailable, null);
-      final firstResult = await secureStorageSupport.isSupported();
-      expect(firstResult, false);
+        expect(secureStorageSupport.cachedLinuxSecretServiceAvailable, null);
+        final firstResult = await secureStorageSupport.isSupported();
+        expect(firstResult, false);
 
-      verifyDBusInteractions();
+        verifyLinuxSystemCallInteraction();
 
-      mockSecretServiceSupported(secretServiceAvailable: true);
+        mockSecretServiceAvailable(secretServiceAvailable: true);
 
-      expect(
-        secureStorageSupport.cachedLinuxSecretServiceAvailable,
-        firstResult,
-      );
+        expect(
+          secureStorageSupport.cachedLinuxSecretServiceAvailable,
+          firstResult,
+        );
 
-      final secondResult = await secureStorageSupport.isSupported();
-      expect(secondResult, firstResult);
+        final secondResult = await secureStorageSupport.isSupported();
+        expect(secondResult, firstResult);
 
-      verifyNever(() => mockDBusClient.listNames());
-      verifyNever(() => mockDBusClient.close());
-    });
+        verifyNever(
+          () => mockLinuxSecretServiceChecker.isSecretServiceAvailable(),
+        );
+      },
+    );
   });
 }
 
-class _MockDBusClient extends Mock implements DBusClient {}
+class _MockLinuxSecretServiceChecker extends Mock
+    implements LinuxSecretServiceChecker {}

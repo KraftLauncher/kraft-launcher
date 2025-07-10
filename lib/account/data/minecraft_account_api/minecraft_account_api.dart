@@ -12,7 +12,7 @@ import 'package:meta/meta.dart';
 /// See also:
 ///  * https://minecraft.wiki/w/Mojang_API
 ///  * [MicrosoftAuthApi]
-abstract class MinecraftAccountApi {
+abstract interface class MinecraftAccountApi {
   Future<MinecraftLoginResponse> loginToMinecraftWithXbox({
     required String xstsToken,
     required String xstsUserHash,
