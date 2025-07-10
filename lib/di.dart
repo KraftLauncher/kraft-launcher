@@ -14,8 +14,8 @@ import 'package:kraft_launcher/account/logic/launcher_minecraft_account/account_
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/microsoft_oauth_flow_controller.dart';
-import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/image_cache_service/default_image_cache_service.dart';
-import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/image_cache_service/image_cache_service.dart';
+import 'package:kraft_launcher/account/data/image_cache_service/default_image_cache_service.dart';
+import 'package:kraft_launcher/account/data/image_cache_service/image_cache_service.dart';
 import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/minecraft_account_refresher.dart';
 import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_resolver/minecraft_account_resolver.dart';
 import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_service/minecraft_account_service.dart';

@@ -1,26 +1,28 @@
+import 'package:cached_network_image/cached_network_image.dart'
+    show CachedNetworkImage;
 // ignore: depend_on_referenced_packages
 import 'package:flutter_cache_manager/flutter_cache_manager.dart'
     show BaseCacheManager;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/image_cache_service/default_image_cache_service.dart';
-import 'package:kraft_launcher/account/logic/microsoft/minecraft/account_refresher/image_cache_service/image_cache_service.dart';
+import 'package:kraft_launcher/account/data/image_cache_service/default_image_cache_service.dart';
+import 'package:kraft_launcher/account/data/image_cache_service/image_cache_service.dart';
 import 'package:mocktail/mocktail.dart';
 
-import '../../../../../../common/helpers/utils.dart';
+import '../../../common/helpers/utils.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late MockBaseCacheManager mockBaseCacheManager;
+  late _MockBaseCacheManager mockBaseCacheManager;
   late ImageCacheService imageCacheService;
 
   setUp(() {
-    mockBaseCacheManager = MockBaseCacheManager();
+    mockBaseCacheManager = _MockBaseCacheManager();
     imageCacheService = DefaultImageCacheService(
       cacheManager: mockBaseCacheManager,
     );
   });
-  test('delegates to CachedNetworkImage.evict', () async {
+  test('delegates to $CachedNetworkImage.evict', () async {
     when(() => mockBaseCacheManager.removeFile(any())).thenDoNothing();
 
     const exampleUrl =
@@ -35,4 +37,4 @@ void main() {
   });
 }
 
-class MockBaseCacheManager extends Mock implements BaseCacheManager {}
+class _MockBaseCacheManager extends Mock implements BaseCacheManager {}
