@@ -49,14 +49,14 @@ class MinecraftVersionsRepository {
     if (!forceRefresh) {
       final cached = await minecraftVersionsFileCache.readCache();
       if (cached != null) {
-        return Result.success(cached.toAppModel());
+        return Result.success(cached.toApp());
       }
     }
     final result = await minecraftVersionsApi.fetchVersionManifest();
     return result.mapSuccess((value) {
       final (parsed, map) = value;
       unawaited(minecraftVersionsFileCache.cache(map));
-      return parsed.toAppModel();
+      return parsed.toApp();
     });
   }
 
@@ -76,7 +76,7 @@ class MinecraftVersionsRepository {
         versionId,
       );
       if (cached != null) {
-        return Result.success(cached.toAppModel());
+        return Result.success(cached.toApp());
       }
     }
     final result = await minecraftVersionsApi.fetchVersionDetails(
@@ -85,13 +85,13 @@ class MinecraftVersionsRepository {
     return result.mapSuccess((value) {
       final (parsed, map) = value;
       unawaited(minecraftVersionDetailsFileCache.cache(versionId, map));
-      return parsed.toAppModel();
+      return parsed.toApp();
     });
   }
 
   Future<Result<MinecraftAssetIndex, MinecraftVersionsApiFailure>>
   fetchAssetIndex(String assetIndexUrl) async {
     final result = await minecraftVersionsApi.fetchAssetIndex(assetIndexUrl);
-    return result.mapSuccess((value) => value.toAppModel());
+    return result.mapSuccess((value) => value.toApp());
   }
 }

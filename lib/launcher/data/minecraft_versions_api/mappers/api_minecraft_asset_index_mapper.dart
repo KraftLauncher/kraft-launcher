@@ -2,7 +2,7 @@ import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/asset
 import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/asset_index/minecraft_asset_index.dart';
 
 extension ApiMinecraftAssetIndexMapper on ApiMinecraftAssetIndex {
-  MinecraftAssetIndex toAppModel() => MinecraftAssetIndex(
+  MinecraftAssetIndex toApp() => MinecraftAssetIndex(
     objects: objects.map(
       (key, value) => MapEntry(
         key,

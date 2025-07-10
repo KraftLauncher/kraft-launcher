@@ -175,12 +175,12 @@ class AccountRepository {
       // This isn't needed at the moment.
 
       if (supportsSecureStorageOrThrow) {
-        return fileAccounts.mapToAppModelAsync((fileAccount) async {
+        return fileAccounts.mapToAppAsync((fileAccount) async {
           return switch (fileAccount.accountType) {
             AccountType.microsoft => await () async {
               final data = await secureAccountStorage.read(fileAccount.id);
               if (data != null) {
-                return fileAccount.toAppModel(
+                return fileAccount.toApp(
                   secureAccountData: data,
                   microsoftReauthRequiredReason: getReauthRequiredReason(
                     fileAccount,
@@ -189,7 +189,7 @@ class AccountRepository {
                 );
               }
 
-              final account = fileAccount.toAppModel(
+              final account = fileAccount.toApp(
                 // The user needs to re-authenticate
                 secureAccountData: null,
                 microsoftReauthRequiredReason: getReauthRequiredReason(
@@ -200,14 +200,14 @@ class AccountRepository {
 
               return account;
             }(),
-            AccountType.offline => fileAccount.toAppModel(
+            AccountType.offline => fileAccount.toApp(
               secureAccountData: null,
               microsoftReauthRequiredReason: null,
             ),
           };
         });
       }
-      return fileAccounts.toAppModel(
+      return fileAccounts.toApp(
         resolveMicrosoftReauthReason:
             (account) => getReauthRequiredReason(
               account,

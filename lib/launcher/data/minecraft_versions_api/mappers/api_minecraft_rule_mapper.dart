@@ -2,8 +2,8 @@ import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/api_m
 import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/minecraft_rule.dart';
 
 extension ApiMinecraftRuleMapper on ApiMinecraftRule {
-  MinecraftRule toAppModel() => MinecraftRule(
-    action: action.toAppModel(),
+  MinecraftRule toApp() => MinecraftRule(
+    action: action.toApp(),
     features: () {
       final features = this.features;
       if (features == null) {
@@ -29,7 +29,7 @@ extension ApiMinecraftRuleMapper on ApiMinecraftRule {
 }
 
 extension ApiMinecraftRuleActionMapper on ApiMinecraftRuleAction {
-  MinecraftRuleAction toAppModel() => switch (this) {
+  MinecraftRuleAction toApp() => switch (this) {
     ApiMinecraftRuleAction.allow => MinecraftRuleAction.allow,
     ApiMinecraftRuleAction.disallow => MinecraftRuleAction.disallow,
   };

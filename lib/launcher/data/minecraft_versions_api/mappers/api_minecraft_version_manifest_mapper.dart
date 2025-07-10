@@ -4,7 +4,7 @@ import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/minecraf
 import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/version_manifest/minecraft_version_manifest.dart';
 
 extension ApiMinecraftVersionManifestMapper on ApiMinecraftVersionManifest {
-  MinecraftVersionManifest toAppModel() => MinecraftVersionManifest(
+  MinecraftVersionManifest toApp() => MinecraftVersionManifest(
     latest: MinecraftLatestVersions(
       release: latest.release,
       snapshot: latest.snapshot,

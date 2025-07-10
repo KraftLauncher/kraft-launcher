@@ -26,7 +26,7 @@ class SettingsRepository {
 
   Future<Settings> loadSettings() async {
     final settings =
-        (await fileSettingsStorage.readSettings())?.toAppModel() ??
+        (await fileSettingsStorage.readSettings())?.toApp() ??
         Settings.defaultSettings();
     _settings = settings;
     return settings;

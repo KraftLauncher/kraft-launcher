@@ -2,7 +2,7 @@ import 'package:kraft_launcher/settings/data/file_settings.dart';
 import 'package:kraft_launcher/settings/logic/settings.dart';
 
 extension FileSettingsMapper on FileSettings {
-  Settings toAppModel() => Settings(
+  Settings toApp() => Settings(
     general: () {
       final general = this.general;
       return GeneralSettings(

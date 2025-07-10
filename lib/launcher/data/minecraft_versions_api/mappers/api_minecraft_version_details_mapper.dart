@@ -20,7 +20,7 @@ import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/version_
 import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/version_details/minecraft_version_logging_config.dart';
 
 extension ApiMinecraftVersionDetailsMapper on ApiMinecraftVersionDetails {
-  MinecraftVersionDetails toAppModel() => MinecraftVersionDetails(
+  MinecraftVersionDetails toApp() => MinecraftVersionDetails(
     assetsVersion: assets,
     id: id,
     legacyArguments: minecraftArguments,
@@ -28,7 +28,7 @@ extension ApiMinecraftVersionDetailsMapper on ApiMinecraftVersionDetails {
     releasedAt: releaseTime,
     supportsSafetyFeatures: complianceLevel == 1,
     mainClass: mainClass,
-    type: type.toAppModel(),
+    type: type.toApp(),
     javaVersion: MinecraftJavaVersionInfo(
       component: javaVersion.component,
       majorVersion: javaVersion.majorVersion,
@@ -76,13 +76,13 @@ extension ApiMinecraftVersionDetailsMapper on ApiMinecraftVersionDetails {
         game:
             arguments.game
                 .map<app_model.StringOrConditionalArg>(
-                  (either) => either.toAppModel(),
+                  (either) => either.toApp(),
                 )
                 .toList(),
         jvm:
             arguments.jvm
                 .map<app_model.StringOrConditionalArg>(
-                  (either) => either.toAppModel(),
+                  (either) => either.toApp(),
                 )
                 .toList(),
       );
@@ -117,7 +117,7 @@ extension ApiMinecraftVersionDetailsMapper on ApiMinecraftVersionDetails {
                   );
                 }(),
                 natives: library.natives,
-                rules: library.rules?.map((rule) => rule.toAppModel()).toList(),
+                rules: library.rules?.map((rule) => rule.toApp()).toList(),
                 extract: () {
                   final extract = library.extract;
                   if (extract == null) {
@@ -135,7 +135,7 @@ extension ApiMinecraftVersionDetailsMapper on ApiMinecraftVersionDetails {
 
 // Confusing name but it just maps [api_model.StringOrConditionalArg] to [app_model.StringOrConditionalArg].
 extension _ApiStringOrConditionalArgMapper on api_model.StringOrConditionalArg {
-  app_model.StringOrConditionalArg toAppModel() {
+  app_model.StringOrConditionalArg toApp() {
     final either = this;
     return switch (either) {
       EitherLeft<String, ApiMinecraftConditionalArg>() => app_model
@@ -143,8 +143,7 @@ extension _ApiStringOrConditionalArgMapper on api_model.StringOrConditionalArg {
       EitherRight<String, ApiMinecraftConditionalArg>() => app_model
           .StringOrConditionalArg.right(
         MinecraftConditionalArg(
-          rules:
-              either.rightValue.rules.map((rule) => rule.toAppModel()).toList(),
+          rules: either.rightValue.rules.map((rule) => rule.toApp()).toList(),
           value: either.rightValue.value,
         ),
       ),

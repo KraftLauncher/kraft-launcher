@@ -86,3 +86,10 @@ Prefer `import` over `@docImport` when using prefixes since `@docImport` doesn't
 import 'microsoft_auth_api_exceptions.dart'
     as microsoft_auth_api_exceptions;
 ```
+
+<!-- 
+TODO: Not done yet but should be clear in either ARCHITECTURE or Code style
+
+* `toFileDto`, `toApiDto` for DTOs when converting app models to source models.
+* `toApp` for converting any DTO from source model to app model.
+ -->
