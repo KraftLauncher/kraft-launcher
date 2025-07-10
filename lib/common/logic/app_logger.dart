@@ -8,8 +8,6 @@ abstract final class AppLogger {
   static List<String> get logs => List.unmodifiable(_logs);
 
   static void init() {
-    Logger.root.level = Level.ALL;
-    recordStackTraceAtLevel = Level.SEVERE;
     Logger.root.onRecord.listen((record) {
       final message = formatMessage(
         record.message,
