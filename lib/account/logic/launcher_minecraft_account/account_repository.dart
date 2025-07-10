@@ -76,6 +76,7 @@ class AccountRepository {
     _supportsSecureStorage = supported;
   }
 
+  // TODO: Close the StreamController (memory leak). Unit test too. Ensure the RepositoryProvider of this repository calls dispose.
   // TODO: We might not use this approach or might not use Stream at all? See also: https://pub.dev/documentation/rxdart/latest/rx/BehaviorSubject-class.html
   final StreamController<MinecraftAccounts> _accountsController;
   Stream<MinecraftAccounts> get accountsStream => _accountsController.stream;
