@@ -20,6 +20,13 @@ sealed class Result<V, F extends BaseFailure> {
 
   factory Result.failure(F failure) => FailureResult(failure);
 
+  // This uses [_Unit] as a substitute for `void` in generic result types,
+  // since Dart does not support `void` as a value type like Kotlin's `Unit`.
+  // The warning is safe to ignore because [_Unit] is intentionally used here
+  // ignore: library_private_types_in_public_api
+  static Result<_Unit, F> emptySuccess<F extends BaseFailure>() =>
+      Result<_Unit, F>.success(_unit);
+
   bool get isFailure => this is FailureResult;
   bool get isSuccess => this is SuccessResult;
 
@@ -72,3 +79,11 @@ final class FailureResult<V, F extends BaseFailure> extends Result<V, F> {
 
   final F failure;
 }
+
+class _Unit {
+  const _Unit._();
+}
+
+const _unit = _Unit._();
+
+typedef EmptyResult<F extends BaseFailure> = Result<_Unit, F>;
