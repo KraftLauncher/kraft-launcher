@@ -6,6 +6,9 @@ import 'package:kraft_launcher/common/data/json.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 import 'package:meta/meta.dart';
 
+// TODO: Extract interface `AccountFileStorage` and rename this class to `LocalAccountFileStorage`.
+//  Apply the same pattern to other data sources.
+
 class FileAccountStorage {
   FileAccountStorage({required this.file});
   factory FileAccountStorage.fromAppDataPaths(AppDataPaths appDataPaths) =>
