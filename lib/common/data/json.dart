@@ -17,6 +17,7 @@ final class JsonDeserializationFailure extends BaseFailure {
   final String reason;
 }
 
+// TODO: Also add safeJsonParse which takes fromJson callback and depends on the result from tryJsonDecode (suggestion)?
 // TODO: Replace all usages of jsonDecode with tryJsonDecode.
 // TODO: Avoid letting DIO decoding the HTTP response so and decode the JSON string manaully using safeHttpApiCall instead?
 Result<JsonMap, JsonDeserializationFailure> tryJsonDecode(String json) {
