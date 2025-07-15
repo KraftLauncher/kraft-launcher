@@ -460,4 +460,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get minecraftAccountApiUnavailable => 'Minecraft services are currently unavailable. Please try again in a few minutes.';
+
+  @override
+  String authCodeServerStartFailurePortInUse(int port) {
+    return 'Unable to start the local server required for login. Port $port is already in use.';
+  }
+
+  @override
+  String authCodeServerStartFailurePermissionDenied(String details) {
+    return 'Unable to start the local server required for login due to system restrictions: $details';
+  }
+
+  @override
+  String authCodeServerStartFailureUnknown(String message) {
+    return 'Unable to start the local server required for login due to an unexpected error: $message';
+  }
 }

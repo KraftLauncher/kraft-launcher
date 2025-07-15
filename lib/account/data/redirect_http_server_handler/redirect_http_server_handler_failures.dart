@@ -1,0 +1,22 @@
+import 'package:kraft_launcher/common/models/result.dart';
+
+sealed class StartServerFailure extends BaseFailure {
+  const StartServerFailure(super.message);
+}
+
+final class PortInUseFailure extends StartServerFailure {
+  const PortInUseFailure(this.port) : super('Port is already in use: $port');
+
+  final int port;
+}
+
+final class PermissionDeniedFailure extends StartServerFailure {
+  const PermissionDeniedFailure(this.details)
+    : super('Permission denied to bind the port: $details');
+
+  final String details;
+}
+
+final class UnknownFailure extends StartServerFailure {
+  const UnknownFailure(super.message);
+}

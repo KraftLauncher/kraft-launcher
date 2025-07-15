@@ -1,3 +1,5 @@
+import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler_failures.dart'
+    show StartServerFailure;
 import 'package:meta/meta.dart';
 
 @immutable
@@ -34,4 +36,17 @@ final class AuthCodeDeniedException extends MicrosoftAuthCodeFlowException {
     : super(
         'While logging with Microsoft via auth code, the user has denied the authorization request.',
       );
+}
+
+// Even though this might be confusing that an exception contains a failure,
+// TODO: it's a temporary workaround and we will migrate to use failures fully
+// without any Exception.
+final class AuthCodeServerStartException
+    extends MicrosoftAuthCodeFlowException {
+  AuthCodeServerStartException(this.failure)
+    : super(
+        'Failed to start the temporary HTTP server used to handle the redirect response from Microsoft Auth Code flow: ${failure.message}',
+      );
+
+  final StartServerFailure failure;
 }

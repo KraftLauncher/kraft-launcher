@@ -89,7 +89,6 @@ class MinecraftAccountService {
     // The page content is not hardcoded for localization.
     required MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants,
   }) async => _transformExceptions(() async {
-    await microsoftOAuthFlowController.startAuthCodeServer();
     final tokenResponse = await microsoftOAuthFlowController
         .loginWithMicrosoftAuthCode(
           onProgress:
@@ -179,8 +178,8 @@ class MinecraftAccountService {
       MinecraftAuthProgress.fetchingProfile,
   };
 
-  Future<bool> stopAuthCodeServerIfRunning() =>
-      microsoftOAuthFlowController.stopAuthCodeServerIfRunning();
+  Future<bool> closeAuthCodeServer() =>
+      microsoftOAuthFlowController.closeAuthCodeServer();
 
   bool cancelDeviceCodePollingTimer() =>
       microsoftOAuthFlowController.cancelDeviceCodePollingTimer();

@@ -1,12 +1,11 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler.dart';
+import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler_failures.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow_exceptions.dart'
     as microsoft_auth_code_flow_exceptions;
 import 'package:kraft_launcher/common/constants/constants.dart';
-import 'package:kraft_launcher/common/constants/project_info_constants.dart';
+import 'package:kraft_launcher/common/models/result.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -16,21 +15,20 @@ import '../../../../data/microsoft_auth_api/microsoft_auth_api_dummy_values.dart
 
 void main() {
   late MockMicrosoftAuthApi mockMicrosoftAuthApi;
-  late _MockHttpServer mockHttpServer;
+  late _MockRedirectHttpServerHandler mockRedirectHttpServerHandler;
 
   late MicrosoftAuthCodeFlow flow;
 
   setUp(() {
     mockMicrosoftAuthApi = MockMicrosoftAuthApi();
-    mockHttpServer = _MockHttpServer();
+    mockRedirectHttpServerHandler = _MockRedirectHttpServerHandler();
+
     flow = MicrosoftAuthCodeFlow(
       microsoftAuthApi: mockMicrosoftAuthApi,
-      httpServerFactory: (_, _) async => mockHttpServer,
+      redirectHttpServerHandler: mockRedirectHttpServerHandler,
     );
 
-    when(() => mockHttpServer.close()).thenAnswer((_) async {
-      return null;
-    });
+    when(() => mockRedirectHttpServerHandler.close()).thenAnswer((_) async {});
 
     when(
       () => mockMicrosoftAuthApi.userLoginUrlWithAuthCode(),
@@ -40,116 +38,57 @@ void main() {
     ).thenAnswer((_) async => dummyMicrosoftOAuthTokenResponse);
   });
 
-  test(
-    'httpServer is initially null before server is started',
-    () => expect(flow.httpServer, null),
-  );
-
-  group('serverOrThrow', () {
-    test('throws $StateError if server has not been started', () {
-      expect(() => flow.serverOrThrow, throwsStateError);
-    });
-
-    test('returns running server instance if already started', () async {
-      final server = await flow.startServer();
-      expect(flow.serverOrThrow, server);
-    });
-  });
-
-  group('isServerRunning', () {
+  group('closeServer', () {
     test('returns true when server is running', () async {
-      await flow.startServer();
-      expect(flow.isServerRunning, true);
-    });
-    test('returns false when server is not running', () async {
-      await flow.startServer();
-      await flow.stopServer();
-      expect(flow.isServerRunning, false);
-    });
-  });
+      when(() => mockRedirectHttpServerHandler.isRunning).thenReturn(true);
 
-  group('startServer', () {
-    test('throws $AssertionError if it is already running', () async {
-      await flow.startServer();
-      await expectLater(flow.startServer(), throwsA(isA<AssertionError>()));
+      expect(await flow.closeServer(), true);
     });
-    test('sets httpServer to not null', () async {
-      expect(await flow.startServer(), flow.httpServer);
-      expect(flow.httpServer, isNotNull);
+    test('closes the server when running', () async {
+      when(() => mockRedirectHttpServerHandler.isRunning).thenReturn(true);
+
+      await flow.closeServer();
+
+      verify(() => mockRedirectHttpServerHandler.close()).called(1);
     });
 
     test(
-      'uses ${InternetAddress.loopbackIPv4} for the internet address',
+      'returns false and does not attempt to close when server is not running',
       () async {
-        InternetAddress? capturedInternetAddress;
+        when(() => mockRedirectHttpServerHandler.isRunning).thenReturn(false);
 
-        await MicrosoftAuthCodeFlow(
-          microsoftAuthApi: mockMicrosoftAuthApi,
-          httpServerFactory: (address, _) async {
-            capturedInternetAddress = address;
-            return mockHttpServer;
-          },
-        ).startServer();
+        expect(await flow.closeServer(), false);
 
-        expect(capturedInternetAddress, InternetAddress.loopbackIPv4);
+        verifyNever(() => mockRedirectHttpServerHandler.close());
       },
     );
 
-    test('uses the correct port', () async {
-      int? capturedPort;
+    test('interacts with $RedirectHttpServerHandler correctly', () async {
+      for (final isRunning in {true, false}) {
+        when(
+          () => mockRedirectHttpServerHandler.isRunning,
+        ).thenReturn(isRunning);
 
-      await MicrosoftAuthCodeFlow(
-        microsoftAuthApi: mockMicrosoftAuthApi,
-        httpServerFactory: (_, port) async {
-          capturedPort = port;
-          return mockHttpServer;
-        },
-      ).startServer();
+        await flow.closeServer();
 
-      expect(capturedPort, ProjectInfoConstants.microsoftLoginRedirectPort);
-    });
-  });
+        verify(() => mockRedirectHttpServerHandler.isRunning).called(1);
 
-  group('stopServer', () {
-    test('throws $AssertionError when stopping a non-running server', () async {
-      await expectLater(flow.stopServer(), throwsA(isA<AssertionError>()));
-    });
+        if (isRunning) {
+          verify(() => mockRedirectHttpServerHandler.close()).called(1);
+        } else {
+          verifyNever(() => mockRedirectHttpServerHandler.close());
+        }
 
-    test('calls close() on the running $HttpServer instance', () async {
-      await flow.startServer();
-      await flow.stopServer();
-
-      verify(() => mockHttpServer.close()).called(1);
-      verifyNoMoreInteractions(mockHttpServer);
-    });
-
-    test('sets httpServer to null after stopping a running server', () async {
-      await flow.startServer();
-      await flow.stopServer();
-      expect(flow.httpServer, null);
-    });
-  });
-
-  group('stopServerIfRunning', () {
-    test('returns true and stops server when running', () async {
-      await flow.startServer();
-
-      expect(await flow.stopServerIfRunning(), true);
-    });
-    test('returns false and does nothing when server is not running', () async {
-      expect(await flow.stopServerIfRunning(), false);
-    });
-
-    test('calls close() on the running $HttpServer instance', () async {
-      await flow.startServer();
-      await flow.stopServerIfRunning();
-
-      verify(() => mockHttpServer.close()).called(1);
-      verifyNoMoreInteractions(mockHttpServer);
+        verifyNoMoreInteractions(mockRedirectHttpServerHandler);
+      }
     });
   });
 
   group('run', () {
+    setUp(() {
+      when(() => mockRedirectHttpServerHandler.isRunning).thenReturn(false);
+    });
+
     MicrosoftAuthCodeResponsePageContent authCodeResponsePageContent({
       String pageTitle = TestConstants.anyString,
       String title = TestConstants.anyString,
@@ -193,54 +132,9 @@ void main() {
           responsePageVariants ?? authCodeResponsePageVariants(),
     );
 
-    Future<void> withHttpRequest(
-      HttpRequest request,
-      Future<void> Function() run,
-    ) async {
-      final controller = StreamController<HttpRequest>();
-      when(
-        () => mockHttpServer.listen(
-          any(),
-          cancelOnError: any(named: 'cancelOnError'),
-          onDone: any(named: 'onDone'),
-          onError: any(named: 'onError'),
-        ),
-      ).thenAnswer((invocation) {
-        final onData =
-            invocation.positionalArguments[0] as void Function(HttpRequest);
-        final onDone = invocation.namedArguments[#onDone] as void Function()?;
-        final onError = invocation.namedArguments[#onError] as Function?;
-        final cancelOnError =
-            invocation.namedArguments[#cancelOnError] as bool?;
-
-        final subscription = controller.stream.listen(
-          onData,
-          onDone: onDone,
-          onError: onError,
-          cancelOnError: cancelOnError ?? false,
-        );
-
-        // Emit the request after listener is ready
-        scheduleMicrotask(() {
-          controller.add(request);
-        });
-
-        return subscription;
-      });
-
-      try {
-        await run();
-      } finally {
-        await controller.close();
-      }
-    }
-
     const fakeAuthCode = 'example-microsoft-auth-code';
 
-    Future<
-      (MicrosoftOAuthTokenResponse? tokenResponse, String? redirectPageHtml)
-    >
-    simulateAuthCodeRedirect({
+    Future<MicrosoftOAuthTokenResponse?> simulateAuthCodeRedirect({
       String? authCode = fakeAuthCode,
       String? errorCode,
       String? errorDescription,
@@ -251,81 +145,79 @@ void main() {
       /// If `true`, swallow auth code flow failures and return `null` for token response instead of throwing.
       /// Useful to validate HTML responses in different cases when the token response is irrelevant.
       bool ignoreFailures = false,
-      void Function({
-        required _MockHttpResponse mockHttpResponse,
-        required _MockHttpHeaders mockHttpHeaders,
-      })?
-      onMocksProvided,
     }) async {
       MicrosoftOAuthTokenResponse? tokenResponse;
-      String? redirectPageHtml;
 
-      final mockHttpRequest = _MockHttpRequest();
-      when(() => mockHttpRequest.uri).thenReturn(
-        Uri(
-          queryParameters: {
-            if (authCode != null)
-              MicrosoftConstants.loginRedirectAuthCodeQueryParamName: authCode,
-            if (errorCode != null)
-              MicrosoftConstants.loginRedirectErrorQueryParamName: errorCode,
-            if (errorDescription != null)
-              MicrosoftConstants.loginRedirectErrorDescriptionQueryParamName:
-                  errorDescription,
-          },
-        ),
+      when(() => mockRedirectHttpServerHandler.waitForRequest()).thenAnswer(
+        (_) async => {
+          if (authCode != null)
+            MicrosoftConstants.loginRedirectAuthCodeQueryParamName: authCode,
+          if (errorCode != null)
+            MicrosoftConstants.loginRedirectErrorQueryParamName: errorCode,
+          if (errorDescription != null)
+            MicrosoftConstants.loginRedirectErrorDescriptionQueryParamName:
+                errorDescription,
+        },
       );
 
-      final mockResponse = _MockHttpResponse();
-      final mockHeaders = _MockHttpHeaders();
+      when(
+        () => mockRedirectHttpServerHandler.respondAndClose(any()),
+      ).thenAnswer((invocation) async {});
 
-      when(() => mockResponse.write(any())).thenAnswer((invocation) {
-        redirectPageHtml = invocation.positionalArguments[0] as String?;
-      });
-      when(() => mockResponse.close()).thenAnswer((_) async {
-        return null;
-      });
-      when(() => mockResponse.headers).thenReturn(mockHeaders);
+      when(() => mockRedirectHttpServerHandler.isRunning).thenReturn(false);
 
-      when(() => mockHttpRequest.response).thenReturn(mockResponse);
+      when(
+        () => mockRedirectHttpServerHandler.start(port: any(named: 'port')),
+      ).thenAnswer((_) async => Result.emptySuccess());
 
-      await flow.startServer();
-      await withHttpRequest(mockHttpRequest, () async {
-        if (ignoreFailures) {
-          try {
-            tokenResponse = await run(
-              onProgress: onProgress,
-              responsePageVariants: authCodeResponsePageVariants,
-              onAuthCodeLoginUrlAvailable: onAuthCodeLoginUrlAvailable,
-            );
-          } on Exception catch (_) {
-            // Ignore failures and keep tokenResponse null.
-          }
-        } else {
+      if (ignoreFailures) {
+        try {
           tokenResponse = await run(
             onProgress: onProgress,
             responsePageVariants: authCodeResponsePageVariants,
             onAuthCodeLoginUrlAvailable: onAuthCodeLoginUrlAvailable,
           );
+        } on Exception catch (_) {
+          // Ignore failures and keep tokenResponse null.
         }
-      });
+      } else {
+        tokenResponse = await run(
+          onProgress: onProgress,
+          responsePageVariants: authCodeResponsePageVariants,
+          onAuthCodeLoginUrlAvailable: onAuthCodeLoginUrlAvailable,
+        );
+      }
 
-      onMocksProvided?.call(
-        mockHttpHeaders: mockHeaders,
-        mockHttpResponse: mockResponse,
-      );
-
-      return (tokenResponse, redirectPageHtml);
+      return tokenResponse;
     }
 
-    test('throws $StateError if server is not already running', () async {
-      expect(
-        flow.isServerRunning,
-        false,
-        reason: 'The server should not be running initially',
-      );
+    test('throws $StateError if server is already running', () async {
+      when(() => mockRedirectHttpServerHandler.isRunning).thenReturn(true);
 
       await expectLater(run(), throwsStateError);
     });
+
+    test(
+      'throws ${microsoft_auth_code_flow_exceptions.AuthCodeServerStartException} when $RedirectHttpServerHandler returns a failure',
+      () async {
+        // Avoid const to ensure unique instance for reference equality in test when using same().
+        // ignore: prefer_const_constructors
+        final failure = PortInUseFailure(TestConstants.anyInt);
+        when(
+          () => mockRedirectHttpServerHandler.start(port: any(named: 'port')),
+        ).thenAnswer((_) async => Result.failure(failure));
+
+        await expectLater(
+          run(),
+          throwsA(
+            isA<
+                  microsoft_auth_code_flow_exceptions.AuthCodeServerStartException
+                >()
+                .having((e) => e.failure, 'failure', same(failure)),
+          ),
+        );
+      },
+    );
 
     test(
       'calls onProgress with ${MicrosoftAuthCodeProgress.waitingForUserLogin}',
@@ -384,50 +276,10 @@ void main() {
       },
     );
 
-    test(
-      'closes response and server and responds with correct status code and headers',
-      () async {
-        // This test covers common behavior regardless of success or failure.
-        // Specific HTML content is tested separately.
-
-        bool called = false;
-        await simulateAuthCodeRedirect(
-          onMocksProvided: ({
-            required mockHttpHeaders,
-            required mockHttpResponse,
-          }) {
-            verify(
-              () => mockHttpHeaders.contentType = ContentType.html,
-            ).called(1);
-            verifyNoMoreInteractions(mockHttpHeaders);
-
-            verify(() => mockHttpResponse.close()).called(1);
-            verify(() => mockHttpResponse.statusCode = HttpStatus.ok).called(1);
-            verify(() => mockHttpResponse.write(any())).called(1);
-            verify(() => mockHttpResponse.headers).called(1);
-            verifyNoMoreInteractions(mockHttpResponse);
-
-            expect(
-              flow.isServerRunning,
-              false,
-              reason: 'The server should not be running.',
-            );
-
-            called = true;
-          },
-        );
-        if (!called) {
-          throw StateError(
-            'onProvideMocks callback was not called; this likely indicates a test bug.',
-          );
-        }
-      },
-    );
-
     // START: Unknown redirect errors
 
     test(
-      'returns unknown error HTML page and stops server on unrecognized redirect error code',
+      'responds with unknown error HTML page and stops server on unrecognized redirect error code',
       () async {
         const unknownErrorCode = 'unknown_error';
         const unknownErrorDescription = 'An internal server error';
@@ -441,7 +293,7 @@ void main() {
               'An unknown error occurred while logging in: $unknownErrorCode, $unknownErrorDescription',
         );
 
-        final (_, response) = await simulateAuthCodeRedirect(
+        await simulateAuthCodeRedirect(
           errorCode: unknownErrorCode,
           errorDescription: unknownErrorDescription,
           authCodeResponsePageVariants: authCodeResponsePageVariants(
@@ -450,12 +302,14 @@ void main() {
           ignoreFailures: true,
         );
 
-        expect(flow.isServerRunning, false);
-
-        expect(
-          response,
-          buildAuthCodeResultHtmlPage(pageContent, isSuccess: false),
+        final expectedResponse = buildAuthCodeResultHtmlPage(
+          pageContent,
+          isSuccess: false,
         );
+
+        verify(
+          () => mockRedirectHttpServerHandler.respondAndClose(expectedResponse),
+        ).called(1);
       },
     );
 
@@ -481,8 +335,6 @@ void main() {
                 ),
           ),
         );
-
-        expect(flow.isServerRunning, false);
       },
     );
 
@@ -491,7 +343,7 @@ void main() {
     // START: Auth code missing redirect error
 
     test(
-      'returns missing auth code HTML page and stops server when auth code query parameter is absent',
+      'responds with missing auth code HTML page and stops server when auth code query parameter is absent',
       () async {
         final pageContent = authCodeResponsePageContent(
           title: 'The auth code query parameter is missing',
@@ -501,7 +353,7 @@ void main() {
           subtitle: 'Please restart the sign-in process.',
         );
 
-        final (_, response) = await simulateAuthCodeRedirect(
+        await simulateAuthCodeRedirect(
           authCode: null,
           authCodeResponsePageVariants: authCodeResponsePageVariants(
             missingAuthCode: pageContent,
@@ -509,12 +361,14 @@ void main() {
           ignoreFailures: true,
         );
 
-        expect(flow.isServerRunning, false);
-
-        expect(
-          response,
-          buildAuthCodeResultHtmlPage(pageContent, isSuccess: false),
+        final expectedResponse = buildAuthCodeResultHtmlPage(
+          pageContent,
+          isSuccess: false,
         );
+
+        verify(
+          () => mockRedirectHttpServerHandler.respondAndClose(expectedResponse),
+        ).called(1);
       },
     );
 
@@ -527,7 +381,6 @@ void main() {
             isA<microsoft_auth_code_flow_exceptions.AuthCodeMissingException>(),
           ),
         );
-        expect(flow.isServerRunning, false);
       },
     );
 
@@ -536,7 +389,7 @@ void main() {
     // START: Access denied redirect error
 
     test(
-      'returns access denied HTML page and stops server when redirect error query parameter is ${MicrosoftConstants.loginRedirectAccessDeniedErrorCode}',
+      'responds with access denied HTML page and stops server when redirect error query parameter is ${MicrosoftConstants.loginRedirectAccessDeniedErrorCode}',
       () async {
         final pageContent = authCodeResponsePageContent(
           title: 'The auth code query parameter is missing',
@@ -546,7 +399,7 @@ void main() {
           subtitle: 'Please restart the sign-in process.',
         );
 
-        final (_, response) = await simulateAuthCodeRedirect(
+        await simulateAuthCodeRedirect(
           authCode: null,
           errorCode: MicrosoftConstants.loginRedirectAccessDeniedErrorCode,
           authCodeResponsePageVariants: authCodeResponsePageVariants(
@@ -555,12 +408,14 @@ void main() {
           ignoreFailures: true,
         );
 
-        expect(flow.isServerRunning, false);
-
-        expect(
-          response,
-          buildAuthCodeResultHtmlPage(pageContent, isSuccess: false),
+        final expectedResponse = buildAuthCodeResultHtmlPage(
+          pageContent,
+          isSuccess: false,
         );
+
+        verify(
+          () => mockRedirectHttpServerHandler.respondAndClose(expectedResponse),
+        ).called(1);
       },
     );
 
@@ -576,7 +431,6 @@ void main() {
             isA<microsoft_auth_code_flow_exceptions.AuthCodeDeniedException>(),
           ),
         );
-        expect(flow.isServerRunning, false);
       },
     );
 
@@ -594,19 +448,21 @@ void main() {
               'You can close this window now, the launcher is logging in...',
         );
 
-        final (_, response) = await simulateAuthCodeRedirect(
+        await simulateAuthCodeRedirect(
           authCode: fakeAuthCode,
           authCodeResponsePageVariants: authCodeResponsePageVariants(
             approved: pageContent,
           ),
         );
 
-        expect(flow.isServerRunning, false);
-
-        expect(
-          response,
-          buildAuthCodeResultHtmlPage(pageContent, isSuccess: true),
+        final expectedResponse = buildAuthCodeResultHtmlPage(
+          pageContent,
+          isSuccess: true,
         );
+
+        verify(
+          () => mockRedirectHttpServerHandler.respondAndClose(expectedResponse),
+        ).called(1);
       },
     );
 
@@ -616,7 +472,7 @@ void main() {
         final progressEvents = <MicrosoftAuthCodeProgress>[];
         bool progressCallbackCalled = false;
 
-        final (_, _) = await simulateAuthCodeRedirect(
+        await simulateAuthCodeRedirect(
           onProgress: (progress) {
             progressEvents.add(progress);
             progressCallbackCalled = true;
@@ -637,7 +493,7 @@ void main() {
     );
 
     test('passes auth code correctly to $MicrosoftAuthApi', () async {
-      final (_, _) = await simulateAuthCodeRedirect(authCode: fakeAuthCode);
+      await simulateAuthCodeRedirect(authCode: fakeAuthCode);
 
       verify(
         () => mockMicrosoftAuthApi.exchangeAuthCodeForTokens(
@@ -649,7 +505,7 @@ void main() {
     test(
       'does not interact with unrelated $MicrosoftAuthApi methods',
       () async {
-        final (_, _) = await simulateAuthCodeRedirect();
+        await simulateAuthCodeRedirect();
 
         verifyInOrder([
           () => mockMicrosoftAuthApi.userLoginUrlWithAuthCode(),
@@ -671,18 +527,27 @@ void main() {
           () => mockMicrosoftAuthApi.exchangeAuthCodeForTokens(any()),
         ).thenAnswer((_) async => expectedTokenResponse);
 
-        final (actualTokenResponse, _) = await simulateAuthCodeRedirect();
+        final actualTokenResponse = await simulateAuthCodeRedirect();
 
         expect(actualTokenResponse, same(expectedTokenResponse));
       },
     );
+
+    test('interacts with $RedirectHttpServerHandler correctly', () async {
+      await simulateAuthCodeRedirect();
+
+      verify(() => mockRedirectHttpServerHandler.isRunning).called(1);
+      verify(
+        () => mockRedirectHttpServerHandler.start(port: any(named: 'port')),
+      ).called(1);
+      verify(() => mockRedirectHttpServerHandler.waitForRequest()).called(1);
+      verify(
+        () => mockRedirectHttpServerHandler.respondAndClose(any()),
+      ).called(1);
+      verifyNoMoreInteractions(mockRedirectHttpServerHandler);
+    });
   });
 }
 
-class _MockHttpServer extends Mock implements HttpServer {}
-
-class _MockHttpRequest extends Mock implements HttpRequest {}
-
-class _MockHttpResponse extends Mock implements HttpResponse {}
-
-class _MockHttpHeaders extends Mock implements HttpHeaders {}
+class _MockRedirectHttpServerHandler extends Mock
+    implements RedirectHttpServerHandler {}

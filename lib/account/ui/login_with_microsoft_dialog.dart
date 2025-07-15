@@ -99,7 +99,7 @@ class _LoginWithMicrosoftDialogState extends State<LoginWithMicrosoftDialog> {
 
   @override
   void dispose() {
-    _microsoftAuthCubit.stopAuthCodeServerIfRunning();
+    _microsoftAuthCubit.closeAuthCodeServer();
     _microsoftAuthCubit.cancelDeviceCodePollingTimer();
     _microsoftAuthCubit.resetLoginStatus();
     super.dispose();

@@ -3,19 +3,43 @@
 library;
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler.dart';
+import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler_failures.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow_exceptions.dart'
     as microsoft_auth_code_flow_exceptions;
 import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/logic/app_logger.dart';
+import 'package:kraft_launcher/common/models/result.dart';
 import 'package:meta/meta.dart';
 
-@visibleForTesting
-typedef HttpServerFactory =
-    Future<HttpServer> Function(InternetAddress address, int port);
+// TODO: Provide a code example for this class.
+//  This is a draft and incomplete (need changes, improvements or fixes):
+/// ```dart
+/// final flow = MicrosoftAuthCodeFlow(...);
+///
+/// final response = await flow.run(
+///   onProgress: (progress) {
+///     // Show progress to the user...
+///   },
+///   onAuthCodeLoginUrlAvailable: (url) {
+///     // The user needs to open this [url] in the browser
+///     // to complete authentication in Microsoft site.
+///   },
+///   // For localization purposes, the messages are not hardcoded.
+///   authCodeResponsePageVariants: ...
+/// );
+///
+/// // Await Microsoft's redirect callback containing success or error data.
+/// if (response == null) {
+///   // The server was closed before receiving the response.
+///   // The server typically gets closed when the process is cancelled by the user.
+///   // This should not happen when the user rejects or completes the login
+///   // and Microsoft redirects to the server with the success or error data.
+/// }
+/// ```
 
 /// Handles Microsoft OAuth authorization code flow (not specific to Minecraft).
 ///
@@ -38,55 +62,43 @@ typedef HttpServerFactory =
 /// * [MicrosoftOAuthFlowController], that manages both [MicrosoftAuthCodeFlow] and [MicrosoftDeviceCodeFlow].
 class MicrosoftAuthCodeFlow {
   MicrosoftAuthCodeFlow({
-    required this.microsoftAuthApi,
-    @visibleForTesting HttpServerFactory? httpServerFactory,
-  }) : _httpServerFactory = httpServerFactory ?? HttpServer.bind;
+    required MicrosoftAuthApi microsoftAuthApi,
+    required RedirectHttpServerHandler redirectHttpServerHandler,
+  }) : _redirectHttpServerHandler = redirectHttpServerHandler,
+       _microsoftAuthApi = microsoftAuthApi;
 
+  final MicrosoftAuthApi _microsoftAuthApi;
+
+  /// Handles the temporary HTTP server used for receiving Microsoft's OAuth redirect.
+  /// Microsoft redirects to this server with the auth code after user login.
+  final RedirectHttpServerHandler _redirectHttpServerHandler;
+
+  // Exposed for an integration test.
   @visibleForTesting
-  final MicrosoftAuthApi microsoftAuthApi;
+  static const serverPort = ProjectInfoConstants.microsoftLoginRedirectPort;
 
-  final HttpServerFactory _httpServerFactory;
+  bool get _isServerRunning => _redirectHttpServerHandler.isRunning;
 
-  /// Minimal HTTP server for handling Microsoft's redirect in the auth code flow.
-  /// Microsoft will redirect to this server with the auth code after the user logs in.
-  @visibleForTesting
-  HttpServer? httpServer;
+  Future<EmptyResult<StartServerFailure>> _startServer() async {
+    if (_redirectHttpServerHandler.isRunning) {
+      throw StateError(
+        'Cannot start Microsoft OAuth flow: the redirect server is already running. '
+        'Ensure run() is not called concurrently.',
+      );
+    }
 
-  @visibleForTesting
-  HttpServer get serverOrThrow =>
-      httpServer ??
-      (throw StateError(
-        'The auth code redirect HTTP server has not started yet which is required to handle auth code flow login result.',
-      ));
-
-  bool get isServerRunning => httpServer != null;
-
-  Future<HttpServer> startServer() async {
-    assert(
-      !isServerRunning,
-      'The Microsoft Auth Redirect server cannot be started if it is already running.',
-    );
-    httpServer = await _httpServerFactory(
-      InternetAddress.loopbackIPv4,
-      ProjectInfoConstants.microsoftLoginRedirectPort,
-    );
-    AppLogger.i('Starting Microsoft Auth Code server');
-    return serverOrThrow;
+    final result = await _redirectHttpServerHandler.start(port: serverPort);
+    AppLogger.i('Starting the Microsoft Auth Code server');
+    return result;
   }
 
-  Future<void> stopServer() async {
-    assert(
-      isServerRunning,
-      "The Microsoft Auth Redirect server cannot be stopped if it hasn't started yet.",
-    );
-    await serverOrThrow.close();
-    httpServer = null;
-    AppLogger.i('Stopping Microsoft Auth Code server');
-  }
+  Future<bool> closeServer() async {
+    final running = _isServerRunning;
 
-  Future<bool> stopServerIfRunning() async {
-    if (isServerRunning) {
-      await stopServer();
+    if (running) {
+      await _redirectHttpServerHandler.close();
+      AppLogger.i('Closing the Microsoft Auth Code server');
+
       return true;
     }
     return false;
@@ -98,45 +110,44 @@ class MicrosoftAuthCodeFlow {
     // The page content is not hardcoded for localization.
     required MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants,
   }) async {
-    final server = serverOrThrow;
+    final failure = (await _startServer()).failureOrNull;
+    if (failure != null) {
+      AppLogger.e(
+        'Failed to start the temporary server that is required to handle '
+        'the Microsoft auth code flow login result: ${failure.message}',
+        failure.message,
+      );
+      throw microsoft_auth_code_flow_exceptions.AuthCodeServerStartException(
+        failure,
+      );
+    }
 
-    final authCodeLoginUrl = microsoftAuthApi.userLoginUrlWithAuthCode();
+    final authCodeLoginUrl = _microsoftAuthApi.userLoginUrlWithAuthCode();
 
     onProgress(MicrosoftAuthCodeProgress.waitingForUserLogin);
     onAuthCodeLoginUrlAvailable(authCodeLoginUrl);
 
-    // Wait for the user response
-    final request = await server.firstOrNull;
-    if (request == null) {
-      // The server was closed because the user didn't log in.
-      // It automatically shuts down when the login dialog is closed.
+    // Await Microsoft's redirect callback containing success or error data.
+    final queryParams = await _redirectHttpServerHandler.waitForRequest();
+    if (queryParams == null) {
+      // Null indicates the server closed before receiving a redirect.
+      // The server typically gets closed when the user cancels the login process,
+      // for example, by closing the login dialog or press "cancel" button.
       return null;
     }
 
-    Future<void> respondAndStopServer(String html) async {
-      final response = request.response;
-      response
-        ..statusCode = HttpStatus.ok
-        ..headers.contentType = ContentType.html
-        ..write(html);
-      await response.close();
-      await stopServer();
-    }
-
     final code =
-        request.uri.queryParameters[MicrosoftConstants
-            .loginRedirectAuthCodeQueryParamName];
+        queryParams[MicrosoftConstants.loginRedirectAuthCodeQueryParamName];
 
     final error =
-        request.uri.queryParameters[MicrosoftConstants
-            .loginRedirectErrorQueryParamName];
+        queryParams[MicrosoftConstants.loginRedirectErrorQueryParamName];
     final errorDescription =
-        request.uri.queryParameters[MicrosoftConstants
+        queryParams[MicrosoftConstants
             .loginRedirectErrorDescriptionQueryParamName];
 
     if (error != null) {
       if (error == MicrosoftConstants.loginRedirectAccessDeniedErrorCode) {
-        await respondAndStopServer(
+        await _redirectHttpServerHandler.respondAndClose(
           buildAuthCodeResultHtmlPage(
             authCodeResponsePageVariants.accessDenied,
             isSuccess: false,
@@ -145,7 +156,7 @@ class MicrosoftAuthCodeFlow {
         throw const microsoft_auth_code_flow_exceptions.AuthCodeDeniedException();
       }
 
-      await respondAndStopServer(
+      await _redirectHttpServerHandler.respondAndClose(
         buildAuthCodeResultHtmlPage(
           authCodeResponsePageVariants.unknownError(
             error,
@@ -160,7 +171,7 @@ class MicrosoftAuthCodeFlow {
       );
     }
     if (code == null) {
-      await respondAndStopServer(
+      await _redirectHttpServerHandler.respondAndClose(
         buildAuthCodeResultHtmlPage(
           authCodeResponsePageVariants.missingAuthCode,
           isSuccess: false,
@@ -168,7 +179,7 @@ class MicrosoftAuthCodeFlow {
       );
       throw const microsoft_auth_code_flow_exceptions.AuthCodeMissingException();
     }
-    await respondAndStopServer(
+    await _redirectHttpServerHandler.respondAndClose(
       buildAuthCodeResultHtmlPage(
         authCodeResponsePageVariants.approved,
         isSuccess: true,
@@ -177,9 +188,8 @@ class MicrosoftAuthCodeFlow {
 
     onProgress(MicrosoftAuthCodeProgress.exchangingAuthCode);
 
-    final oauthTokenResponse = await microsoftAuthApi.exchangeAuthCodeForTokens(
-      code,
-    );
+    final oauthTokenResponse = await _microsoftAuthApi
+        .exchangeAuthCodeForTokens(code);
 
     return oauthTokenResponse;
   }
@@ -220,9 +230,11 @@ class MicrosoftAuthCodeResponsePageVariants {
   unknownError;
 }
 
-// Since the authorization code flow requires a redirect URI,
-// the app temporarily starts a local server to handle the redirect request,
-// which contains the authorization code needed to complete login.
+/// Builds the HTML response, which will be shown to the user in the browser.
+///
+/// The auth code flow requires a redirect URI,
+/// the app temporarily starts a local server to handle the redirect request,
+/// which contains the auth code needed to complete login.
 @visibleForTesting
 String buildAuthCodeResultHtmlPage(
   MicrosoftAuthCodeResponsePageContent content, {
@@ -270,35 +282,6 @@ String buildAuthCodeResultHtmlPage(
 </body>
 </html>
 ''';
-
-extension _HttpServerExt on HttpServer {
-  Future<HttpRequest?> get firstOrNull {
-    final completer = Completer<HttpRequest?>();
-    late StreamSubscription<HttpRequest> serverSubscription;
-
-    serverSubscription = listen(
-      (request) {
-        if (!completer.isCompleted) {
-          completer.complete(request);
-          serverSubscription.cancel();
-        }
-      },
-      onDone: () {
-        if (!completer.isCompleted) {
-          completer.complete(null);
-        }
-      },
-      onError: (Object error, StackTrace stack) {
-        if (!completer.isCompleted) {
-          completer.completeError(error, stack);
-        }
-      },
-      cancelOnError: true,
-    );
-
-    return completer.future;
-  }
-}
 
 enum MicrosoftAuthCodeProgress { waitingForUserLogin, exchangingAuthCode }
 

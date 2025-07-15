@@ -13,6 +13,8 @@ import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_ap
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api_impl.dart';
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api.dart';
 import 'package:kraft_launcher/account/data/minecraft_account_api/minecraft_account_api_impl.dart';
+import 'package:kraft_launcher/account/data/redirect_http_server_handler/dart_redirect_http_server_handler.dart';
+import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/account_repository.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
@@ -120,6 +122,10 @@ class _AccountFeatureProviders extends _FeatureProviders {
       Provider<LinuxSecretServiceChecker>(
         create: (context) => DbusLinuxSecretServiceChecker(),
       ),
+      Provider<RedirectHttpServerHandler>(
+        create: (context) => DartRedirectHttpServerHandler(),
+        dispose: (_, value) => value.close(),
+      ),
     ],
     child: child,
   );
@@ -149,25 +155,43 @@ class _AccountFeatureProviders extends _FeatureProviders {
               minecraftAccountApi: context.read(),
             ),
       ),
+      Provider(
+        create:
+            (context) => MicrosoftAuthCodeFlow(
+              microsoftAuthApi: context.read(),
+              redirectHttpServerHandler: context.read(),
+            ),
+        dispose: (_, value) => value.closeServer(),
+      ),
+      Provider(
+        create:
+            (context) =>
+                MicrosoftDeviceCodeFlow(microsoftAuthApi: context.read()),
+        dispose: (_, value) => value.cancelPollingTimer(),
+      ),
+      Provider(
+        create:
+            (context) => MicrosoftOAuthFlowController(
+              microsoftAuthCodeFlow: context.read(),
+              microsoftDeviceCodeFlow: context.read(),
+            ),
+      ),
+      Provider(
+        create:
+            (context) => MinecraftAccountRefresher(
+              imageCacheService: context.read(),
+              microsoftAuthApi: context.read(),
+              minecraftAccountApi: context.read(),
+              accountResolver: context.read(),
+            ),
+      ),
       Provider<MinecraftAccountService>(
         create:
             (context) => MinecraftAccountService(
               accountRepository: context.read<AccountRepository>(),
-              microsoftOAuthFlowController: MicrosoftOAuthFlowController(
-                microsoftAuthCodeFlow: MicrosoftAuthCodeFlow(
-                  microsoftAuthApi: context.read(),
-                ),
-                microsoftDeviceCodeFlow: MicrosoftDeviceCodeFlow(
-                  microsoftAuthApi: context.read(),
-                ),
-              ),
+              microsoftOAuthFlowController: context.read(),
               minecraftAccountResolver: context.read(),
-              minecraftAccountRefresher: MinecraftAccountRefresher(
-                imageCacheService: context.read(),
-                microsoftAuthApi: context.read(),
-                minecraftAccountApi: context.read(),
-                accountResolver: context.read(),
-              ),
+              minecraftAccountRefresher: context.read(),
             ),
       ),
       Provider(create: (context) => MinecraftOfflineAccountFactory()),

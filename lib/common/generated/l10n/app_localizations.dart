@@ -952,6 +952,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Minecraft services are currently unavailable. Please try again in a few minutes.'**
   String get minecraftAccountApiUnavailable;
+
+  /// Shown when the local HTTP server used to receive Microsoft's redirect during auth code login cannot start because the selected port is already in use. This prevents the app from receiving the login response from Microsoft.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to start the local server required for login. Port {port} is already in use.'**
+  String authCodeServerStartFailurePortInUse(int port);
+
+  /// Shown when the local HTTP server used to receive Microsoft's redirect cannot start because the operating system denied permission. This can be caused by firewall rules, antivirus software, admin restrictions, or security policies.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to start the local server required for login due to system restrictions: {details}'**
+  String authCodeServerStartFailurePermissionDenied(String details);
+
+  /// Shown when the local HTTP server, used to receive Microsoft's redirect after sign-in, fails to start due to an unknown or unclassified error.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to start the local server required for login due to an unexpected error: {message}'**
+  String authCodeServerStartFailureUnknown(String message);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -202,8 +202,8 @@ class MicrosoftAuthCubit extends Cubit<MicrosoftAuthState> {
     }
   }
 
-  Future<void> stopAuthCodeServerIfRunning() async {
-    final stopped = await minecraftAccountService.stopAuthCodeServerIfRunning();
+  Future<void> closeAuthCodeServer() async {
+    final stopped = await minecraftAccountService.closeAuthCodeServer();
     if (stopped) {
       emit(state.copyWith(loginStatus: MicrosoftLoginStatus.cancelled));
     }
@@ -240,7 +240,7 @@ class MicrosoftAuthCubit extends Cubit<MicrosoftAuthState> {
 
   @override
   Future<void> close() async {
-    await minecraftAccountService.stopAuthCodeServerIfRunning();
+    await minecraftAccountService.closeAuthCodeServer();
     minecraftAccountService.cancelDeviceCodePollingTimer();
     return super.close();
   }

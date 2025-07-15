@@ -41,10 +41,8 @@ class MicrosoftOAuthFlowController {
     onUserDeviceCodeAvailable: onUserDeviceCodeAvailable,
   );
 
-  Future<void> startAuthCodeServer() => microsoftAuthCodeFlow.startServer();
-
-  Future<bool> stopAuthCodeServerIfRunning() async =>
-      microsoftAuthCodeFlow.stopServerIfRunning();
+  Future<bool> closeAuthCodeServer() async =>
+      microsoftAuthCodeFlow.closeServer();
 
   bool cancelDeviceCodePollingTimer() =>
       microsoftDeviceCodeFlow.cancelPollingTimer();

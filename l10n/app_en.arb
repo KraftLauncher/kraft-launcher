@@ -322,5 +322,38 @@
     "minecraftAccountApiUnavailable": "Minecraft services are currently unavailable. Please try again in a few minutes.",
     "@minecraftAccountApiUnavailable": {
         "description": "Shown when a request to api.minecraftservices.com fails with a 503 Service Unavailable response. Indicates that Minecraft services are temporarily unavailable during communication with the API, such as login or other account-related operations."
+    },
+    "authCodeServerStartFailurePortInUse": "Unable to start the local server required for login. Port {port} is already in use.",
+    "@authCodeServerStartFailurePortInUse": {
+        "description": "Shown when the local HTTP server used to receive Microsoft's redirect during auth code login cannot start because the selected port is already in use. This prevents the app from receiving the login response from Microsoft.",
+        "placeholders": {
+            "port": {
+                "type": "int",
+                "example": "5665",
+                "description": "The port number the app attempted to bind the local server to."
+            }
+        }
+    },
+    "authCodeServerStartFailurePermissionDenied": "Unable to start the local server required for login due to system restrictions: {details}",
+    "@authCodeServerStartFailurePermissionDenied": {
+        "description": "Shown when the local HTTP server used to receive Microsoft's redirect cannot start because the operating system denied permission. This can be caused by firewall rules, antivirus software, admin restrictions, or security policies.",
+        "placeholders": {
+            "details": {
+                "type": "String",
+                "example": "Permission denied (EACCES)",
+                "description": "The system-level error message explaining why permission was denied."
+            }
+        }
+    },
+    "authCodeServerStartFailureUnknown": "Unable to start the local server required for login due to an unexpected error: {message}",
+    "@authCodeServerStartFailureUnknown": {
+        "description": "Shown when the local HTTP server, used to receive Microsoft's redirect after sign-in, fails to start due to an unknown or unclassified error.",
+        "placeholders": {
+            "message": {
+                "type": "String",
+                "example": "SocketException: Failed to bind to port",
+                "description": "The raw error message returned by the system or runtime."
+            }
+        }
     }
 }

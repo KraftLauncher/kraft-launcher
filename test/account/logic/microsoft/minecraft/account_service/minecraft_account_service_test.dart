@@ -35,17 +35,17 @@ void main() {
   group('requestLoginWithMicrosoftDeviceCode', () {});
 
   test(
-    'stopAuthCodeServerIfRunning delegates to $MicrosoftOAuthFlowController',
+    'closeAuthCodeServer delegates to $MicrosoftOAuthFlowController',
     () async {
       for (final value in {true, false}) {
         when(
-          () => mockMicrosoftOAuthFlowController.stopAuthCodeServerIfRunning(),
+          () => mockMicrosoftOAuthFlowController.closeAuthCodeServer(),
         ).thenAnswer((_) async => value);
 
-        expect(await service.stopAuthCodeServerIfRunning(), value);
+        expect(await service.closeAuthCodeServer(), value);
 
         verify(
-          () => mockMicrosoftOAuthFlowController.stopAuthCodeServerIfRunning(),
+          () => mockMicrosoftOAuthFlowController.closeAuthCodeServer(),
         ).called(1);
       }
 

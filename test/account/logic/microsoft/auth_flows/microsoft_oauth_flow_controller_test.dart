@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
@@ -164,28 +162,14 @@ void main() {
   });
 
   test(
-    'startAuthCodeServer delegates to $MicrosoftAuthCodeFlow correctly',
-    () async {
-      when(
-        () => mockMicrosoftAuthCodeFlow.startServer(),
-      ).thenAnswer((_) async => _FakeHttpServer());
-
-      await controller.startAuthCodeServer();
-
-      verify(() => mockMicrosoftAuthCodeFlow.startServer()).called(1);
-      verifyNoMoreInteractions(mockMicrosoftAuthCodeFlow);
-    },
-  );
-
-  test(
-    'stopAuthCodeServerIfRunning delegates to $MicrosoftAuthCodeFlow correctly',
+    'closeAuthCodeServer delegates to $MicrosoftAuthCodeFlow correctly',
     () async {
       for (final value in {true, false}) {
         when(
-          () => mockMicrosoftAuthCodeFlow.stopServerIfRunning(),
+          () => mockMicrosoftAuthCodeFlow.closeServer(),
         ).thenAnswer((_) async => value);
-        expect(await controller.stopAuthCodeServerIfRunning(), value);
-        verify(() => mockMicrosoftAuthCodeFlow.stopServerIfRunning()).called(1);
+        expect(await controller.closeAuthCodeServer(), value);
+        verify(() => mockMicrosoftAuthCodeFlow.closeServer()).called(1);
       }
       verifyNoMoreInteractions(mockMicrosoftAuthCodeFlow);
     },
@@ -235,5 +219,3 @@ MicrosoftAuthCodeResponsePageVariants _dummyAuthCodePageVariants() =>
       missingAuthCode: _dummyAuthCodePageContent(),
       unknownError: (_, _) => _dummyAuthCodePageContent(),
     );
-
-class _FakeHttpServer extends Fake implements HttpServer {}

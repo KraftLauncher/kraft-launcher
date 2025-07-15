@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:integration_test/integration_test.dart';
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
+import 'package:kraft_launcher/account/data/redirect_http_server_handler/dart_redirect_http_server_handler.dart';
+import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:mocktail/mocktail.dart';
@@ -22,53 +24,54 @@ void main() {
   late MockMicrosoftAuthApi mockMicrosoftAuthApi;
   late MicrosoftAuthCodeFlow microsoftAuthCodeFlow;
 
+  late RedirectHttpServerHandler redirectHttpServerHandler;
+
   setUp(() {
     mockMicrosoftAuthApi = MockMicrosoftAuthApi();
+
+    redirectHttpServerHandler = DartRedirectHttpServerHandler();
     microsoftAuthCodeFlow = MicrosoftAuthCodeFlow(
       microsoftAuthApi: mockMicrosoftAuthApi,
-      httpServerFactory: null, // Runs a real HTTP server
+      // Runs a real HTTP server
+      redirectHttpServerHandler: redirectHttpServerHandler,
     );
   });
 
-  (String, int) addressAndPort() => (
-    microsoftAuthCodeFlow.serverOrThrow.address.address,
-    microsoftAuthCodeFlow.serverOrThrow.port,
-  );
+  const address = '127.0.0.1';
+  const port = MicrosoftAuthCodeFlow.serverPort;
 
   Future<void> startServer() async {
-    await microsoftAuthCodeFlow.startServer();
-    if (!microsoftAuthCodeFlow.isServerRunning) {
+    await redirectHttpServerHandler.start(port: port);
+    if (!redirectHttpServerHandler.isRunning) {
       throw StateError(
         'Server should be running after start. This is likely a bug either in production or test code.',
       );
     }
   }
 
-  Future<void> stopServer() async {
-    await microsoftAuthCodeFlow.stopServer();
-    if (microsoftAuthCodeFlow.isServerRunning) {
+  Future<void> closeServer() async {
+    await microsoftAuthCodeFlow.closeServer();
+    if (redirectHttpServerHandler.isRunning) {
       throw StateError(
-        'Server should not be running after stop. This is likely a bug either in production or test code.',
+        'Server should not be running after close. This is likely a bug either in production or test code.',
       );
     }
   }
 
   tearDown(() async {
-    await microsoftAuthCodeFlow.stopServerIfRunning();
+    await microsoftAuthCodeFlow.closeServer();
   });
 
   test('server is reachable when started', () async {
     await startServer();
 
-    final (address, port) = addressAndPort();
     expect(await _isPortOpen(address, port), true);
   });
 
   test('server is not reachable when stopped', () async {
     await startServer();
 
-    final (address, port) = addressAndPort();
-    await stopServer();
+    await closeServer();
 
     expect(await _isPortOpen(address, port), false);
   });
@@ -78,7 +81,6 @@ void main() {
     String? errorCodeParam,
     String? errorDescriptionParam,
   }) {
-    final (address, port) = addressAndPort();
     return Uri.http('$address:$port', '/', {
       if (authCodeParam != null)
         MicrosoftConstants.loginRedirectAuthCodeQueryParamName: authCodeParam,
@@ -111,7 +113,6 @@ void main() {
           title: 'Example title',
           subtitle: 'Example subtitle',
         );
-    await microsoftAuthCodeFlow.startServer();
     final future = microsoftAuthCodeFlow.run(
       onProgress: (_) {},
       onAuthCodeLoginUrlAvailable: (_) {},

@@ -31,7 +31,10 @@
     "securityWarning",
     "secureStorageUnsupportedWarning",
     "updateMicrosoftAccount",
-    "minecraftAccountApiUnavailable"
+    "minecraftAccountApiUnavailable",
+    "authCodeServerStartFailurePortInUse",
+    "authCodeServerStartFailurePermissionDenied",
+    "authCodeServerStartFailureUnknown"
   ],
 
   "de": [
@@ -66,7 +69,10 @@
     "securityWarning",
     "secureStorageUnsupportedWarning",
     "updateMicrosoftAccount",
-    "minecraftAccountApiUnavailable"
+    "minecraftAccountApiUnavailable",
+    "authCodeServerStartFailurePortInUse",
+    "authCodeServerStartFailurePermissionDenied",
+    "authCodeServerStartFailureUnknown"
   ],
 
   "zh": [
@@ -101,6 +107,9 @@
     "securityWarning",
     "secureStorageUnsupportedWarning",
     "updateMicrosoftAccount",
-    "minecraftAccountApiUnavailable"
+    "minecraftAccountApiUnavailable",
+    "authCodeServerStartFailurePortInUse",
+    "authCodeServerStartFailurePermissionDenied",
+    "authCodeServerStartFailureUnknown"
   ]
 }

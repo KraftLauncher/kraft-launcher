@@ -87,3 +87,6 @@ class _Unit {
 const _unit = _Unit._();
 
 typedef EmptyResult<F extends BaseFailure> = Result<_Unit, F>;
+
+@visibleForTesting
+typedef EmptySuccessResult<F extends BaseFailure> = SuccessResult<_Unit, F>;
