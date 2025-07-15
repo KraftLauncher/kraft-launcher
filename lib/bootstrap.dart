@@ -14,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 // TODO: Read: https://dart.dev/tools/linter-rules/avoid_slow_async_io, review all usages of file sync operations
 // TODO: Avoid using @visibleForTesting for private fields
 // TODO: Consider handling all errors/exceptions thrown from any fromJson()?
+// TODO: Refactor app_en.arb with a better design that's more specific (avoid: "profile": "profile")
 
 Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
