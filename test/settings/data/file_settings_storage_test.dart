@@ -1,3 +1,5 @@
+import 'dart:io' show File;
+
 import 'package:file/memory.dart';
 import 'package:kraft_launcher/settings/data/file_settings.dart';
 import 'package:kraft_launcher/settings/data/file_settings_storage.dart';
@@ -6,14 +8,16 @@ import 'package:kraft_launcher/settings/logic/settings.dart';
 import 'package:test/test.dart';
 
 void main() {
-  late FileSettingsStorage fileSettingsStorage;
   late MemoryFileSystem memoryFileSystem;
+  late File file;
+
+  late FileSettingsStorage fileSettingsStorage;
 
   setUp(() {
     memoryFileSystem = MemoryFileSystem.test();
-    fileSettingsStorage = FileSettingsStorage(
-      file: memoryFileSystem.file('settings.json'),
-    );
+    file = memoryFileSystem.file('settings.json');
+
+    fileSettingsStorage = FileSettingsStorage(file: file);
   });
 
   Future<FileSettings> readSettingsNotNull() async {
@@ -32,7 +36,6 @@ void main() {
 
   group('readSettings', () {
     test('returns null if file does not exist', () async {
-      final file = fileSettingsStorage.file;
       expect(file.existsSync(), false);
 
       final settings = await fileSettingsStorage.readSettings();
@@ -47,7 +50,6 @@ void main() {
     });
 
     test('returns null if file exists but is empty', () async {
-      final file = fileSettingsStorage.file;
       await file.create();
       expect(file.existsSync(), true);
       expect(await file.readAsString(), '');

@@ -1,3 +1,5 @@
+import 'dart:io' show File;
+
 import 'package:file/memory.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_accounts.dart';
@@ -7,14 +9,16 @@ import 'package:test/test.dart';
 import '../../minecraft_dummy_accounts.dart';
 
 void main() {
-  late FileAccountStorage fileAccountStorage;
   late MemoryFileSystem memoryFileSystem;
+  late File file;
+
+  late FileAccountStorage fileAccountStorage;
 
   setUp(() {
     memoryFileSystem = MemoryFileSystem.test();
-    fileAccountStorage = FileAccountStorage(
-      file: memoryFileSystem.file('accounts.json'),
-    );
+    file = memoryFileSystem.file('accounts.json');
+
+    fileAccountStorage = FileAccountStorage(file: file);
   });
 
   final dummyAccounts = MinecraftDummyAccounts.accounts.toFileDto(
@@ -35,7 +39,6 @@ void main() {
 
   group('readAccounts', () {
     test('returns null if file does not exist', () async {
-      final file = fileAccountStorage.file;
       expect(file.existsSync(), false);
 
       final accounts = await fileAccountStorage.readAccounts();
@@ -50,7 +53,6 @@ void main() {
     });
 
     test('returns null if file exists but is empty', () async {
-      final file = fileAccountStorage.file;
       await file.create();
       expect(file.existsSync(), true);
       expect(await file.readAsString(), '');

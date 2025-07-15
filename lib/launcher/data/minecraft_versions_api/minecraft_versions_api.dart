@@ -7,7 +7,6 @@ import 'package:kraft_launcher/launcher/data/minecraft_versions_api/minecraft_ve
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/asset_index/api_minecraft_asset_index.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/version_details/api_minecraft_version_details.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/version_manifest/api_minecraft_version_manifest.dart';
-import 'package:meta/meta.dart';
 
 const _host = ApiHosts.pistonMetaMojang;
 
@@ -31,10 +30,9 @@ const _host = ApiHosts.pistonMetaMojang;
 /// * https://minecraft.wiki/w/Client.json (version details)
 /// * https://piston-meta.mojang.com/mc/game/version_manifest_v2.json
 class MinecraftVersionsApi {
-  MinecraftVersionsApi({required this.dio});
+  MinecraftVersionsApi({required Dio dio}) : _dio = dio;
 
-  @visibleForTesting
-  final Dio dio;
+  final Dio _dio;
 
   Future<Result<T, MinecraftVersionsApiFailure>> _handleCommonFailures<T>(
     Future<T> Function() run,
@@ -53,7 +51,7 @@ class MinecraftVersionsApi {
 
   Future<Result<ManifestWithJsonMap, MinecraftVersionsApiFailure>>
   fetchVersionManifest() async => _handleCommonFailures(() async {
-    final response = await dio.getUri<JsonMap>(
+    final response = await _dio.getUri<JsonMap>(
       Uri.https(_host, 'mc/game/version_manifest_v2.json'),
     );
     final responseData = response.dataOrThrow;
@@ -64,7 +62,7 @@ class MinecraftVersionsApi {
   Future<Result<VersionDetailsWithJsonMap, MinecraftVersionsApiFailure>>
   fetchVersionDetails(String versionDetailsUrl) async => _handleCommonFailures(
     () async {
-      final response = await dio.getUri<JsonMap>(Uri.parse(versionDetailsUrl));
+      final response = await _dio.getUri<JsonMap>(Uri.parse(versionDetailsUrl));
       final responseData = response.dataOrThrow;
       return (ApiMinecraftVersionDetails.fromJson(responseData), responseData);
     },
@@ -73,7 +71,7 @@ class MinecraftVersionsApi {
   Future<Result<ApiMinecraftAssetIndex, MinecraftVersionsApiFailure>>
   fetchAssetIndex(String assetIndexUrl) async =>
       _handleCommonFailures(() async {
-        final response = await dio.getUri<JsonMap>(Uri.parse(assetIndexUrl));
+        final response = await _dio.getUri<JsonMap>(Uri.parse(assetIndexUrl));
         return ApiMinecraftAssetIndex.fromJson(response.dataOrThrow);
       });
 }

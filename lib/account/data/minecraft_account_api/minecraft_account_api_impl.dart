@@ -8,15 +8,13 @@ import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/data/json.dart';
 import 'package:kraft_launcher/common/data/network/dio_helpers.dart';
 import 'package:kraft_launcher/common/logic/file_utils.dart';
-import 'package:meta/meta.dart';
 
 const _host = ApiHosts.minecraftServices;
 
 class MinecraftAccountApiImpl implements MinecraftAccountApi {
-  MinecraftAccountApiImpl({required this.dio});
+  MinecraftAccountApiImpl({required Dio dio}) : _dio = dio;
 
-  @visibleForTesting
-  final Dio dio;
+  final Dio _dio;
 
   Future<T> _handleCommonFailures<T>(
     Future<T> Function() run, {
@@ -71,7 +69,7 @@ class MinecraftAccountApiImpl implements MinecraftAccountApi {
     required String xstsToken,
     required String xstsUserHash,
   }) async => _handleCommonFailures(() async {
-    final response = await dio.postUri<JsonMap>(
+    final response = await _dio.postUri<JsonMap>(
       Uri.https(_host, 'authentication/login_with_xbox'),
       options: Options(
         headers: {
@@ -89,7 +87,7 @@ class MinecraftAccountApiImpl implements MinecraftAccountApi {
     String minecraftAccessToken,
   ) async => _handleCommonFailures(
     () async {
-      final response = await dio.getUri<JsonMap>(
+      final response = await _dio.getUri<JsonMap>(
         Uri.https(_host, 'minecraft/profile'),
         options: Options(
           headers: {'Authorization': 'Bearer $minecraftAccessToken'},
@@ -111,7 +109,7 @@ class MinecraftAccountApiImpl implements MinecraftAccountApi {
   @override
   Future<bool> checkMinecraftJavaOwnership(String minecraftAccessToken) =>
       _handleCommonFailures(() async {
-        final response = await dio.getUri<JsonMap>(
+        final response = await _dio.getUri<JsonMap>(
           Uri.https(_host, 'entitlements/mcstore'),
           options: Options(
             headers: {'Authorization': 'Bearer $minecraftAccessToken'},
@@ -129,7 +127,7 @@ class MinecraftAccountApiImpl implements MinecraftAccountApi {
     required String minecraftAccessToken,
   }) => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonMap>(
+      final response = await _dio.postUri<JsonMap>(
         Uri.https(_host, 'minecraft/profile/skins'),
         options: Options(
           headers: {'Authorization': 'Bearer $minecraftAccessToken'},

@@ -10,13 +10,11 @@ import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/data/json.dart';
 import 'package:kraft_launcher/common/data/network/dio_helpers.dart';
-import 'package:meta/meta.dart';
 
 class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
-  MicrosoftAuthApiImpl({required this.dio});
+  MicrosoftAuthApiImpl({required Dio dio}) : _dio = dio;
 
-  @visibleForTesting
-  final Dio dio;
+  final Dio _dio;
 
   Future<T> _handleCommonFailures<T>(
     Future<T> Function() run, {
@@ -81,7 +79,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
     String authCode,
   ) async => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonMap>(
+      final response = await _dio.postUri<JsonMap>(
         Uri.https(ApiHosts.microsoftLoginLive, 'oauth20_token.srf'),
         options: Options(
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -114,7 +112,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
   @override
   Future<MicrosoftRequestDeviceCodeResponse> requestDeviceCode() =>
       _handleCommonFailures(() async {
-        final response = await dio.postUri<JsonMap>(
+        final response = await _dio.postUri<JsonMap>(
           Uri.https(
             ApiHosts.loginMicrosoftOnline,
             'consumers/oauth2/v2.0/devicecode',
@@ -137,7 +135,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
     MicrosoftRequestDeviceCodeResponse deviceCodeResponse,
   ) => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonMap>(
+      final response = await _dio.postUri<JsonMap>(
         Uri.https(ApiHosts.loginMicrosoftOnline, 'consumers/oauth2/v2.0/token'),
         options: Options(
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -179,7 +177,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
     String microsoftAccessToken,
   ) async => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonMap>(
+      final response = await _dio.postUri<JsonMap>(
         Uri.https(ApiHosts.xboxLiveUserAuth, 'user/authenticate'),
         options: Options(
           headers: {
@@ -219,7 +217,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
     String xboxLiveToken,
   ) => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonMap>(
+      final response = await _dio.postUri<JsonMap>(
         Uri.https(ApiHosts.xboxLiveXstsAuth, 'xsts/authorize'),
         options: Options(
           headers: {
@@ -271,7 +269,7 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
     String microsoftRefreshToken,
   ) => _handleCommonFailures(
     () async {
-      final response = await dio.postUri<JsonMap>(
+      final response = await _dio.postUri<JsonMap>(
         Uri.https(ApiHosts.microsoftLoginLive, 'oauth20_token.srf'),
         options: Options(
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},

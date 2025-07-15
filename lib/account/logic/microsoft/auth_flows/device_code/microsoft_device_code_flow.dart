@@ -24,10 +24,10 @@ import 'package:meta/meta.dart';
 /// * [MicrosoftAuthCodeFlow], for Microsoft auth code authentication.
 /// * [MicrosoftOAuthFlowController], that manages both [MicrosoftAuthCodeFlow] and [MicrosoftDeviceCodeFlow].
 class MicrosoftDeviceCodeFlow {
-  MicrosoftDeviceCodeFlow({required this.microsoftAuthApi});
+  MicrosoftDeviceCodeFlow({required MicrosoftAuthApi microsoftAuthApi})
+    : _microsoftAuthApi = microsoftAuthApi;
 
-  @visibleForTesting
-  final MicrosoftAuthApi microsoftAuthApi;
+  final MicrosoftAuthApi _microsoftAuthApi;
 
   /// Timer that periodically checks the device code status during login.
   /// Set when [run] is called, and cleared
@@ -77,7 +77,7 @@ class MicrosoftDeviceCodeFlow {
     // Not setting it to false at all, will cancel the timer on next run when it shouldn't.
     requestCancelPollingTimer = false;
 
-    final deviceCodeResponse = await microsoftAuthApi.requestDeviceCode();
+    final deviceCodeResponse = await _microsoftAuthApi.requestDeviceCode();
     final deviceCodeExpiresAt = expiresInToExpiresAt(
       deviceCodeResponse.expiresIn,
     );
@@ -118,7 +118,7 @@ class MicrosoftDeviceCodeFlow {
           cancelTimerOnExpiration();
           return;
         }
-        final checkDeviceCodeResult = await microsoftAuthApi
+        final checkDeviceCodeResult = await _microsoftAuthApi
             .checkDeviceCodeStatus(deviceCodeResponse);
         switch (checkDeviceCodeResult) {
           case MicrosoftDeviceCodeApproved():

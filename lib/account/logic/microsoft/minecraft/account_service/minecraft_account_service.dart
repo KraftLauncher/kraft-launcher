@@ -29,20 +29,19 @@ import 'package:meta/meta.dart';
 /// All operations are specific to **Microsoft-backed Minecraft accounts**.
 class MinecraftAccountService {
   MinecraftAccountService({
-    required this.accountRepository,
-    required this.microsoftOAuthFlowController,
-    required this.minecraftAccountResolver,
-    required this.minecraftAccountRefresher,
-  });
+    required AccountRepository accountRepository,
+    required MicrosoftOAuthFlowController microsoftOAuthFlowController,
+    required MinecraftAccountResolver minecraftAccountResolver,
+    required MinecraftAccountRefresher minecraftAccountRefresher,
+  }) : _accountRepository = accountRepository,
+       _microsoftOAuthFlowController = microsoftOAuthFlowController,
+       _minecraftAccountResolver = minecraftAccountResolver,
+       _minecraftAccountRefresher = minecraftAccountRefresher;
 
-  @visibleForTesting
-  final AccountRepository accountRepository;
-  @visibleForTesting
-  final MicrosoftOAuthFlowController microsoftOAuthFlowController;
-  @visibleForTesting
-  final MinecraftAccountResolver minecraftAccountResolver;
-  @visibleForTesting
-  final MinecraftAccountRefresher minecraftAccountRefresher;
+  final AccountRepository _accountRepository;
+  final MicrosoftOAuthFlowController _microsoftOAuthFlowController;
+  final MinecraftAccountResolver _minecraftAccountResolver;
+  final MinecraftAccountRefresher _minecraftAccountRefresher;
 
   Future<T> _transformExceptions<T>(
     Future<T> Function() run, {
@@ -89,7 +88,7 @@ class MinecraftAccountService {
     // The page content is not hardcoded for localization.
     required MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants,
   }) async => _transformExceptions(() async {
-    final tokenResponse = await microsoftOAuthFlowController
+    final tokenResponse = await _microsoftOAuthFlowController
         .loginWithMicrosoftAuthCode(
           onProgress:
               (progress) => onProgress(switch (progress) {
@@ -115,7 +114,7 @@ class MinecraftAccountService {
     required MinecraftAuthProgressCallback onProgress,
     required UserDeviceCodeAvailableCallback onUserDeviceCodeAvailable,
   }) => _transformExceptions(() async {
-    final (tokenResponse, closeReason) = await microsoftOAuthFlowController
+    final (tokenResponse, closeReason) = await _microsoftOAuthFlowController
         .requestLoginWithMicrosoftDeviceCode(
           onProgress:
               (progress) => onProgress(switch (progress) {
@@ -146,15 +145,15 @@ class MinecraftAccountService {
     required MicrosoftOAuthTokenResponse tokenResponse,
     required MinecraftAuthProgressCallback onProgress,
   }) async {
-    final account = await minecraftAccountResolver.resolve(
+    final account = await _minecraftAccountResolver.resolve(
       oauthTokenResponse: tokenResponse,
       onProgress: (progress) => onProgress(_resolveToAuthProgress(progress)),
     );
-    final accountExists = accountRepository.accountExists(account.id);
+    final accountExists = _accountRepository.accountExists(account.id);
     if (accountExists) {
-      await accountRepository.updateAccount(account);
+      await _accountRepository.updateAccount(account);
     } else {
-      await accountRepository.addAccount(account);
+      await _accountRepository.addAccount(account);
     }
 
     return MinecraftLoginResult(account: account, accountExists: accountExists);
@@ -179,17 +178,17 @@ class MinecraftAccountService {
   };
 
   Future<bool> closeAuthCodeServer() =>
-      microsoftOAuthFlowController.closeAuthCodeServer();
+      _microsoftOAuthFlowController.closeAuthCodeServer();
 
   bool cancelDeviceCodePollingTimer() =>
-      microsoftOAuthFlowController.cancelDeviceCodePollingTimer();
+      _microsoftOAuthFlowController.cancelDeviceCodePollingTimer();
 
   Future<MinecraftAccount> refreshMicrosoftAccount(
     MinecraftAccount account, {
     required MinecraftAuthProgressCallback onProgress,
   }) async => _transformExceptions(() async {
     try {
-      final refreshedAccount = await minecraftAccountRefresher
+      final refreshedAccount = await _minecraftAccountRefresher
           .refreshMicrosoftAccount(
             account,
             onRefreshProgress:
@@ -201,13 +200,13 @@ class MinecraftAccountService {
                 (progress) => onProgress(_resolveToAuthProgress(progress)),
           );
 
-      await accountRepository.updateAccount(refreshedAccount);
+      await _accountRepository.updateAccount(refreshedAccount);
 
       return refreshedAccount;
     } on minecraft_account_refresher_exceptions.InvalidMicrosoftRefreshTokenException catch (
       e
     ) {
-      await accountRepository.updateAccount(e.updatedAccount);
+      await _accountRepository.updateAccount(e.updatedAccount);
       rethrow;
     }
   });

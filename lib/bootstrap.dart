@@ -12,7 +12,6 @@ import 'package:path_provider/path_provider.dart';
 //  because Enum.byName is a built-in, more efficient, and safer way to get enum
 //  values by their name string. It avoids manual iteration and potential errors.
 // TODO: Read: https://dart.dev/tools/linter-rules/avoid_slow_async_io, review all usages of file sync operations
-// TODO: Avoid using @visibleForTesting for private fields
 // TODO: Consider handling all errors/exceptions thrown from any fromJson()?
 // TODO: Refactor app_en.arb with a better design that's more specific (avoid: "profile": "profile")
 

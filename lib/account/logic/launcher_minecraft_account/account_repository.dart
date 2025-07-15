@@ -48,20 +48,20 @@ typedef AccountsStreamControllerFactory = StreamController<MinecraftAccounts>;
 class AccountRepository {
   // TODO: Rename to AccountsRepository to be consistent with MinecraftVersionsRepository? Also FileAccountStorage and SecureAccountStorage and other possible usages.
   AccountRepository({
-    required this.fileAccountStorage,
-    required this.secureAccountStorage,
-    required this.secureStorageSupport,
+    required FileAccountStorage fileAccountStorage,
+    required SecureAccountStorage secureAccountStorage,
+    required PlatformSecureStorageSupport secureStorageSupport,
     @visibleForTesting
     AccountsStreamControllerFactory? accountsStreamControllerFactory,
-  }) : _accountsController =
+  }) : _secureStorageSupport = secureStorageSupport,
+       _secureAccountStorage = secureAccountStorage,
+       _fileAccountStorage = fileAccountStorage,
+       _accountsController =
            accountsStreamControllerFactory ?? StreamController.broadcast();
 
-  @visibleForTesting
-  final FileAccountStorage fileAccountStorage;
-  @visibleForTesting
-  final SecureAccountStorage secureAccountStorage;
-  @visibleForTesting
-  final PlatformSecureStorageSupport secureStorageSupport;
+  final FileAccountStorage _fileAccountStorage;
+  final SecureAccountStorage _secureAccountStorage;
+  final PlatformSecureStorageSupport _secureStorageSupport;
 
   bool? _supportsSecureStorage;
 
@@ -105,7 +105,7 @@ class AccountRepository {
   Future<void> _saveAccountsInFileStorage(
     MinecraftAccounts updatedAccounts,
   ) async {
-    await fileAccountStorage.saveAccounts(
+    await _fileAccountStorage.saveAccounts(
       updatedAccounts.toFileDto(
         storeTokensInFile: !supportsSecureStorageOrThrow,
       ),
@@ -118,7 +118,7 @@ class AccountRepository {
     }
     final microsoftAccountInfo = account.microsoftAccountInfo;
     if (microsoftAccountInfo != null) {
-      await secureAccountStorage.write(
+      await _secureAccountStorage.write(
         account.id,
         SecureAccountData(
           microsoftRefreshToken:
@@ -178,7 +178,7 @@ class AccountRepository {
         return fileAccounts.mapToAppAsync((fileAccount) async {
           return switch (fileAccount.accountType) {
             AccountType.microsoft => await () async {
-              final data = await secureAccountStorage.read(fileAccount.id);
+              final data = await _secureAccountStorage.read(fileAccount.id);
               if (data != null) {
                 return fileAccount.toApp(
                   secureAccountData: data,
@@ -217,14 +217,14 @@ class AccountRepository {
       );
     }
 
-    _supportsSecureStorage = await secureStorageSupport.isSupported();
+    _supportsSecureStorage = await _secureStorageSupport.isSupported();
     if (!supportsSecureStorageOrThrow) {
       AppLogger.i(
         'Secure storage is not available on this platform. Falling back to file storage.',
       );
     }
 
-    final fileAccounts = await fileAccountStorage.readAccounts();
+    final fileAccounts = await _fileAccountStorage.readAccounts();
 
     final accounts =
         fileAccounts != null
@@ -298,7 +298,7 @@ class AccountRepository {
 
     await _saveAccountsInFileStorage(updatedAccounts);
     if (supportsSecureStorageOrThrow) {
-      await secureAccountStorage.delete(accountId);
+      await _secureAccountStorage.delete(accountId);
     }
 
     _setAccountsAndNotify(updatedAccounts);

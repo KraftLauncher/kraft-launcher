@@ -1,7 +1,6 @@
 import 'package:kraft_launcher/account/data/microsoft_auth_api/microsoft_auth_api.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow.dart';
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/device_code/microsoft_device_code_flow.dart';
-import 'package:meta/meta.dart';
 
 /// Manages Microsoft OAuth authentication supporting both
 /// authorization code and device code flows.
@@ -10,14 +9,13 @@ import 'package:meta/meta.dart';
 /// authorization code flow to avoid concurrent authentication attempts.
 class MicrosoftOAuthFlowController {
   MicrosoftOAuthFlowController({
-    required this.microsoftAuthCodeFlow,
-    required this.microsoftDeviceCodeFlow,
-  });
+    required MicrosoftAuthCodeFlow microsoftAuthCodeFlow,
+    required MicrosoftDeviceCodeFlow microsoftDeviceCodeFlow,
+  }) : _microsoftDeviceCodeFlow = microsoftDeviceCodeFlow,
+       _microsoftAuthCodeFlow = microsoftAuthCodeFlow;
 
-  @visibleForTesting
-  final MicrosoftAuthCodeFlow microsoftAuthCodeFlow;
-  @visibleForTesting
-  final MicrosoftDeviceCodeFlow microsoftDeviceCodeFlow;
+  final MicrosoftAuthCodeFlow _microsoftAuthCodeFlow;
+  final MicrosoftDeviceCodeFlow _microsoftDeviceCodeFlow;
 
   Future<MicrosoftOAuthTokenResponse?> loginWithMicrosoftAuthCode({
     required AuthCodeProgressCallback onProgress,
@@ -25,8 +23,8 @@ class MicrosoftOAuthFlowController {
     // The page content is not hardcoded for localization.
     required MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants,
   }) {
-    microsoftDeviceCodeFlow.cancelPollingTimer();
-    return microsoftAuthCodeFlow.run(
+    _microsoftDeviceCodeFlow.cancelPollingTimer();
+    return _microsoftAuthCodeFlow.run(
       onProgress: onProgress,
       onAuthCodeLoginUrlAvailable: onAuthCodeLoginUrlAvailable,
       authCodeResponsePageVariants: authCodeResponsePageVariants,
@@ -36,14 +34,14 @@ class MicrosoftOAuthFlowController {
   Future<DeviceCodeLoginResult> requestLoginWithMicrosoftDeviceCode({
     required DeviceCodeProgressCallback onProgress,
     required UserDeviceCodeAvailableCallback onUserDeviceCodeAvailable,
-  }) => microsoftDeviceCodeFlow.run(
+  }) => _microsoftDeviceCodeFlow.run(
     onProgress: onProgress,
     onUserDeviceCodeAvailable: onUserDeviceCodeAvailable,
   );
 
   Future<bool> closeAuthCodeServer() async =>
-      microsoftAuthCodeFlow.closeServer();
+      _microsoftAuthCodeFlow.closeServer();
 
   bool cancelDeviceCodePollingTimer() =>
-      microsoftDeviceCodeFlow.cancelPollingTimer();
+      _microsoftDeviceCodeFlow.cancelPollingTimer();
 }

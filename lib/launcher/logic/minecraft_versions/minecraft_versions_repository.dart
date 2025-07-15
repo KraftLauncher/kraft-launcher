@@ -11,7 +11,6 @@ import 'package:kraft_launcher/launcher/data/minecraft_versions_api/minecraft_ve
 import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/asset_index/minecraft_asset_index.dart';
 import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/version_details/minecraft_version_details.dart';
 import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/version_manifest/minecraft_version_manifest.dart';
-import 'package:meta/meta.dart';
 
 /// Provides Minecraft version data for the app,
 /// containing the necessary information to download any Minecraft version.
@@ -29,33 +28,32 @@ import 'package:meta/meta.dart';
 /// See also: [MinecraftVersionsApi]
 class MinecraftVersionsRepository {
   MinecraftVersionsRepository({
-    required this.minecraftVersionsApi,
-    required this.minecraftVersionsFileCache,
-    required this.minecraftVersionDetailsFileCache,
-  });
+    required MinecraftVersionsApi minecraftVersionsApi,
+    required MinecraftVersionsFileCache minecraftVersionsFileCache,
+    required MinecraftVersionDetailsFileCache minecraftVersionDetailsFileCache,
+  }) : _minecraftVersionDetailsFileCache = minecraftVersionDetailsFileCache,
+       _minecraftVersionsFileCache = minecraftVersionsFileCache,
+       _minecraftVersionsApi = minecraftVersionsApi;
 
-  @visibleForTesting
-  final MinecraftVersionsApi minecraftVersionsApi;
+  final MinecraftVersionsApi _minecraftVersionsApi;
 
   // TODO: Implement cache invalidation based on expiration DateTime.
   //  Currently, cached data is always used if available without checking expiration unless forceRefresh is true.
-  @visibleForTesting
-  final MinecraftVersionsFileCache minecraftVersionsFileCache;
-  @visibleForTesting
-  final MinecraftVersionDetailsFileCache minecraftVersionDetailsFileCache;
+  final MinecraftVersionsFileCache _minecraftVersionsFileCache;
+  final MinecraftVersionDetailsFileCache _minecraftVersionDetailsFileCache;
 
   Future<Result<MinecraftVersionManifest, MinecraftVersionsApiFailure>>
   fetchVersionManifest({bool forceRefresh = false}) async {
     if (!forceRefresh) {
-      final cached = await minecraftVersionsFileCache.readCache();
+      final cached = await _minecraftVersionsFileCache.readCache();
       if (cached != null) {
         return Result.success(cached.toApp());
       }
     }
-    final result = await minecraftVersionsApi.fetchVersionManifest();
+    final result = await _minecraftVersionsApi.fetchVersionManifest();
     return result.mapSuccess((value) {
       final (parsed, map) = value;
-      unawaited(minecraftVersionsFileCache.cache(map));
+      unawaited(_minecraftVersionsFileCache.cache(map));
       return parsed.toApp();
     });
   }
@@ -72,26 +70,26 @@ class MinecraftVersionsRepository {
     bool forceRefresh = false,
   }) async {
     if (!forceRefresh) {
-      final cached = await minecraftVersionDetailsFileCache.readCache(
+      final cached = await _minecraftVersionDetailsFileCache.readCache(
         versionId,
       );
       if (cached != null) {
         return Result.success(cached.toApp());
       }
     }
-    final result = await minecraftVersionsApi.fetchVersionDetails(
+    final result = await _minecraftVersionsApi.fetchVersionDetails(
       versionDetailsUrl,
     );
     return result.mapSuccess((value) {
       final (parsed, map) = value;
-      unawaited(minecraftVersionDetailsFileCache.cache(versionId, map));
+      unawaited(_minecraftVersionDetailsFileCache.cache(versionId, map));
       return parsed.toApp();
     });
   }
 
   Future<Result<MinecraftAssetIndex, MinecraftVersionsApiFailure>>
   fetchAssetIndex(String assetIndexUrl) async {
-    final result = await minecraftVersionsApi.fetchAssetIndex(assetIndexUrl);
+    final result = await _minecraftVersionsApi.fetchAssetIndex(assetIndexUrl);
     return result.mapSuccess((value) => value.toApp());
   }
 }

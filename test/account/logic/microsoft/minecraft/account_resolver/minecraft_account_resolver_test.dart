@@ -262,7 +262,7 @@ void main() {
 
       expect(
         account,
-        resolver.accountFromResponses(
+        resolver.constructAccount(
           profileResponse: minecraftProfileResponse,
           oauthTokenResponse: tokenResponse,
           loginResponse: minecraftLoginResponse,

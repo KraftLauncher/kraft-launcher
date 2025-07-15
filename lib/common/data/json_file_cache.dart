@@ -2,15 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:kraft_launcher/common/data/json.dart';
-import 'package:meta/meta.dart';
 
 typedef FromJson<T> = T Function(JsonMap json);
 
 class JsonFileCache<T> {
-  JsonFileCache({required this.fromJson});
+  JsonFileCache({required T Function(Map<String, Object?>) fromJson})
+    : _fromJson = fromJson;
 
-  @visibleForTesting
-  final FromJson<T> fromJson;
+  final FromJson<T> _fromJson;
 
   // Missing or corrupt cache is not a fatal error.
   // Silent [FormatException] and [FileSystemException].
@@ -23,7 +22,7 @@ class JsonFileCache<T> {
       //  FileSettingsStorage.readSettings and FileAccountStorage.readAccounts does not.
       final content = await file.readAsString();
       final json = jsonDecode(content) as JsonMap;
-      return fromJson(json);
+      return _fromJson(json);
     } on FormatException {
       return null;
     } on FileSystemException {

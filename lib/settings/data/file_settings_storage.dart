@@ -4,24 +4,21 @@ import 'dart:io';
 import 'package:kraft_launcher/common/data/json.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 import 'package:kraft_launcher/settings/data/file_settings.dart';
-import 'package:meta/meta.dart';
 
-@immutable
 class FileSettingsStorage {
-  const FileSettingsStorage({required this.file});
+  FileSettingsStorage({required File file}) : _file = file;
 
   factory FileSettingsStorage.fromAppDataPaths(AppDataPaths appDataPaths) =>
       FileSettingsStorage(file: appDataPaths.settings);
 
-  @visibleForTesting
-  final File file;
+  final File _file;
 
   Future<FileSettings?> readSettings() async {
-    if (!file.existsSync()) {
+    if (!_file.existsSync()) {
       return null;
     }
 
-    final fileContent = (await file.readAsString()).trim();
+    final fileContent = (await _file.readAsString()).trim();
     if (fileContent.isEmpty) {
       return null;
     }
@@ -29,5 +26,5 @@ class FileSettingsStorage {
   }
 
   Future<void> saveSettings(FileSettings settings) =>
-      file.writeAsString(jsonEncodePretty(settings.toJson()));
+      _file.writeAsString(jsonEncodePretty(settings.toJson()));
 }

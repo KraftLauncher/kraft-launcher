@@ -2,7 +2,6 @@ import 'package:kraft_launcher/settings/data/file_settings_storage.dart';
 import 'package:kraft_launcher/settings/data/mappers/file_settings_mapper.dart';
 import 'package:kraft_launcher/settings/data/mappers/settings_mapper.dart';
 import 'package:kraft_launcher/settings/logic/settings.dart';
-import 'package:meta/meta.dart';
 
 /// Manages in-app settings stored locally on this device.
 ///
@@ -17,16 +16,16 @@ import 'package:meta/meta.dart';
 /// await repository.saveSettings(...);
 /// ```
 class SettingsRepository {
-  SettingsRepository({required this.fileSettingsStorage});
+  SettingsRepository({required FileSettingsStorage fileSettingsStorage})
+    : _fileSettingsStorage = fileSettingsStorage;
 
-  @visibleForTesting
-  final FileSettingsStorage fileSettingsStorage;
+  final FileSettingsStorage _fileSettingsStorage;
 
   Settings? _settings;
 
   Future<Settings> loadSettings() async {
     final settings =
-        (await fileSettingsStorage.readSettings())?.toApp() ??
+        (await _fileSettingsStorage.readSettings())?.toApp() ??
         Settings.defaultSettings();
     _settings = settings;
     return settings;
@@ -41,7 +40,7 @@ class SettingsRepository {
     }
     final updatedSettings = initialSettings.copyWith(general: general);
     _settings = updatedSettings;
-    await fileSettingsStorage.saveSettings(updatedSettings.toFileDto());
+    await _fileSettingsStorage.saveSettings(updatedSettings.toFileDto());
     return updatedSettings;
   }
 }

@@ -22,37 +22,36 @@ import 'package:meta/meta.dart';
 /// Stateless and pure; does not cache or persist any data.
 class MinecraftAccountResolver {
   MinecraftAccountResolver({
-    required this.microsoftAuthApi,
-    required this.minecraftAccountApi,
-  });
+    required MicrosoftAuthApi microsoftAuthApi,
+    required MinecraftAccountApi minecraftAccountApi,
+  }) : _microsoftAuthApi = microsoftAuthApi,
+       _minecraftAccountApi = minecraftAccountApi;
 
-  @visibleForTesting
-  final MicrosoftAuthApi microsoftAuthApi;
-  @visibleForTesting
-  final MinecraftAccountApi minecraftAccountApi;
+  final MicrosoftAuthApi _microsoftAuthApi;
+  final MinecraftAccountApi _minecraftAccountApi;
 
   Future<MinecraftAccount> resolve({
     required MicrosoftOAuthTokenResponse oauthTokenResponse,
     required ResolveMinecraftAccountProgressCallback onProgress,
   }) async {
     onProgress(ResolveMinecraftAccountProgress.requestingXboxToken);
-    final xboxLiveTokenResponse = await microsoftAuthApi.requestXboxLiveToken(
+    final xboxLiveTokenResponse = await _microsoftAuthApi.requestXboxLiveToken(
       oauthTokenResponse.accessToken,
     );
 
     onProgress(ResolveMinecraftAccountProgress.requestingXstsToken);
-    final xstsTokenResponse = await microsoftAuthApi.requestXSTSToken(
+    final xstsTokenResponse = await _microsoftAuthApi.requestXSTSToken(
       xboxLiveTokenResponse.xboxToken,
     );
     onProgress(ResolveMinecraftAccountProgress.loggingIntoMinecraft);
-    final minecraftLoginResponse = await minecraftAccountApi
+    final minecraftLoginResponse = await _minecraftAccountApi
         .loginToMinecraftWithXbox(
           xstsToken: xstsTokenResponse.xboxToken,
           xstsUserHash: xstsTokenResponse.userHash,
         );
 
     onProgress(ResolveMinecraftAccountProgress.checkingMinecraftJavaOwnership);
-    final ownsMinecraftJava = await minecraftAccountApi
+    final ownsMinecraftJava = await _minecraftAccountApi
         .checkMinecraftJavaOwnership(minecraftLoginResponse.accessToken);
 
     if (!ownsMinecraftJava) {
@@ -60,10 +59,10 @@ class MinecraftAccountResolver {
     }
 
     onProgress(ResolveMinecraftAccountProgress.fetchingProfile);
-    final minecraftProfileResponse = await minecraftAccountApi
+    final minecraftProfileResponse = await _minecraftAccountApi
         .fetchMinecraftProfile(minecraftLoginResponse.accessToken);
 
-    final newAccount = accountFromResponses(
+    final newAccount = constructAccount(
       profileResponse: minecraftProfileResponse,
       oauthTokenResponse: oauthTokenResponse,
       loginResponse: minecraftLoginResponse,
@@ -74,7 +73,7 @@ class MinecraftAccountResolver {
   }
 
   @visibleForTesting
-  MinecraftAccount accountFromResponses({
+  MinecraftAccount constructAccount({
     required MinecraftProfileResponse profileResponse,
     required MicrosoftOAuthTokenResponse oauthTokenResponse,
     required MinecraftLoginResponse loginResponse,

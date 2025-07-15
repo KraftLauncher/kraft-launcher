@@ -4,9 +4,12 @@ import 'package:kraft_launcher/common/logic/platform_check.dart';
 import 'package:meta/meta.dart';
 
 class PlatformSecureStorageSupport {
-  PlatformSecureStorageSupport({required this.linuxSecretServiceChecker});
+  PlatformSecureStorageSupport({
+    required LinuxSecretServiceChecker linuxSecretServiceChecker,
+  }) : _linuxSecretServiceChecker = linuxSecretServiceChecker;
 
-  final LinuxSecretServiceChecker linuxSecretServiceChecker;
+  final LinuxSecretServiceChecker _linuxSecretServiceChecker;
+
   @visibleForTesting
   bool? cachedLinuxSecretServiceAvailable;
 
@@ -19,7 +22,7 @@ class PlatformSecureStorageSupport {
         }
 
         final available =
-            await linuxSecretServiceChecker.isSecretServiceAvailable();
+            await _linuxSecretServiceChecker.isSecretServiceAvailable();
         cachedLinuxSecretServiceAvailable = available;
         return available;
       }(),
