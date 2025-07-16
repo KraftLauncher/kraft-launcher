@@ -67,7 +67,10 @@ class _CommonProviders extends StatelessWidget {
         Provider(create: (context) => ImagePicker()),
         Provider(create: (context) => const FlutterSecureStorage()),
         Provider.value(value: appDataPaths),
-        Provider<Dio>(create: (context) => DioFactory.newClient()),
+        Provider<Dio>(
+          create: (context) => DioFactory.newClient(),
+          dispose: (_, value) => value.close(),
+        ),
       ],
       child: child,
     );
