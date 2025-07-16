@@ -1,7 +1,7 @@
 import 'dart:io' show File;
 
 import 'package:file/memory.dart';
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/account_file_storage.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_accounts.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/mappers/accounts_mapper.dart';
 import 'package:test/test.dart';
@@ -12,13 +12,13 @@ void main() {
   late MemoryFileSystem memoryFileSystem;
   late File file;
 
-  late FileAccountStorage fileAccountStorage;
+  late AccountFileStorage storage;
 
   setUp(() {
     memoryFileSystem = MemoryFileSystem.test();
     file = memoryFileSystem.file('accounts.json');
 
-    fileAccountStorage = FileAccountStorage(file: file);
+    storage = AccountFileStorage(file: file);
   });
 
   final dummyAccounts = MinecraftDummyAccounts.accounts.toFileDto(
@@ -26,7 +26,7 @@ void main() {
   );
 
   Future<FileMinecraftAccounts> readAccountsNotNull() async {
-    final accounts = await fileAccountStorage.readAccounts();
+    final accounts = await storage.readAccounts();
 
     if (accounts == null) {
       fail(
@@ -41,7 +41,7 @@ void main() {
     test('returns null if file does not exist', () async {
       expect(file.existsSync(), false);
 
-      final accounts = await fileAccountStorage.readAccounts();
+      final accounts = await storage.readAccounts();
       expect(accounts, null);
 
       expect(
@@ -57,7 +57,7 @@ void main() {
       expect(file.existsSync(), true);
       expect(await file.readAsString(), '');
 
-      final accounts = await fileAccountStorage.readAccounts();
+      final accounts = await storage.readAccounts();
       expect(accounts, null);
 
       expect(
@@ -70,7 +70,7 @@ void main() {
 
     test('parses saved accounts correctly', () async {
       final accountsToSave = dummyAccounts;
-      await fileAccountStorage.saveAccounts(accountsToSave);
+      await storage.saveAccounts(accountsToSave);
 
       final savedAccounts = await readAccountsNotNull();
 
@@ -81,7 +81,7 @@ void main() {
 
   test('saveAccounts writes accounts correctly to disk', () async {
     final accountsToSave = dummyAccounts;
-    await fileAccountStorage.saveAccounts(accountsToSave);
+    await storage.saveAccounts(accountsToSave);
 
     final savedAccounts = await readAccountsNotNull();
 

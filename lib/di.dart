@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kraft_launcher/account/data/image_cache_service/default_image_cache_service.dart';
 import 'package:kraft_launcher/account/data/image_cache_service/image_cache_service.dart';
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/account_file_storage.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_storage.dart';
 import 'package:kraft_launcher/account/data/linux_secret_service/dbus_linux_secret_service_checker.dart';
 import 'package:kraft_launcher/account/data/linux_secret_service/linux_secret_service_checker.dart';
@@ -28,7 +28,7 @@ import 'package:kraft_launcher/account/ui/account_cubit/account_cubit.dart';
 import 'package:kraft_launcher/account/ui/microsoft_auth_cubit/microsoft_auth_cubit.dart';
 import 'package:kraft_launcher/common/data/network/dio_factory.dart';
 import 'package:kraft_launcher/common/logic/app_data_paths.dart';
-import 'package:kraft_launcher/settings/data/file_settings_storage.dart';
+import 'package:kraft_launcher/settings/data/settings_file_storage.dart';
 import 'package:kraft_launcher/settings/logic/settings_repository.dart';
 import 'package:kraft_launcher/settings/ui/cubit/settings_cubit.dart';
 import 'package:meta/meta.dart';
@@ -110,9 +110,9 @@ class _AccountFeatureProviders extends _FeatureProviders {
       Provider<ImageCacheService>(
         create: (context) => DefaultImageCacheService(),
       ),
-      Provider<FileAccountStorage>(
+      Provider<AccountFileStorage>(
         create:
-            (context) => FileAccountStorage.fromAppDataPaths(context.read()),
+            (context) => AccountFileStorage.fromAppDataPaths(context.read()),
       ),
       Provider(
         create:
@@ -142,7 +142,7 @@ class _AccountFeatureProviders extends _FeatureProviders {
       RepositoryProvider<AccountRepository>(
         create:
             (context) => AccountRepository(
-              fileAccountStorage: context.read(),
+              accountFileStorage: context.read(),
               secureAccountStorage: context.read(),
               secureStorageSupport: context.read(),
             ),
@@ -232,7 +232,7 @@ class _SettingsFeatureProviders extends _FeatureProviders {
     providers: [
       Provider(
         create:
-            (context) => FileSettingsStorage.fromAppDataPaths(context.read()),
+            (context) => SettingsFileStorage.fromAppDataPaths(context.read()),
       ),
     ],
     child: child,
@@ -244,7 +244,7 @@ class _SettingsFeatureProviders extends _FeatureProviders {
       RepositoryProvider(
         create:
             (context) =>
-                SettingsRepository(fileSettingsStorage: context.read()),
+                SettingsRepository(settingsFileStorage: context.read()),
       ),
     ],
     child: child,

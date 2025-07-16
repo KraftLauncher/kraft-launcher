@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/account_file_storage.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_account.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_accounts.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/mappers/accounts_mapper.dart';
@@ -26,7 +26,7 @@ typedef AccountsStreamControllerFactory = StreamController<MinecraftAccounts>;
 ///
 /// Interacts with the following storage layers to meet the requirements:
 ///
-/// * [FileAccountStorage] for file-based storage. Stores account information,
+/// * [AccountFileStorage] for file-based storage. Stores account information,
 ///   except for the account tokens, which are stored in system secure storage when supported.
 ///   If secure storage is not available, the tokens will be stored in file storage.
 ///
@@ -46,20 +46,20 @@ typedef AccountsStreamControllerFactory = StreamController<MinecraftAccounts>;
 /// await repository.removeAccount(...);
 /// ```
 class AccountRepository {
-  // TODO: Rename to AccountsRepository to be consistent with MinecraftVersionsRepository? Also FileAccountStorage and SecureAccountStorage and other possible usages.
+  // TODO: Rename to AccountsRepository to be consistent with MinecraftVersionsRepository? Also AccountFileStorage and SecureAccountStorage and other possible usages.
   AccountRepository({
-    required FileAccountStorage fileAccountStorage,
+    required AccountFileStorage accountFileStorage,
     required SecureAccountStorage secureAccountStorage,
     required PlatformSecureStorageSupport secureStorageSupport,
     @visibleForTesting
     AccountsStreamControllerFactory? accountsStreamControllerFactory,
   }) : _secureStorageSupport = secureStorageSupport,
        _secureAccountStorage = secureAccountStorage,
-       _fileAccountStorage = fileAccountStorage,
+       _accountFileStorage = accountFileStorage,
        _accountsController =
            accountsStreamControllerFactory ?? StreamController.broadcast();
 
-  final FileAccountStorage _fileAccountStorage;
+  final AccountFileStorage _accountFileStorage;
   final SecureAccountStorage _secureAccountStorage;
   final PlatformSecureStorageSupport _secureStorageSupport;
 
@@ -105,7 +105,7 @@ class AccountRepository {
   Future<void> _saveAccountsInFileStorage(
     MinecraftAccounts updatedAccounts,
   ) async {
-    await _fileAccountStorage.saveAccounts(
+    await _accountFileStorage.saveAccounts(
       updatedAccounts.toFileDto(
         storeTokensInFile: !supportsSecureStorageOrThrow,
       ),
@@ -224,7 +224,7 @@ class AccountRepository {
       );
     }
 
-    final fileAccounts = await _fileAccountStorage.readAccounts();
+    final fileAccounts = await _accountFileStorage.readAccounts();
 
     final accounts =
         fileAccounts != null

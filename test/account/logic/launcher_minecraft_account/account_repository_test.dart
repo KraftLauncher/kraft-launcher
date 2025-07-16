@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:clock/clock.dart';
-import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_account_storage.dart';
+import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/account_file_storage.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_accounts.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/mappers/accounts_mapper.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_data.dart';
@@ -22,25 +22,25 @@ import '../../data/minecraft_dummy_accounts.dart';
 late AccountRepository _accountRepository;
 
 late _MockAccountsStreamController _mockAccountsStreamController;
-late _MockFileAccountStorage _mockFileAccountStorage;
+late _MockAccountFileStorage _mockAccountFileStorage;
 late _MockSecureAccountStorage _mockSecureAccountStorage;
 late _MockPlatformSecureStorageSupport _mockPlatformSecureStorageSupport;
 
 void main() {
   setUp(() {
     _mockAccountsStreamController = _MockAccountsStreamController();
-    _mockFileAccountStorage = _MockFileAccountStorage();
+    _mockAccountFileStorage = _MockAccountFileStorage();
     _mockSecureAccountStorage = _MockSecureAccountStorage();
     _mockPlatformSecureStorageSupport = _MockPlatformSecureStorageSupport();
     _accountRepository = AccountRepository(
-      fileAccountStorage: _mockFileAccountStorage,
+      accountFileStorage: _mockAccountFileStorage,
       secureAccountStorage: _mockSecureAccountStorage,
       secureStorageSupport: _mockPlatformSecureStorageSupport,
       accountsStreamControllerFactory: _mockAccountsStreamController,
     );
 
     when(
-      () => _mockFileAccountStorage.saveAccounts(any()),
+      () => _mockAccountFileStorage.saveAccounts(any()),
     ).thenAnswer((_) async {});
     when(
       () => _mockSecureAccountStorage.delete(any()),
@@ -68,7 +68,7 @@ void main() {
     test('uses $StreamController.broadcast by default', () {
       expect(
         AccountRepository(
-          fileAccountStorage: _mockFileAccountStorage,
+          accountFileStorage: _mockAccountFileStorage,
           secureAccountStorage: _mockSecureAccountStorage,
           secureStorageSupport: _mockPlatformSecureStorageSupport,
           accountsStreamControllerFactory: null,
@@ -150,7 +150,7 @@ void main() {
     }
 
     setUp(() {
-      when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((_) async {
+      when(() => _mockAccountFileStorage.readAccounts()).thenAnswer((_) async {
         return null;
       });
       when(
@@ -176,30 +176,30 @@ void main() {
       },
     );
 
-    test('reads accounts from $FileAccountStorage correctly', () async {
+    test('reads accounts from $AccountFileStorage correctly', () async {
       await loadAccountsWithFixedClock();
 
-      verify(() => _mockFileAccountStorage.readAccounts()).called(1);
-      verifyNoMoreInteractions(_mockFileAccountStorage);
+      verify(() => _mockAccountFileStorage.readAccounts()).called(1);
+      verifyNoMoreInteractions(_mockAccountFileStorage);
     });
 
     test(
-      'avoids writing empty accounts file when $FileAccountStorage.readAccounts() returns null',
+      'avoids writing empty accounts file when $AccountFileStorage.readAccounts() returns null',
       () async {
-        when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((
+        when(() => _mockAccountFileStorage.readAccounts()).thenAnswer((
           _,
         ) async {
           return null;
         });
         await loadAccountsWithFixedClock();
-        verifyNever(() => _mockFileAccountStorage.saveAccounts(any()));
+        verifyNever(() => _mockAccountFileStorage.saveAccounts(any()));
       },
     );
 
     test(
-      'initializes empty accounts when $FileAccountStorage.readAccounts() returns null',
+      'initializes empty accounts when $AccountFileStorage.readAccounts() returns null',
       () async {
-        when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((
+        when(() => _mockAccountFileStorage.readAccounts()).thenAnswer((
           _,
         ) async {
           return null;
@@ -215,7 +215,7 @@ void main() {
     group('mapFileAccountsToAccounts', () {
       final accounts = MinecraftDummyAccounts.accounts;
       setUp(() {
-        when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((
+        when(() => _mockAccountFileStorage.readAccounts()).thenAnswer((
           _,
         ) async {
           return accounts.toFileDto(storeTokensInFile: true);
@@ -334,7 +334,7 @@ void main() {
               () => _mockSecureAccountStorage.read(any()),
             ).thenAnswer((_) async => null);
 
-            when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((
+            when(() => _mockAccountFileStorage.readAccounts()).thenAnswer((
               _,
             ) async {
               return accounts.toFileDto(storeTokensInFile: false);
@@ -374,7 +374,7 @@ void main() {
         test(
           'sets $MicrosoftAccountInfo.reauthRequiredReason to ${MicrosoftReauthRequiredReason.tokensMissingFromFileStorage} when tokens not found in file',
           () async {
-            when(() => _mockFileAccountStorage.readAccounts()).thenAnswer(
+            when(() => _mockAccountFileStorage.readAccounts()).thenAnswer(
               (_) async => createMinecraftAccounts(
                 list: [
                   createMinecraftAccount(
@@ -416,7 +416,7 @@ void main() {
                   () => _mockPlatformSecureStorageSupport.isSupported(),
                 ).thenAnswer((_) async => supportsSecureStorage);
 
-                when(() => _mockFileAccountStorage.readAccounts()).thenAnswer(
+                when(() => _mockAccountFileStorage.readAccounts()).thenAnswer(
                   (_) async => createMinecraftAccounts(
                     list: [
                       createMinecraftAccount(
@@ -453,7 +453,7 @@ void main() {
                 ).thenAnswer((_) async => supportsSecureStorage);
 
                 final fixedDateTime = DateTime(2014);
-                when(() => _mockFileAccountStorage.readAccounts()).thenAnswer(
+                when(() => _mockAccountFileStorage.readAccounts()).thenAnswer(
                   (_) async => createMinecraftAccounts(
                     list: [
                       createMinecraftAccount(
@@ -489,7 +489,7 @@ void main() {
     });
 
     test('accounts list is unmodifiable', () async {
-      when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((_) async {
+      when(() => _mockAccountFileStorage.readAccounts()).thenAnswer((_) async {
         return MinecraftDummyAccounts.accounts.toFileDto(
           storeTokensInFile: _dummyStoreTokensInFile,
         );
@@ -510,7 +510,7 @@ void main() {
     });
 
     _setAccountsAndNotifyTests((existingAccounts) async {
-      when(() => _mockFileAccountStorage.readAccounts()).thenAnswer((_) async {
+      when(() => _mockAccountFileStorage.readAccounts()).thenAnswer((_) async {
         return existingAccounts.toFileDto(storeTokensInFile: true);
       });
 
@@ -1100,7 +1100,7 @@ void _saveAccountsInFileStorageTests(
     );
 
     final verificationResult = verify(
-      () => _mockFileAccountStorage.saveAccounts(captureAny()),
+      () => _mockAccountFileStorage.saveAccounts(captureAny()),
     );
 
     final capturedSavedAccounts =
@@ -1112,7 +1112,7 @@ void _saveAccountsInFileStorageTests(
 
     verificationResult.called(1);
 
-    verifyNoMoreInteractions(_mockFileAccountStorage);
+    verifyNoMoreInteractions(_mockAccountFileStorage);
   }
 
   test(
@@ -1253,7 +1253,7 @@ void _setInternalState({
 class _MockAccountsStreamController extends Mock
     implements StreamController<MinecraftAccounts> {}
 
-class _MockFileAccountStorage extends Mock implements FileAccountStorage {}
+class _MockAccountFileStorage extends Mock implements AccountFileStorage {}
 
 class _MockSecureAccountStorage extends Mock implements SecureAccountStorage {}
 

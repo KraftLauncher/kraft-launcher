@@ -7,11 +7,13 @@ import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 
 // TODO: Extract interface `AccountFileStorage` and rename this class to `LocalAccountFileStorage`.
 //  Apply the same pattern to other data sources.
+// TODO: Consider extracting common code between AccountFileStorage, SettingsAccountStorage and JsonFileCache.
 
-class FileAccountStorage {
-  FileAccountStorage({required File file}) : _file = file;
-  factory FileAccountStorage.fromAppDataPaths(AppDataPaths appDataPaths) =>
-      FileAccountStorage(file: appDataPaths.accounts);
+class AccountFileStorage {
+  AccountFileStorage({required File file}) : _file = file;
+
+  factory AccountFileStorage.fromAppDataPaths(AppDataPaths appDataPaths) =>
+      AccountFileStorage(file: appDataPaths.accounts);
 
   final File _file;
 

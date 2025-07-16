@@ -2,8 +2,8 @@ import 'dart:io' show File;
 
 import 'package:file/memory.dart';
 import 'package:kraft_launcher/settings/data/file_settings.dart';
-import 'package:kraft_launcher/settings/data/file_settings_storage.dart';
 import 'package:kraft_launcher/settings/data/mappers/settings_mapper.dart';
+import 'package:kraft_launcher/settings/data/settings_file_storage.dart';
 import 'package:kraft_launcher/settings/logic/settings.dart';
 import 'package:test/test.dart';
 
@@ -11,17 +11,17 @@ void main() {
   late MemoryFileSystem memoryFileSystem;
   late File file;
 
-  late FileSettingsStorage fileSettingsStorage;
+  late SettingsFileStorage storage;
 
   setUp(() {
     memoryFileSystem = MemoryFileSystem.test();
     file = memoryFileSystem.file('settings.json');
 
-    fileSettingsStorage = FileSettingsStorage(file: file);
+    storage = SettingsFileStorage(file: file);
   });
 
   Future<FileSettings> readSettingsNotNull() async {
-    final settings = await fileSettingsStorage.readSettings();
+    final settings = await storage.readSettings();
 
     if (settings == null) {
       fail(
@@ -38,7 +38,7 @@ void main() {
     test('returns null if file does not exist', () async {
       expect(file.existsSync(), false);
 
-      final settings = await fileSettingsStorage.readSettings();
+      final settings = await storage.readSettings();
       expect(settings, null);
 
       expect(
@@ -54,7 +54,7 @@ void main() {
       expect(file.existsSync(), true);
       expect(await file.readAsString(), '');
 
-      final settings = await fileSettingsStorage.readSettings();
+      final settings = await storage.readSettings();
       expect(settings, null);
 
       expect(
@@ -67,7 +67,7 @@ void main() {
 
     test('parses saved settings correctly', () async {
       final settingsToSave = dummySettings;
-      await fileSettingsStorage.saveSettings(settingsToSave);
+      await storage.saveSettings(settingsToSave);
 
       final savedSettings = await readSettingsNotNull();
 
@@ -78,7 +78,7 @@ void main() {
 
   test('saveSettings writes settings correctly to disk', () async {
     final settingsToSave = dummySettings;
-    await fileSettingsStorage.saveSettings(settingsToSave);
+    await storage.saveSettings(settingsToSave);
 
     final savedSettings = await readSettingsNotNull();
 
