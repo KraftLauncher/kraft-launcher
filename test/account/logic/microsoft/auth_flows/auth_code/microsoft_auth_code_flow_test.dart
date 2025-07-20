@@ -191,7 +191,7 @@ void main() {
       return tokenResponse;
     }
 
-    test('throws $StateError if server is already running', () async {
+    test('throws $StateError when server is already running', () async {
       when(() => mockRedirectHttpServerHandler.isRunning).thenReturn(true);
 
       await expectLater(run(), throwsStateError);
@@ -218,6 +218,24 @@ void main() {
         );
       },
     );
+
+    test('starts the redirect HTTP server when it is not running', () async {
+      await simulateAuthCodeRedirect();
+      verify(
+        () => mockRedirectHttpServerHandler.start(port: any(named: 'port')),
+      ).called(1);
+    });
+
+    test('uses the expected port when starting the HTTP server', () async {
+      const expectedPort = MicrosoftAuthCodeFlow.serverPort;
+
+      await simulateAuthCodeRedirect();
+      verify(
+        () => mockRedirectHttpServerHandler.start(
+          port: any(named: 'port', that: equals(expectedPort)),
+        ),
+      ).called(1);
+    });
 
     test(
       'calls onProgress with ${MicrosoftAuthCodeProgress.waitingForUserLogin}',
