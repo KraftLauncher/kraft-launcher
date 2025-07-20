@@ -4,6 +4,10 @@ import 'package:kraft_launcher/common/models/result.dart';
 /// Starts a temporary HTTP server that handles a single request, and then the
 /// server will be closed.
 ///
+/// This server only receives the redirect, it doesn't perform it.
+/// The OAuth provider (e.g., Microsoft or GitHub) is responsible for
+/// redirecting the user's browser to this local server.
+///
 /// Used to receive OAuth redirect responses from Microsoft
 /// when implementing the Microsoft auth code flow.
 ///
