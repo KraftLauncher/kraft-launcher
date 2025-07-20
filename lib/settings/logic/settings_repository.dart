@@ -1,6 +1,6 @@
-import 'package:kraft_launcher/settings/data/settings_file_storage.dart';
 import 'package:kraft_launcher/settings/data/mappers/file_settings_mapper.dart';
 import 'package:kraft_launcher/settings/data/mappers/settings_mapper.dart';
+import 'package:kraft_launcher/settings/data/settings_file_storage.dart';
 import 'package:kraft_launcher/settings/logic/settings.dart';
 
 /// Manages in-app settings stored locally on this device.
