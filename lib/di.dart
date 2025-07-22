@@ -82,7 +82,6 @@ abstract class _FeatureProviders extends StatelessWidget {
 
   final Widget child;
 
-  // TODO: In the new architecture, data layer depends on the interfaces from the logic layer
   @nonVirtual
   @override
   Widget build(BuildContext context) =>
@@ -94,8 +93,6 @@ abstract class _FeatureProviders extends StatelessWidget {
 }
 
 // NOTE: The difference between RepositoryProvider and Provider is semantic.
-
-// TODO: Move things for clarity after changing the architecture
 
 class _AccountFeatureProviders extends _FeatureProviders {
   const _AccountFeatureProviders({required super.child});
