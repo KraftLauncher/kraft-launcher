@@ -17,6 +17,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 part 'microsoft_auth_state.dart';
 
+// TODO: Cleanup this cubit by fixing the TODOs and keep it focused purely on state management, no business logic or application logic
+
 class MicrosoftAuthCubit extends Cubit<MicrosoftAuthState> {
   MicrosoftAuthCubit({
     required this.minecraftAccountService,
