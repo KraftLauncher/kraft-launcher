@@ -2,9 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraft_account.dart';
 import 'package:kraft_launcher/common/logic/utils.dart';
 
-// TODO: Unit tests
-
-extension AccountsListExt on List<MinecraftAccount> {
+extension AccountListByIdExt on List<MinecraftAccount> {
   List<MinecraftAccount> updateById(
     String id,
     MinecraftAccount Function(MinecraftAccount account) update,
@@ -38,5 +36,15 @@ extension AccountsListExt on List<MinecraftAccount> {
       );
     }
     return account;
+  }
+}
+
+extension AccountListSearchExt on List<MinecraftAccount> {
+  List<MinecraftAccount> filterByUsername(String searchQuery) {
+    return where(
+      (account) => account.username.trim().toLowerCase().contains(
+        searchQuery.trim().toLowerCase(),
+      ),
+    ).toList();
   }
 }

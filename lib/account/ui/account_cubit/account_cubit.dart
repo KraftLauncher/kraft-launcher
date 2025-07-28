@@ -134,27 +134,9 @@ class AccountCubit extends ExternalStreamCubit<AccountState> {
   ) =>
       state.searchQuery != null
           ? Wrapped.value(
-            _filterAccountsByUsername(
-              state.searchQuery!,
-              accounts: updatedAccounts.list,
-            ),
+            updatedAccounts.list.filterByUsername(state.searchQuery!),
           )
           : null;
-
-  List<MinecraftAccount> _filterAccountsByUsername(
-    String searchQuery, {
-    required List<MinecraftAccount> accounts,
-  }) {
-    final filteredAccounts =
-        accounts
-            .where(
-              (account) => account.username.trim().toLowerCase().contains(
-                searchQuery.trim().toLowerCase(),
-              ),
-            )
-            .toList();
-    return filteredAccounts;
-  }
 
   void searchAccounts(String searchQuery) {
     if (searchQuery.trim().isEmpty) {
@@ -166,10 +148,7 @@ class AccountCubit extends ExternalStreamCubit<AccountState> {
       );
       return;
     }
-    final filteredAccounts = _filterAccountsByUsername(
-      searchQuery,
-      accounts: state.accounts.list,
-    );
+    final filteredAccounts = state.accounts.list.filterByUsername(searchQuery);
 
     emit(
       state.copyWith(
