@@ -22,8 +22,8 @@ import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/data/json.dart'
     show JsonList, JsonMap, jsonEncodePretty;
 import 'package:kraft_launcher/common/data/network/dio_helpers.dart';
-import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 import 'package:kraft_launcher/common/functional/either.dart';
+import 'package:kraft_launcher/common/logic/app_data_paths.dart';
 import 'package:kraft_launcher/common/ui/utils/build_context_ext.dart';
 import 'package:kraft_launcher/common/ui/utils/scaffold_messenger_ext.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/cache/minecraft_version_details_file_cache.dart';

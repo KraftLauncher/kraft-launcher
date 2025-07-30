@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:kraft_launcher/account/data/redirect_http_server_handler/dart_redirect_http_server_handler.dart';
 import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler_failures.dart';
-import 'package:kraft_launcher/common/logic/platform_check.dart';
 import 'package:kraft_launcher/common/functional/result.dart';
+import 'package:kraft_launcher/common/logic/platform_check.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
