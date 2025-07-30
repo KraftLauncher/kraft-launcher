@@ -1,0 +1,14 @@
+name: json_utils
+description: "Safe JSON decoding & deserialization and pretty encoding"
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  result:
+    path: ../result
+
+dev_dependencies:
+  test: ^1.24.0

@@ -49,6 +49,8 @@ dependencies:
     path: packages/file_executable
   result:
     path: packages/result
+  json_utils:
+    path: packages/json_utils
 
 dev_dependencies:
   flutter_test:

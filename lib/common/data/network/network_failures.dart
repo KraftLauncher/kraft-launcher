@@ -17,13 +17,6 @@ final class InternalServerFailure extends NetworkFailure {
   final String serverMessage;
 }
 
-final class ConnectionFailure extends NetworkFailure {
-  const ConnectionFailure(String message)
-    : super(
-        'Failed to connect to the server: $message\nCheck the internet connection.',
-      );
-}
-
 final class ServiceUnavailableFailure extends NetworkFailure {
   const ServiceUnavailableFailure({required this.retryAfterInSeconds})
     : super(
@@ -31,6 +24,13 @@ final class ServiceUnavailableFailure extends NetworkFailure {
       );
   // From Retry-After header.
   final int? retryAfterInSeconds;
+}
+
+final class ConnectionFailure extends NetworkFailure {
+  const ConnectionFailure(String message)
+    : super(
+        'Failed to connect to the server: $message\nCheck the internet connection.',
+      );
 }
 
 final class UnknownFailure extends NetworkFailure {
