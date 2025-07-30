@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:kraft_launcher/common/data/json.dart';
-import 'package:kraft_launcher/common/models/either.dart';
+import 'package:kraft_launcher/common/functional/either.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/api_minecraft_rule.dart';
 import 'package:meta/meta.dart';
 

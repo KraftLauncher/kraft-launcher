@@ -1,4 +1,4 @@
-import 'package:kraft_launcher/common/models/either.dart';
+import 'package:kraft_launcher/common/functional/either.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/mappers/api_minecraft_rule_mapper.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/mappers/api_minecraft_version_type_mapper.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/version_details/api_minecraft_version_args.dart';

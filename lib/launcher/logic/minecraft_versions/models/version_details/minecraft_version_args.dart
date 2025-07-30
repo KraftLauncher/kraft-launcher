@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:kraft_launcher/common/models/either.dart';
+import 'package:kraft_launcher/common/functional/either.dart';
 import 'package:kraft_launcher/launcher/logic/minecraft_versions/models/minecraft_rule.dart';
 import 'package:meta/meta.dart';
 

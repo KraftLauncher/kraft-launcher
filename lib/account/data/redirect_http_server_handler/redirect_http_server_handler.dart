@@ -1,5 +1,5 @@
 import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler_failures.dart';
-import 'package:kraft_launcher/common/models/result.dart';
+import 'package:kraft_launcher/common/functional/result.dart';
 
 /// Starts a temporary HTTP server that handles a single request, and then the
 /// server will be closed.

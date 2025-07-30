@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler.dart';
 import 'package:kraft_launcher/account/data/redirect_http_server_handler/redirect_http_server_handler_failures.dart';
-import 'package:kraft_launcher/common/models/result.dart';
+import 'package:kraft_launcher/common/functional/result.dart';
 import 'package:meta/meta.dart';
 
 @visibleForTesting

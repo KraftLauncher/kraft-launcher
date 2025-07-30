@@ -1,4 +1,4 @@
-import 'package:kraft_launcher/common/models/result.dart';
+import 'package:kraft_launcher/common/functional/result.dart';
 
 sealed class MinecraftVersionsApiFailure extends BaseFailure {
   const MinecraftVersionsApiFailure(super.message);

@@ -5,7 +5,7 @@ import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/micr
 import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/microsoft_auth_code_flow_exceptions.dart'
     as microsoft_auth_code_flow_exceptions;
 import 'package:kraft_launcher/common/constants/constants.dart';
-import 'package:kraft_launcher/common/models/result.dart';
+import 'package:kraft_launcher/common/functional/result.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 

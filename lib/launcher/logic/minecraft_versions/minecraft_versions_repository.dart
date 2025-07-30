@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:kraft_launcher/common/models/result.dart';
+import 'package:kraft_launcher/common/functional/result.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/cache/minecraft_version_details_file_cache.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/cache/minecraft_versions_file_cache.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/mappers/api_minecraft_asset_index_mapper.dart';

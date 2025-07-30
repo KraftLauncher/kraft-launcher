@@ -1,0 +1,9 @@
+name: result
+description: "Utility to implement the Result pattern."
+version: 1.0.0
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  meta: ^1.16.0

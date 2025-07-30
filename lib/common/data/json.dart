@@ -1,7 +1,7 @@
 // Avoid showing the "json" property; otherwise, a bug will be introduced silently.
 import 'dart:convert' show JsonEncoder, jsonDecode;
 
-import 'package:kraft_launcher/common/models/result.dart';
+import 'package:kraft_launcher/common/functional/result.dart';
 
 typedef JsonMap = Map<String, Object?>;
 

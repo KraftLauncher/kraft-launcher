@@ -12,7 +12,7 @@ import 'package:kraft_launcher/account/logic/microsoft/auth_flows/auth_code/micr
 import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
 import 'package:kraft_launcher/common/logic/app_logger.dart';
-import 'package:kraft_launcher/common/models/result.dart';
+import 'package:kraft_launcher/common/functional/result.dart';
 import 'package:meta/meta.dart';
 
 // TODO: Provide a code example for this class.

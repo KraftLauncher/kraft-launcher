@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:kraft_launcher/common/constants/constants.dart';
 import 'package:kraft_launcher/common/data/json.dart';
 import 'package:kraft_launcher/common/data/network/dio_helpers.dart';
-import 'package:kraft_launcher/common/models/result.dart';
+import 'package:kraft_launcher/common/functional/result.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/minecraft_versions_api_failures.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/asset_index/api_minecraft_asset_index.dart';
 import 'package:kraft_launcher/launcher/data/minecraft_versions_api/models/version_details/api_minecraft_version_details.dart';

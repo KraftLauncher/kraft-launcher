@@ -32,10 +32,9 @@ sealed class Result<V, F extends BaseFailure> {
 
   V? get valueOrNull =>
       this is SuccessResult<V, F> ? (this as SuccessResult<V, F>).value : null;
-  F? get failureOrNull =>
-      this is FailureResult<V, F>
-          ? (this as FailureResult<V, F>).failure
-          : null;
+  F? get failureOrNull => this is FailureResult<V, F>
+      ? (this as FailureResult<V, F>).failure
+      : null;
 
   V get valueOrThrow =>
       valueOrNull ??
@@ -72,12 +71,18 @@ final class SuccessResult<V, F extends BaseFailure> extends Result<V, F> {
   const SuccessResult(this.value);
 
   final V value;
+
+  @override
+  String toString() => 'Result<$V>.success($value)';
 }
 
 final class FailureResult<V, F extends BaseFailure> extends Result<V, F> {
   const FailureResult(this.failure);
 
   final F failure;
+
+  @override
+  String toString() => 'Result<$F>.failure($failure)';
 }
 
 class _Unit {

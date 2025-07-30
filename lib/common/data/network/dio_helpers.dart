@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:kraft_launcher/common/data/network/network_failures.dart';
-import 'package:kraft_launcher/common/models/result.dart';
+import 'package:kraft_launcher/common/functional/result.dart';
 
 // TODO: Use safeHttpApiCall in MicrosoftAuthApi and MinecraftAccountApi (which will handle common failures).
 
