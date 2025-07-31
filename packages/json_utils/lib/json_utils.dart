@@ -12,9 +12,8 @@ String jsonEncodePretty(JsonMap jsonMap) =>
     JsonEncoder.withIndent(' ' * 2).convert(jsonMap);
 
 final class JsonDecodingFailure extends BaseFailure {
-  const JsonDecodingFailure(this.jsonInput, this.reason)
+  const JsonDecodingFailure(String jsonInput, this.reason)
     : super('Failed to decode JSON. Reason: $reason\nInput: $jsonInput');
-  final String jsonInput;
   final String reason;
 }
 
@@ -45,11 +44,8 @@ Result<JsonMap, JsonDecodingFailure> tryJsonDecode(String json) {
 }
 
 final class JsonDeserializationFailure extends BaseFailure {
-  const JsonDeserializationFailure(this.decodedJson, this.reason)
-    : super(
-        'Failed to deserialize JSON. Reason: $reason\nInput: $decodedJson',
-      );
-  final JsonMap decodedJson;
+  const JsonDeserializationFailure(JsonMap decodedJson, this.reason)
+    : super('Failed to deserialize JSON. Reason: $reason\nInput: $decodedJson');
   final String reason;
 }
 

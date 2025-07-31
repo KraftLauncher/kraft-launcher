@@ -1,5 +1,7 @@
 import 'package:kraft_launcher/common/functional/result.dart';
 
+// TODO: Replace this with ApiFailure from safe_http local package, currently NetworkFailure is used by MinecraftVersionsApi
+
 sealed class NetworkFailure extends BaseFailure {
   const NetworkFailure(super.message);
 }
