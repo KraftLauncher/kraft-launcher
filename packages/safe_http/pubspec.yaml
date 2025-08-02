@@ -12,8 +12,8 @@ dependencies:
   json_utils:
     path: ../json_utils
   http: ^1.4.0
+  meta: ^1.16.0
 
 dev_dependencies:
   test: ^1.24.0
   mocktail: ^1.0.4
-  meta: ^1.16.0

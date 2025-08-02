@@ -1,9 +1,10 @@
+import 'dart:convert' show jsonEncode;
 import 'dart:io' show HttpHeaders, HttpStatus, SocketException;
 
 import 'package:http/http.dart' as http;
 import 'package:json_utils/json_utils.dart' as json;
 import 'package:result/result.dart';
-import 'package:safe_http/safe_http.dart';
+import 'package:safe_http/src/api/api_failures.dart';
 import 'package:safe_http/src/api/client/json_api_client.dart';
 import 'package:safe_http/src/http_status_code.dart';
 
@@ -13,14 +14,17 @@ final class HttpJsonApiClient implements JsonApiClient {
   final http.Client _client;
 
   @override
-  JsonApiResult<Response, ClientError> get<Response, ClientError>(
+  JsonApiResultFuture<S, C> get<S, C>(
     Uri url, {
     Map<String, String>? headers,
-    required JsonResponseDeserializer<Response> deserializeSuccess,
-    required JsonResponseDeserializer<ClientError> deserializeClientFailure,
+    required JsonResponseDeserializer<S> deserializeSuccess,
+    required JsonResponseDeserializer<C> deserializeClientFailure,
   }) async {
-    return _handleFailures(() async {
-      final response = await _client.get(url, headers: headers);
+    return _handleSocketException(() async {
+      final response = await _client.get(
+        url,
+        headers: _ensureJsonAcceptHeader(headers),
+      );
       return _handleResponse(
         response,
         deserializeSuccess: deserializeSuccess,
@@ -30,15 +34,28 @@ final class HttpJsonApiClient implements JsonApiClient {
   }
 
   @override
-  JsonApiResult<Response, ClientError> post<Response, ClientError>(
+  JsonApiResultFuture<S, C> post<S, C>(
     Uri url, {
     Map<String, String>? headers,
     Object? body,
-    required JsonResponseDeserializer<Response> deserializeSuccess,
-    required JsonResponseDeserializer<ClientError> deserializeClientFailure,
+    bool isJsonBody = false,
+    required JsonResponseDeserializer<S> deserializeSuccess,
+    required JsonResponseDeserializer<C> deserializeClientFailure,
   }) async {
-    return _handleFailures(() async {
-      final response = await _client.post(url, headers: headers, body: body);
+    if (isJsonBody) {
+      if (body is! json.JsonMap) {
+        throw ArgumentError.value(body, 'body', 'must be a ${json.JsonMap}');
+      }
+      body = jsonEncode(body);
+      headers = {...?headers, 'Content-Type': 'application/json'};
+    }
+
+    return _handleSocketException(() async {
+      final response = await _client.post(
+        url,
+        headers: _ensureJsonAcceptHeader(headers),
+        body: body,
+      );
       return _handleResponse(
         response,
         deserializeSuccess: deserializeSuccess,
@@ -47,8 +64,8 @@ final class HttpJsonApiClient implements JsonApiClient {
     });
   }
 
-  JsonApiResult<Response, ClientError> _handleFailures<Response, ClientError>(
-    JsonApiResult<Response, ClientError> Function() request,
+  JsonApiResultFuture<S, C> _handleSocketException<S, C>(
+    JsonApiResultFuture<S, C> Function() request,
   ) async {
     try {
       return await request();
@@ -57,10 +74,15 @@ final class HttpJsonApiClient implements JsonApiClient {
     }
   }
 
-  JsonApiResult<Response, ClientError> _handleResponse<Response, ClientError>(
+  Map<String, String> _ensureJsonAcceptHeader(Map<String, String>? headers) => {
+    ...?headers,
+    'Accept': 'application/json',
+  };
+
+  JsonApiResultFuture<S, C> _handleResponse<S, C>(
     http.Response response, {
-    required JsonResponseDeserializer<Response> deserializeSuccess,
-    required JsonResponseDeserializer<ClientError> deserializeClientFailure,
+    required JsonResponseDeserializer<S> deserializeSuccess,
+    required JsonResponseDeserializer<C> deserializeClientFailure,
   }) async {
     final statusCode = response.statusCode;
     final responseBody = response.body;
@@ -82,7 +104,9 @@ final class HttpJsonApiClient implements JsonApiClient {
 
       final jsonDeserializationResult = json.tryJsonDeserialize(
         decoded,
-        (decoded) => deserializeSuccess(decoded, statusCode),
+        (decoded) => deserializeSuccess(
+          JsonResponse(json: decoded, statusCode: statusCode),
+        ),
       );
 
       final deserialized = jsonDeserializationResult.valueOrNull;
@@ -126,7 +150,9 @@ final class HttpJsonApiClient implements JsonApiClient {
 
       final jsonDeserializationResult = json.tryJsonDeserialize(
         decoded,
-        (decoded) => deserializeClientFailure(decoded, statusCode),
+        (decoded) => deserializeClientFailure(
+          JsonResponse(json: decoded, statusCode: statusCode),
+        ),
       );
 
       final deserialized = jsonDeserializationResult.valueOrNull;
@@ -141,7 +167,7 @@ final class HttpJsonApiClient implements JsonApiClient {
       }
 
       return Result.failure(
-        ClientResponseFailure<ClientError>(
+        ClientResponseFailure<C>(
           statusCode: statusCode,
           reasonPhrase: response.reasonPhrase,
           responseBody: deserialized,

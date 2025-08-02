@@ -6,7 +6,8 @@ import 'package:json_utils/json_utils.dart' show JsonMap;
 import 'package:meta/meta.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:result/result.dart';
-import 'package:safe_http/safe_http.dart';
+import 'package:safe_http/src/api/api_failures.dart';
+import 'package:safe_http/src/api/client/http_json_api_client.dart';
 import 'package:safe_http/src/api/client/json_api_client.dart';
 import 'package:test/test.dart';
 
@@ -27,6 +28,7 @@ void main() {
         any(),
         headers: any(named: 'headers'),
         body: any(named: 'body'),
+        encoding: any(named: 'encoding'),
       ),
     ).thenAnswer((_) async => _response(statusCode: 404));
   });
@@ -36,41 +38,54 @@ void main() {
   });
 
   group('get', () {
-    JsonApiResult<Response, ClientError> get<Response, ClientError>(
+    JsonApiResultFuture<S, C> get<S, C>(
       Uri? url, {
       Map<String, String>? headers,
-      JsonResponseDeserializer<Response>? deserializeSuccess,
-      JsonResponseDeserializer<ClientError>? deserializeClientFailure,
-    }) => client.get<Response, ClientError>(
+      JsonResponseDeserializer<S>? deserializeSuccess,
+      JsonResponseDeserializer<C>? deserializeClientFailure,
+    }) => client.get<S, C>(
       url ?? Uri(),
       headers: headers,
-      deserializeSuccess: (json, statusCode) {
+      deserializeSuccess: (response) {
         final fn = deserializeSuccess;
         if (fn == null) {
-          throw StateError('Should not be reached');
+          throw StateError(
+            'get() was called and deserializeSuccess is null when it is required',
+          );
         }
-        return fn(json, statusCode);
+        return fn(response);
       },
-      deserializeClientFailure: (json, statusCode) {
+      deserializeClientFailure: (response) {
         final fn = deserializeClientFailure;
         if (fn == null) {
-          throw StateError('Should not be reached');
+          throw StateError(
+            'get() was called and deserializeClientFailure is null when it is required',
+          );
         }
-        return fn(json, statusCode);
+        return fn(response);
       },
     );
 
     _commonTests(
-      whenRequest: () => when(() => mockHttpClient.get(any())),
+      whenRequest: () =>
+          when(() => mockHttpClient.get(any(), headers: any(named: 'headers'))),
       makeRequest:
           ({
             JsonResponseDeserializer<Object>? deserializeSuccess,
             JsonResponseDeserializer<Object>? deserializeClientFailure,
+            Map<String, String>? headers,
           }) => get(
             null,
             deserializeClientFailure: deserializeClientFailure,
             deserializeSuccess: deserializeSuccess,
+            headers: headers,
           ),
+      verifyRequest: ({required Matcher headersMatcher}) => verify(
+        () => mockHttpClient.get(
+          any(),
+          headers: any(named: 'headers', that: headersMatcher),
+        ),
+      ),
     );
 
     test('passes arguments to ${http.Client}.get correctly', () async {
@@ -79,10 +94,12 @@ void main() {
 
       await get<void, void>(url, headers: headers);
 
+      final expectedHeaders = {...headers, 'Accept': 'application/json'};
+
       verify(
         () => mockHttpClient.get(
           any(that: same(url)),
-          headers: any(named: 'headers', that: same(headers)),
+          headers: any(named: 'headers', that: equals(expectedHeaders)),
         ),
       );
     });
@@ -96,44 +113,121 @@ void main() {
     });
   });
   group('post', () {
-    JsonApiResult<Response, ClientError> post<Response, ClientError>(
+    JsonApiResultFuture<S, C> post<S, C>(
       Uri? url, {
       Map<String, String>? headers,
       Object? body,
-      JsonResponseDeserializer<Response>? deserializeSuccess,
-      JsonResponseDeserializer<ClientError>? deserializeClientFailure,
-    }) => client.post<Response, ClientError>(
+      bool isJsonBody = false,
+      JsonResponseDeserializer<S>? deserializeSuccess,
+      JsonResponseDeserializer<C>? deserializeClientFailure,
+    }) => client.post<S, C>(
       url ?? Uri(),
       headers: headers,
       body: body,
-      deserializeSuccess: (json, statusCode) {
+      isJsonBody: isJsonBody,
+      deserializeSuccess: (response) {
         final fn = deserializeSuccess;
         if (fn == null) {
-          throw StateError('Should not be reached');
+          throw StateError(
+            'post() was called and deserializeSuccess is null when it is required',
+          );
         }
-        return fn(json, statusCode);
+        return fn(response);
       },
-      deserializeClientFailure: (json, statusCode) {
+      deserializeClientFailure: (response) {
         final fn = deserializeClientFailure;
         if (fn == null) {
-          throw StateError('Should not be reached');
+          throw StateError(
+            'post() was called and deserializeClientFailure is null when it is required',
+          );
         }
-        return fn(json, statusCode);
+        return fn(response);
       },
     );
 
     _commonTests(
-      whenRequest: () => when(() => mockHttpClient.post(any())),
+      whenRequest: () => when(
+        () => mockHttpClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+          encoding: any(named: 'encoding'),
+        ),
+      ),
       makeRequest:
           ({
             JsonResponseDeserializer<Object>? deserializeSuccess,
             JsonResponseDeserializer<Object>? deserializeClientFailure,
+            Map<String, String>? headers,
           }) => post(
             null,
             deserializeSuccess: deserializeSuccess,
             deserializeClientFailure: deserializeClientFailure,
+            headers: headers,
           ),
+      verifyRequest: ({required Matcher headersMatcher}) => verify(
+        () => mockHttpClient.post(
+          any(),
+          body: any(named: 'body'),
+          headers: any(named: 'headers', that: headersMatcher),
+        ),
+      ),
     );
+
+    test(
+      'throws $ArgumentError if isJsonBody is true but body is not a $JsonMap',
+      () async {
+        await expectLater(
+          post<void, void>(null, isJsonBody: true, body: Object()),
+          throwsArgumentError,
+        );
+      },
+    );
+
+    group('when isJsonBody is true and body is a valid $JsonMap', () {
+      test('encodes body using JSON automatically', () async {
+        final JsonMap body = {'username': 'Steve', 'password': '123'};
+
+        await post<void, void>(null, isJsonBody: true, body: body);
+
+        final String jsonBody = jsonEncode(body);
+
+        verify(
+          () => mockHttpClient.post(
+            any(),
+            body: any(that: equals(jsonBody), named: 'body'),
+            headers: any(named: 'headers'),
+          ),
+        );
+      });
+
+      test('adds "Content-Type: application/json" to headers', () async {
+        final passedHeaders = {'Authorization': 'Bearer eyJrcWL'};
+        final expectedHeaders = {
+          ...passedHeaders,
+          'Content-Type': 'application/json',
+        };
+
+        final JsonMap body = {};
+        await post<void, void>(
+          null,
+          isJsonBody: true,
+          body: body,
+          headers: passedHeaders,
+        );
+
+        verify(
+          () => mockHttpClient.post(
+            any(),
+            body: any(named: 'body'),
+            headers: any(
+              named: 'headers',
+              that: _containsHeaders(expectedHeaders),
+            ),
+          ),
+        );
+      });
+    });
 
     test('passes arguments to ${http.Client}.post correctly', () async {
       final url = Uri.https('example.org');
@@ -142,11 +236,13 @@ void main() {
 
       await post<void, void>(url, headers: headers, body: body);
 
+      final expectedHeaders = {...headers, 'Accept': 'application/json'};
+
       verify(
         () => mockHttpClient.post(
           any(that: same(url)),
           body: any(that: same(body), named: 'body'),
-          headers: any(named: 'headers', that: same(headers)),
+          headers: any(named: 'headers', that: equals(expectedHeaders)),
         ),
       );
     });
@@ -165,22 +261,37 @@ void main() {
   });
 }
 
-typedef _ClientError = Object;
+typedef _ClientErrorResponse = Object;
 
 void _commonTests({
   required When<Future<http.Response>> Function() whenRequest,
-  required JsonApiResult<Object, Object> Function({
+  required JsonApiResultFuture<Object, _ClientErrorResponse> Function({
     JsonResponseDeserializer<Object>? deserializeSuccess,
-    JsonResponseDeserializer<Object>? deserializeClientFailure,
+    JsonResponseDeserializer<_ClientErrorResponse>? deserializeClientFailure,
+    Map<String, String>? headers,
   })
   makeRequest,
+  required VerificationResult Function({required Matcher headersMatcher})
+  verifyRequest,
 }) {
   test('returns $ConnectionFailure on $SocketException', () async {
     whenRequest().thenThrow(const SocketException('any'));
 
     final result = await makeRequest();
 
-    expect(result.failureOrNull, isA<ConnectionFailure<_ClientError>>());
+    expect(
+      result.failureOrNull,
+      isA<ConnectionFailure<_ClientErrorResponse>>(),
+    );
+  });
+
+  test('adds "Accept: application/json" to headers ', () async {
+    final passedHeaders = {'Authorization': 'Bearer eyJrcWL'};
+    final expectedHeaders = {...passedHeaders, 'Accept': 'application/json'};
+
+    await makeRequest(headers: passedHeaders);
+
+    verifyRequest(headersMatcher: _containsHeaders(expectedHeaders));
   });
 
   group('2xx', () {
@@ -197,11 +308,11 @@ void _commonTests({
 
           expect(
             result.failureOrNull,
-            isA<JsonDecodingFailure<_ClientError>>(),
+            isA<JsonDecodingFailure<_ClientErrorResponse>>(),
           );
           expect(
             result.failureOrNull,
-            isA<JsonDecodingFailure<_ClientError>>()
+            isA<JsonDecodingFailure<_ClientErrorResponse>>()
                 .having(
                   (e) => e.responseBody,
                   'responseBody',
@@ -232,18 +343,18 @@ void _commonTests({
           );
 
           final result = await makeRequest(
-            deserializeSuccess: (json, statusCode) =>
-                _FakeAccount.fromJson(json),
+            deserializeSuccess: (response) =>
+                _FakeAccount.fromJson(response.json),
           );
 
           expect(
             result.failureOrNull,
-            isA<JsonDeserializationFailure<_ClientError>>(),
+            isA<JsonDeserializationFailure<_ClientErrorResponse>>(),
           );
 
           expect(
             result.failureOrNull,
-            isA<JsonDeserializationFailure<_ClientError>>()
+            isA<JsonDeserializationFailure<_ClientErrorResponse>>()
                 .having(
                   (e) => e.decodedJson,
                   'responseBody',
@@ -276,8 +387,8 @@ void _commonTests({
           );
 
           final result = await makeRequest(
-            deserializeSuccess: (json, statusCode) =>
-                _FakeAccount.fromJson(json),
+            deserializeSuccess: (response) =>
+                _FakeAccount.fromJson(response.json),
           );
 
           expect(result.failureOrNull, null);
@@ -299,7 +410,7 @@ void _commonTests({
 
         expect(
           result.failureOrNull,
-          isA<TooManyRequestsFailure<_ClientError>>(),
+          isA<TooManyRequestsFailure<_ClientErrorResponse>>(),
         );
       },
     );
@@ -321,11 +432,11 @@ void _commonTests({
 
           expect(
             result.failureOrNull,
-            isA<JsonDecodingFailure<_ClientError>>(),
+            isA<JsonDecodingFailure<_ClientErrorResponse>>(),
           );
           expect(
             result.failureOrNull,
-            isA<JsonDecodingFailure<_ClientError>>()
+            isA<JsonDecodingFailure<_ClientErrorResponse>>()
                 .having(
                   (e) => e.responseBody,
                   'responseBody',
@@ -360,18 +471,18 @@ void _commonTests({
           );
 
           final result = await makeRequest(
-            deserializeClientFailure: (json, statusCode) =>
-                _FakeAccount.fromJson(json),
+            deserializeClientFailure: (response) =>
+                _FakeAccount.fromJson(response.json),
           );
 
           expect(
             result.failureOrNull,
-            isA<JsonDeserializationFailure<_ClientError>>(),
+            isA<JsonDeserializationFailure<_ClientErrorResponse>>(),
           );
 
           expect(
             result.failureOrNull,
-            isA<JsonDeserializationFailure<_ClientError>>()
+            isA<JsonDeserializationFailure<_ClientErrorResponse>>()
                 .having(
                   (e) => e.decodedJson,
                   'responseBody',
@@ -408,18 +519,18 @@ void _commonTests({
           );
 
           final result = await makeRequest(
-            deserializeClientFailure: (json, statusCode) =>
-                _FakeAccount.fromJson(json),
+            deserializeClientFailure: (response) =>
+                _FakeAccount.fromJson(response.json),
           );
 
           expect(result.valueOrNull, null);
           expect(
             result.failureOrNull,
-            isA<ClientResponseFailure<_ClientError>>(),
+            isA<ClientResponseFailure<_ClientErrorResponse>>(),
           );
           expect(
             result.failureOrNull,
-            isA<ClientResponseFailure<_ClientError>>().having(
+            isA<ClientResponseFailure<_ClientErrorResponse>>().having(
               (e) => e.responseBody as _FakeAccount,
               'responseBody',
               equals(fakeAccount),
@@ -429,7 +540,7 @@ void _commonTests({
           );
           expect(
             result.failureOrNull,
-            isA<ClientResponseFailure<_ClientError>>()
+            isA<ClientResponseFailure<_ClientErrorResponse>>()
                 .having((e) => e.statusCode, 'statusCode', equals(statusCode))
                 .having(
                   (e) => e.reasonPhrase,
@@ -457,7 +568,7 @@ void _commonTests({
 
         expect(
           result.failureOrNull,
-          isA<ServiceUnavailableFailure<_ClientError>>(),
+          isA<ServiceUnavailableFailure<_ClientErrorResponse>>(),
         );
       },
     );
@@ -487,14 +598,14 @@ void _commonTests({
 
           expect(
             result.failureOrNull,
-            isNot(isA<InternalServerFailure<_ClientError>>()),
+            isNot(isA<InternalServerFailure<_ClientErrorResponse>>()),
             reason:
                 'Should return $ServiceUnavailableFailure rather than $InternalServerFailure when the status code is'
                 ' ${HttpStatus.serviceUnavailable} (service unavailable).',
           );
           expect(
             result.failureOrNull,
-            isA<ServiceUnavailableFailure<_ClientError>>().having(
+            isA<ServiceUnavailableFailure<_ClientErrorResponse>>().having(
               (e) => e.retryAfterInSeconds,
               'retryAfterInSeconds',
               equals(expectedRetryAfter),
@@ -523,11 +634,11 @@ void _commonTests({
 
           expect(
             result.failureOrNull,
-            isA<InternalServerFailure<_ClientError>>(),
+            isA<InternalServerFailure<_ClientErrorResponse>>(),
           );
           expect(
             result.failureOrNull,
-            isA<InternalServerFailure<_ClientError>>()
+            isA<InternalServerFailure<_ClientErrorResponse>>()
                 .having(
                   (e) => e.responseBody,
                   'responseBody',
@@ -559,7 +670,7 @@ void _commonTests({
 
       expect(
         result.failureOrNull,
-        isA<UnknownFailure<_ClientError>>()
+        isA<UnknownFailure<_ClientErrorResponse>>()
             .having((e) => e.responseBody, 'responseBody', equals(responseBody))
             .having((e) => e.statusCode, 'statusCode', equals(statusCode)),
       );
@@ -608,4 +719,11 @@ class _FakeAccount {
 
   @override
   String toString() => 'FakeAccount(id: $id, name: $name)';
+}
+
+Matcher _containsHeaders(Map<String, String> expected) {
+  return predicate<Map<String, String>>(
+    (actual) => expected.entries.every((e) => actual[e.key] == e.value),
+    'contains headers: ${expected.entries.map((e) => '${e.key}: ${e.value}').join(', ')}',
+  );
 }
