@@ -6,7 +6,7 @@ import 'package:json_utils/json_utils.dart' as json;
 import 'package:result/result.dart';
 import 'package:safe_http/src/api/api_failures.dart';
 import 'package:safe_http/src/api/client/json_api_client.dart';
-import 'package:safe_http/src/http_status_code.dart';
+import 'package:safe_http/src/http_status_utils.dart';
 
 final class HttpJsonApiClient implements JsonApiClient {
   HttpJsonApiClient(this._client);
