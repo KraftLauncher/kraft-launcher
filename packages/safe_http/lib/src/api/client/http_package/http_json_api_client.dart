@@ -3,11 +3,14 @@ import 'dart:io' show HttpHeaders, HttpStatus, SocketException;
 
 import 'package:http/http.dart' as http;
 import 'package:json_utils/json_utils.dart' as json;
+import 'package:meta/meta.dart';
 import 'package:result/result.dart';
 import 'package:safe_http/src/api/api_failures.dart';
 import 'package:safe_http/src/api/client/json_api_client.dart';
 import 'package:safe_http/src/http_status_utils.dart';
+import 'package:safe_http/src/multipart/multipart_body.dart' show MultipartBody;
 
+/// An implementation of [JsonApiClient] using [`package:http`](https://pub.dev/packages/http).
 final class HttpJsonApiClient implements JsonApiClient {
   HttpJsonApiClient(this._client);
 
@@ -26,7 +29,7 @@ final class HttpJsonApiClient implements JsonApiClient {
         headers: _ensureJsonAcceptHeader(headers),
       );
       return _handleResponse(
-        response,
+        response: _mapHttpResponse(response),
         deserializeSuccess: deserializeSuccess,
         deserializeClientFailure: deserializeClientFailure,
       );
@@ -42,6 +45,35 @@ final class HttpJsonApiClient implements JsonApiClient {
     required JsonResponseDeserializer<S> deserializeSuccess,
     required JsonResponseDeserializer<C> deserializeClientFailure,
   }) async {
+    if (body is MultipartBody) {
+      if (isJsonBody) {
+        // Makes a multipart request using http.Client.send()
+        throw ArgumentError.value(
+          body,
+          'isJsonBody',
+          'must be false when passing a $MultipartBody to the [body] argument',
+        );
+      }
+
+      final MultipartBody multipartBody = body;
+
+      return _handleSocketException(() async {
+        final response = await _sendMultipartRequest(
+          method: 'POST',
+          url: url,
+          body: multipartBody,
+          headers: _ensureJsonAcceptHeader(headers),
+        );
+        return _handleResponse(
+          response: response,
+          deserializeSuccess: deserializeSuccess,
+          deserializeClientFailure: deserializeClientFailure,
+        );
+      });
+    }
+
+    // Makes a non-multipart request using http.Client.post()
+
     if (isJsonBody) {
       if (body is! json.JsonMap) {
         throw ArgumentError.value(body, 'body', 'must be a ${json.JsonMap}');
@@ -57,11 +89,33 @@ final class HttpJsonApiClient implements JsonApiClient {
         body: body,
       );
       return _handleResponse(
-        response,
+        response: _mapHttpResponse(response),
         deserializeSuccess: deserializeSuccess,
         deserializeClientFailure: deserializeClientFailure,
       );
     });
+  }
+
+  Future<HttpResponse> _sendMultipartRequest({
+    required String method,
+    required Uri url,
+    required MultipartBody body,
+    required Map<String, String> headers,
+  }) async {
+    final multipartRequest = http.MultipartRequest(method, url)
+      ..fields.addAll(body.fields)
+      ..files.addAll(body.files)
+      ..headers.addAll(headers);
+
+    final streamedResponse = await _client.send(multipartRequest);
+    final responseBody = await streamedResponse.stream.bytesToString();
+
+    return HttpResponse(
+      body: responseBody,
+      statusCode: streamedResponse.statusCode,
+      headers: streamedResponse.headers,
+      reasonPhrase: streamedResponse.reasonPhrase,
+    );
   }
 
   JsonApiResultFuture<S, C> _handleSocketException<S, C>(
@@ -79,13 +133,32 @@ final class HttpJsonApiClient implements JsonApiClient {
     'Accept': 'application/json',
   };
 
-  JsonApiResultFuture<S, C> _handleResponse<S, C>(
-    http.Response response, {
+  /// Converts a [http.Response] from `package:http` to internal [HttpResponse].
+  ///
+  /// This decouples [_handleResponse] from external types,
+  /// handling differences between [http.Response] and [http.StreamedResponse].
+  ///
+  /// Note: Multipart requests use [http.Client.send], which returns [http.StreamedResponse].
+  /// We ignore differences with [http.Response] and [http.StreamedResponse]
+  /// by mapping to [HttpResponse] to keep decoupling.
+  HttpResponse _mapHttpResponse(http.Response response) => HttpResponse(
+    statusCode: response.statusCode,
+    body: response.body,
+    reasonPhrase: response.reasonPhrase,
+    headers: response.headers,
+  );
+
+  JsonApiResultFuture<S, C> _handleResponse<S, C>({
+    required HttpResponse response,
     required JsonResponseDeserializer<S> deserializeSuccess,
     required JsonResponseDeserializer<C> deserializeClientFailure,
   }) async {
-    final statusCode = response.statusCode;
-    final responseBody = response.body;
+    final (responseBody, statusCode, headers, reasonPhrase) = (
+      response.body,
+      response.statusCode,
+      response.headers,
+      response.reasonPhrase,
+    );
 
     final isSuccess = isIn2xx(statusCode);
 
@@ -105,7 +178,7 @@ final class HttpJsonApiClient implements JsonApiClient {
       final jsonDeserializationResult = json.tryJsonDeserialize(
         decoded,
         (decoded) => deserializeSuccess(
-          JsonResponse(json: decoded, statusCode: statusCode),
+          JsonHttpResponse(body: decoded, statusCode: statusCode),
         ),
       );
 
@@ -151,7 +224,7 @@ final class HttpJsonApiClient implements JsonApiClient {
       final jsonDeserializationResult = json.tryJsonDeserialize(
         decoded,
         (decoded) => deserializeClientFailure(
-          JsonResponse(json: decoded, statusCode: statusCode),
+          JsonHttpResponse(body: decoded, statusCode: statusCode),
         ),
       );
 
@@ -169,9 +242,9 @@ final class HttpJsonApiClient implements JsonApiClient {
       return Result.failure(
         ClientResponseFailure<C>(
           statusCode: statusCode,
-          reasonPhrase: response.reasonPhrase,
+          reasonPhrase: reasonPhrase,
           responseBody: deserialized,
-          headers: response.headers,
+          headers: headers,
         ),
       );
     }
@@ -179,7 +252,7 @@ final class HttpJsonApiClient implements JsonApiClient {
     // It's important to handle 503 (service unavailable)
     // before checking if code is in 5xx to avoid a regression.
     if (statusCode == HttpStatus.serviceUnavailable) {
-      final retryAfter = response.headers[HttpHeaders.retryAfterHeader];
+      final retryAfter = headers[HttpHeaders.retryAfterHeader];
       return Result.failure(
         ServiceUnavailableFailure(
           retryAfterInSeconds: retryAfter != null
@@ -202,9 +275,34 @@ final class HttpJsonApiClient implements JsonApiClient {
     return Result.failure(
       UnknownFailure(
         'Unknown or unhandled HTTP error ($statusCode): $responseBody',
-        statusCode: response.statusCode,
+        statusCode: statusCode,
         responseBody: responseBody,
       ),
     );
   }
+}
+
+/// Decouples internal code from external types,
+/// handling differences between [http.Response] and [http.StreamedResponse].
+///
+/// Used internally in [HttpJsonApiClient._handleResponse] avoid depending on
+/// [http.Response] and for testing.
+///
+/// The [http.Client.post] method is required for making a Multipart request,
+/// it returns a [http.StreamedResponse] rather than [http.Response].
+@visibleForTesting
+@internal
+@immutable
+class HttpResponse {
+  const HttpResponse({
+    required this.statusCode,
+    required this.body,
+    required this.reasonPhrase,
+    required this.headers,
+  });
+
+  final int statusCode;
+  final String body;
+  final String? reasonPhrase;
+  final Map<String, String> headers;
 }
