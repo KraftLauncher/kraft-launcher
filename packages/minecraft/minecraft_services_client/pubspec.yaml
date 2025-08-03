@@ -1,0 +1,19 @@
+name: minecraft_services_client
+description: "An API client for the Minecraft Services API"
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  meta: ^1.16.0
+  json_utils:
+    path: ../../json_utils
+  result:
+    path: ../../result
+  safe_http:
+    path: ../../safe_http
+
+dev_dependencies:
+  test: ^1.24.0
