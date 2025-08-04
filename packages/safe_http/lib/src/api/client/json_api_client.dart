@@ -28,8 +28,8 @@ import 'package:safe_http/src/multipart/multipart_body.dart' show MultipartBody;
 ///
 /// final result = await jsonApiClient.get<Example, String>(
 ///   Uri.https('api.example.com'),
-///   deserializeSuccess: (jsonMap, statusCode) => Example.fromJson(jsonMap),
-///   deserializeClientFailure: (jsonMap, statusCode) => jsonMap['error_code']! as String,
+///   deserializeSuccess: (response) => Example.fromJson(response.body),
+///   deserializeClientFailure: (response) => response.body['error_code']! as String,
 /// );
 /// ```
 ///
