@@ -11,10 +11,29 @@ typedef JsonList = List<dynamic>;
 String jsonEncodePretty(JsonMap jsonMap) =>
     JsonEncoder.withIndent(' ' * 2).convert(jsonMap);
 
-final class JsonDecodingFailure extends BaseFailure {
+sealed class JsonParseFailure extends BaseFailure {
+  const JsonParseFailure(super.message);
+}
+
+/// A failure that occurs while decoding the JSON String.
+///
+/// Indicates invalid or malformed JSON.
+final class JsonDecodingFailure extends JsonParseFailure {
   const JsonDecodingFailure(String jsonInput, this.reason)
-    : super('Failed to decode JSON. Reason: $reason\nInput: $jsonInput');
+    : super('JSON decoding failed. Reason: $reason\nInput: $jsonInput');
   final String reason;
+}
+
+/// A failure that occurs while deserializing a decoded JSON object.
+///
+/// Indicates a structural or type mismatch between JSON and the expected model.
+final class JsonDeserializationFailure extends JsonParseFailure {
+  const JsonDeserializationFailure(this.decodedJson, this.reason)
+    : super(
+        'JSON deserialization failed. Reason: $reason\nInput: $decodedJson',
+      );
+  final String reason;
+  final JsonMap decodedJson;
 }
 
 Result<JsonMap, JsonDecodingFailure> tryJsonDecode(String json) {
@@ -43,12 +62,6 @@ Result<JsonMap, JsonDecodingFailure> tryJsonDecode(String json) {
   }
 }
 
-final class JsonDeserializationFailure extends BaseFailure {
-  const JsonDeserializationFailure(JsonMap decodedJson, this.reason)
-    : super('Failed to deserialize JSON. Reason: $reason\nInput: $decodedJson');
-  final String reason;
-}
-
 Result<T, JsonDeserializationFailure> tryJsonDeserialize<T>(
   JsonMap decodedJson,
   T Function(JsonMap json) fromJson,
@@ -63,4 +76,29 @@ Result<T, JsonDeserializationFailure> tryJsonDeserialize<T>(
       JsonDeserializationFailure(decodedJson, e.toString()),
     );
   }
+}
+
+Result<T, JsonParseFailure> tryJsonParse<T>(
+  String json,
+  T Function(JsonMap json) fromJson,
+) {
+  final jsonDecodeResult = tryJsonDecode(json);
+
+  final decoded = jsonDecodeResult.valueOrNull;
+  if (decoded == null) {
+    return Result.failure(jsonDecodeResult.failureOrThrow);
+  }
+
+  final jsonDeserializationResult = tryJsonDeserialize(
+    decoded,
+    (JsonMap decoded) => fromJson(decoded),
+  );
+
+  final deserialized = jsonDeserializationResult.valueOrNull;
+
+  if (deserialized == null) {
+    return Result.failure(jsonDeserializationResult.failureOrThrow);
+  }
+
+  return Result.success(deserialized);
 }
