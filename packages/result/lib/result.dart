@@ -65,6 +65,26 @@ sealed class Result<V, F extends BaseFailure> {
     ),
     final FailureResult<V, F> failure => Result.failure(failure.failure),
   };
+
+  /// Transforms a failure value while preserving the success type.
+  Result<V, R> mapFailure<R extends BaseFailure>(
+    R Function(F value) transform,
+  ) => switch (this) {
+    final SuccessResult<V, F> success => Result.success(success.value),
+    final FailureResult<V, F> failure => Result.failure(
+      transform(failure.failure),
+    ),
+  };
+
+  /// Chains another [Result] if this is a success.
+  ///
+  /// If this is a failure, returns the failure unchanged.
+  /// If this is a success, applies [transform] and returns its result.
+  Result<R, F> flatMap<R>(Result<R, F> Function(V value) transform) =>
+      switch (this) {
+        SuccessResult<V, F>(:final value) => transform(value),
+        FailureResult<V, F>(:final failure) => Result.failure(failure),
+      };
 }
 
 final class SuccessResult<V, F extends BaseFailure> extends Result<V, F> {
