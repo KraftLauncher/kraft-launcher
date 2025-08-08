@@ -1,5 +1,5 @@
-export 'src/api/api_failures.dart';
-export 'src/api/client/http_package/http_json_api_client.dart'
-    hide HttpResponse;
-export 'src/api/client/json_api_client.dart';
+export 'src/api_client/api_client.dart';
+export 'src/api_client/api_failures.dart';
+export 'src/api_client/http_package/http_api_client.dart';
+export 'src/api_client/http_response.dart';
 export 'src/multipart/multipart_body.dart';

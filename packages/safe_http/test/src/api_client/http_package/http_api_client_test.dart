@@ -1,3 +1,8 @@
+// TODO: REFACTORING_JSON_API_CLIENT The tests in this file are outdated, the new version is on the way!
+
+@doNotSubmit
+library;
+
 import 'dart:convert' show jsonDecode, jsonEncode, utf8;
 import 'dart:io' show HttpHeaders, HttpStatus, SocketException;
 
@@ -6,24 +11,25 @@ import 'package:json_utils/json_utils.dart' show JsonMap;
 import 'package:meta/meta.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:result/result.dart';
-import 'package:safe_http/src/api/api_failures.dart';
-import 'package:safe_http/src/api/client/http_package/http_json_api_client.dart';
-import 'package:safe_http/src/api/client/json_api_client.dart';
+import 'package:safe_http/src/api_client/api_client.dart';
+import 'package:safe_http/src/api_client/api_failures.dart';
+import 'package:safe_http/src/api_client/http_package/http_api_client.dart';
+import 'package:safe_http/src/api_client/http_response.dart';
 import 'package:safe_http/src/multipart/multipart_body.dart';
 import 'package:test/test.dart';
 
 void main() {
   late _MockHttpClient mockHttpClient;
-  late JsonApiClient client;
+  late ApiClient client;
 
-  void mockGet(Future<HttpResponse> Function() getHttpResponse) =>
+  void mockGet(Future<_HttpResponse> Function() getHttpResponse) =>
       when(
         () => mockHttpClient.get(any(), headers: any(named: 'headers')),
       ).thenAnswer(
         (_) async => _mapHttpResponseToResponse(await getHttpResponse()),
       );
 
-  void mockPost(Future<HttpResponse> Function() getHttpResponse) =>
+  void mockPost(Future<_HttpResponse> Function() getHttpResponse) =>
       when(
         () => mockHttpClient.post(
           any(),
@@ -35,7 +41,7 @@ void main() {
         (_) async => _mapHttpResponseToResponse(await getHttpResponse()),
       );
 
-  void mockSend(Future<HttpResponse> Function() getHttpResponse) =>
+  void mockSend(Future<_HttpResponse> Function() getHttpResponse) =>
       when(() => mockHttpClient.send(any())).thenAnswer(
         (_) async =>
             _mapHttpResponseToStreamedResponse(await getHttpResponse()),
@@ -44,7 +50,7 @@ void main() {
   setUp(() {
     mockHttpClient = _MockHttpClient();
 
-    client = HttpJsonApiClient(mockHttpClient);
+    client = HttpApiClient(mockHttpClient);
   });
 
   setUpAll(() {
@@ -52,18 +58,71 @@ void main() {
     registerFallbackValue(_FakeBaseRequest());
   });
 
+  group('request', () {
+    StringApiResultFuture request(
+      Uri? url, {
+      HttpMethod? method,
+      Map<String, String>? headers,
+      Object? body,
+      bool isJsonBody = false,
+    }) => client.request(
+      url ?? Uri(),
+      method: method ?? HttpMethod.get,
+      headers: headers,
+      body: body,
+      isJsonBody: isJsonBody,
+    );
+  });
+
+  group('requestJson', () {
+    JsonApiResultFuture<S, F> requestJson<S, F>(
+      Uri? url, {
+      HttpMethod? method,
+      Map<String, String>? headers,
+      Object? body,
+      bool isJsonBody = false,
+      JsonResponseDeserializer<S>? deserializeSuccess,
+      JsonResponseDeserializer<F>? deserializeFailure,
+    }) => client.requestJson<S, F>(
+      url ?? Uri(),
+      method: method ?? HttpMethod.get,
+      headers: headers,
+      body: body,
+      isJsonBody: isJsonBody,
+      deserializeSuccess: (response) {
+        final fn = deserializeSuccess;
+        if (fn == null) {
+          throw StateError(
+            'get() was called and deserializeSuccess is null when it is required',
+          );
+        }
+        return fn(response);
+      },
+      deserializeFailure: (response) {
+        final fn = deserializeFailure;
+        if (fn == null) {
+          throw StateError(
+            'get() was called and deserializeFailure is null when it is required',
+          );
+        }
+        return fn(response);
+      },
+    );
+  });
+
   group('get', () {
     setUp(() {
       mockGet(() async => _dummyResponse);
     });
 
-    JsonApiResultFuture<S, C> get<S, C>(
+    JsonApiResultFuture<S, F> get<S, F>(
       Uri? url, {
       Map<String, String>? headers,
       JsonResponseDeserializer<S>? deserializeSuccess,
-      JsonResponseDeserializer<C>? deserializeClientFailure,
-    }) => client.get<S, C>(
+      JsonResponseDeserializer<F>? deserializeFailure,
+    }) => client.requestJson<S, F>(
       url ?? Uri(),
+      method: HttpMethod.get,
       headers: headers,
       deserializeSuccess: (response) {
         final fn = deserializeSuccess;
@@ -74,11 +133,11 @@ void main() {
         }
         return fn(response);
       },
-      deserializeClientFailure: (response) {
-        final fn = deserializeClientFailure;
+      deserializeFailure: (response) {
+        final fn = deserializeFailure;
         if (fn == null) {
           throw StateError(
-            'get() was called and deserializeClientFailure is null when it is required',
+            'get() was called and deserializeFailure is null when it is required',
           );
         }
         return fn(response);
@@ -90,11 +149,11 @@ void main() {
       makeRequest:
           ({
             JsonResponseDeserializer<Object>? deserializeSuccess,
-            JsonResponseDeserializer<Object>? deserializeClientFailure,
+            JsonResponseDeserializer<Object>? deserializeFailure,
             Map<String, String>? headers,
           }) => get(
             null,
-            deserializeClientFailure: deserializeClientFailure,
+            deserializeFailure: deserializeFailure,
             deserializeSuccess: deserializeSuccess,
             headers: headers,
           ),
@@ -138,15 +197,16 @@ void main() {
       mockSend(() async => _dummyResponse);
     });
 
-    JsonApiResultFuture<S, C> post<S, C>(
+    JsonApiResultFuture<S, F> post<S, F>(
       Uri? url, {
       Map<String, String>? headers,
       Object? body,
       bool isJsonBody = false,
       JsonResponseDeserializer<S>? deserializeSuccess,
-      JsonResponseDeserializer<C>? deserializeClientFailure,
-    }) => client.post<S, C>(
+      JsonResponseDeserializer<F>? deserializeFailure,
+    }) => client.requestJson<S, F>(
       url ?? Uri(),
+      method: HttpMethod.post,
       headers: headers,
       body: body,
       isJsonBody: isJsonBody,
@@ -159,11 +219,11 @@ void main() {
         }
         return fn(response);
       },
-      deserializeClientFailure: (response) {
-        final fn = deserializeClientFailure;
+      deserializeFailure: (response) {
+        final fn = deserializeFailure;
         if (fn == null) {
           throw StateError(
-            'post() was called and deserializeClientFailure is null when it is required',
+            'post() was called and deserializeFailure is null when it is required',
           );
         }
         return fn(response);
@@ -264,12 +324,12 @@ void main() {
         makeRequest:
             ({
               JsonResponseDeserializer<Object>? deserializeSuccess,
-              JsonResponseDeserializer<Object>? deserializeClientFailure,
+              JsonResponseDeserializer<Object>? deserializeFailure,
               Map<String, String>? headers,
             }) => post(
               null,
               deserializeSuccess: deserializeSuccess,
-              deserializeClientFailure: deserializeClientFailure,
+              deserializeFailure: deserializeFailure,
               headers: headers,
             ),
         verifyRequest: ({required Matcher headersMatcher}) => verify(
@@ -419,13 +479,13 @@ void main() {
         makeRequest:
             ({
               JsonResponseDeserializer<Object>? deserializeSuccess,
-              JsonResponseDeserializer<Object>? deserializeClientFailure,
+              JsonResponseDeserializer<Object>? deserializeFailure,
               Map<String, String>? headers,
             }) => post(
               null,
               body: _dummyMultipartRequest,
               deserializeSuccess: deserializeSuccess,
-              deserializeClientFailure: deserializeClientFailure,
+              deserializeFailure: deserializeFailure,
               headers: headers,
             ),
         verifyRequest: ({required Matcher headersMatcher}) => verify(
@@ -465,7 +525,7 @@ void main() {
 
 typedef _ClientErrorResponse = Object;
 typedef _MockMakeHttpRequest =
-    void Function(Future<HttpResponse> Function() mock);
+    void Function(Future<_HttpResponse> Function() mock);
 
 // Common tests for making the request, handling the transport errors and also
 // handling the HTTP response.
@@ -473,7 +533,7 @@ void _commonTests({
   required _MockMakeHttpRequest mockMakeRequest,
   required JsonApiResultFuture<Object, _ClientErrorResponse> Function({
     JsonResponseDeserializer<Object>? deserializeSuccess,
-    JsonResponseDeserializer<_ClientErrorResponse>? deserializeClientFailure,
+    JsonResponseDeserializer<_ClientErrorResponse>? deserializeFailure,
     Map<String, String>? headers,
   })
   makeRequest,
@@ -511,7 +571,7 @@ void _testResponseHandling({
   required _MockMakeHttpRequest mockMakeRequest,
   required JsonApiResultFuture<Object, _ClientErrorResponse> Function({
     JsonResponseDeserializer<Object>? deserializeSuccess,
-    JsonResponseDeserializer<_ClientErrorResponse>? deserializeClientFailure,
+    JsonResponseDeserializer<_ClientErrorResponse>? deserializeFailure,
     Map<String, String>? headers,
   })
   makeRequest,
@@ -698,7 +758,7 @@ void _testResponseHandling({
           );
 
           final result = await makeRequest(
-            deserializeClientFailure: (response) =>
+            deserializeFailure: (response) =>
                 _FakeAccount.fromJson(response.body),
           );
 
@@ -746,7 +806,7 @@ void _testResponseHandling({
           );
 
           final result = await makeRequest(
-            deserializeClientFailure: (response) =>
+            deserializeFailure: (response) =>
                 _FakeAccount.fromJson(response.body),
           );
 
@@ -906,12 +966,12 @@ void _testResponseHandling({
   );
 }
 
-HttpResponse _httpResponse({
+_HttpResponse _httpResponse({
   String? body,
   int statusCode = -1,
   Map<String, String> headers = const {},
   String? reasonPhrase,
-}) => HttpResponse(
+}) => _HttpResponse(
   // Some unrelated tests will fail when a bug is introduced and if this
   // JSON is invalid, keep it valid for better tests (very minor).
   // This is used by [jsonDecode] in production code.
@@ -963,8 +1023,8 @@ final _dummyResponse = _httpResponse(statusCode: 404);
 // but the body argument type should be MultipartBody to run the test correctly.
 final _dummyMultipartRequest = MultipartBody.empty();
 
-/// Converts an internal [HttpResponse] to a [http.Response] from `package:http`.
-http.Response _mapHttpResponseToResponse(HttpResponse response) =>
+/// Converts an internal [_HttpResponse] to a [http.Response] from `package:http`.
+http.Response _mapHttpResponseToResponse(_HttpResponse response) =>
     http.Response(
       response.body,
       response.statusCode,
@@ -972,9 +1032,9 @@ http.Response _mapHttpResponseToResponse(HttpResponse response) =>
       reasonPhrase: response.reasonPhrase,
     );
 
-/// Converts an internal [HttpResponse] to a [http.StreamedResponse] from `package:http`.
+/// Converts an internal [_HttpResponse] to a [http.StreamedResponse] from `package:http`.
 http.StreamedResponse _mapHttpResponseToStreamedResponse(
-  HttpResponse response,
+  _HttpResponse response,
 ) {
   final bodyBytes = utf8.encode(response.body);
   final stream = Stream<List<int>>.fromIterable([bodyBytes]);
@@ -988,3 +1048,5 @@ http.StreamedResponse _mapHttpResponseToStreamedResponse(
 }
 
 class _FakeBaseRequest extends Fake implements http.BaseRequest {}
+
+typedef _HttpResponse = StringHttpResponse;
