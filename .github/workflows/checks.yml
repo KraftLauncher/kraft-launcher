@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Extract common code in all workflows using action yaml files to .github/actions and use them
 
