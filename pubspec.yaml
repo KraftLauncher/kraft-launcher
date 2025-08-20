@@ -25,7 +25,7 @@ dependencies:
   go_router: ^16.0.0
   # TODO: Replace direct Dio usages with an HttpClient interface and a Dio-based implementation
   dio: ^5.8.0+1
-  talker_dio_logger: ^4.7.2
+  talker_dio_logger: ^5.0.0
   flutter_bloc: ^9.1.0
   image_picker: ^1.1.2
   mime: ^2.0.0
