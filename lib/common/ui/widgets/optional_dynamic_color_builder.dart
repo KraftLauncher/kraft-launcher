@@ -18,8 +18,8 @@ class OptionalDynamicColorBuilder extends StatelessWidget {
       return builder(null, null);
     }
     return DynamicColorBuilder(
-      builder:
-          (lightDynamic, darkDynamic) => builder(lightDynamic, darkDynamic),
+      builder: (lightDynamic, darkDynamic) =>
+          builder(lightDynamic, darkDynamic),
     );
   }
 }

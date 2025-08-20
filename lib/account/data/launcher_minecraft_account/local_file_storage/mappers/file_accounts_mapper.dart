@@ -22,17 +22,16 @@ extension FileAccountsMapper on FileMinecraftAccounts {
     )
     resolveMicrosoftReauthReason,
   }) => MinecraftAccounts(
-    list:
-        accounts
-            .map(
-              (account) => account.toApp(
-                secureAccountData: null,
-                microsoftReauthRequiredReason: resolveMicrosoftReauthReason(
-                  account,
-                ),
-              ),
-            )
-            .toList(),
+    list: accounts
+        .map(
+          (account) => account.toApp(
+            secureAccountData: null,
+            microsoftReauthRequiredReason: resolveMicrosoftReauthReason(
+              account,
+            ),
+          ),
+        )
+        .toList(),
     defaultAccountId: defaultAccountId,
   );
 }

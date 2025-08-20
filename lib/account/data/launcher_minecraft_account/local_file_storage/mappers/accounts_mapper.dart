@@ -6,13 +6,12 @@ import 'package:kraft_launcher/account/logic/launcher_minecraft_account/minecraf
 extension AccountsMapper on MinecraftAccounts {
   FileMinecraftAccounts toFileDto({required bool storeTokensInFile}) =>
       FileMinecraftAccounts(
-        accounts:
-            list
-                .map(
-                  (account) =>
-                      account.toFileDto(storeTokensInFile: storeTokensInFile),
-                )
-                .toList(),
+        accounts: list
+            .map(
+              (account) =>
+                  account.toFileDto(storeTokensInFile: storeTokensInFile),
+            )
+            .toList(),
         defaultAccountId: defaultAccountId,
       );
 }

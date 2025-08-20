@@ -94,9 +94,8 @@ class MicrosoftDeviceCodeFlow {
 
     pollingTimer = AsyncTimer.periodic(
       Duration(
-        seconds:
-            deviceCodeResponse
-                .interval, // This is probably 5 seconds but should not be hardcoded
+        seconds: deviceCodeResponse
+            .interval, // This is probably 5 seconds but should not be hardcoded
       ),
       () async {
         if (requestCancelPollingTimer) {
@@ -186,5 +185,7 @@ typedef DeviceCodeProgressCallback =
 
 typedef UserDeviceCodeAvailableCallback = void Function(String userDeviceCode);
 
-typedef DeviceCodeLoginResult =
-    (MicrosoftOAuthTokenResponse?, DeviceCodeTimerCloseReason);
+typedef DeviceCodeLoginResult = (
+  MicrosoftOAuthTokenResponse?,
+  DeviceCodeTimerCloseReason,
+);

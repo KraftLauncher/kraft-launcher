@@ -244,9 +244,9 @@ void main() {
               DesktopPlatform.linux => linuxMacOs,
               DesktopPlatform.macOS => linuxMacOs,
               DesktopPlatform.windows =>
-              // We were unable to reproduce this issue on Windows
-              // and the exact message of [OSError] that will be thrown in this case is unknown.
-              const OSError('Permission denied', 10013),
+                // We were unable to reproduce this issue on Windows
+                // and the exact message of [OSError] that will be thrown in this case is unknown.
+                const OSError('Permission denied', 10013),
             };
             fakeHttpServerFactory.throwsException = SocketException(
               TestConstants.anyString,

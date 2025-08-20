@@ -569,10 +569,9 @@ void main() {
 
       test('returns same account if access token has not expired', () async {
         final account = await refreshWithValidMinecraftAccessToken(
-          onRefreshProgress:
-              (_) => fail(
-                'Should not refresh the account when the Minecraft access token has not expired.',
-              ),
+          onRefreshProgress: (_) => fail(
+            'Should not refresh the account when the Minecraft access token has not expired.',
+          ),
         );
         expect(
           account,

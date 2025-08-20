@@ -47,11 +47,10 @@ class ApiMinecraftConditionalArg extends Equatable {
   factory ApiMinecraftConditionalArg.fromJson(
     JsonMap json,
   ) => ApiMinecraftConditionalArg(
-    rules:
-        (json['rules']! as JsonList)
-            .cast<JsonMap>()
-            .map((ruleMap) => ApiMinecraftRule.fromJson(ruleMap))
-            .toList(),
+    rules: (json['rules']! as JsonList)
+        .cast<JsonMap>()
+        .map((ruleMap) => ApiMinecraftRule.fromJson(ruleMap))
+        .toList(),
     value: () {
       final value = json['value']!;
       if (value is List) {

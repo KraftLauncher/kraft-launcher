@@ -38,10 +38,9 @@ void main() {
 
   void mockSecretServiceSupported({required bool secretServiceAvailable}) {
     when(() => mockDBusClient.listNames()).thenAnswer(
-      (_) async =>
-          secretServiceAvailable
-              ? ['org.freedesktop.secrets', TestConstants.anyString]
-              : [TestConstants.anyString, TestConstants.anyString],
+      (_) async => secretServiceAvailable
+          ? ['org.freedesktop.secrets', TestConstants.anyString]
+          : [TestConstants.anyString, TestConstants.anyString],
     );
   }
 

@@ -9,9 +9,8 @@ enum ApiMinecraftVersionType {
     'snapshot' => snapshot,
     'old_alpha' => oldAlpha,
     'old_beta' => oldBeta,
-    String() =>
-      throw UnsupportedError(
-        'Unknown Minecraft version type from the API: $json',
-      ),
+    String() => throw UnsupportedError(
+      'Unknown Minecraft version type from the API: $json',
+    ),
   };
 }

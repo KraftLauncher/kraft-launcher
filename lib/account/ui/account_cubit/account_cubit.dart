@@ -131,12 +131,9 @@ class AccountCubit extends ExternalStreamCubit<AccountState> {
   // when updating, adding, or removing an account.
   Wrapped<List<MinecraftAccount>?>? _getUpdatedSearchedAccounts(
     MinecraftAccounts updatedAccounts,
-  ) =>
-      state.searchQuery != null
-          ? Wrapped.value(
-            updatedAccounts.list.filterByUsername(state.searchQuery!),
-          )
-          : null;
+  ) => state.searchQuery != null
+      ? Wrapped.value(updatedAccounts.list.filterByUsername(state.searchQuery!))
+      : null;
 
   void searchAccounts(String searchQuery) {
     if (searchQuery.trim().isEmpty) {

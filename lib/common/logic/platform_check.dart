@@ -24,9 +24,8 @@ DesktopPlatform get currentDesktopPlatform {
     TargetPlatform.linux => DesktopPlatform.linux,
     TargetPlatform.macOS => DesktopPlatform.macOS,
     TargetPlatform.windows => DesktopPlatform.windows,
-    _ =>
-      throw UnsupportedError(
-        'Unsupported platform: ${defaultTargetPlatform.name}',
-      ),
+    _ => throw UnsupportedError(
+      'Unsupported platform: ${defaultTargetPlatform.name}',
+    ),
   };
 }

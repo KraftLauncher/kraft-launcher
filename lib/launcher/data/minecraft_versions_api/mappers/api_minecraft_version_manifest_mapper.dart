@@ -9,28 +9,23 @@ extension ApiMinecraftVersionManifestMapper on ApiMinecraftVersionManifest {
       release: latest.release,
       snapshot: latest.snapshot,
     ),
-    versions:
-        versions
-            .map(
-              (version) => MinecraftManifestVersion(
-                detailsUrl: version.url,
-                id: version.id,
-                sha1: version.sha1,
-                supportsSafetyFeatures: version.complianceLevel == 1,
-                releasedAt: version.releaseTime,
-                updatedAt: version.time,
-                type: switch (version.type) {
-                  ApiMinecraftVersionType.release =>
-                    MinecraftVersionType.release,
-                  ApiMinecraftVersionType.snapshot =>
-                    MinecraftVersionType.snapshot,
-                  ApiMinecraftVersionType.oldAlpha =>
-                    MinecraftVersionType.oldAlpha,
-                  ApiMinecraftVersionType.oldBeta =>
-                    MinecraftVersionType.oldBeta,
-                },
-              ),
-            )
-            .toList(),
+    versions: versions
+        .map(
+          (version) => MinecraftManifestVersion(
+            detailsUrl: version.url,
+            id: version.id,
+            sha1: version.sha1,
+            supportsSafetyFeatures: version.complianceLevel == 1,
+            releasedAt: version.releaseTime,
+            updatedAt: version.time,
+            type: switch (version.type) {
+              ApiMinecraftVersionType.release => MinecraftVersionType.release,
+              ApiMinecraftVersionType.snapshot => MinecraftVersionType.snapshot,
+              ApiMinecraftVersionType.oldAlpha => MinecraftVersionType.oldAlpha,
+              ApiMinecraftVersionType.oldBeta => MinecraftVersionType.oldBeta,
+            },
+          ),
+        )
+        .toList(),
   );
 }

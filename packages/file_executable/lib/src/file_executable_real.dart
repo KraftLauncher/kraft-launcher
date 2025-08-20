@@ -6,8 +6,11 @@ final DynamicLibrary _libc = Platform.isMacOS
     ? DynamicLibrary.open('/usr/lib/libc.dylib')
     : DynamicLibrary.open('libc.so.6');
 
-final _chmod = _libc.lookupFunction<Int32 Function(Pointer<Utf8>, Uint32),
-    int Function(Pointer<Utf8>, int)>('chmod');
+final _chmod = _libc
+    .lookupFunction<
+      Int32 Function(Pointer<Utf8>, Uint32),
+      int Function(Pointer<Utf8>, int)
+    >('chmod');
 
 class FileExecutable {
   /// Makes the file at [path] executable by setting mode 0o755 (rwxr-xr-x).

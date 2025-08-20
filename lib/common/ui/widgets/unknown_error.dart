@@ -43,8 +43,8 @@ class UnknownError extends StatelessWidget {
                     icon: const Icon(Icons.refresh),
                   ),
                   OutlinedButton.icon(
-                    onPressed:
-                        () => launchUrl(Uri.parse(Constants.reportBugLink)),
+                    onPressed: () =>
+                        launchUrl(Uri.parse(Constants.reportBugLink)),
                     label: Text(context.loc.reportBug),
                     icon: const Icon(Icons.bug_report),
                   ),

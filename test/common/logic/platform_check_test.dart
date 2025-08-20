@@ -24,9 +24,8 @@ void main() {
 
   final desktopPlatforms = TargetPlatformVariant.desktop().values;
 
-  final nonDesktopPlatforms =
-      TargetPlatform.values.toList()
-        ..removeWhere((platform) => desktopPlatforms.contains(platform));
+  final nonDesktopPlatforms = TargetPlatform.values.toList()
+    ..removeWhere((platform) => desktopPlatforms.contains(platform));
 
   group('isDesktop', () {
     test('returns true on desktop platforms', () {
@@ -57,10 +56,9 @@ void main() {
             TargetPlatform.linux => DesktopPlatform.linux,
             TargetPlatform.macOS => DesktopPlatform.macOS,
             TargetPlatform.windows => DesktopPlatform.windows,
-            _ =>
-              throw UnsupportedError(
-                'Unsupported platform ${defaultTargetPlatform.name}.',
-              ),
+            _ => throw UnsupportedError(
+              'Unsupported platform ${defaultTargetPlatform.name}.',
+            ),
           };
           expect(currentDesktopPlatform, expectedPlatform);
         },

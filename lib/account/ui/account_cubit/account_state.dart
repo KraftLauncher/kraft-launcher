@@ -64,15 +64,13 @@ final class AccountState extends Equatable {
     AccountStatus? status,
     ExceptionWithStacktrace<Exception>? exceptionWithStackTrace,
   }) => AccountState(
-    selectedAccountId:
-        selectedAccountId != null
-            ? selectedAccountId.value
-            : this.selectedAccountId,
+    selectedAccountId: selectedAccountId != null
+        ? selectedAccountId.value
+        : this.selectedAccountId,
     accounts: accounts ?? this.accounts,
-    searchedAccounts:
-        searchedAccounts != null
-            ? searchedAccounts.value
-            : this.searchedAccounts,
+    searchedAccounts: searchedAccounts != null
+        ? searchedAccounts.value
+        : this.searchedAccounts,
     searchQuery: searchQuery != null ? searchQuery.value : this.searchQuery,
     status: status ?? this.status,
     exceptionWithStackTrace:

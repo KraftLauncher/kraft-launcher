@@ -12,19 +12,17 @@ void main() {
   test(
     'localizations matches $AppLanguage.values to support in-app language settings',
     () async {
-      final supportedLanguages =
-          AppLanguage.values.toList()
-            ..removeWhere((language) => language == AppLanguage.system);
+      final supportedLanguages = AppLanguage.values.toList()
+        ..removeWhere((language) => language == AppLanguage.system);
 
-      final localizationFiles =
-          await _localizationsDir
-              .list()
-              .where(
-                (fileSystemEntity) =>
-                    fileSystemEntity is File &&
-                    p.extension(fileSystemEntity.path) == '.arb',
-              )
-              .toList();
+      final localizationFiles = await _localizationsDir
+          .list()
+          .where(
+            (fileSystemEntity) =>
+                fileSystemEntity is File &&
+                p.extension(fileSystemEntity.path) == '.arb',
+          )
+          .toList();
 
       expect(localizationFiles.length, supportedLanguages.length);
 

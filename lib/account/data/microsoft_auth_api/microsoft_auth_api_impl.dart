@@ -240,12 +240,11 @@ class MicrosoftAuthApiImpl implements MicrosoftAuthApi {
       final errorBody = e.response?.data as JsonMap?;
       final message = errorBody?['Message'] as String?;
       final xErr = errorBody?['XErr'] as int?;
-      final xstsError =
-          xErr != null
-              ? microsoft_auth_api_exceptions.XstsError.values.firstWhereOrNull(
-                (e) => e.xErr == xErr,
-              )
-              : null;
+      final xstsError = xErr != null
+          ? microsoft_auth_api_exceptions.XstsError.values.firstWhereOrNull(
+              (e) => e.xErr == xErr,
+            )
+          : null;
 
       if (e.response?.statusCode != HttpStatus.unauthorized &&
           xErr == null &&

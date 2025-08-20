@@ -39,22 +39,20 @@ class _AppearanceSection extends StatelessWidget {
         leading: const Icon(Icons.language),
         trailing: DropdownMenu(
           initialSelection: generalSettings.appLanguage,
-          onSelected:
-              (value) => context.read<SettingsCubit>().updateSettings(
-                general: generalSettings.copyWith(appLanguage: value),
-              ),
-          dropdownMenuEntries:
-              AppLanguage.values
-                  .map(
-                    (language) => DropdownMenuEntry(
-                      value: language,
-                      label: switch (language) {
-                        AppLanguage.system => context.loc.system,
-                        _ => language.label,
-                      },
-                    ),
-                  )
-                  .toList(),
+          onSelected: (value) => context.read<SettingsCubit>().updateSettings(
+            general: generalSettings.copyWith(appLanguage: value),
+          ),
+          dropdownMenuEntries: AppLanguage.values
+              .map(
+                (language) => DropdownMenuEntry(
+                  value: language,
+                  label: switch (language) {
+                    AppLanguage.system => context.loc.system,
+                    _ => language.label,
+                  },
+                ),
+              )
+              .toList(),
         ),
       ),
       ListTile(
@@ -90,13 +88,12 @@ class _AppearanceSection extends StatelessWidget {
             ),
           ],
           selected: <AppThemeMode>{generalSettings.themeMode},
-          onSelectionChanged:
-              (Set<AppThemeMode> newSelection) =>
-                  context.read<SettingsCubit>().updateSettings(
-                    general: generalSettings.copyWith(
-                      themeMode: newSelection.first,
-                    ),
-                  ),
+          onSelectionChanged: (Set<AppThemeMode> newSelection) =>
+              context.read<SettingsCubit>().updateSettings(
+                general: generalSettings.copyWith(
+                  themeMode: newSelection.first,
+                ),
+              ),
         ),
       ),
       SwitchListTile(
@@ -104,10 +101,9 @@ class _AppearanceSection extends StatelessWidget {
         title: Text(context.loc.dynamicColor),
         subtitle: Text(context.loc.automaticallyAdaptToSystemColors),
         secondary: const Icon(Icons.palette),
-        onChanged:
-            (value) => context.read<SettingsCubit>().updateSettings(
-              general: generalSettings.copyWith(useDynamicColor: value),
-            ),
+        onChanged: (value) => context.read<SettingsCubit>().updateSettings(
+          general: generalSettings.copyWith(useDynamicColor: value),
+        ),
       ),
 
       ListTile(
@@ -130,31 +126,28 @@ class _AppearanceSection extends StatelessWidget {
 
                 await showDialog<void>(
                   context: context,
-                  builder:
-                      (context) => AlertDialog(
-                        title: Text(context.loc.pickAColor),
-                        content: ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            maxHeight: 400,
-                            maxWidth: 400,
-                          ),
-                          child: SingleChildScrollView(
-                            child: ColorPicker(
-                              color: Color(generalSettings.accentColor),
-                              onColorChanged: (color) => pickedColor = color,
-                              pickersEnabled: const {
-                                ColorPickerType.wheel: true,
-                              },
-                            ),
-                          ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => context.pop(),
-                            child: Text(context.loc.close),
-                          ),
-                        ],
+                  builder: (context) => AlertDialog(
+                    title: Text(context.loc.pickAColor),
+                    content: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxHeight: 400,
+                        maxWidth: 400,
                       ),
+                      child: SingleChildScrollView(
+                        child: ColorPicker(
+                          color: Color(generalSettings.accentColor),
+                          onColorChanged: (color) => pickedColor = color,
+                          pickersEnabled: const {ColorPickerType.wheel: true},
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => context.pop(),
+                        child: Text(context.loc.close),
+                      ),
+                    ],
+                  ),
                 );
 
                 final newColor = pickedColor;
@@ -169,14 +162,11 @@ class _AppearanceSection extends StatelessWidget {
             ),
             Switch(
               value: generalSettings.useAccentColor,
-              onChanged:
-                  generalSettings.useDynamicColor
-                      ? null
-                      : (value) => context.read<SettingsCubit>().updateSettings(
-                        general: generalSettings.copyWith(
-                          useAccentColor: value,
-                        ),
-                      ),
+              onChanged: generalSettings.useDynamicColor
+                  ? null
+                  : (value) => context.read<SettingsCubit>().updateSettings(
+                      general: generalSettings.copyWith(useAccentColor: value),
+                    ),
             ),
           ],
         ),
@@ -186,12 +176,9 @@ class _AppearanceSection extends StatelessWidget {
         title: Text(context.loc.classicMaterialDesign),
         subtitle: Text(context.loc.useClassicMaterialDesignTheme),
         secondary: const Icon(Icons.android),
-        onChanged:
-            (value) => context.read<SettingsCubit>().updateSettings(
-              general: generalSettings.copyWith(
-                useClassicMaterialDesign: value,
-              ),
-            ),
+        onChanged: (value) => context.read<SettingsCubit>().updateSettings(
+          general: generalSettings.copyWith(useClassicMaterialDesign: value),
+        ),
       ),
     ],
   );
@@ -214,20 +201,18 @@ class _UiPreferencesSection extends StatelessWidget {
           // Rebuild to use correct localization label for the selected item
           key: ValueKey(Localizations.localeOf(context)),
           initialSelection: generalSettings.defaultTab,
-          onSelected:
-              (value) => context.read<SettingsCubit>().updateSettings(
-                general: generalSettings.copyWith(defaultTab: value),
-              ),
-          dropdownMenuEntries:
-              HomeScreenTab.values
-                  .map(
-                    (tab) => DropdownMenuEntry(
-                      value: tab,
-                      label: tab.getLabel(context.loc),
-                      leadingIcon: Icon(tab.selectedIconData),
-                    ),
-                  )
-                  .toList(),
+          onSelected: (value) => context.read<SettingsCubit>().updateSettings(
+            general: generalSettings.copyWith(defaultTab: value),
+          ),
+          dropdownMenuEntries: HomeScreenTab.values
+              .map(
+                (tab) => DropdownMenuEntry(
+                  value: tab,
+                  label: tab.getLabel(context.loc),
+                  leadingIcon: Icon(tab.selectedIconData),
+                ),
+              )
+              .toList(),
         ),
       ),
     ],

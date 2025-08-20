@@ -103,8 +103,9 @@ class _UpsertOfflineAccountDialogState
         child: Text(context.loc.cancel),
       ),
       TextButton(
-        onPressed:
-            (_formKey.currentState?.validate() ?? false) ? _create : null,
+        onPressed: (_formKey.currentState?.validate() ?? false)
+            ? _create
+            : null,
         child: Text(
           widget.offlineAccountToUpdate != null
               ? context.loc.update

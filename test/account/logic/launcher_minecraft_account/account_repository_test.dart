@@ -655,7 +655,10 @@ void main() {
                 value: 'updated-minecraft-access-token',
               ),
             ),
-            capes: [createMinecraftCape(id: 'new-id'), createMinecraftCape()],
+            capes: [
+              createMinecraftCape(id: 'new-id'),
+              createMinecraftCape(),
+            ],
             skins: [createMinecraftSkin(url: 'new-url')],
           );
       return (updatedAccount, existingAccounts);

@@ -56,13 +56,10 @@ class ApiMinecraftVersionDetails extends Equatable {
     javaVersion: ApiMinecraftJavaVersionInfo.fromJson(
       json['javaVersion']! as JsonMap,
     ),
-    libraries:
-        (json['libraries']! as JsonList)
-            .cast<JsonMap>()
-            .map(
-              (libraryMap) => ApiMinecraftVersionLibrary.fromJson(libraryMap),
-            )
-            .toList(),
+    libraries: (json['libraries']! as JsonList)
+        .cast<JsonMap>()
+        .map((libraryMap) => ApiMinecraftVersionLibrary.fromJson(libraryMap))
+        .toList(),
     logging: ApiMinecraftLoggingConfig.fromJson(json['logging']! as JsonMap),
     mainClass: json['mainClass']! as String,
     minimumLauncherVersion: json['minimumLauncherVersion']! as int,

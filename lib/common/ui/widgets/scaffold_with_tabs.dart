@@ -49,18 +49,17 @@ class _ScaffoldWithTabsState extends State<ScaffoldWithTabs> {
       children: [
         NavigationRail(
           labelType: NavigationRailLabelType.all,
-          onDestinationSelected:
-              (value) => setState(() => _selectedIndex = value),
-          destinations:
-              widget.navigationMenuItems
-                  .map(
-                    (e) => NavigationRailDestination(
-                      icon: e.unselectedIcon,
-                      label: Text(e.label),
-                      selectedIcon: e.selectedIcon,
-                    ),
-                  )
-                  .toList(),
+          onDestinationSelected: (value) =>
+              setState(() => _selectedIndex = value),
+          destinations: widget.navigationMenuItems
+              .map(
+                (e) => NavigationRailDestination(
+                  icon: e.unselectedIcon,
+                  label: Text(e.label),
+                  selectedIcon: e.selectedIcon,
+                ),
+              )
+              .toList(),
           selectedIndex: _selectedIndex,
           trailing: Expanded(
             child: Column(

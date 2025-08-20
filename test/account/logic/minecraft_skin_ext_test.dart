@@ -10,17 +10,16 @@ void main() {
   group('fullSkinImageUrl', () {
     _commonTests(
       onlineSkinImageUrlProvider: (account) => account.fullSkinImageUrl,
-      expectedSkinImageUrl:
-          (accountId) =>
-              'https://api.mineatar.io/body/full/$accountId?scale=8&overlay=true',
+      expectedSkinImageUrl: (accountId) =>
+          'https://api.mineatar.io/body/full/$accountId?scale=8&overlay=true',
     );
   });
 
   group('headSkinImageUrl', () {
     _commonTests(
       onlineSkinImageUrlProvider: (account) => account.headSkinImageUrl,
-      expectedSkinImageUrl:
-          (accountId) => 'https://api.mineatar.io/face/$accountId?overlay=true',
+      expectedSkinImageUrl: (accountId) =>
+          'https://api.mineatar.io/face/$accountId?overlay=true',
     );
   });
 }

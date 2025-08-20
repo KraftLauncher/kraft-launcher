@@ -44,8 +44,8 @@ class MinecraftVersionsApi {
     onConnectionFailure: (message) => ConnectionFailure(message),
     onTooManyRequestsFailure: () => const TooManyRequestsFailure(),
     onInternalServerError: (message, _) => InternalServerFailure(message),
-    onServiceUnavailable:
-        (retryAfterInSeconds) => ServiceUnavailable(retryAfterInSeconds),
+    onServiceUnavailable: (retryAfterInSeconds) =>
+        ServiceUnavailable(retryAfterInSeconds),
     onUnknownFailure: (e) => UnknownFailure(e.userErrorMessage),
   );
 
@@ -79,7 +79,11 @@ class MinecraftVersionsApi {
 // The [JsonMap] is the response without parsing, useful for callers
 // to cache the response without using toJson().
 // Using toJson() is more verbose and will not include new fields added by the API.
-typedef ManifestWithJsonMap =
-    (ApiMinecraftVersionManifest manifest, JsonMap jsonMap);
-typedef VersionDetailsWithJsonMap =
-    (ApiMinecraftVersionDetails versionDetails, JsonMap jsonMap);
+typedef ManifestWithJsonMap = (
+  ApiMinecraftVersionManifest manifest,
+  JsonMap jsonMap,
+);
+typedef VersionDetailsWithJsonMap = (
+  ApiMinecraftVersionDetails versionDetails,
+  JsonMap jsonMap,
+);

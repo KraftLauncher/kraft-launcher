@@ -71,14 +71,13 @@ class MicrosoftAuthCubit extends Cubit<MicrosoftAuthState> {
     required MicrosoftAuthCodeResponsePageVariants authCodeResponsePageVariants,
   }) => _handleFailures(() async {
     final (result) = await minecraftAccountService.loginWithMicrosoftAuthCode(
-      onProgress:
-          (progress) => emit(
-            state.copyWith(
-              loginProgress: progress,
-              loginStatus: MicrosoftLoginStatus.loading,
-              authFlow: MicrosoftAuthFlow.authCode,
-            ),
-          ),
+      onProgress: (progress) => emit(
+        state.copyWith(
+          loginProgress: progress,
+          loginStatus: MicrosoftLoginStatus.loading,
+          authFlow: MicrosoftAuthFlow.authCode,
+        ),
+      ),
       onAuthCodeLoginUrlAvailable: (authCodeLoginUrl) {
         emit(
           state.copyWith(
@@ -105,10 +104,9 @@ class MicrosoftAuthCubit extends Cubit<MicrosoftAuthState> {
 
     emit(
       state.copyWith(
-        loginStatus:
-            hasUpdatedExistingAccount
-                ? MicrosoftLoginStatus.successRefreshedExisting
-                : MicrosoftLoginStatus.successAddedNew,
+        loginStatus: hasUpdatedExistingAccount
+            ? MicrosoftLoginStatus.successRefreshedExisting
+            : MicrosoftLoginStatus.successAddedNew,
         recentAccount: account,
       ),
     );
@@ -127,25 +125,23 @@ class MicrosoftAuthCubit extends Cubit<MicrosoftAuthState> {
     );
     final deviceCodeResult = await minecraftAccountService
         .requestLoginWithMicrosoftDeviceCode(
-          onProgress:
-              (progress) => emit(
-                state.copyWith(
-                  loginProgress: progress,
-                  loginStatus:
-                      // Avoid showing loading. Device code is requested on login dialog open,
-                      // and the user may use auth/device code to login.
-                      (progress == MinecraftAuthProgress.waitingForUserLogin)
-                          ? null
-                          : MicrosoftLoginStatus.loading,
-                ),
-              ),
-          onUserDeviceCodeAvailable:
-              (deviceCode) => emit(
-                state.copyWith(
-                  requestedDeviceCode: Wrapped.value(deviceCode),
-                  deviceCodeStatus: MicrosoftDeviceCodeStatus.polling,
-                ),
-              ),
+          onProgress: (progress) => emit(
+            state.copyWith(
+              loginProgress: progress,
+              loginStatus:
+                  // Avoid showing loading. Device code is requested on login dialog open,
+                  // and the user may use auth/device code to login.
+                  (progress == MinecraftAuthProgress.waitingForUserLogin)
+                  ? null
+                  : MicrosoftLoginStatus.loading,
+            ),
+          ),
+          onUserDeviceCodeAvailable: (deviceCode) => emit(
+            state.copyWith(
+              requestedDeviceCode: Wrapped.value(deviceCode),
+              deviceCodeStatus: MicrosoftDeviceCodeStatus.polling,
+            ),
+          ),
         );
 
     final (accountResult, closeReason) = (
@@ -184,10 +180,9 @@ class MicrosoftAuthCubit extends Cubit<MicrosoftAuthState> {
         deviceCodeStatus: MicrosoftDeviceCodeStatus.idle,
         requestedDeviceCode: const Wrapped.value(null),
         recentAccount: account,
-        loginStatus:
-            accountExists
-                ? MicrosoftLoginStatus.successRefreshedExisting
-                : MicrosoftLoginStatus.successAddedNew,
+        loginStatus: accountExists
+            ? MicrosoftLoginStatus.successRefreshedExisting
+            : MicrosoftLoginStatus.successAddedNew,
       ),
     );
   }, loginStatus: MicrosoftLoginStatus.failure);
@@ -216,13 +211,12 @@ class MicrosoftAuthCubit extends Cubit<MicrosoftAuthState> {
         final refreshedAccount = await minecraftAccountService
             .refreshMicrosoftAccount(
               account,
-              onProgress:
-                  (progress) => emit(
-                    state.copyWith(
-                      refreshStatus: MicrosoftRefreshAccountStatus.loading,
-                      refreshAccountProgress: progress,
-                    ),
-                  ),
+              onProgress: (progress) => emit(
+                state.copyWith(
+                  refreshStatus: MicrosoftRefreshAccountStatus.loading,
+                  refreshAccountProgress: progress,
+                ),
+              ),
             );
 
         accountCubit.handleExternalAccountChange(account: refreshedAccount);

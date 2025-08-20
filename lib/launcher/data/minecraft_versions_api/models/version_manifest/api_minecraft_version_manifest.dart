@@ -14,14 +14,12 @@ class ApiMinecraftVersionManifest extends Equatable {
   factory ApiMinecraftVersionManifest.fromJson(JsonMap json) =>
       ApiMinecraftVersionManifest(
         latest: ApiMinecraftLatestVersions.fromJson(json['latest']! as JsonMap),
-        versions:
-            (json['versions']! as JsonList)
-                .cast<JsonMap>()
-                .map(
-                  (versionMap) =>
-                      ApiMinecraftManifestVersion.fromJson(versionMap),
-                )
-                .toList(),
+        versions: (json['versions']! as JsonList)
+            .cast<JsonMap>()
+            .map(
+              (versionMap) => ApiMinecraftManifestVersion.fromJson(versionMap),
+            )
+            .toList(),
       );
 
   final ApiMinecraftLatestVersions latest;

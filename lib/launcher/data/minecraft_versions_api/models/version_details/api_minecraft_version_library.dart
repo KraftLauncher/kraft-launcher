@@ -19,11 +19,10 @@ class ApiMinecraftVersionLibrary extends Equatable {
           json['downloads']! as JsonMap,
         ),
         name: json['name']! as String,
-        rules:
-            (json['rules'] as JsonList?)
-                ?.cast<JsonMap>()
-                .map((ruleMap) => ApiMinecraftRule.fromJson(ruleMap))
-                .toList(),
+        rules: (json['rules'] as JsonList?)
+            ?.cast<JsonMap>()
+            .map((ruleMap) => ApiMinecraftRule.fromJson(ruleMap))
+            .toList(),
         natives: (json['natives'] as Map<String, dynamic>?)
             ?.cast<String, Object>()
             .map((k, v) => MapEntry(k, v as String)),

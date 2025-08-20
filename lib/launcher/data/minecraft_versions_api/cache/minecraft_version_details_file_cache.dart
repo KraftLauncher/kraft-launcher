@@ -18,8 +18,8 @@ class MinecraftVersionDetailsFileCache {
   factory MinecraftVersionDetailsFileCache.fromAppDataPaths(
     AppDataPaths appDataPaths,
   ) => MinecraftVersionDetailsFileCache(
-    getFileForVersionId:
-        (versionId) => appDataPaths.versionDetailsFile(versionId),
+    getFileForVersionId: (versionId) =>
+        appDataPaths.versionDetailsFile(versionId),
   );
 
   final GetFileForVersionId _getFileForVersionId;

@@ -245,10 +245,9 @@ class _ProfileTabState extends State<ProfileTab> {
               'user_type': 'msa',
               'version_type': versionDetails.type.toLaunchArgument(),
             };
-            final argumentValue =
-                map.entries
-                    .firstWhereOrNull((e) => e.key == argumentName)
-                    ?.value;
+            final argumentValue = map.entries
+                .firstWhereOrNull((e) => e.key == argumentName)
+                ?.value;
             if (argumentValue == null) {
               continue;
             }
@@ -282,23 +281,22 @@ class _ProfileTabState extends State<ProfileTab> {
 
     classpath.add(clientJarFile.absolute.path);
 
-    final libraries =
-        versionDetails.libraries.where((library) {
-          final rules = library.rules ?? [];
-          if (rules.isEmpty) {
-            return true;
-          }
-          final firstRule = rules.firstOrNull?.os;
-          final targetOsName = firstRule?.name;
-          // final targetOsVersion = firstRule?['version'] as String?;
-          if (targetOsName == osName) {
-            return true;
-          }
-          print(
-            'Ignoring this library since it is not for this os: ${library.name}',
-          );
-          return false;
-        }).toList();
+    final libraries = versionDetails.libraries.where((library) {
+      final rules = library.rules ?? [];
+      if (rules.isEmpty) {
+        return true;
+      }
+      final firstRule = rules.firstOrNull?.os;
+      final targetOsName = firstRule?.name;
+      // final targetOsVersion = firstRule?['version'] as String?;
+      if (targetOsName == osName) {
+        return true;
+      }
+      print(
+        'Ignoring this library since it is not for this os: ${library.name}',
+      );
+      return false;
+    }).toList();
 
     for (final libraryJson in libraries) {
       final artifact = libraryJson.downloads.artifact;
@@ -391,10 +389,9 @@ class _ProfileTabState extends State<ProfileTab> {
 
     final assetIndexJson = versionDetails.assetIndex;
     final assetIndexJsonDownloadUrl = assetIndexJson.url;
-    final assetIndexResponseData =
-        (await dio.getUri<JsonMap>(
-          Uri.parse(assetIndexJsonDownloadUrl),
-        )).dataOrThrow;
+    final assetIndexResponseData = (await dio.getUri<JsonMap>(
+      Uri.parse(assetIndexJsonDownloadUrl),
+    )).dataOrThrow;
     final assetIndexFile = File(
       p.join(assetsDirPath, 'indexes', '${assetIndexJson.id}.json'),
     );
@@ -404,8 +401,9 @@ class _ProfileTabState extends State<ProfileTab> {
     final assetsPool = Pool(10, timeout: const Duration(seconds: 30));
     final assetFutures = <Future<void>>[];
 
-    final assetObjects =
-        ApiMinecraftAssetIndex.fromJson(assetIndexResponseData).objects;
+    final assetObjects = ApiMinecraftAssetIndex.fromJson(
+      assetIndexResponseData,
+    ).objects;
     for (final assetObject in assetObjects.entries) {
       final assetHash = assetObject.value.hash;
       final firstTwo = assetHash.substring(0, 2);
@@ -434,8 +432,9 @@ class _ProfileTabState extends State<ProfileTab> {
 
     final requiredJavaVersionComponent = versionDetails.javaVersion.component;
 
-    final javaRuntimesResponseData =
-        (await dio.getUri<JsonMap>(Uri.parse(javaRuntimesUrl))).dataOrThrow;
+    final javaRuntimesResponseData = (await dio.getUri<JsonMap>(
+      Uri.parse(javaRuntimesUrl),
+    )).dataOrThrow;
 
     final javaSystemRuntimeKey = switch (defaultTargetPlatform) {
       TargetPlatform.linux => () {
@@ -471,10 +470,9 @@ class _ProfileTabState extends State<ProfileTab> {
     final javaRuntimeManifestUrl =
         (runtimeDetails['manifest']! as JsonMap)['url']! as String;
 
-    final javaRuntimeManifestResponseData =
-        (await dio.getUri<JsonMap>(
-          Uri.parse(javaRuntimeManifestUrl),
-        )).dataOrThrow;
+    final javaRuntimeManifestResponseData = (await dio.getUri<JsonMap>(
+      Uri.parse(javaRuntimeManifestUrl),
+    )).dataOrThrow;
     final javaRuntimeFilesWithDirectories =
         javaRuntimeManifestResponseData['files']! as JsonMap;
     final javaRuntimeFiles = javaRuntimeFilesWithDirectories.entries.where(

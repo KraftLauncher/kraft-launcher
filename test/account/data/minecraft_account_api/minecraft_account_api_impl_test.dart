@@ -314,11 +314,10 @@ void main() {
               .toLowerCase(),
           skinVariant.name.toLowerCase(),
         );
-        final capturedSkinFile =
-            captured.requestData.files
-                .where((file) => file.key == 'file')
-                .firstOrNull
-                ?.value;
+        final capturedSkinFile = captured.requestData.files
+            .where((file) => file.key == 'file')
+            .firstOrNull
+            ?.value;
         expect(capturedSkinFile, isNotNull);
         expect(capturedSkinFile?.filename, p.basename(skinFile.path));
         expect(capturedSkinFile?.length, skinFile.lengthSync());

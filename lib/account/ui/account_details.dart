@@ -59,10 +59,9 @@ class AccountDetails extends StatelessWidget {
                       case AccountType.offline:
                         showDialog<void>(
                           context: context,
-                          builder:
-                              (context) => UpsertOfflineAccountDialog(
-                                offlineAccountToUpdate: account,
-                              ),
+                          builder: (context) => UpsertOfflineAccountDialog(
+                            offlineAccountToUpdate: account,
+                          ),
                         );
                     }
                   },
@@ -111,12 +110,10 @@ class AccountDetails extends StatelessWidget {
                                 MicrosoftAuthState,
                                 MinecraftAuthProgress?
                               >(
-                                selector:
-                                    (state) => state.refreshAccountProgress,
-                                builder:
-                                    (context, authProgress) => Text(
-                                      authProgress.getMessage(context.loc),
-                                    ),
+                                selector: (state) =>
+                                    state.refreshAccountProgress,
+                                builder: (context, authProgress) =>
+                                    Text(authProgress.getMessage(context.loc)),
                               ),
                               const LinearProgressIndicator(),
                             ],
@@ -149,22 +146,18 @@ class AccountDetails extends StatelessWidget {
                     title: Text(context.loc.updateSkin),
                     leading: const Icon(Icons.brush),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap:
-                        () => context.scaffoldMessenger.showSnackBarText(
-                          context.loc.featureUnsupportedYet,
-                        ),
+                    onTap: () => context.scaffoldMessenger.showSnackBarText(
+                      context.loc.featureUnsupportedYet,
+                    ),
                   ),
                 if (account.isMicrosoft)
                   ListTile(
                     title: Text(context.loc.revokeAccess),
                     leading: const Icon(Icons.no_accounts),
                     trailing: const Icon(Icons.open_in_new),
-                    onTap:
-                        () => launchUrl(
-                          Uri.parse(
-                            ProjectInfoConstants.microsoftRevokeAccessLink,
-                          ),
-                        ),
+                    onTap: () => launchUrl(
+                      Uri.parse(ProjectInfoConstants.microsoftRevokeAccessLink),
+                    ),
                   ),
                 ListTile(
                   onTap: () async {
@@ -172,29 +165,26 @@ class AccountDetails extends StatelessWidget {
                     final confirmed =
                         await showDialog<bool>(
                           context: context,
-                          builder:
-                              (context) => AlertDialog(
-                                title: Text(
-                                  context.loc.removeAccountConfirmation,
-                                ),
-                                content: Text(
-                                  context.loc.removeAccountConfirmationNotice,
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => context.pop(false),
-                                    child: Text(context.loc.cancel),
-                                  ),
-                                  TextButton(
-                                    onPressed: () => context.pop(true),
-                                    style: TextButton.styleFrom(
-                                      foregroundColor:
-                                          context.theme.colorScheme.error,
-                                    ),
-                                    child: Text(context.loc.remove),
-                                  ),
-                                ],
+                          builder: (context) => AlertDialog(
+                            title: Text(context.loc.removeAccountConfirmation),
+                            content: Text(
+                              context.loc.removeAccountConfirmationNotice,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => context.pop(false),
+                                child: Text(context.loc.cancel),
                               ),
+                              TextButton(
+                                onPressed: () => context.pop(true),
+                                style: TextButton.styleFrom(
+                                  foregroundColor:
+                                      context.theme.colorScheme.error,
+                                ),
+                                child: Text(context.loc.remove),
+                              ),
+                            ],
+                          ),
                         ) ??
                         false;
                     if (!confirmed) {

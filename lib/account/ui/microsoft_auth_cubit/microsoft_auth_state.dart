@@ -144,10 +144,9 @@ final class MicrosoftAuthState extends Equatable {
       loginStatus: loginStatus ?? this.loginStatus,
       refreshStatus: refreshStatus ?? this.refreshStatus,
       deviceCodeStatus: deviceCodeStatus ?? this.deviceCodeStatus,
-      requestedDeviceCode:
-          requestedDeviceCode != null
-              ? requestedDeviceCode.value
-              : this.requestedDeviceCode,
+      requestedDeviceCode: requestedDeviceCode != null
+          ? requestedDeviceCode.value
+          : this.requestedDeviceCode,
       authCodeLoginUrl: authCodeLoginUrl ?? this.authCodeLoginUrl,
       recentAccount: recentAccount ?? this.recentAccount,
       exception: exception ?? this.exception,

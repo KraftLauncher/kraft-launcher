@@ -12,11 +12,10 @@ class FileMinecraftAccounts extends Equatable {
 
   factory FileMinecraftAccounts.fromJson(JsonMap json) => FileMinecraftAccounts(
     defaultAccountId: json['defaultAccountId'] as String?,
-    accounts:
-        (json['accounts']! as JsonList)
-            .cast<JsonMap>()
-            .map((accountMap) => FileMinecraftAccount.fromJson(accountMap))
-            .toList(),
+    accounts: (json['accounts']! as JsonList)
+        .cast<JsonMap>()
+        .map((accountMap) => FileMinecraftAccount.fromJson(accountMap))
+        .toList(),
   );
 
   final List<FileMinecraftAccount> accounts;

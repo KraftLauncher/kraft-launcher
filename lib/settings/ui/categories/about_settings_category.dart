@@ -40,8 +40,8 @@ class AboutSettingsCategory extends StatelessWidget {
             ProjectInfoConstants.githubRepoLink.replaceFirst('https://', ''),
           ),
           leading: const Icon(Icons.code),
-          onTap:
-              () => launchUrl(Uri.parse(ProjectInfoConstants.githubRepoLink)),
+          onTap: () =>
+              launchUrl(Uri.parse(ProjectInfoConstants.githubRepoLink)),
         ),
         ListTile(
           leading: const Icon(Icons.question_answer),
@@ -57,10 +57,9 @@ class AboutSettingsCategory extends StatelessWidget {
           leading: const Icon(Icons.email),
           title: Text(context.loc.contact),
           subtitle: const Text(ProjectInfoConstants.contactEmail),
-          onTap:
-              () => launchUrl(
-                Uri(scheme: 'mailto', path: ProjectInfoConstants.contactEmail),
-              ),
+          onTap: () => launchUrl(
+            Uri(scheme: 'mailto', path: ProjectInfoConstants.contactEmail),
+          ),
         ),
         ListTile(
           title: Text(context.loc.license),

@@ -22,11 +22,10 @@ class _CopyTextIconButtonState extends State<CopyTextIconButton> {
   Widget build(BuildContext context) => IconButton(
     icon: AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
-      transitionBuilder:
-          (child, animation) => FadeTransition(
-            opacity: animation,
-            child: ScaleTransition(scale: animation, child: child),
-          ),
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: ScaleTransition(scale: animation, child: child),
+      ),
       child: Icon(_copied ? Icons.done : Icons.copy, key: ValueKey(_copied)),
     ),
     tooltip: widget.tooltip,

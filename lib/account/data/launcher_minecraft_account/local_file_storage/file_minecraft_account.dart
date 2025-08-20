@@ -32,16 +32,14 @@ class FileMinecraftAccount extends Equatable {
       }
       return FileMicrosoftAccountInfo.fromJson(microsoftAccountInfoMap);
     }(),
-    skins:
-        (json['skins']! as JsonList)
-            .cast<JsonMap>()
-            .map((skinMap) => _MinecraftSkinJson.fromJson(skinMap))
-            .toList(),
-    capes:
-        (json['capes']! as JsonList)
-            .cast<JsonMap>()
-            .map((capeMap) => _MinecraftCapeJson.fromJson(capeMap))
-            .toList(),
+    skins: (json['skins']! as JsonList)
+        .cast<JsonMap>()
+        .map((skinMap) => _MinecraftSkinJson.fromJson(skinMap))
+        .toList(),
+    capes: (json['capes']! as JsonList)
+        .cast<JsonMap>()
+        .map((capeMap) => _MinecraftCapeJson.fromJson(capeMap))
+        .toList(),
     ownsMinecraftJava: json['ownsMinecraftJava'] as bool?,
   );
 
@@ -174,10 +172,9 @@ extension _MinecraftSkinJson on MinecraftSkin {
       return switch (skinVariant) {
         'classic' => MinecraftSkinVariant.classic,
         'slim' => MinecraftSkinVariant.slim,
-        String() =>
-          throw UnsupportedError(
-            'Unknown Minecraft skin variant: $skinVariant',
-          ),
+        String() => throw UnsupportedError(
+          'Unknown Minecraft skin variant: $skinVariant',
+        ),
       };
     }(),
   );
@@ -203,8 +200,9 @@ extension _MinecraftCosmeticStateJson on MinecraftCosmeticState {
   static MinecraftCosmeticState fromJson(String json) => switch (json) {
     'active' => MinecraftCosmeticState.active,
     'inactive' => MinecraftCosmeticState.inactive,
-    String() =>
-      throw UnsupportedError('Unknown Minecraft cosmetic state: $json'),
+    String() => throw UnsupportedError(
+      'Unknown Minecraft cosmetic state: $json',
+    ),
   };
 }
 

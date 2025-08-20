@@ -21,8 +21,8 @@ class PlatformSecureStorageSupport {
           return linuxCached;
         }
 
-        final available =
-            await _linuxSecretServiceChecker.isSecretServiceAvailable();
+        final available = await _linuxSecretServiceChecker
+            .isSecretServiceAvailable();
         cachedLinuxSecretServiceAvailable = available;
         return available;
       }(),

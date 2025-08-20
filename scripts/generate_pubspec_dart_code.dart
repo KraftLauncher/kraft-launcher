@@ -33,7 +33,8 @@ void main(List<String> args) async {
     exit(1);
   }
 
-  final generatedDartFile = '''
+  final generatedDartFile =
+      '''
 // dart format off
 // coverage:ignore-file
 

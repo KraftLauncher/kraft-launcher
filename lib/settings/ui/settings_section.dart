@@ -24,10 +24,9 @@ class SettingsSection extends StatelessWidget {
           ),
           child: DefaultTextStyle(
             style: TextStyle(
-              color:
-                  context.theme.brightness == Brightness.dark
-                      ? const Color(0xffd3e3fd)
-                      : const Color(0xff0b57d0),
+              color: context.theme.brightness == Brightness.dark
+                  ? const Color(0xffd3e3fd)
+                  : const Color(0xff0b57d0),
             ),
             child: Text(title),
           ),

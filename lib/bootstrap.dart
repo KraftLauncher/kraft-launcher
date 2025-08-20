@@ -20,10 +20,9 @@ Future<void> bootstrap() async {
 
   final appDataPaths = AppDataPaths(
     // TODO: Support portable mode, run in portable mode on debug-builds
-    workingDirectory:
-        kDebugMode
-            ? (Directory('devWorkingDirectory')..createSync(recursive: true))
-            : await getApplicationSupportDirectory(),
+    workingDirectory: kDebugMode
+        ? (Directory('devWorkingDirectory')..createSync(recursive: true))
+        : await getApplicationSupportDirectory(),
   );
   AppLogger.init();
 

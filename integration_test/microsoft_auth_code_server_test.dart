@@ -125,10 +125,9 @@ void main() {
     );
 
     const fakeAuthCode = 'example-auth-code';
-    final redirectPageHtml =
-        (await DioTestClient.instance.getUri<String?>(
-          serverUri(authCodeParam: fakeAuthCode),
-        )).data;
+    final redirectPageHtml = (await DioTestClient.instance.getUri<String?>(
+      serverUri(authCodeParam: fakeAuthCode),
+    )).data;
 
     expect(
       redirectPageHtml,

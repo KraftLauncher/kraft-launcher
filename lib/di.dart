@@ -84,8 +84,9 @@ abstract class _FeatureProviders extends StatelessWidget {
 
   @nonVirtual
   @override
-  Widget build(BuildContext context) =>
-      _dataLayer(child: _logicLayer(child: _uiLayer(child: child)));
+  Widget build(BuildContext context) => _dataLayer(
+    child: _logicLayer(child: _uiLayer(child: child)),
+  );
 
   Widget _dataLayer({required Widget child});
   Widget _logicLayer({required Widget child});
@@ -111,13 +112,12 @@ class _AccountFeatureProviders extends _FeatureProviders {
         create: (context) => DefaultImageCacheService(),
       ),
       Provider<AccountFileStorage>(
-        create:
-            (context) => AccountFileStorage.fromAppDataPaths(context.read()),
+        create: (context) =>
+            AccountFileStorage.fromAppDataPaths(context.read()),
       ),
       Provider(
-        create:
-            (context) =>
-                SecureAccountStorage(flutterSecureStorage: context.read()),
+        create: (context) =>
+            SecureAccountStorage(flutterSecureStorage: context.read()),
       ),
       Provider<LinuxSecretServiceChecker>(
         create: (context) => DbusLinuxSecretServiceChecker(),
@@ -134,65 +134,57 @@ class _AccountFeatureProviders extends _FeatureProviders {
   Widget _logicLayer({required Widget child}) => MultiProvider(
     providers: [
       Provider<PlatformSecureStorageSupport>(
-        create:
-            (context) => PlatformSecureStorageSupport(
-              linuxSecretServiceChecker: context.read(),
-            ),
+        create: (context) => PlatformSecureStorageSupport(
+          linuxSecretServiceChecker: context.read(),
+        ),
       ),
       RepositoryProvider<AccountRepository>(
-        create:
-            (context) => AccountRepository(
-              accountFileStorage: context.read(),
-              secureAccountStorage: context.read(),
-              secureStorageSupport: context.read(),
-            ),
+        create: (context) => AccountRepository(
+          accountFileStorage: context.read(),
+          secureAccountStorage: context.read(),
+          secureStorageSupport: context.read(),
+        ),
         dispose: (repository) => repository.dispose(),
       ),
       Provider<MinecraftAccountResolver>(
-        create:
-            (context) => MinecraftAccountResolver(
-              microsoftAuthApi: context.read(),
-              minecraftAccountApi: context.read(),
-            ),
+        create: (context) => MinecraftAccountResolver(
+          microsoftAuthApi: context.read(),
+          minecraftAccountApi: context.read(),
+        ),
       ),
       Provider(
-        create:
-            (context) => MicrosoftAuthCodeFlow(
-              microsoftAuthApi: context.read(),
-              redirectHttpServerHandler: context.read(),
-            ),
+        create: (context) => MicrosoftAuthCodeFlow(
+          microsoftAuthApi: context.read(),
+          redirectHttpServerHandler: context.read(),
+        ),
         dispose: (_, value) => value.closeServer(),
       ),
       Provider(
-        create:
-            (context) =>
-                MicrosoftDeviceCodeFlow(microsoftAuthApi: context.read()),
+        create: (context) =>
+            MicrosoftDeviceCodeFlow(microsoftAuthApi: context.read()),
         dispose: (_, value) => value.cancelPollingTimer(),
       ),
       Provider(
-        create:
-            (context) => MicrosoftOAuthFlowController(
-              microsoftAuthCodeFlow: context.read(),
-              microsoftDeviceCodeFlow: context.read(),
-            ),
+        create: (context) => MicrosoftOAuthFlowController(
+          microsoftAuthCodeFlow: context.read(),
+          microsoftDeviceCodeFlow: context.read(),
+        ),
       ),
       Provider(
-        create:
-            (context) => MinecraftAccountRefresher(
-              imageCacheService: context.read(),
-              microsoftAuthApi: context.read(),
-              minecraftAccountApi: context.read(),
-              accountResolver: context.read(),
-            ),
+        create: (context) => MinecraftAccountRefresher(
+          imageCacheService: context.read(),
+          microsoftAuthApi: context.read(),
+          minecraftAccountApi: context.read(),
+          accountResolver: context.read(),
+        ),
       ),
       Provider<MinecraftAccountService>(
-        create:
-            (context) => MinecraftAccountService(
-              accountRepository: context.read<AccountRepository>(),
-              microsoftOAuthFlowController: context.read(),
-              minecraftAccountResolver: context.read(),
-              minecraftAccountRefresher: context.read(),
-            ),
+        create: (context) => MinecraftAccountService(
+          accountRepository: context.read<AccountRepository>(),
+          microsoftOAuthFlowController: context.read(),
+          minecraftAccountResolver: context.read(),
+          minecraftAccountRefresher: context.read(),
+        ),
       ),
       Provider(create: (context) => MinecraftOfflineAccountFactory()),
     ],
@@ -203,21 +195,19 @@ class _AccountFeatureProviders extends _FeatureProviders {
   Widget _uiLayer({required Widget child}) => MultiBlocProvider(
     providers: [
       BlocProvider(
-        create:
-            (context) => AccountCubit(
-              accountRepository: context.read(),
-              offlineAccountFactory: context.read(),
-            ),
+        create: (context) => AccountCubit(
+          accountRepository: context.read(),
+          offlineAccountFactory: context.read(),
+        ),
       ),
       BlocProvider(
-        create:
-            (context) => MicrosoftAuthCubit(
-              minecraftAccountService: context.read(),
-              // TODO: No bloc/cubit should depends on the other, avoid? See: https://bloclibrary.dev/architecture/#bloc-to-bloc-communication,
-              //  See also: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain and AccountRepository, this should be fixed once other related TODOs are fixed in AccountCubit and MicrosoftAuthCubit
-              accountCubit: context.read(),
-              secureStorageSupport: context.read(),
-            ),
+        create: (context) => MicrosoftAuthCubit(
+          minecraftAccountService: context.read(),
+          // TODO: No bloc/cubit should depends on the other, avoid? See: https://bloclibrary.dev/architecture/#bloc-to-bloc-communication,
+          //  See also: https://bloclibrary.dev/architecture/#connecting-blocs-through-domain and AccountRepository, this should be fixed once other related TODOs are fixed in AccountCubit and MicrosoftAuthCubit
+          accountCubit: context.read(),
+          secureStorageSupport: context.read(),
+        ),
       ),
     ],
     child: child,
@@ -231,8 +221,8 @@ class _SettingsFeatureProviders extends _FeatureProviders {
   Widget _dataLayer({required Widget child}) => MultiProvider(
     providers: [
       Provider(
-        create:
-            (context) => SettingsFileStorage.fromAppDataPaths(context.read()),
+        create: (context) =>
+            SettingsFileStorage.fromAppDataPaths(context.read()),
       ),
     ],
     child: child,
@@ -242,9 +232,8 @@ class _SettingsFeatureProviders extends _FeatureProviders {
   Widget _logicLayer({required Widget child}) => MultiProvider(
     providers: [
       RepositoryProvider(
-        create:
-            (context) =>
-                SettingsRepository(settingsFileStorage: context.read()),
+        create: (context) =>
+            SettingsRepository(settingsFileStorage: context.read()),
       ),
     ],
     child: child,

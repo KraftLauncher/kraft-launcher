@@ -208,12 +208,11 @@ class AccountRepository {
         });
       }
       return fileAccounts.toApp(
-        resolveMicrosoftReauthReason:
-            (account) => getReauthRequiredReason(
-              account,
-              accountTokensMissingFromFileStorage:
-                  account.microsoftAccountInfo?.hasMissingTokens ?? false,
-            ),
+        resolveMicrosoftReauthReason: (account) => getReauthRequiredReason(
+          account,
+          accountTokensMissingFromFileStorage:
+              account.microsoftAccountInfo?.hasMissingTokens ?? false,
+        ),
       );
     }
 
@@ -226,10 +225,9 @@ class AccountRepository {
 
     final fileAccounts = await _accountFileStorage.readAccounts();
 
-    final accounts =
-        fileAccounts != null
-            ? await mapFileAccountsToAccounts(fileAccounts)
-            : initializeEmptyAccounts();
+    final accounts = fileAccounts != null
+        ? await mapFileAccountsToAccounts(fileAccounts)
+        : initializeEmptyAccounts();
 
     final accountsWithUnmodifiableList = accounts.copyWith(
       list: List.unmodifiable(accounts.list),
@@ -250,11 +248,10 @@ class AccountRepository {
   Future<void> updateAccount(MinecraftAccount updatedAccount) async {
     await _modifyAndSaveAccount(
       account: updatedAccount,
-      buildList:
-          (existingAccounts) => existingAccounts.list.updateById(
-            updatedAccount.id,
-            (_) => updatedAccount,
-          ),
+      buildList: (existingAccounts) => existingAccounts.list.updateById(
+        updatedAccount.id,
+        (_) => updatedAccount,
+      ),
     );
   }
 

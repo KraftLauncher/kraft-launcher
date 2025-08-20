@@ -90,13 +90,12 @@ class MinecraftAccountService {
   }) async => _transformExceptions(() async {
     final tokenResponse = await _microsoftOAuthFlowController
         .loginWithMicrosoftAuthCode(
-          onProgress:
-              (progress) => onProgress(switch (progress) {
-                MicrosoftAuthCodeProgress.waitingForUserLogin =>
-                  MinecraftAuthProgress.waitingForUserLogin,
-                MicrosoftAuthCodeProgress.exchangingAuthCode =>
-                  MinecraftAuthProgress.exchangingAuthCode,
-              }),
+          onProgress: (progress) => onProgress(switch (progress) {
+            MicrosoftAuthCodeProgress.waitingForUserLogin =>
+              MinecraftAuthProgress.waitingForUserLogin,
+            MicrosoftAuthCodeProgress.exchangingAuthCode =>
+              MinecraftAuthProgress.exchangingAuthCode,
+          }),
           onAuthCodeLoginUrlAvailable: onAuthCodeLoginUrlAvailable,
           authCodeResponsePageVariants: authCodeResponsePageVariants,
         );
@@ -116,11 +115,10 @@ class MinecraftAccountService {
   }) => _transformExceptions(() async {
     final (tokenResponse, closeReason) = await _microsoftOAuthFlowController
         .requestLoginWithMicrosoftDeviceCode(
-          onProgress:
-              (progress) => onProgress(switch (progress) {
-                MicrosoftDeviceCodeProgress.waitingForUserLogin =>
-                  MinecraftAuthProgress.waitingForUserLogin,
-              }),
+          onProgress: (progress) => onProgress(switch (progress) {
+            MicrosoftDeviceCodeProgress.waitingForUserLogin =>
+              MinecraftAuthProgress.waitingForUserLogin,
+          }),
           onUserDeviceCodeAvailable: onUserDeviceCodeAvailable,
         );
     if (tokenResponse == null) {
@@ -191,13 +189,12 @@ class MinecraftAccountService {
       final refreshedAccount = await _minecraftAccountRefresher
           .refreshMicrosoftAccount(
             account,
-            onRefreshProgress:
-                (progress) => onProgress(switch (progress) {
-                  RefreshMinecraftAccountProgress.refreshingMicrosoftTokens =>
-                    MinecraftAuthProgress.refreshingMicrosoftTokens,
-                }),
-            onResolveAccountProgress:
-                (progress) => onProgress(_resolveToAuthProgress(progress)),
+            onRefreshProgress: (progress) => onProgress(switch (progress) {
+              RefreshMinecraftAccountProgress.refreshingMicrosoftTokens =>
+                MinecraftAuthProgress.refreshingMicrosoftTokens,
+            }),
+            onResolveAccountProgress: (progress) =>
+                onProgress(_resolveToAuthProgress(progress)),
           );
 
       await _accountRepository.updateAccount(refreshedAccount);

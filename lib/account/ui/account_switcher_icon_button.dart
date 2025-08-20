@@ -13,33 +13,25 @@ class AccountSwitcherIconButton extends StatelessWidget {
       (AccountCubit cubit) => cubit.state.accounts,
     );
     return MenuAnchor(
-      menuChildren:
-          accounts.list.indexed.map((entry) {
-            final account = entry.$2;
+      menuChildren: accounts.list.indexed.map((entry) {
+        final account = entry.$2;
 
-            return MenuItemButton(
-              leadingIcon: SkinIconImage(
-                account: account,
-                useCircleAvatar: true,
-              ),
-              child: Text(account.username),
-              onPressed:
-                  () => context.read<AccountCubit>().updateDefaultAccount(
-                    account.id,
-                  ),
-            );
-          }).toList(),
-      builder:
-          (context, controller, child) => IconButton(
-            onPressed:
-                () =>
-                    controller.isOpen ? controller.close() : controller.open(),
-            icon: SkinIconImage(
-              account: accounts.defaultAccount,
-              useCircleAvatar: true,
-            ),
-            tooltip: context.loc.switchAccount,
-          ),
+        return MenuItemButton(
+          leadingIcon: SkinIconImage(account: account, useCircleAvatar: true),
+          child: Text(account.username),
+          onPressed: () =>
+              context.read<AccountCubit>().updateDefaultAccount(account.id),
+        );
+      }).toList(),
+      builder: (context, controller, child) => IconButton(
+        onPressed: () =>
+            controller.isOpen ? controller.close() : controller.open(),
+        icon: SkinIconImage(
+          account: accounts.defaultAccount,
+          useCircleAvatar: true,
+        ),
+        tooltip: context.loc.switchAccount,
+      ),
     );
   }
 }

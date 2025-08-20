@@ -21,12 +21,11 @@ void main() {
   final libDir = Directory('lib');
 
   test('all test files have matching lib files', () {
-    final testFiles =
-        testDir
-            .listSync(recursive: true)
-            .whereType<File>()
-            .where((file) => file.path.endsWith('_test.dart'))
-            .toList();
+    final testFiles = testDir
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((file) => file.path.endsWith('_test.dart'))
+        .toList();
 
     for (final testFile in testFiles) {
       final relativeTestPath = p.relative(testFile.path, from: 'test');

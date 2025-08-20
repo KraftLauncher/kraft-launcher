@@ -39,10 +39,8 @@ class LoginWithMicrosoftDialog extends StatefulWidget {
   static void show(BuildContext context, {bool isReAuthentication = false}) =>
       showDialog<void>(
         context: context,
-        builder:
-            (context) => LoginWithMicrosoftDialog(
-              isReAuthentication: isReAuthentication,
-            ),
+        builder: (context) =>
+            LoginWithMicrosoftDialog(isReAuthentication: isReAuthentication),
       );
 }
 
@@ -175,14 +173,10 @@ class _DeviceCodeSectionState extends State<_DeviceCodeSection> {
               TextSpan(text: '${context.loc.deviceCodeStepVisit} '),
               TextSpan(
                 text: MicrosoftConstants.microsoftDeviceCodeLink,
-                recognizer:
-                    _microsoftDeviceLinkTapRecognizer
-                      ..onTap =
-                          () => launchUrl(
-                            Uri.parse(
-                              MicrosoftConstants.microsoftDeviceCodeLink,
-                            ),
-                          ),
+                recognizer: _microsoftDeviceLinkTapRecognizer
+                  ..onTap = () => launchUrl(
+                    Uri.parse(MicrosoftConstants.microsoftDeviceCodeLink),
+                  ),
                 style: TextStyle(color: context.theme.colorScheme.primary),
               ),
 
@@ -217,11 +211,9 @@ class _DeviceCodeSectionState extends State<_DeviceCodeSection> {
                     style: context.theme.textTheme.titleMedium,
                   ),
                   ElevatedButton.icon(
-                    onPressed:
-                        () =>
-                            context
-                                .read<MicrosoftAuthCubit>()
-                                .requestLoginWithMicrosoftDeviceCode(),
+                    onPressed: () => context
+                        .read<MicrosoftAuthCubit>()
+                        .requestLoginWithMicrosoftDeviceCode(),
                     label: Text(context.loc.tryAgain),
                     icon: const Icon(Icons.refresh),
                   ),
@@ -235,11 +227,9 @@ class _DeviceCodeSectionState extends State<_DeviceCodeSection> {
                     style: context.theme.textTheme.titleMedium,
                   ),
                   ElevatedButton.icon(
-                    onPressed:
-                        () =>
-                            context
-                                .read<MicrosoftAuthCubit>()
-                                .requestLoginWithMicrosoftDeviceCode(),
+                    onPressed: () => context
+                        .read<MicrosoftAuthCubit>()
+                        .requestLoginWithMicrosoftDeviceCode(),
                     label: Text(context.loc.tryAgain),
                     icon: const Icon(Icons.refresh),
                   ),
@@ -298,14 +288,13 @@ class _AuthCodeSection extends StatelessWidget {
         //  2. Avoid requiring pageLangCode and reading SettingsCubit, instead
         //  make MicrosoftAuthCubit dependent on SettingsRepository and access the value internally.
         final pageDir = Directionality.of(context).name;
-        final pageLangCode =
-            context
-                .read<SettingsCubit>()
-                .state
-                .settingsOrThrow
-                .general
-                .appLanguage
-                .localeCode;
+        final pageLangCode = context
+            .read<SettingsCubit>()
+            .state
+            .settingsOrThrow
+            .general
+            .appLanguage
+            .localeCode;
         context.read<MicrosoftAuthCubit>().loginWithMicrosoftAuthCode(
           authCodeResponsePageVariants: MicrosoftAuthCodeResponsePageVariants(
             approved: MicrosoftAuthCodeResponsePageContent(
@@ -331,18 +320,17 @@ class _AuthCodeSection extends StatelessWidget {
               pageLangCode: pageLangCode,
               pageDir: pageDir,
             ),
-            unknownError:
-                (errorCode, errorDescription) =>
-                    MicrosoftAuthCodeResponsePageContent(
-                      pageTitle: context.loc.errorOccurred,
-                      title: context.loc.errorOccurred,
-                      subtitle: context.loc.authCodeLoginUnknownError(
-                        errorCode,
-                        errorDescription,
-                      ),
-                      pageLangCode: pageLangCode,
-                      pageDir: pageDir,
-                    ),
+            unknownError: (errorCode, errorDescription) =>
+                MicrosoftAuthCodeResponsePageContent(
+                  pageTitle: context.loc.errorOccurred,
+                  title: context.loc.errorOccurred,
+                  subtitle: context.loc.authCodeLoginUnknownError(
+                    errorCode,
+                    errorDescription,
+                  ),
+                  pageLangCode: pageLangCode,
+                  pageDir: pageDir,
+                ),
           ),
         );
       },
@@ -383,10 +371,8 @@ class _LoadingIndicator extends StatelessWidget {
               builder: (context, authCodeLoginUrl) {
                 return GestureDetector(
                   onTap: () => launchUrl(Uri.parse(authCodeLoginUrl)),
-                  onLongPress:
-                      () => Clipboard.setData(
-                        ClipboardData(text: authCodeLoginUrl),
-                      ),
+                  onLongPress: () =>
+                      Clipboard.setData(ClipboardData(text: authCodeLoginUrl)),
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: Text(
@@ -438,8 +424,8 @@ class _MicrosoftLoginListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<MicrosoftAuthCubit, MicrosoftAuthState>(
-      listenWhen:
-          (previous, current) => previous.loginStatus != current.loginStatus,
+      listenWhen: (previous, current) =>
+          previous.loginStatus != current.loginStatus,
       listener: _onLoginStatusChanged,
       child: child,
     );
@@ -478,12 +464,9 @@ class _MicrosoftLoginListener extends StatelessWidget {
                       message,
                       snackBarAction: SnackBarAction(
                         label: context.loc.createXboxAccount,
-                        onPressed:
-                            () => launchUrl(
-                              Uri.parse(
-                                MicrosoftConstants.createXboxAccountLink,
-                              ),
-                            ),
+                        onPressed: () => launchUrl(
+                          Uri.parse(MicrosoftConstants.createXboxAccountLink),
+                        ),
                       ),
                     );
                     return;
@@ -502,8 +485,8 @@ class _MicrosoftLoginListener extends StatelessWidget {
               case MinecraftJavaEntitlementAbsentException():
                 showDialog<void>(
                   context: context,
-                  builder:
-                      (context) => const MinecraftJavaEntitlementAbsentDialog(),
+                  builder: (context) =>
+                      const MinecraftJavaEntitlementAbsentDialog(),
                 );
             }
             return;

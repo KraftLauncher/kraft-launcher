@@ -13,10 +13,9 @@ class MinecraftAccounts extends Equatable {
   final List<MinecraftAccount> list;
   final String? defaultAccountId;
 
-  MinecraftAccount? get defaultAccount =>
-      defaultAccountId == null
-          ? null
-          : list.firstWhere((account) => account.id == defaultAccountId);
+  MinecraftAccount? get defaultAccount => defaultAccountId == null
+      ? null
+      : list.firstWhere((account) => account.id == defaultAccountId);
 
   MinecraftAccount get defaultAccountOrThrow =>
       defaultAccount ??
@@ -29,10 +28,9 @@ class MinecraftAccounts extends Equatable {
     Wrapped<String?>? defaultAccountId,
   }) => MinecraftAccounts(
     list: list ?? this.list,
-    defaultAccountId:
-        defaultAccountId != null
-            ? defaultAccountId.value
-            : this.defaultAccountId,
+    defaultAccountId: defaultAccountId != null
+        ? defaultAccountId.value
+        : this.defaultAccountId,
   );
 
   @override

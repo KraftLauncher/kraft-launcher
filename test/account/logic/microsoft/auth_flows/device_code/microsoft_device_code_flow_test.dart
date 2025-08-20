@@ -281,8 +281,8 @@ void main() {
       String? capturedUserDeviceCode;
       final progressEvents = <MicrosoftDeviceCodeProgress>[];
       await simulateExpiration(
-        onUserDeviceCodeAvailable:
-            (deviceCode) => capturedUserDeviceCode = deviceCode,
+        onUserDeviceCodeAvailable: (deviceCode) =>
+            capturedUserDeviceCode = deviceCode,
         onProgress: (progress) => progressEvents.add(progress),
       );
 

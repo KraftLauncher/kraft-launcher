@@ -4,9 +4,7 @@ import 'package:file_executable/file_executable.dart';
 
 void main() {
   if (!Platform.isLinux && !Platform.isMacOS) {
-    stderr.writeln(
-      '❌ This package only supports Linux and macOS.',
-    );
+    stderr.writeln('❌ This package only supports Linux and macOS.');
     exit(1);
   }
 

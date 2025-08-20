@@ -51,10 +51,9 @@ enum ApiMinecraftRuleAction {
   static ApiMinecraftRuleAction fromJson(String json) => switch (json) {
     'allow' => allow,
     'disallow' => disallow,
-    String() =>
-      throw UnsupportedError(
-        'Unknown Minecraft Rule action from the API: $json',
-      ),
+    String() => throw UnsupportedError(
+      'Unknown Minecraft Rule action from the API: $json',
+    ),
   };
 }
 

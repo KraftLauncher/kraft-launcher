@@ -4,8 +4,9 @@ import 'package:kraft_launcher/common/generated/l10n/app_localizations.dart';
 extension AuthProgressMessagesExt on MinecraftAuthProgress? {
   String getMessage(AppLocalizations loc) {
     return switch (this) {
-      null =>
-        throw StateError('The auth progress is unknown, this is likely a bug.'),
+      null => throw StateError(
+        'The auth progress is unknown, this is likely a bug.',
+      ),
       MinecraftAuthProgress.waitingForUserLogin =>
         loc.authProgressWaitingForUserLogin,
       MinecraftAuthProgress.exchangingAuthCode =>

@@ -58,14 +58,10 @@ class AccountsTab extends StatelessWidget {
           child: Column(
             children: [
               SearchField(
-                onSubmitted:
-                    (searchQuery) => context
-                        .read<AccountCubit>()
-                        .searchAccounts(searchQuery),
-                onChanged:
-                    (searchQuery) => context
-                        .read<AccountCubit>()
-                        .searchAccounts(searchQuery),
+                onSubmitted: (searchQuery) =>
+                    context.read<AccountCubit>().searchAccounts(searchQuery),
+                onChanged: (searchQuery) =>
+                    context.read<AccountCubit>().searchAccounts(searchQuery),
               ),
               const _AccountsList(),
 
@@ -79,9 +75,9 @@ class AccountsTab extends StatelessWidget {
               builder: (context, selectedAccount) {
                 return selectedAccount != null
                     ? AccountDetails(
-                      account: selectedAccount,
-                      imagePicker: context.read<ImagePicker>(),
-                    )
+                        account: selectedAccount,
+                        imagePicker: context.read<ImagePicker>(),
+                      )
                     : const SizedBox();
               },
             ),
@@ -136,31 +132,28 @@ class _AddAccountButton extends StatelessWidget {
       child: Align(
         alignment: Alignment.bottomLeft,
         child: MenuAnchor(
-          menuChildren:
-              AccountType.values
-                  .map(
-                    (accountType) => switch (accountType) {
-                      AccountType.microsoft => MenuItemButton(
-                        leadingIcon: const Icon(Icons.cloud),
-                        child: Text(context.loc.microsoft),
-                        onPressed: () => LoginWithMicrosoftDialog.show(context),
-                      ),
+          menuChildren: AccountType.values
+              .map(
+                (accountType) => switch (accountType) {
+                  AccountType.microsoft => MenuItemButton(
+                    leadingIcon: const Icon(Icons.cloud),
+                    child: Text(context.loc.microsoft),
+                    onPressed: () => LoginWithMicrosoftDialog.show(context),
+                  ),
 
-                      AccountType.offline => MenuItemButton(
-                        leadingIcon: const Icon(Icons.computer),
-                        child: Text(context.loc.offline),
-                        onPressed:
-                            () => showDialog<void>(
-                              context: context,
-                              builder:
-                                  (context) => const UpsertOfflineAccountDialog(
-                                    offlineAccountToUpdate: null,
-                                  ),
-                            ),
+                  AccountType.offline => MenuItemButton(
+                    leadingIcon: const Icon(Icons.computer),
+                    child: Text(context.loc.offline),
+                    onPressed: () => showDialog<void>(
+                      context: context,
+                      builder: (context) => const UpsertOfflineAccountDialog(
+                        offlineAccountToUpdate: null,
                       ),
-                    },
-                  )
-                  .toList(),
+                    ),
+                  ),
+                },
+              )
+              .toList(),
           builder: (context, controller, child) {
             void onPressed() {
               final state = context.read<MicrosoftAuthCubit>().state;
@@ -243,11 +236,10 @@ class _AccountRefreshListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<MicrosoftAuthCubit, MicrosoftAuthState>(
-      listenWhen:
-          (previous, current) =>
-              // Prevent BlocListener from reacting again to a successful refresh,
-              // which could trigger a bug when opening the login dialog later.
-              previous.refreshStatus != current.refreshStatus,
+      listenWhen: (previous, current) =>
+          // Prevent BlocListener from reacting again to a successful refresh,
+          // which could trigger a bug when opening the login dialog later.
+          previous.refreshStatus != current.refreshStatus,
       listener: _onRefreshStatusChanged,
       child: child,
     );
@@ -277,11 +269,10 @@ class _AccountRefreshListener extends StatelessWidget {
                   context.loc.sessionExpiredOrAccessRevoked,
                   snackBarAction: SnackBarAction(
                     label: context.loc.signInWithMicrosoft,
-                    onPressed:
-                        () => LoginWithMicrosoftDialog.show(
-                          context,
-                          isReAuthentication: true,
-                        ),
+                    onPressed: () => LoginWithMicrosoftDialog.show(
+                      context,
+                      isReAuthentication: true,
+                    ),
                   ),
                 );
                 return;
@@ -290,11 +281,10 @@ class _AccountRefreshListener extends StatelessWidget {
                   message,
                   snackBarAction: SnackBarAction(
                     label: context.loc.signInWithMicrosoft,
-                    onPressed:
-                        () => LoginWithMicrosoftDialog.show(
-                          context,
-                          isReAuthentication: true,
-                        ),
+                    onPressed: () => LoginWithMicrosoftDialog.show(
+                      context,
+                      isReAuthentication: true,
+                    ),
                   ),
                 );
                 return;

@@ -55,49 +55,43 @@ class MainApp extends StatelessWidget {
 
           ColorScheme colorScheme(Brightness brightness) =>
               ColorScheme.fromSeed(
-                seedColor:
-                    generalSettings.useAccentColor
-                        ? Color(generalSettings.accentColor)
-                        : Colors.lightBlue,
+                seedColor: generalSettings.useAccentColor
+                    ? Color(generalSettings.accentColor)
+                    : Colors.lightBlue,
                 brightness: brightness,
               );
 
           return OptionalDynamicColorBuilder(
             isEnabled: generalSettings.useDynamicColor,
-            builder:
-                (lightColorScheme, darkColorScheme) => MaterialApp.router(
-                  routerConfig: _router,
-                  title: ProjectInfoConstants.displayName,
-                  debugShowCheckedModeBanner: false,
-                  theme: ThemeData(
-                    useMaterial3: !generalSettings.useClassicMaterialDesign,
-                    colorScheme:
-                        lightColorScheme ?? colorScheme(Brightness.light),
-                    listTileTheme: listTileTheme,
-                    progressIndicatorTheme: progressIndicatorTheme,
-                    sliderTheme: sliderTheme,
-                  ),
-                  darkTheme: ThemeData(
-                    useMaterial3: !generalSettings.useClassicMaterialDesign,
-                    colorScheme:
-                        darkColorScheme ?? colorScheme(Brightness.dark),
-                    listTileTheme: listTileTheme,
-                    progressIndicatorTheme: progressIndicatorTheme,
-                    sliderTheme: sliderTheme,
-                  ),
-                  themeMode: switch (generalSettings.themeMode) {
-                    AppThemeMode.system => ThemeMode.system,
-                    AppThemeMode.light => ThemeMode.light,
-                    AppThemeMode.dark => ThemeMode.dark,
-                  },
-                  localizationsDelegates:
-                      AppLocalizations.localizationsDelegates,
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  locale:
-                      generalSettings.appLanguage == AppLanguage.system
-                          ? null
-                          : Locale(generalSettings.appLanguage.localeCode),
-                ),
+            builder: (lightColorScheme, darkColorScheme) => MaterialApp.router(
+              routerConfig: _router,
+              title: ProjectInfoConstants.displayName,
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                useMaterial3: !generalSettings.useClassicMaterialDesign,
+                colorScheme: lightColorScheme ?? colorScheme(Brightness.light),
+                listTileTheme: listTileTheme,
+                progressIndicatorTheme: progressIndicatorTheme,
+                sliderTheme: sliderTheme,
+              ),
+              darkTheme: ThemeData(
+                useMaterial3: !generalSettings.useClassicMaterialDesign,
+                colorScheme: darkColorScheme ?? colorScheme(Brightness.dark),
+                listTileTheme: listTileTheme,
+                progressIndicatorTheme: progressIndicatorTheme,
+                sliderTheme: sliderTheme,
+              ),
+              themeMode: switch (generalSettings.themeMode) {
+                AppThemeMode.system => ThemeMode.system,
+                AppThemeMode.light => ThemeMode.light,
+                AppThemeMode.dark => ThemeMode.dark,
+              },
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: generalSettings.appLanguage == AppLanguage.system
+                  ? null
+                  : Locale(generalSettings.appLanguage.localeCode),
+            ),
           );
         },
       ),
@@ -111,32 +105,30 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ScaffoldWithTabs(
     defaultIndex: () {
-      final defaultTab =
-          context
-              .read<SettingsCubit>()
-              .state
-              .settingsOrThrow
-              .general
-              .defaultTab;
+      final defaultTab = context
+          .read<SettingsCubit>()
+          .state
+          .settingsOrThrow
+          .general
+          .defaultTab;
       final index = HomeScreenTab.values.indexOf(defaultTab);
       return index;
     }(),
-    navigationMenuItems:
-        HomeScreenTab.values
-            .map(
-              (tab) => NavigationMenuItem(
-                unselectedIcon: Icon(tab.unselectedIconData),
-                selectedIcon: Icon(tab.selectedIconData),
-                label: tab.getLabel(context.loc),
-                body: switch (tab) {
-                  HomeScreenTab.profiles => const ProfileTab(),
-                  HomeScreenTab.accounts => const AccountsTab(),
-                  HomeScreenTab.settings => const SettingsTab(),
-                  HomeScreenTab.news => Center(child: Text(context.loc.news)),
-                },
-              ),
-            )
-            .toList(),
+    navigationMenuItems: HomeScreenTab.values
+        .map(
+          (tab) => NavigationMenuItem(
+            unselectedIcon: Icon(tab.unselectedIconData),
+            selectedIcon: Icon(tab.selectedIconData),
+            label: tab.getLabel(context.loc),
+            body: switch (tab) {
+              HomeScreenTab.profiles => const ProfileTab(),
+              HomeScreenTab.accounts => const AccountsTab(),
+              HomeScreenTab.settings => const SettingsTab(),
+              HomeScreenTab.news => Center(child: Text(context.loc.news)),
+            },
+          ),
+        )
+        .toList(),
     trailingItems: const [AccountSwitcherIconButton(), SizedBox(height: 20)],
   );
 }

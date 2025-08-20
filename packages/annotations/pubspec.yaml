@@ -9,4 +9,4 @@ dependencies:
   meta: ^1.16.0
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.9.0

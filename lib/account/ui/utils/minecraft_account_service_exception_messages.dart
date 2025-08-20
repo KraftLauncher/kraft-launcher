@@ -84,8 +84,8 @@ extension AccountManagerExceptionMessages
         :final exception,
       ) =>
         switch (exception) {
-          microsoft_auth_api_exceptions.UnknownException() => loc
-              .unexpectedMicrosoftApiError(exception.message),
+          microsoft_auth_api_exceptions.UnknownException() =>
+            loc.unexpectedMicrosoftApiError(exception.message),
           microsoft_auth_api_exceptions.AuthCodeExpiredException() =>
             loc.expiredAuthCodeError,
 
@@ -103,9 +103,9 @@ extension AccountManagerExceptionMessages
               null =>
                 exception.xErr != null
                     ? loc.xstsUnknownErrorWithDetails(
-                      exception.xErr.toString(),
-                      exception.message,
-                    )
+                        exception.xErr.toString(),
+                        exception.message,
+                      )
                     : loc.xstsUnknownError,
               microsoft_auth_api_exceptions.XstsError.accountCreationRequired =>
                 loc.xstsAccountCreationRequiredError,
@@ -133,8 +133,8 @@ extension AccountManagerExceptionMessages
           //  same as unexpectedMicrosoftApiError, should be used
           //  only when the server respond with an unknown errror,
           //  not when Dio throws DioException
-          minecraft_account_api_exceptions.UnknownException() => loc
-              .unexpectedMinecraftApiError(exception.message),
+          minecraft_account_api_exceptions.UnknownException() =>
+            loc.unexpectedMinecraftApiError(exception.message),
           minecraft_account_api_exceptions.UnauthorizedException() =>
             loc.unauthorizedMinecraftAccessError,
           minecraft_account_api_exceptions.TooManyRequestsException() =>

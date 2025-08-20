@@ -100,33 +100,30 @@ class MinecraftAccountResolver {
         // Account created and logged in; re-authentication is not required
         reauthRequiredReason: null,
       ),
-      skins:
-          profileResponse.skins
-              .map(
-                (skin) => MinecraftSkin(
-                  id: skin.id,
-                  state: toCosmeticState(skin.state),
-                  url: skin.url,
-                  textureKey: skin.textureKey,
-                  variant: switch (skin.variant) {
-                    MinecraftApiSkinVariant.classic =>
-                      MinecraftSkinVariant.classic,
-                    MinecraftApiSkinVariant.slim => MinecraftSkinVariant.slim,
-                  },
-                ),
-              )
-              .toList(),
-      capes:
-          profileResponse.capes
-              .map(
-                (cape) => MinecraftCape(
-                  id: cape.id,
-                  state: toCosmeticState(cape.state),
-                  url: cape.url,
-                  alias: cape.alias,
-                ),
-              )
-              .toList(),
+      skins: profileResponse.skins
+          .map(
+            (skin) => MinecraftSkin(
+              id: skin.id,
+              state: toCosmeticState(skin.state),
+              url: skin.url,
+              textureKey: skin.textureKey,
+              variant: switch (skin.variant) {
+                MinecraftApiSkinVariant.classic => MinecraftSkinVariant.classic,
+                MinecraftApiSkinVariant.slim => MinecraftSkinVariant.slim,
+              },
+            ),
+          )
+          .toList(),
+      capes: profileResponse.capes
+          .map(
+            (cape) => MinecraftCape(
+              id: cape.id,
+              state: toCosmeticState(cape.state),
+              url: cape.url,
+              alias: cape.alias,
+            ),
+          )
+          .toList(),
       ownsMinecraftJava: ownsMinecraftJava,
     );
   }

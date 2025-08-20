@@ -239,7 +239,8 @@ class MicrosoftAuthCodeResponsePageVariants {
 String buildAuthCodeResultHtmlPage(
   MicrosoftAuthCodeResponsePageContent content, {
   required bool isSuccess,
-}) => '''
+}) =>
+    '''
 <!DOCTYPE html>
 <html lang="${content.pageLangCode}" dir="${content.pageDir}">
 <head>

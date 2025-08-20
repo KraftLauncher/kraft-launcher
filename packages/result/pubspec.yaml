@@ -3,7 +3,7 @@ description: "Utility to implement the Result pattern."
 version: 1.0.0
 
 environment:
-  sdk: ^3.8.1
+  sdk: ^3.9.0
 
 dependencies:
   meta: ^1.16.0

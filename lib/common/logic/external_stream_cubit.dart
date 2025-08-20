@@ -49,13 +49,12 @@ abstract class ExternalStreamCubit<State> extends Cubit<State> {
         final newState = onData(data);
         emit(newState);
       },
-      onError:
-          onError != null
-              ? (Object error, StackTrace stackTrace) {
-                final newState = onError(error, stackTrace);
-                emit(newState);
-              }
-              : null,
+      onError: onError != null
+          ? (Object error, StackTrace stackTrace) {
+              final newState = onError(error, stackTrace);
+              emit(newState);
+            }
+          : null,
     );
     _subscriptions.add(subscription);
   }

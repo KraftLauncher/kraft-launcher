@@ -73,63 +73,52 @@ extension ApiMinecraftVersionDetailsMapper on ApiMinecraftVersionDetails {
         return null;
       }
       return MinecraftVersionArgs(
-        game:
-            arguments.game
-                .map<app_model.StringOrConditionalArg>(
-                  (either) => either.toApp(),
-                )
-                .toList(),
-        jvm:
-            arguments.jvm
-                .map<app_model.StringOrConditionalArg>(
-                  (either) => either.toApp(),
-                )
-                .toList(),
+        game: arguments.game
+            .map<app_model.StringOrConditionalArg>((either) => either.toApp())
+            .toList(),
+        jvm: arguments.jvm
+            .map<app_model.StringOrConditionalArg>((either) => either.toApp())
+            .toList(),
       );
     }(),
-    libraries:
-        libraries
-            .map(
-              (library) => MinecraftVersionLibrary(
-                name: library.name,
-                downloads: () {
-                  final downloads = library.downloads;
-                  final artifact = downloads.artifact;
-                  final classifiers = downloads.classifiers;
+    libraries: libraries
+        .map(
+          (library) => MinecraftVersionLibrary(
+            name: library.name,
+            downloads: () {
+              final downloads = library.downloads;
+              final artifact = downloads.artifact;
+              final classifiers = downloads.classifiers;
 
-                  MinecraftLibraryArtifact fromApiModel(
-                    ApiMinecraftLibraryArtifact artifact,
-                  ) => MinecraftLibraryArtifact(
-                    path: artifact.path,
-                    sha1: artifact.sha1,
-                    size: artifact.size,
-                    url: artifact.url,
-                  );
-                  return MinecraftLibraryDownloads(
-                    artifact: artifact != null ? fromApiModel(artifact) : null,
-                    classifiers:
-                        classifiers != null
-                            ? (classifiers.map(
-                              (key, value) =>
-                                  MapEntry(key, fromApiModel(value)),
-                            ))
-                            : null,
-                  );
-                }(),
-                natives: library.natives,
-                rules: library.rules?.map((rule) => rule.toApp()).toList(),
-                extract: () {
-                  final extract = library.extract;
-                  if (extract == null) {
-                    return null;
-                  }
-                  return MinecraftNativesExtractionRules(
-                    exclude: extract.exclude,
-                  );
-                }(),
-              ),
-            )
-            .toList(),
+              MinecraftLibraryArtifact fromApiModel(
+                ApiMinecraftLibraryArtifact artifact,
+              ) => MinecraftLibraryArtifact(
+                path: artifact.path,
+                sha1: artifact.sha1,
+                size: artifact.size,
+                url: artifact.url,
+              );
+              return MinecraftLibraryDownloads(
+                artifact: artifact != null ? fromApiModel(artifact) : null,
+                classifiers: classifiers != null
+                    ? (classifiers.map(
+                        (key, value) => MapEntry(key, fromApiModel(value)),
+                      ))
+                    : null,
+              );
+            }(),
+            natives: library.natives,
+            rules: library.rules?.map((rule) => rule.toApp()).toList(),
+            extract: () {
+              final extract = library.extract;
+              if (extract == null) {
+                return null;
+              }
+              return MinecraftNativesExtractionRules(exclude: extract.exclude);
+            }(),
+          ),
+        )
+        .toList(),
   );
 }
 
@@ -138,15 +127,15 @@ extension _ApiStringOrConditionalArgMapper on api_model.StringOrConditionalArg {
   app_model.StringOrConditionalArg toApp() {
     final either = this;
     return switch (either) {
-      EitherLeft<String, ApiMinecraftConditionalArg>() => app_model
-          .StringOrConditionalArg.left(either.leftValue),
-      EitherRight<String, ApiMinecraftConditionalArg>() => app_model
-          .StringOrConditionalArg.right(
-        MinecraftConditionalArg(
-          rules: either.rightValue.rules.map((rule) => rule.toApp()).toList(),
-          value: either.rightValue.value,
+      EitherLeft<String, ApiMinecraftConditionalArg>() =>
+        app_model.StringOrConditionalArg.left(either.leftValue),
+      EitherRight<String, ApiMinecraftConditionalArg>() =>
+        app_model.StringOrConditionalArg.right(
+          MinecraftConditionalArg(
+            rules: either.rightValue.rules.map((rule) => rule.toApp()).toList(),
+            value: either.rightValue.value,
+          ),
         ),
-      ),
     };
   }
 }

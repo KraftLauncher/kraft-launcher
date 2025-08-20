@@ -73,16 +73,14 @@ class MinecraftProfileResponse {
       MinecraftProfileResponse(
         id: json['id']! as String,
         name: json['name']! as String,
-        skins:
-            (json['skins']! as JsonList)
-                .cast<JsonMap>()
-                .map((skinMap) => MinecraftProfileSkin.fromJson(skinMap))
-                .toList(),
-        capes:
-            (json['capes']! as JsonList)
-                .cast<JsonMap>()
-                .map((capeMap) => MinecraftProfileCape.fromJson(capeMap))
-                .toList(),
+        skins: (json['skins']! as JsonList)
+            .cast<JsonMap>()
+            .map((skinMap) => MinecraftProfileSkin.fromJson(skinMap))
+            .toList(),
+        capes: (json['capes']! as JsonList)
+            .cast<JsonMap>()
+            .map((capeMap) => MinecraftProfileCape.fromJson(capeMap))
+            .toList(),
       );
 
   final String id;
@@ -157,10 +155,9 @@ enum MinecraftApiSkinVariant {
   static MinecraftApiSkinVariant fromJson(String json) => switch (json) {
     'CLASSIC' => classic,
     'SLIM' => slim,
-    String() =>
-      throw UnsupportedError(
-        'Unknown Minecraft skin variant from the API: $json',
-      ),
+    String() => throw UnsupportedError(
+      'Unknown Minecraft skin variant from the API: $json',
+    ),
   };
 }
 
@@ -172,9 +169,8 @@ enum MinecraftApiCosmeticState {
   static MinecraftApiCosmeticState fromJson(String json) => switch (json) {
     'ACTIVE' => active,
     'INACTIVE' => inactive,
-    String() =>
-      throw UnsupportedError(
-        'Unknown Minecraft cosmetic state from the API: $json',
-      ),
+    String() => throw UnsupportedError(
+      'Unknown Minecraft cosmetic state from the API: $json',
+    ),
   };
 }
