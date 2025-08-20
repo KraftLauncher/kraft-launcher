@@ -51,6 +51,8 @@ dependencies:
     path: packages/result
   json_utils:
     path: packages/json_utils
+  minecraft_services_client:
+    path: packages/minecraft/minecraft_services_client
 
 dev_dependencies:
   flutter_test:
