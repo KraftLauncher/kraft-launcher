@@ -1,0 +1,12 @@
+name: annotations
+description: >
+  A collection of custom annotations for documenting and marking common
+  architectural patterns, and design workarounds.
+  Intended to improve code clarity, maintainability, and facilitate future refactoring.
+version: 1.0.0
+
+dependencies:
+  meta: ^1.16.0
+
+environment:
+  sdk: ^3.8.0

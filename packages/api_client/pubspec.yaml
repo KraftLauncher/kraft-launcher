@@ -1,5 +1,5 @@
-name: safe_http
-description: "Enforces explicit failure handling for HTTP calls."
+name: api_client
+description: "Enforces explicit failure handling for API calls."
 version: 1.0.0
 publish_to: 'none'
 

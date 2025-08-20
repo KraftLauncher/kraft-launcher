@@ -12,8 +12,8 @@ dependencies:
     path: ../../json_utils
   result:
     path: ../../result
-  safe_http:
-    path: ../../safe_http
+  api_client:
+    path: ../../api_client
 
 dev_dependencies:
   test: ^1.24.0

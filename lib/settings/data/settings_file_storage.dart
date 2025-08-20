@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:kraft_launcher/common/data/json.dart';
@@ -22,7 +21,7 @@ class SettingsFileStorage {
     if (fileContent.isEmpty) {
       return null;
     }
-    return FileSettings.fromJson(jsonDecode(fileContent) as JsonMap);
+    return FileSettings.fromJson(jsonDecode(fileContent));
   }
 
   Future<void> saveSettings(FileSettings settings) =>

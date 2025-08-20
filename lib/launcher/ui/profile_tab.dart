@@ -6,7 +6,7 @@
 // to plan it properly.
 
 import 'dart:async';
-import 'dart:convert';
+import 'dart:convert' show utf8;
 import 'dart:io';
 
 import 'package:collection/collection.dart';

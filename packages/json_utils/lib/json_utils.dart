@@ -1,6 +1,6 @@
 // Avoid showing the `json` property to ensure it
 // will be not used by convert() or jsonDecode().
-import 'dart:convert' show JsonEncoder, jsonDecode;
+import 'dart:convert' as convert show JsonEncoder, jsonDecode, jsonEncode;
 
 import 'package:result/result.dart';
 
@@ -9,7 +9,9 @@ typedef JsonMap = Map<String, Object?>;
 typedef JsonList = List<dynamic>;
 
 String jsonEncodePretty(JsonMap jsonMap) =>
-    JsonEncoder.withIndent(' ' * 2).convert(jsonMap);
+    convert.JsonEncoder.withIndent(' ' * 2).convert(jsonMap);
+
+String jsonEncode(JsonMap json) => convert.jsonEncode(json);
 
 sealed class JsonParseFailure extends BaseFailure {
   const JsonParseFailure(super.message);
@@ -38,7 +40,7 @@ final class JsonDeserializationFailure extends JsonParseFailure {
 
 Result<JsonMap, JsonDecodingFailure> tryJsonDecode(String json) {
   try {
-    final decoded = jsonDecode(json);
+    final decoded = convert.jsonDecode(json);
     if (decoded is JsonMap) {
       return Result.success(decoded);
     }
@@ -61,6 +63,9 @@ Result<JsonMap, JsonDecodingFailure> tryJsonDecode(String json) {
     return Result.failure(JsonDecodingFailure(json, e.message));
   }
 }
+
+/// Callers should strongly prefer [tryJsonDecode] over [jsonDecode].
+JsonMap jsonDecode(String json) => tryJsonDecode(json).valueOrThrow;
 
 Result<T, JsonDeserializationFailure> tryJsonDeserialize<T>(
   JsonMap decodedJson,

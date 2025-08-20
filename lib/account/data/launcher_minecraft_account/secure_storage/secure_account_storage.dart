@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/secure_storage/secure_account_data.dart';
 import 'package:kraft_launcher/common/constants/project_info_constants.dart';
@@ -19,7 +17,7 @@ class SecureAccountStorage {
     if (jsonString == null) {
       return null;
     }
-    return SecureAccountData.fromJson(jsonDecode(jsonString) as JsonMap);
+    return SecureAccountData.fromJson(jsonDecode(jsonString));
   }
 
   Future<void> delete(String accountId) =>

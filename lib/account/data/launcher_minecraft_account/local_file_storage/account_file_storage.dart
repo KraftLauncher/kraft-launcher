@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:kraft_launcher/account/data/launcher_minecraft_account/local_file_storage/file_minecraft_accounts.dart';
@@ -27,7 +26,7 @@ class AccountFileStorage {
       return null;
     }
 
-    return FileMinecraftAccounts.fromJson(jsonDecode(fileContent) as JsonMap);
+    return FileMinecraftAccounts.fromJson(jsonDecode(fileContent));
   }
 
   Future<void> saveAccounts(FileMinecraftAccounts accounts) =>

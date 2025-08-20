@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:kraft_launcher/common/data/json.dart';
@@ -21,7 +20,7 @@ class JsonFileCache<T> {
       // TODO: Unrelated to this file: All File IO operations should handle FileSystemException, currently
       //  SettingsFileStorage.readSettings and AccountFileStorage.readAccounts does not.
       final content = await file.readAsString();
-      final json = jsonDecode(content) as JsonMap;
+      final json = jsonDecode(content);
       return _fromJson(json);
     } on FormatException {
       return null;

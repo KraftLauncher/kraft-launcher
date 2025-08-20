@@ -1,29 +1,21 @@
+import 'package:api_client/api_client.dart';
+import 'package:api_client/test.dart';
 import 'package:json_utils/json_utils.dart' show JsonMap;
 import 'package:minecraft_services_client/minecraft_services_client.dart';
-import 'package:minecraft_services_client/src/models/minecraft_entitlements_response.dart';
-import 'package:minecraft_services_client/src/models/minecraft_error_response.dart';
-import 'package:minecraft_services_client/src/models/minecraft_login_response.dart';
-import 'package:minecraft_services_client/src/models/profile/minecraft_profile_response.dart';
-import 'package:minecraft_services_client/src/models/profile/skin/enums/minecraft_cosmetic_state.dart';
-import 'package:minecraft_services_client/src/models/profile/skin/minecraft_profile_cape.dart';
-import 'package:minecraft_services_client/src/models/profile/skin/minecraft_profile_skin.dart';
 import 'package:result/result.dart';
-import 'package:safe_http/safe_http.dart';
-
-import 'package:safe_http/test.dart';
 import 'package:test/test.dart';
 
 const _host = MinecraftServicesApiClient.baseUrlHost;
 
 void main() {
-  late FakeJsonApiClient fakeJsonApiClient;
+  late FakeApiClient fakeApiClient;
   late MinecraftServicesApiClient client;
 
   setUp(() {
-    fakeJsonApiClient = FakeJsonApiClient();
-    client = HttpMinecraftServicesApiClient(jsonApiClient: fakeJsonApiClient);
+    fakeApiClient = FakeApiClient();
+    client = HttpMinecraftServicesApiClient(apiClient: fakeApiClient);
 
-    fakeJsonApiClient.whenAny = <S, C>(call) async {
+    fakeApiClient.whenRequestJson = <S, F>(call) async {
       return Result.failure(const ConnectionFailure('any'));
     };
   });
@@ -37,15 +29,15 @@ void main() {
       xstsUserHash: xstsUserHash ?? 'any',
     );
 
-    test('passes expected URL to $JsonApiClient', () async {
+    test('passes expected URL to $ApiClient', () async {
       await authenticateWithXbox();
 
-      final call = fakeJsonApiClient.postCalls.firstOrNull;
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
 
       expect(call?.url, Uri.https(_host, '/authentication/login_with_xbox'));
     });
 
-    test('builds and passes expected JSON body to $JsonApiClient', () async {
+    test('builds and passes expected JSON body to $ApiClient', () async {
       const xstsToken = 'example_xsts_token';
       const xstsUserHash = 'example_xsts_user_hash';
 
@@ -54,23 +46,23 @@ void main() {
         xstsUserHash: xstsUserHash,
       );
 
-      final call = fakeJsonApiClient.postCalls.firstOrNull;
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
 
-      expect(call?.body, {
+      expect(call?.body?.jsonOrNull, {
         'identityToken': 'XBL3.0 x=$xstsUserHash;$xstsToken',
       });
     });
 
-    test('passes isJsonBody = true to $JsonApiClient', () async {
+    test('passes a $JsonRequestBody to $ApiClient', () async {
       await authenticateWithXbox();
 
-      final call = fakeJsonApiClient.postCalls.firstOrNull;
-      expect(call?.isJsonBody, true);
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
+      expect(call?.body, isA<JsonRequestBody>());
     });
 
     _testClientFailureResponseParse(
       makeRequest: () => authenticateWithXbox(),
-      getFakeJsonApiClient: () => fakeJsonApiClient,
+      getFakeApiClient: () => fakeApiClient,
     );
 
     test(
@@ -87,38 +79,26 @@ void main() {
           'username': expectedResponse.username,
         };
 
-        fakeJsonApiClient.whenPost = <S, C>(call) async {
-          final result =
-              call.deserializeSuccess(_jsonHttpResponse(body: json))
-                  as MinecraftLoginResponse;
-
-          expect(result, expectedResponse);
-
-          return Result.success(result as S);
-        };
-
-        await authenticateWithXbox();
+        await fakeApiClient.stubJsonSuccessAndRun(
+          json: json,
+          expectedDecodedBody: expectedResponse,
+          assertion: (result) => expect(result, expectedResponse),
+          makeRequest: authenticateWithXbox,
+        );
       },
     );
 
-    test('returns $Result from $JsonApiClient', () async {
-      final expectedResult = MinecraftApiResult<MinecraftLoginResponse>.failure(
-        // Example dummy result.
-        const TooManyRequestsFailure(),
-      );
+    _testReturnValue(
+      makeRequest: authenticateWithXbox,
+      getFakeApiClient: () => fakeApiClient,
+    );
 
-      fakeJsonApiClient.whenPost = <S, C>(call) async {
-        return expectedResult as JsonApiResult<S, C>;
-      };
-
-      final result = await authenticateWithXbox();
-
-      expect(result, same(expectedResult));
-    });
-
-    test('calls only POST method once', () async {
+    test('sends request once using HTTP POST', () async {
       await authenticateWithXbox();
-      fakeJsonApiClient.expectOnlyPostCalls(1);
+      fakeApiClient.expectSingleRequest(
+        isRequestJsonMethod: true,
+        method: HttpMethod.post,
+      );
     });
   });
 
@@ -127,25 +107,25 @@ void main() {
       String? accessToken,
     }) => client.fetchEntitlements(accessToken: accessToken ?? 'any');
 
-    test('passes expected URL to $JsonApiClient', () async {
+    test('passes expected URL to $ApiClient', () async {
       await fetchEntitlements();
 
-      final call = fakeJsonApiClient.getCalls.firstOrNull;
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
       expect(call?.url, Uri.https(_host, 'entitlements/mcstore'));
     });
 
-    test('passes headers with Authorization to $JsonApiClient', () async {
+    test('passes headers with Authorization to $ApiClient', () async {
       const expectedAccessToken = 'eMinecraftAccessToken';
 
       await fetchEntitlements(accessToken: expectedAccessToken);
 
-      final call = fakeJsonApiClient.getCalls.firstOrNull;
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
       expect(call?.headers, {'Authorization': 'Bearer $expectedAccessToken'});
     });
 
     _testClientFailureResponseParse(
       makeRequest: () => fetchEntitlements(),
-      getFakeJsonApiClient: () => fakeJsonApiClient,
+      getFakeApiClient: () => fakeApiClient,
     );
 
     test(
@@ -173,39 +153,26 @@ void main() {
               .toList(),
         };
 
-        fakeJsonApiClient.whenGet = <S, C>(call) async {
-          final result =
-              call.deserializeSuccess(_jsonHttpResponse(body: json))
-                  as MinecraftEntitlementsResponse;
-
-          expect(result, expectedResponse);
-
-          return Result.success(result as S);
-        };
-
-        await fetchEntitlements();
+        await fakeApiClient.stubJsonSuccessAndRun(
+          json: json,
+          expectedDecodedBody: expectedResponse,
+          assertion: (result) => expect(result, expectedResponse),
+          makeRequest: fetchEntitlements,
+        );
       },
     );
 
-    test('returns $Result from $JsonApiClient', () async {
-      final expectedResult =
-          MinecraftApiResult<MinecraftEntitlementsResponse>.failure(
-            // Example dummy result.
-            const TooManyRequestsFailure(),
-          );
+    _testReturnValue(
+      makeRequest: fetchEntitlements,
+      getFakeApiClient: () => fakeApiClient,
+    );
 
-      fakeJsonApiClient.whenGet = <S, C>(call) async {
-        return expectedResult as JsonApiResult<S, C>;
-      };
-
-      final result = await fetchEntitlements();
-
-      expect(result, same(expectedResult));
-    });
-
-    test('calls only GET method once', () async {
+    test('sends request once using HTTP GET', () async {
       await fetchEntitlements();
-      fakeJsonApiClient.expectOnlyGetCalls(1);
+      fakeApiClient.expectSingleRequest(
+        isRequestJsonMethod: true,
+        method: HttpMethod.get,
+      );
     });
   });
 
@@ -214,25 +181,25 @@ void main() {
       String? accessToken,
     }) => client.fetchProfile(accessToken: accessToken ?? 'any');
 
-    test('passes expected URL to $JsonApiClient', () async {
+    test('passes expected URL to $ApiClient', () async {
       await fetchProfile();
 
-      final call = fakeJsonApiClient.getCalls.firstOrNull;
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
       expect(call?.url, Uri.https(_host, 'minecraft/profile'));
     });
 
-    test('passes headers with Authorization to $JsonApiClient', () async {
+    test('passes headers with Authorization to $ApiClient', () async {
       const expectedAccessToken = 'e2MinecraftAccessToken';
 
       await fetchProfile(accessToken: expectedAccessToken);
 
-      final call = fakeJsonApiClient.getCalls.firstOrNull;
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
       expect(call?.headers, {'Authorization': 'Bearer $expectedAccessToken'});
     });
 
     _testClientFailureResponseParse(
       makeRequest: () => fetchProfile(),
-      getFakeJsonApiClient: () => fakeJsonApiClient,
+      getFakeApiClient: () => fakeApiClient,
     );
 
     test(
@@ -241,39 +208,26 @@ void main() {
         const expectedResponse = _exampleMinecraftProfileResponse;
         final JsonMap json = expectedResponse._toJson();
 
-        fakeJsonApiClient.whenGet = <S, C>(call) async {
-          final result =
-              call.deserializeSuccess(_jsonHttpResponse(body: json))
-                  as MinecraftProfileResponse;
-
-          expect(result, expectedResponse);
-
-          return Result.success(result as S);
-        };
-
-        await fetchProfile();
+        await fakeApiClient.stubJsonSuccessAndRun(
+          json: json,
+          expectedDecodedBody: expectedResponse,
+          assertion: (result) => expect(result, expectedResponse),
+          makeRequest: fetchProfile,
+        );
       },
     );
 
-    test('returns $Result from $JsonApiClient', () async {
-      final expectedResult =
-          MinecraftApiResult<MinecraftProfileResponse>.failure(
-            // Example dummy result.
-            const TooManyRequestsFailure(),
-          );
+    _testReturnValue(
+      makeRequest: fetchProfile,
+      getFakeApiClient: () => fakeApiClient,
+    );
 
-      fakeJsonApiClient.whenGet = <S, C>(call) async {
-        return expectedResult as JsonApiResult<S, C>;
-      };
-
-      final result = await fetchProfile();
-
-      expect(result, same(expectedResult));
-    });
-
-    test('calls only GET method once', () async {
+    test('sends request once using HTTP GET', () async {
       await fetchProfile();
-      fakeJsonApiClient.expectOnlyGetCalls(1);
+      fakeApiClient.expectSingleRequest(
+        isRequestJsonMethod: true,
+        method: HttpMethod.get,
+      );
     });
   });
 
@@ -288,61 +242,59 @@ void main() {
       variant: variant ?? MinecraftSkinVariant.slim,
     );
 
-    test('passes expected URL to $JsonApiClient', () async {
+    test('passes expected URL to $ApiClient', () async {
       await uploadSkin();
 
-      final call = fakeJsonApiClient.postCalls.firstOrNull;
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
 
       expect(call?.url, Uri.https(_host, 'minecraft/profile/skins'));
     });
 
-    test('passes headers with Authorization to $JsonApiClient', () async {
+    test('passes headers with Authorization to $ApiClient', () async {
       const expectedAccessToken = 'eMinecraftAccessToken';
 
       await uploadSkin(accessToken: expectedAccessToken);
 
-      final call = fakeJsonApiClient.postCalls.firstOrNull;
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
       expect(call?.headers, {'Authorization': 'Bearer $expectedAccessToken'});
     });
 
-    test('passes isJsonBody = false to $JsonApiClient', () async {
+    test('passes a $MultipartRequestBody to $ApiClient', () async {
       await uploadSkin();
 
-      final call = fakeJsonApiClient.postCalls.firstOrNull;
-      expect(call?.isJsonBody, false);
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
+      expect(call?.body, isA<MultipartRequestBody>());
     });
 
-    test(
-      'builds and passes expected $MultipartBody to $JsonApiClient',
-      () async {
-        const expectedSkinVariant = MinecraftSkinVariant.classic;
-        final expectedSkinFile = MultipartFile.fromBytes('file', []);
+    test('builds and passes expected $MultipartBody to $ApiClient', () async {
+      const expectedSkinVariant = MinecraftSkinVariant.classic;
+      final expectedSkinFile = MultipartFile.fromBytes('file', []);
 
-        await uploadSkin(
-          variant: expectedSkinVariant,
-          skinFile: expectedSkinFile,
-        );
+      await uploadSkin(
+        variant: expectedSkinVariant,
+        skinFile: expectedSkinFile,
+      );
 
-        final call = fakeJsonApiClient.postCalls.firstOrNull;
-        final body = call?.body;
+      final call = fakeApiClient.requestJsonCalls.firstOrNull;
+      final body = call?.body;
 
-        expect(body, isA<MultipartBody>());
+      if (body is! MultipartRequestBody) {
+        fail('The body must be a $MultipartRequestBody');
+      }
+      final multipartBody = body.multipart;
 
-        final multipartBody = body! as MultipartBody;
-
-        expect(multipartBody.fields, {'variant': expectedSkinVariant.toJson()});
-        expect(multipartBody.files.firstOrNull, same(expectedSkinFile));
-        expect(
-          multipartBody.files.length,
-          1,
-          reason: 'Should avoid passing multiple files.',
-        );
-      },
-    );
+      expect(multipartBody.fields, {'variant': expectedSkinVariant.toJson()});
+      expect(multipartBody.files.firstOrNull, same(expectedSkinFile));
+      expect(
+        multipartBody.files.length,
+        1,
+        reason: 'Should avoid passing multiple files.',
+      );
+    });
 
     _testClientFailureResponseParse(
       makeRequest: () => uploadSkin(),
-      getFakeJsonApiClient: () => fakeJsonApiClient,
+      getFakeApiClient: () => fakeApiClient,
     );
 
     test(
@@ -351,51 +303,38 @@ void main() {
         const expectedResponse = _exampleMinecraftProfileResponse;
         final JsonMap json = expectedResponse._toJson();
 
-        fakeJsonApiClient.whenPost = <S, C>(call) async {
-          final result =
-              call.deserializeSuccess(_jsonHttpResponse(body: json))
-                  as MinecraftProfileResponse;
-
-          expect(result, expectedResponse);
-
-          return Result.success(result as S);
-        };
-
-        await uploadSkin();
+        await fakeApiClient.stubJsonSuccessAndRun(
+          json: json,
+          expectedDecodedBody: expectedResponse,
+          assertion: (result) => expect(result, expectedResponse),
+          makeRequest: uploadSkin,
+        );
       },
     );
 
-    test('returns $Result from $JsonApiClient', () async {
-      final expectedResult =
-          MinecraftApiResult<MinecraftProfileResponse>.failure(
-            // Example dummy result.
-            const TooManyRequestsFailure(),
-          );
+    _testReturnValue(
+      makeRequest: uploadSkin,
+      getFakeApiClient: () => fakeApiClient,
+    );
 
-      fakeJsonApiClient.whenPost = <S, C>(call) async {
-        return expectedResult as JsonApiResult<S, C>;
-      };
-
-      final result = await uploadSkin();
-
-      expect(result, same(expectedResult));
-    });
-
-    test('calls only POST method once', () async {
+    test('sends request once using HTTP POST', () async {
       await uploadSkin();
-      fakeJsonApiClient.expectOnlyPostCalls(1);
+      fakeApiClient.expectSingleRequest(
+        isRequestJsonMethod: true,
+        method: HttpMethod.post,
+      );
     });
   });
 }
 
 void _testClientFailureResponseParse({
   required Future<void> Function() makeRequest,
-  required FakeJsonApiClient Function() getFakeJsonApiClient,
+  required FakeApiClient Function() getFakeApiClient,
 }) {
   test(
     'parses client error JSON response into $MinecraftErrorResponse',
     () async {
-      final fakeJsonApiClient = getFakeJsonApiClient();
+      final fakeApiClient = getFakeApiClient();
 
       const expectedResponse = MinecraftErrorResponse(
         path: '/example',
@@ -408,27 +347,37 @@ void _testClientFailureResponseParse({
         'errorMessage': expectedResponse.errorMessage,
       };
 
-      fakeJsonApiClient.whenAny = <S, C>(call) async {
-        final result =
-            call.deserializeClientFailure(_jsonHttpResponse(body: json))
-                as MinecraftErrorResponse;
-
-        expect(result, expectedResponse);
-
-        final dummyResult = JsonApiResult<S, C>.failure(
-          const ConnectionFailure('any'),
-        );
-        return dummyResult;
-      };
-
-      await makeRequest();
+      await fakeApiClient.stubJsonFailureAndRun(
+        json: json,
+        expectedDecodedBody: expectedResponse,
+        assertion: (result) => expect(result, expectedResponse),
+        makeRequest: makeRequest,
+      );
     },
   );
 }
 
-JsonHttpResponse _jsonHttpResponse({JsonMap? body, int? statusCode}) =>
-    // 200 is a dummy value.
-    JsonHttpResponse(body: body ?? {}, statusCode: statusCode ?? 200);
+void _testReturnValue<R>({
+  required Future<MinecraftApiResult<R>> Function() makeRequest,
+  required FakeApiClient Function() getFakeApiClient,
+}) {
+  test('returns $Result from $ApiClient', () async {
+    final fakeApiClient = getFakeApiClient();
+
+    final expectedResult = MinecraftApiResult<R>.failure(
+      // Example dummy result.
+      const UnknownFailure('An unknown error'),
+    );
+
+    fakeApiClient.whenRequestJson = <S, F>(call) async {
+      return expectedResult as JsonApiResult<S, F>;
+    };
+
+    final result = await makeRequest();
+
+    expect(result, same(expectedResult));
+  });
+}
 
 extension on MinecraftProfileResponse {
   JsonMap _toJson() => {
