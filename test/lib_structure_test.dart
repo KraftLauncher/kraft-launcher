@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
+// TODO: KEEP this is a general quality check for the entire codebase and repo in scripts, not a test! Should work for all packages
+
 // A test to ensure all test files have corresponding source files in the lib directory.
 // This test will fail if a file is refactored (moved or renamed) in the lib directory
 // without making the same change to its matching file in the test directory.
