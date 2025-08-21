@@ -8,5 +8,5 @@ dart run remove_from_coverage -f coverage/lcov.info \
   -r '\.mocks\.dart$' \
   -r '\.freezed\.dart$' \
   -r '\.mapper\.dart$' \
-  -r 'lib/common/generated/.*' \
-  -r 'lib/common/constants/.*'
+  -r 'kraft_launcher/lib/common/generated/.*' \
+  -r 'kraft_launcher/lib/common/constants/.*'

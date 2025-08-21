@@ -6,11 +6,11 @@ on:
   # push:
   #   branches: [main]
   #   paths:
-  #     - .github/workflows/coverage-badge.yml
-  #     - lib/**
-  #     - test/**
-  #     - integration_test/**
-  #     - scripts/clean_coverage.sh
+  #     - '.github/workflows/coverage-badge.yml'
+  #     - '**/lib/**'
+  #     - '**/test/**'
+  #     - '**/integration_test/**'
+  #     - '**/scripts/clean_coverage.sh'
 
 jobs:
   build:
@@ -19,14 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Setup Flutter (stable)
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Install package dependencies
-        run: flutter pub get
+      - uses: ./.github/actions/setup-flutter
 
       - name: Run unit tests and collect coverage information
         run: flutter test --coverage

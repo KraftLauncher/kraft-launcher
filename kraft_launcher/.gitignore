@@ -1,7 +1,3 @@
-# Copied from kraft_launcher/.gitignore.
-# Consider reviewing which entries are package-specific (keep in kraft_launcher/.gitignore)
-# versus repository-wide (keep in this file) to improve clarity.
-
 # Miscellaneous
 *.class
 *.log

@@ -4,22 +4,22 @@ on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/checks.yml
-      - lib/**
-      - test/**
-      - integration_test/**
-      - pubspec.yaml
-      - pubspec.lock
-      - analysis_options.yaml
+      - '.github/workflows/checks.yml'
+      - '**/lib/**'
+      - '**/test/**'
+      - '**/integration_test/**'
+      - '**/pubspec.yaml'
+      - '**/pubspec.lock'
+      - '**/analysis_options.yaml'
   pull_request:
     paths:
-      - .github/workflows/checks.yml
-      - lib/**
-      - test/**
-      - integration_test/**
-      - pubspec.yaml
-      - pubspec.lock
-      - analysis_options.yaml
+      - '.github/workflows/checks.yml'
+      - '**/lib/**'
+      - '**/test/**'
+      - '**/integration_test/**'
+      - '**/pubspec.yaml'
+      - '**/pubspec.lock'
+      - '**/analysis_options.yaml'
 
 jobs:
   checks:
@@ -29,16 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # Extract common code in all workflows using action yaml files to .github/actions and use them
-
-      - name: Setup Flutter (Stable)
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Install Package Dependencies
-        run: flutter pub get
+      - uses: ./.github/actions/setup-flutter
 
       - name: Perform Flutter Analysis
         run: flutter analyze --write=flutter_analyze.log

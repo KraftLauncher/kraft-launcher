@@ -1,0 +1,19 @@
+name: "Install Flutter Linux Dependencies"
+description: "Install required apt packages for Flutter on Linux"
+runs:
+  using: "composite"
+  steps:
+    - name: Install Flutter Linux dependencies
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt-get update -y
+
+        # Flutter CLI dependencies
+        sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa
+
+        # Flutter build dependencies
+        sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+
+        # Required for building the app package
+        sudo apt-get install -y libsecret-1-dev libsecret-1-0

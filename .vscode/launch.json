@@ -2,8 +2,8 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run with .env",
-            "program": "lib/main.dart",
+            "name": "Run app with .env",
+            "program": "kraft_launcher/lib/main.dart",
             "request": "launch",
             "type": "dart",
             "args": [

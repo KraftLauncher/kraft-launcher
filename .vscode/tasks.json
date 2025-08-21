@@ -1,24 +1,26 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-      {
-        "label": "build_runner",
-        "type": "shell",
-        "command": "dart run build_runner build --delete-conflicting-outputs",
-        "group": "build"
-      },
-      {
-        "label": "fluttergen",
-        "type": "shell",
-        "command": "fluttergen",
-        "group": "build"
-      },
-      {
-        "label": "gen-l10n",
-        "type": "shell",
-        "command": "flutter gen-l10n",
-        "group": "build"
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build_runner",
+      "type": "shell",
+      "command": "dart run build_runner build --delete-conflicting-outputs",
+      "group": "build"
+    },
+    {
+      "label": "fluttergen for the app",
+      "type": "shell",
+      "command": "fluttergen -c kraft_launcher/pubspec.yaml",
+      "group": "build"
+    },
+    {
+      "label": "gen-l10n for the app",
+      "type": "shell",
+      "command": "flutter gen-l10n",
+      "group": "build",
+      "options": {
+        "cwd": "kraft_launcher"
       }
-    ]
-  }
-  
+    }
+  ]
+}

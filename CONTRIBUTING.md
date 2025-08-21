@@ -52,12 +52,16 @@ To run tests:
 * **Unit tests**: 
 
     ```bash
+    # REPLACE "package_name" with the given package name 
+    cd package_name
     flutter test
     ```
 
 * **End-to-end (E2E) tests**: 
 
     ```bash
+    # REPLACE "package_name" with the given package name
+    cd package_name
     flutter test integration_test
     ```
 
@@ -73,7 +77,7 @@ To run tests:
 
 ## ⚙️ Development Notes
 
-- Run `flutter gen-l10n` when updating localization `.arb` files in [l10n](./l10n/) directory. Also update `AppLanguage` enum when adding new localizations, a unit test will fails if not in sync.
+- Run `(cd kraft_launcher && flutter gen-l10n)` when updating localization `.arb` files in [l10n](./l10n/) directory. Also update `AppLanguage` enum when adding new localizations, a unit test will fails if not in sync.
 - Run `dart run build_runner build --delete-conflicting-outputs` or [`fluttergen`](https://pub.dev/packages/flutter_gen#usage) when adding and deleting files inside the `assets` directory.
 - Run `dart ./scripts/generate_pubspec_dart_code.dart` when updating `pubspec.yaml`.
 

@@ -10,3 +10,4 @@ dependencies:
 
 environment:
   sdk: ^3.9.0
+resolution: workspace

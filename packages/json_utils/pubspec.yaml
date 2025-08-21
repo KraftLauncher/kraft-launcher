@@ -5,10 +5,10 @@ publish_to: 'none'
 
 environment:
   sdk: ^3.9.0
+resolution: workspace
 
 dependencies:
-  result:
-    path: ../result
+  result: ^1.0.0
 
 dev_dependencies:
   test: ^1.24.0
