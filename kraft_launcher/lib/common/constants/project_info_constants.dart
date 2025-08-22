@@ -54,4 +54,11 @@ abstract final class ProjectInfoConstants {
       'https://account.live.com/consent/Edit?client_id=0000000049694D4F';
 
   static const macOSKeychainAppName = 'kraft_launcher';
+
+  /// Image displayed in the Microsoft OAuth redirect HTML page during auth code login.
+  ///
+  /// A temporary server handles the Microsoft redirect, and this image is included
+  /// in the response sent by that server.
+  static const microsoftAuthHtmlImageUrl =
+      'https://github.com/KraftLauncher/kraft-launcher/blob/main/kraft_launcher/assets/branding/icon_framed.png?raw=true';
 }

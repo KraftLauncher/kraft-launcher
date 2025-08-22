@@ -251,33 +251,47 @@ String buildAuthCodeResultHtmlPage(
       margin: 0;
       padding: 0;
       height: 100%;
-      background: #f3f4f6;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      width: 100%;
+      background: #1e1e1e;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #d4d4d4;
     }
-    .box {
+    .container {
       text-align: center;
-      background: white;
-      padding: 2rem 3rem;
-      border-radius: 1rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-    .box h1 {
-      margin: 0;
+    .logo {
+      width: 150px;
+      height: auto;
+      margin-bottom: 1.5rem;
+    }
+    h1 {
       font-size: 1.5rem;
-      color: #2563eb;
+      margin: 0;
+      color: #ffffff;
     }
-    .box p {
+    p {
       margin-top: 0.5rem;
-      color: #4b5563;
+      font-size: 1rem;
+      color: #c5c5c5;
+    }
+    a {
+      color: #3794ff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>${isSuccess ? '✅' : '❌'} ${content.title}</h1>
+  <div class="container">
+    <img src="${ProjectInfoConstants.microsoftAuthHtmlImageUrl}" alt="Logo" class="logo" />
+    <h1 style="font-size: 2rem; margin-top: 1px; color: ${isSuccess ? '#22c55e' : '#ef4444'};">
+      ${content.title} <span>${isSuccess ? '✔' : '✖'}</span>
+    </h1>
     <p>${content.subtitle}</p>
   </div>
 </body>
