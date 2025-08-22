@@ -10,7 +10,7 @@ runs:
         cache: true
 
     - name: Install Workspace Dependencies
-      # Workaround for localization generation issue:
+      # Workaround for localization generation issue (https://github.com/flutter/flutter/issues/174205):
       # Running "flutter pub get" at the root workspace normally triggers:
       #
       #   Generating synthetic localizations package failed with 1 error:

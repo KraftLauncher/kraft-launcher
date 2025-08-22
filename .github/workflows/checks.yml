@@ -46,8 +46,8 @@ jobs:
       - name: Preview Potential Dart Fixes
         run: dart fix --dry-run
 
-      - name: Run Flutter unit tests
-        run: dart ./scripts/run_tests.dart
+      - name: Run unit tests for all packages
+        run: dart ./scripts/run_tests.dart --unit
         timeout-minutes: 5
 
       # This action will validate absolute HTTP links, but will not check 

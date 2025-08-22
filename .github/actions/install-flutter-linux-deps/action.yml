@@ -1,5 +1,5 @@
 name: "Install Flutter Linux Dependencies"
-description: "Install required apt packages for Flutter on Linux"
+description: "Install the required apt packages for Flutter on Linux to build the app"
 runs:
   using: "composite"
   steps:

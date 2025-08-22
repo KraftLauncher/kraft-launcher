@@ -21,6 +21,9 @@ jobs:
 
       - uses: ./.github/actions/setup-flutter
 
+      # TODO: This workflow no longer works due to monorepo support, needs refactoring.
+      # Flutter tests need "--coverage only" while Dart tests need "--coverage=./coverage"
+      # with coverage package to format collected coverage to LCOV (see: https://pub.dev/packages/test#collecting-code-coverage)
       - name: Run unit tests and collect coverage information
         run: flutter test --coverage
 

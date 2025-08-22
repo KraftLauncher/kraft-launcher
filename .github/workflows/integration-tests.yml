@@ -1,8 +1,7 @@
 name: Run integration tests
 
 on:
-  # Currently, the integration tests run more often and we don't need it at this stage,
-  # unit tests should be extracted from this file.
+  # Currently, the integration tests run more often and we don't need it at this stage.
   workflow_dispatch:  # Enables manual trigger
   # push:
   #   branches: [main]
@@ -51,9 +50,8 @@ jobs:
         if: runner.os == 'Linux'
         uses: smithki/xvfb-action@v1.1.2
         with:
-          run: cd kraft_launcher && flutter test integration_test -d linux -r github
+          run: dart ./scripts/run_tests.dart --integration -- -d linux -r github
 
       - name: Run Flutter integration tests on Non-Linux platforms
         if: runner.os != 'Linux'
-        run: flutter test integration_test -d ${{ runner.os }}
-        working-directory: kraft_launcher
+        run: dart ./scripts/run_tests.dart --integration -- -d ${{ runner.os }}

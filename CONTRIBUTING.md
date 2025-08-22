@@ -52,21 +52,17 @@ To run tests:
 * **Unit tests**: 
 
     ```bash
-    # REPLACE "package_name" with the given package name 
-    cd package_name
-    flutter test
+     dart ./scripts/run_tests.dart --unit
     ```
 
-* **End-to-end (E2E) tests**: 
+* **Integration tests**: 
 
     ```bash
-    # REPLACE "package_name" with the given package name
-    cd package_name
-    flutter test integration_test
+    dart ./scripts/run_tests.dart --integration
     ```
 
 > [!NOTE]
-> In this project, the UI is generally not as heavily tested as the business logic.
+> In this project, the UI is currently not heavily tested.
 
 > [!TIP]
 >  Useful testing resources:
