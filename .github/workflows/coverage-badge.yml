@@ -6,11 +6,11 @@ on:
   # push:
   #   branches: [main]
   #   paths:
-  #     - .github/workflows/coverage-badge.yml
-  #     - lib/**
-  #     - test/**
-  #     - integration_test/**
-  #     - scripts/clean_coverage.sh
+  #     - '.github/workflows/coverage-badge.yml'
+  #     - '**/lib/**'
+  #     - '**/test/**'
+  #     - '**/integration_test/**'
+  #     - '**/scripts/clean_coverage.sh'
 
 jobs:
   build:
@@ -19,15 +19,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Setup Flutter (stable)
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
+      - uses: ./.github/actions/setup-flutter
 
-      - name: Install package dependencies
-        run: flutter pub get
-
+      # TODO: This workflow no longer works due to monorepo support, needs refactoring.
+      # Flutter tests need "--coverage only" while Dart tests need "--coverage=./coverage"
+      # with coverage package to format collected coverage to LCOV (see: https://pub.dev/packages/test#collecting-code-coverage)
       - name: Run unit tests and collect coverage information
         run: flutter test --coverage
 

@@ -5,12 +5,11 @@ publish_to: 'none'
 
 environment:
   sdk: ^3.9.0
+resolution: workspace
 
 dependencies:
-  result:
-    path: ../result
-  json_utils:
-    path: ../json_utils
+  result: ^1.0.0
+  json_utils: ^1.0.0
   http: ^1.4.0
   meta: ^1.16.0
 

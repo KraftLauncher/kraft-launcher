@@ -85,7 +85,11 @@ Our goal is to support standard features across most launchers while enabling pl
     ```bash
     git clone --depth 1 https://github.com/KraftLauncher/kraft-launcher
     cd kraft-launcher
+    # Fetch dependencies for the whole workspace
     flutter pub get
+
+    # Build the app package
+    cd kraft_launcher
     flutter build <platform>
     ```
 
@@ -98,11 +102,11 @@ Our goal is to support standard features across most launchers while enabling pl
 If you plan to fork or redistribute this project, please follow these guidelines:
 
 * Do not crack, pirate, or distribute builds that bypass Minecraft: Java Edition ownership checks. This is illegal and not supported. Offline mode is available, but users must own the game on at least one Microsoft account.
-* Replace all API keys with your own or use empty strings (`''`). This includes the [Microsoft Login Client ID and CurseForge API key](./lib/common/constants/project_info_constants.dart), located in `ProjectInfoConstants`.
+* Replace all API keys with your own or use empty strings (`''`). This includes the [Microsoft Login Client ID and CurseForge API key][project_constants], located in `ProjectInfoConstants`.
 * Update all branding, including the launcher name, app IDs and assets:
-    * All static fields in [`ProjectInfoConstants`](./lib/common/constants/project_info_constants.dart) should be updated, including the app name.
-    * Update all files inside [assets/branding](./assets/branding). Also run `dart run flutter_launcher_icons:generate` to replace them in platform runners.
-    * The package name in `pubspec.yaml` and also the app id in the platform runners `linux`, `macos` and `windows`. Also refer to [Platform Runner Modifications](./docs/PLATFORM_RUNNER_MODIFICATIONS.md).
+    * All static fields in [`ProjectInfoConstants`][project_constants] should be updated, including the app name.
+    * Update all files inside [assets/branding][assets_branding]. Also run `dart run flutter_launcher_icons:generate` to replace them in platform runners.
+    * The package name in [`pubspec.yaml`][app_pubspec.yaml] and also the app id in the platform runners [`linux`][platform_linux], [`macos`][platform_macos] and [`windows`][platform_windows]. Also refer to [Platform Runner Modifications](./docs/PLATFORM_RUNNER_MODIFICATIONS.md).
 * Clearly state that your fork is not affiliated with or endorsed by **Kraft Launcher**.
 
 This launcher interacts with APIs and services that requires to review and accept the following terms and conditions:
@@ -152,3 +156,11 @@ We are incredibly grateful to many individuals and organizations who have played
     - [Options.txt](https://minecraft.wiki/w/Options.txt)
     - [Servers.dat_format](https://minecraft.wiki/w/Servers.dat_format)
     - [Quick Play](https://minecraft.wiki/w/Quick_Play)
+
+<!-- Link references for easier maintenance -->
+[project_constants]: ./kraft_launcher/lib/common/constants/project_info_constants.dart
+[assets_branding]: ./kraft_launcher/assets/branding
+[app_pubspec.yaml]: ./kraft_launcher/pubspec.yaml
+[platform_linux]: ./kraft_launcher/linux
+[platform_macos]: ./kraft_launcher/macos
+[platform_windows]: ./kraft_launcher/windows

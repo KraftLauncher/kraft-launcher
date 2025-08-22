@@ -1,0 +1,27 @@
+name: "Setup Flutter & Install Dependencies"
+description: "Set up Flutter and run flutter pub get"
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        cache: true
+
+    - name: Install Workspace Dependencies
+      # Workaround for localization generation issue (https://github.com/flutter/flutter/issues/174205):
+      # Running "flutter pub get" at the root workspace normally triggers:
+      #
+      #   Generating synthetic localizations package failed with 1 error:
+      #   PathNotFoundException: Cannot open file, path = 'l10n/untranslated.json' 
+      #   (OS Error: No such file or directory, errno = 2)
+      #
+      # This happens when the "untranslated-messages-file" is set in 
+      # "kraft_launcher/l10n.yaml" and the root-level "flutter pub get" runs 
+      # before the app-level package.
+      #
+      # To avoid this, we first run "flutter pub get" in the app package directory,
+      # then run it at the root workspace level.
+      run: (cd kraft_launcher && flutter pub get) && flutter pub get
+      shell: bash

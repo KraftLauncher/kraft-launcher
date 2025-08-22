@@ -5,8 +5,10 @@ import 'dart:io' show File, Process, exit;
 import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
 
+const _appPackagePath = './kraft_launcher';
+
 void main(List<String> args) async {
-  final pubspecYamlFile = File('./pubspec.yaml');
+  final pubspecYamlFile = File('$_appPackagePath/pubspec.yaml');
   final pubspecYamlText = await pubspecYamlFile.readAsString();
   final pubspecYaml = loadYaml(pubspecYamlText) as YamlMap;
 
@@ -57,13 +59,19 @@ abstract final class Pubspec {
 }
 ''';
 
-  final pubspecFileDestination = File(pubspecDartClassFileDestination);
+  final pubspecFileDestination = File(
+    '$_appPackagePath/$pubspecDartClassFileDestination',
+  );
   if (!pubspecFileDestination.existsSync()) {
     print(
-      "The file ${pubspecFileDestination.path} doesn't exist. Please create it first.",
+      "The file ${pubspecFileDestination.path} doesn't exist. Please create it first."
+      '\n\nCommand:\n'
+      'touch ${pubspecFileDestination.path}',
     );
     exit(1);
   }
   await pubspecFileDestination.writeAsString(generatedDartFile);
   await Process.run('dart', ['format', pubspecFileDestination.path]);
+
+  print(pubspecFileDestination.path);
 }
