@@ -46,6 +46,8 @@ jobs:
 
       # For more details: https://docs.flutter.dev/testing/integration-tests#test-on-a-desktop-platform
 
+      # TODO: Integration tests are currently failing, investigate
+
       - name: Run Flutter integration tests on Linux
         if: runner.os == 'Linux'
         uses: smithki/xvfb-action@v1.1.2
