@@ -46,7 +46,9 @@ typedef AccountsStreamControllerFactory = StreamController<MinecraftAccounts>;
 /// await repository.removeAccount(...);
 /// ```
 class AccountRepository {
-  // TODO: Rename to AccountsRepository to be consistent with MinecraftVersionsRepository? Also AccountFileStorage and SecureAccountStorage and other possible usages.
+  // TODO: Rename to AccountsRepository to be consistent with MinecraftVersionsRepository?
+  //  Also AccountFileStorage and SecureAccountStorage and other possible usages.
+  //  Consider: MinecraftLauncherAccountsRepository or LauncherAccountsRepository
   AccountRepository({
     required AccountFileStorage accountFileStorage,
     required SecureAccountStorage secureAccountStorage,
