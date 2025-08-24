@@ -12,3 +12,4 @@ workspace:
   - packages/json_utils
   - packages/minecraft/minecraft_services_client
   - packages/result
+  - packages/collection_utils
