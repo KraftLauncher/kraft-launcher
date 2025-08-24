@@ -21,6 +21,11 @@ import 'package:http/http.dart' show MultipartFile;
 // between abstraction, performance, and ease of use for file uploads.
 export 'package:http/http.dart' show MultipartFile;
 
+// Required to allow consumers to create a [MultipartFile] with a content type set,
+// without depending on the http_parser package.
+// ignore: depend_on_referenced_packages
+export 'package:http_parser/http_parser.dart' show MediaType;
+
 class MultipartBody {
   MultipartBody({required this.fields, required this.files});
 
