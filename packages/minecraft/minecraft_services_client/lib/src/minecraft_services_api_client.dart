@@ -1,6 +1,8 @@
 import 'package:api_client/api_client.dart';
 import 'package:minecraft_services_client/src/models/models.dart';
 
+export 'package:api_client/api_client.dart' show MultipartFile;
+
 /// A client for the `api.minecraftservices.com` API.
 ///
 /// See also:
@@ -27,9 +29,8 @@ abstract interface class MinecraftServicesApiClient {
 
   /// Uploads a new skin for the authenticated user.
   ///
-  /// While not required, it's preferred to hardcode the content-type to `image/png`
-  /// when passing a [MultipartFile] to [skinFile] argument
-  /// since Minecraft skins are always PNG files.
+  /// While not strictly required, it's recommended to set the content-type
+  /// of the [skinFile] to `image/png`, since Minecraft skins must be PNG files.
   Future<MinecraftApiResult<MinecraftProfileResponse>> uploadSkin({
     required String accessToken,
     required MultipartFile skinFile,
