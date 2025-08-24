@@ -8,7 +8,7 @@ sealed class NetworkFailure extends BaseFailure {
 
 final class TooManyRequestsFailure extends NetworkFailure {
   const TooManyRequestsFailure()
-    : super('Too many requests has been sent to the server (429).');
+    : super('Too many requests have been sent to the server (429).');
 }
 
 final class InternalServerFailure extends NetworkFailure {

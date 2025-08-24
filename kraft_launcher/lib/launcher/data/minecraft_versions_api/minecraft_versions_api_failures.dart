@@ -11,7 +11,7 @@ final class DeserializationFailure extends MinecraftVersionsApiFailure {
 
 final class TooManyRequestsFailure extends MinecraftVersionsApiFailure {
   const TooManyRequestsFailure()
-    : super('Too many requests has been sent to Mojang servers.');
+    : super('Too many requests have been sent to Mojang servers.');
 }
 
 final class InternalServerFailure extends MinecraftVersionsApiFailure {
