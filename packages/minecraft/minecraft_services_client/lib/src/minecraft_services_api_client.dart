@@ -1,9 +1,5 @@
 import 'package:api_client/api_client.dart';
-import 'package:minecraft_services_client/src/models/minecraft_entitlements_response.dart';
-import 'package:minecraft_services_client/src/models/minecraft_error_response.dart';
-import 'package:minecraft_services_client/src/models/minecraft_login_response.dart';
-import 'package:minecraft_services_client/src/models/profile/minecraft_profile_response.dart';
-import 'package:minecraft_services_client/src/models/profile/skin/enums/minecraft_skin_variant.dart';
+import 'package:minecraft_services_client/src/models/models.dart';
 
 /// A client for the `api.minecraftservices.com` API.
 ///

@@ -1,8 +1,8 @@
+import 'package:collection_utils/collection_utils.dart';
 import 'package:json_utils/json_utils.dart';
 import 'package:meta/meta.dart';
 import 'package:minecraft_services_client/src/models/profile/skin/minecraft_profile_cape.dart';
 import 'package:minecraft_services_client/src/models/profile/skin/minecraft_profile_skin.dart';
-import 'package:minecraft_services_client/src/utils/list_equals.dart';
 
 @immutable
 class MinecraftProfileResponse {

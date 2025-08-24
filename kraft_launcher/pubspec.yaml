@@ -50,6 +50,7 @@ dependencies:
   result: ^1.0.0
   json_utils: ^1.0.0
   minecraft_services_client: ^1.0.0
+  collection_utils: ^1.0.0
 
 dev_dependencies:
   flutter_test:

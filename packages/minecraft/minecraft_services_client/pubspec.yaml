@@ -12,6 +12,7 @@ dependencies:
   json_utils: ^1.0.0
   result: ^1.0.0
   api_client: ^1.0.0
+  collection_utils: ^1.0.0
 
 dev_dependencies:
   test: ^1.24.0
