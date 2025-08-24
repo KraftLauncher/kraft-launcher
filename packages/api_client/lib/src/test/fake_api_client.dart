@@ -22,8 +22,10 @@ final class FakeApiClient implements ApiClient {
   List<FakeHttpRequestJsonCall<Object, Object>> get requestJsonCalls =>
       List.unmodifiable(_requestJsonCalls);
 
-  StringApiResultFuture Function(FakeHttpRequestCall call)? whenRequest;
-  JsonApiResultFuture<S, F> Function<S, F>(FakeHttpRequestJsonCall<S, F> call)?
+  Future<StringApiResult> Function(FakeHttpRequestCall call)? whenRequest;
+  Future<JsonApiResult<S, F>> Function<S, F>(
+    FakeHttpRequestJsonCall<S, F> call,
+  )?
   whenRequestJson;
 
   Future<void> stubJsonSuccessAndRun<T>({
@@ -81,7 +83,7 @@ final class FakeApiClient implements ApiClient {
   // }
 
   @override
-  StringApiResultFuture request(
+  Future<StringApiResult> request(
     Uri url, {
     required HttpMethod method,
     Map<String, String>? headers,
@@ -107,7 +109,7 @@ final class FakeApiClient implements ApiClient {
   }
 
   @override
-  JsonApiResultFuture<S, F> requestJson<S, F>(
+  Future<JsonApiResult<S, F>> requestJson<S, F>(
     Uri url, {
     required HttpMethod method,
     Map<String, String>? headers,

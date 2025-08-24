@@ -78,7 +78,7 @@ abstract interface class ApiClient {
   /// - [deserializeFailure] is used for non-2xx responses (e.g., 4xx, 5xx).
   ///
   /// {@macro requestCommon}
-  JsonApiResultFuture<S, F> requestJson<S, F>(
+  Future<JsonApiResult<S, F>> requestJson<S, F>(
     Uri url, {
     required HttpMethod method,
     Map<String, String>? headers,
@@ -98,7 +98,7 @@ abstract interface class ApiClient {
   /// See also: [RequestBody]
   ///
   /// {@endtemplate}
-  StringApiResultFuture request(
+  Future<StringApiResult> request(
     Uri url, {
     required HttpMethod method,
     Map<String, String>? headers,
@@ -127,7 +127,4 @@ typedef JsonResponseDeserializer<T> = T Function(JsonHttpResponse response);
 // S represents the success response.
 // F represents the error response.
 typedef JsonApiResult<S, F> = Result<HttpResponse<S>, ApiFailure<F>>;
-typedef JsonApiResultFuture<S, F> = Future<JsonApiResult<S, F>>;
-
 typedef StringApiResult = Result<StringHttpResponse, GeneralApiFailure<String>>;
-typedef StringApiResultFuture = Future<StringApiResult>;

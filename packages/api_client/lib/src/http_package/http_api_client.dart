@@ -18,7 +18,7 @@ final class HttpApiClient implements ApiClient {
   final http.Client _client;
 
   @override
-  JsonApiResultFuture<S, F> requestJson<S, F>(
+  Future<JsonApiResult<S, F>> requestJson<S, F>(
     Uri url, {
     required HttpMethod method,
     Map<String, String>? headers,
@@ -106,7 +106,7 @@ final class HttpApiClient implements ApiClient {
   };
 
   @override
-  StringApiResultFuture request(
+  Future<StringApiResult> request(
     Uri url, {
     required HttpMethod method,
     Map<String, String>? headers,
@@ -116,7 +116,7 @@ final class HttpApiClient implements ApiClient {
   /// Performs an HTTP request for both multipart and regular bodies,
   /// encoding JSON if needed and mapping errors to [GeneralApiFailure].
   /// Used internally by [request] and [requestJson].
-  StringApiResultFuture _request(
+  Future<StringApiResult> _request(
     Uri url, {
     required HttpMethod method,
     required Map<String, String>? headers,

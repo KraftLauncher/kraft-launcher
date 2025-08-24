@@ -135,7 +135,7 @@ void main() {
   });
 
   group('request', () {
-    StringApiResultFuture request({
+    Future<StringApiResult> request({
       Uri? url,
       HttpMethod? method,
       Map<String, String>? headers,
@@ -247,7 +247,7 @@ void main() {
   });
 
   group('requestJson', () {
-    JsonApiResultFuture<S, F> requestJson<S, F>({
+    Future<JsonApiResult<S, F>> requestJson<S, F>({
       Uri? url,
       HttpMethod? method,
       Map<String, String>? headers,
@@ -567,7 +567,7 @@ typedef _MockMakeHttpRequest =
     void Function(Future<_HttpResponse> Function() mock);
 
 typedef _CommonTestsMakeRequest =
-    JsonApiResultFuture<Object, _ErrorResponse> Function({
+    Future<JsonApiResult<Object, _ErrorResponse>> Function({
       Uri? url,
       Map<String, String>? headers,
       RequestBody? body,
