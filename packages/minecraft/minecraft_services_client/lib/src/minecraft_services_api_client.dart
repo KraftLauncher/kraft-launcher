@@ -10,18 +10,18 @@ abstract interface class MinecraftServicesApiClient {
   static const baseUrlHost = 'api.minecraftservices.com';
 
   /// Authenticates a user using Xbox XSTS token and user hash.
-  MinecraftApiResultFuture<MinecraftLoginResponse> authenticateWithXbox({
+  Future<MinecraftApiResult<MinecraftLoginResponse>> authenticateWithXbox({
     required String xstsToken,
     required String xstsUserHash,
   });
 
   /// Fetches the Minecraft profile data for the authenticated user.
-  MinecraftApiResultFuture<MinecraftProfileResponse> fetchProfile({
+  Future<MinecraftApiResult<MinecraftProfileResponse>> fetchProfile({
     required String accessToken,
   });
 
   /// Retrieves the entitlements (owned products) of the authenticated user.
-  MinecraftApiResultFuture<MinecraftEntitlementsResponse> fetchEntitlements({
+  Future<MinecraftApiResult<MinecraftEntitlementsResponse>> fetchEntitlements({
     required String accessToken,
   });
 
@@ -30,7 +30,7 @@ abstract interface class MinecraftServicesApiClient {
   /// While not required, it's preferred to hardcode the content-type to `image/png`
   /// when passing a [MultipartFile] to [skinFile] argument
   /// since Minecraft skins are always PNG files.
-  MinecraftApiResultFuture<MinecraftProfileResponse> uploadSkin({
+  Future<MinecraftApiResult<MinecraftProfileResponse>> uploadSkin({
     required String accessToken,
     required MultipartFile skinFile,
     required MinecraftSkinVariant variant,
@@ -38,4 +38,3 @@ abstract interface class MinecraftServicesApiClient {
 }
 
 typedef MinecraftApiResult<T> = JsonApiResult<T, MinecraftErrorResponse>;
-typedef MinecraftApiResultFuture<T> = Future<MinecraftApiResult<T>>;

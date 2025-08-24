@@ -12,7 +12,7 @@ final class HttpMinecraftServicesApiClient
   final String _host;
 
   @override
-  MinecraftApiResultFuture<MinecraftLoginResponse> authenticateWithXbox({
+  Future<MinecraftApiResult<MinecraftLoginResponse>> authenticateWithXbox({
     required String xstsToken,
     required String xstsUserHash,
   }) => _apiClient.requestJson(
@@ -28,7 +28,7 @@ final class HttpMinecraftServicesApiClient
   );
 
   @override
-  MinecraftApiResultFuture<MinecraftEntitlementsResponse> fetchEntitlements({
+  Future<MinecraftApiResult<MinecraftEntitlementsResponse>> fetchEntitlements({
     required String accessToken,
   }) => _apiClient.requestJson(
     Uri.https(_host, 'entitlements/mcstore'),
@@ -41,7 +41,7 @@ final class HttpMinecraftServicesApiClient
   );
 
   @override
-  MinecraftApiResultFuture<MinecraftProfileResponse> fetchProfile({
+  Future<MinecraftApiResult<MinecraftProfileResponse>> fetchProfile({
     required String accessToken,
   }) => _apiClient.requestJson(
     Uri.https(_host, 'minecraft/profile'),
@@ -54,7 +54,7 @@ final class HttpMinecraftServicesApiClient
   );
 
   @override
-  MinecraftApiResultFuture<MinecraftProfileResponse> uploadSkin({
+  Future<MinecraftApiResult<MinecraftProfileResponse>> uploadSkin({
     required String accessToken,
     required MultipartFile skinFile,
     required MinecraftSkinVariant variant,

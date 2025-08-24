@@ -21,7 +21,7 @@ void main() {
   });
 
   group('authenticateWithXbox', () {
-    MinecraftApiResultFuture<MinecraftLoginResponse> authenticateWithXbox({
+    Future<MinecraftApiResult<MinecraftLoginResponse>> authenticateWithXbox({
       String? xstsToken,
       String? xstsUserHash,
     }) => client.authenticateWithXbox(
@@ -103,9 +103,9 @@ void main() {
   });
 
   group('fetchEntitlements', () {
-    MinecraftApiResultFuture<MinecraftEntitlementsResponse> fetchEntitlements({
-      String? accessToken,
-    }) => client.fetchEntitlements(accessToken: accessToken ?? 'any');
+    Future<MinecraftApiResult<MinecraftEntitlementsResponse>>
+    fetchEntitlements({String? accessToken}) =>
+        client.fetchEntitlements(accessToken: accessToken ?? 'any');
 
     test('passes expected URL to $ApiClient', () async {
       await fetchEntitlements();
@@ -177,7 +177,7 @@ void main() {
   });
 
   group('fetchProfile', () {
-    MinecraftApiResultFuture<MinecraftProfileResponse> fetchProfile({
+    Future<MinecraftApiResult<MinecraftProfileResponse>> fetchProfile({
       String? accessToken,
     }) => client.fetchProfile(accessToken: accessToken ?? 'any');
 
@@ -232,7 +232,7 @@ void main() {
   });
 
   group('uploadSkin', () {
-    MinecraftApiResultFuture<MinecraftProfileResponse> uploadSkin({
+    Future<MinecraftApiResult<MinecraftProfileResponse>> uploadSkin({
       String? accessToken,
       MultipartFile? skinFile,
       MinecraftSkinVariant? variant,
@@ -361,6 +361,7 @@ void _testReturnValue<R>({
   required Future<MinecraftApiResult<R>> Function() makeRequest,
   required FakeApiClient Function() getFakeApiClient,
 }) {
+  // TODO: Move to FakeApiClient?
   test('returns $Result from $ApiClient', () async {
     final fakeApiClient = getFakeApiClient();
 
