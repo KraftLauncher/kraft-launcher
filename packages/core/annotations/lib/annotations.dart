@@ -1,25 +1,26 @@
 import 'package:meta/meta_meta.dart';
 
-// NOTE: This is a dummy example of what this package could provide;
-// this is an assumption, and anything in here is incorrect.
+/// {@macro debugOnlyInfra}
+const debugOnlyInfra = _DebugOnlyInfra();
 
-// ignore: unused_element
-const _nestedSealedClassCompositionWorkaround =
-    _NestedSealedClassCompositionWorkaround();
-
-/// Marks classes that serve as composition-based workarounds
-/// for Dart's current lack of support for nested sealed classes.
+/// {@template debugOnlyInfra}
+/// Marks infrastructure-level details that are included in domain APIs
+/// **for debugging or logging purposes only**.
 ///
-/// This should never actually be created, but currently,
-/// Dart does not support nested sealed classes, and we haven't
-/// found a reliable solution without duplicating code other than
-/// this composition workaround.
+/// Consumers of the domain API **should not access or rely on** these
+/// details, as they are not part of the domain model.
 ///
-/// This annotation is intended purely for documentation purposes
-/// to clarify the design intent behind these workaround classes.
+/// Examples of infrastructure details include:
 ///
-/// Note: This annotation has no runtime behavior or functional effect.
-@Target({TargetKind.classType})
-class _NestedSealedClassCompositionWorkaround {
-  const _NestedSealedClassCompositionWorkaround();
+/// - HTTP (e.g., response body, status code)
+/// - JSON payloads
+/// - System or external service data
+///
+/// These details exist purely for logging, diagnostics, or debugging.
+///
+/// Note: This annotation has **no runtime behavior or functional effect**.
+/// {@endtemplate}
+@Target({TargetKind.parameter})
+class _DebugOnlyInfra {
+  const _DebugOnlyInfra();
 }

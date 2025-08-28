@@ -2,6 +2,8 @@ import 'dart:io' show SocketException;
 
 import 'package:api_client/src/api_client.dart';
 import 'package:api_client/src/api_failures.dart';
+import 'package:api_client/src/helpers/http_status_codes.dart'
+    show HttpStatusRanges;
 import 'package:api_client/src/http_package/_http_send_unstreamed.dart';
 import 'package:api_client/src/http_response.dart';
 import 'package:api_client/src/multipart/multipart_body.dart'
@@ -309,7 +311,7 @@ final class HttpApiClient implements ApiClient {
   Result<HttpResponse<T>, GeneralApiFailure<T>> _mapResponseToResult<T>(
     HttpResponse<T> response,
   ) {
-    if (_isIn2xx(response.statusCode)) {
+    if (HttpStatusRanges.isIn2xx(response.statusCode)) {
       return Result.success(response);
     }
 
@@ -322,8 +324,6 @@ final class HttpApiClient implements ApiClient {
 ///
 /// Used internally avoid depending on [http.Response] and [http.StreamedResponse].
 typedef _HttpResponse = StringHttpResponse;
-
-bool _isIn2xx(int statusCode) => statusCode >= 200 && statusCode < 300;
 
 extension _MapResponse<T> on HttpResponse<T> {
   HttpResponse<R> _mapBody<R>(R newBody) {

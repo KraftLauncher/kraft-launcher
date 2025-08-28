@@ -58,7 +58,7 @@ sealed class Result<V, F extends BaseFailure> {
   V getOrElse(V Function(F failure) onFailure) =>
       fold(onSuccess: (value) => value, onFailure: onFailure);
 
-  /// Transforms a success value while preserving the failure type.
+  /// Maps a success value while preserving the failure type.
   Result<R, F> mapSuccess<R>(R Function(V value) transform) => switch (this) {
     final SuccessResult<V, F> success => Result.success(
       transform(success.value),
@@ -66,7 +66,7 @@ sealed class Result<V, F extends BaseFailure> {
     final FailureResult<V, F> failure => Result.failure(failure.failure),
   };
 
-  /// Transforms a failure value while preserving the success type.
+  /// Maps a failure value while preserving the success type.
   Result<V, R> mapFailure<R extends BaseFailure>(
     R Function(F value) transform,
   ) => switch (this) {
@@ -74,6 +74,15 @@ sealed class Result<V, F extends BaseFailure> {
     final FailureResult<V, F> failure => Result.failure(
       transform(failure.failure),
     ),
+  };
+
+  /// Maps both success and failure to potentially new types.
+  Result<NV, NF> map<NV, NF extends BaseFailure>({
+    required NV Function(V value) onSuccess,
+    required NF Function(F failure) onFailure,
+  }) => switch (this) {
+    SuccessResult<V, F>(:final value) => Result.success(onSuccess(value)),
+    FailureResult<V, F>(:final failure) => Result.failure(onFailure(failure)),
   };
 
   /// Chains another [Result] if this is a success.
