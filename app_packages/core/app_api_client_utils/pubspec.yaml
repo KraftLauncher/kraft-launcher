@@ -1,0 +1,14 @@
+name: app_api_client_utils
+description: "App-specific utilities for API client, response handling, and error mapping."
+version: 1.0.0
+
+environment:
+  sdk: ^3.9.0
+resolution: workspace
+
+dependencies:
+  api_client: ^1.0.0
+  result: ^1.0.0
+
+dev_dependencies:
+  test: ^1.25.6

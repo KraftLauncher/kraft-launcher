@@ -1,0 +1,1 @@
+enum MinecraftCosmeticState { active, inactive }

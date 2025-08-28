@@ -1,8 +1,7 @@
-import 'package:api_client/api_client.dart';
+import 'package:api_client/api_client.dart' show JsonApiResult, MultipartFile;
 import 'package:minecraft_services_client/src/models/models.dart';
 
-export 'package:api_client/api_client.dart' show MediaType, MultipartFile;
-export 'package:api_client/api_failures.dart';
+export 'package:api_client/consumer_types.dart';
 
 /// A client for the `api.minecraftservices.com` API.
 ///

@@ -4,9 +4,11 @@ import 'package:minecraft_services_client/src/models/models.dart';
 
 final class HttpMinecraftServicesApiClient
     implements MinecraftServicesApiClient {
-  HttpMinecraftServicesApiClient({required ApiClient apiClient, String? host})
-    : _apiClient = apiClient,
-      _host = host ?? MinecraftServicesApiClient.baseUrlHost;
+  HttpMinecraftServicesApiClient({
+    required ApiClient apiClient,
+    String host = MinecraftServicesApiClient.baseUrlHost,
+  }) : _apiClient = apiClient,
+       _host = host;
 
   final ApiClient _apiClient;
   final String _host;

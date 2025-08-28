@@ -6,6 +6,8 @@ environment:
 # Globs support is currently unavailable: https://github.com/dart-lang/pub/issues/4391
 workspace:
   - kraft_launcher
+  - app_packages/minecraft_services_repository
+  - app_packages/core/app_api_client_utils
   - packages/core/annotations
   - packages/core/api_client
   - packages/core/result

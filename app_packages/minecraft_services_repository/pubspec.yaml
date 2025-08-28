@@ -1,0 +1,20 @@
+name: minecraft_services_repository
+description: "A repository providing domain-specific access to Minecraft services"
+version: 1.0.0
+
+environment:
+  sdk: ^3.9.0
+resolution: workspace
+
+dependencies:
+  minecraft_services_client: ^1.0.0
+  result: ^1.0.0
+  annotations: ^1.0.0
+  collection_utils: ^1.0.0
+  app_api_client_utils: ^1.0.0 
+
+  meta: ^1.16.0
+
+dev_dependencies:
+  test: ^1.25.6
+  checks: ^0.3.1

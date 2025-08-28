@@ -1,0 +1,1 @@
+enum MinecraftSkinVariant { classic, slim }

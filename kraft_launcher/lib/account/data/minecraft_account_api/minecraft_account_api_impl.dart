@@ -11,8 +11,7 @@ import 'package:kraft_launcher/common/logic/file_utils.dart';
 
 const _host = ApiHosts.minecraftServices;
 
-// TODO: Replace MinecraftAccountApiImpl with a repository
-//  that uses MinecraftServicesApiClient, https://github.com/KraftLauncher/kraft-launcher/issues/8
+// TODO: Replace MinecraftAccountApiImpl with MinecraftServicesRepository, https://github.com/KraftLauncher/kraft-launcher/issues/8
 
 class MinecraftAccountApiImpl implements MinecraftAccountApi {
   MinecraftAccountApiImpl({required Dio dio}) : _dio = dio;
