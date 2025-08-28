@@ -155,11 +155,13 @@ extension _ApiFailureDomainMapper
             response.statusCode,
           ),
           override: () => overrideHttpFailure?.call(response),
-          orElse: () => UnknownFailure(response.body.errorMessage),
+          orElse: () => UnhandledServerResponseFailure(
+            response.statusCode,
+            response.body.errorMessage,
+          ),
         ),
-      client.UnknownFailure<client.MinecraftErrorResponse>() => UnknownFailure(
-        failure.message,
-      ),
+      client.UnexpectedFailure<client.MinecraftErrorResponse>() =>
+        UnexpectedFailure(failure.message),
       client.JsonDecodingFailure<client.MinecraftErrorResponse>(
         :final responseBody,
         :final reason,

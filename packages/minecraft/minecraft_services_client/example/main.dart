@@ -60,9 +60,9 @@ void main() async {
               );
             }
             stderr.writeln('❌ $_host returned: $response.');
-          case UnknownFailure<MinecraftErrorResponse>():
+          case UnexpectedFailure<MinecraftErrorResponse>():
             stderr.writeln(
-              '❌ An unknown error while sending a request to $_host.',
+              '❌ An unexpected error while sending a request to $_host.',
             );
           case JsonDecodingFailure<MinecraftErrorResponse>():
             stderr.writeln(

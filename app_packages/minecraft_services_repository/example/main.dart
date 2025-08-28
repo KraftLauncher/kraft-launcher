@@ -48,9 +48,14 @@ void main() async {
         switch (result.failure) {
           case ConnectionFailure():
             stderr.writeln('❌ Failed to connect to Minecraft services.');
-          case UnknownFailure():
+          case UnexpectedFailure():
             stderr.writeln(
               '❌ An unknown error occurred while sending a request to Minecraft services.',
+            );
+          case UnhandledServerResponseFailure(:final message):
+            stderr.writeln(
+              '❌ An unhandled server response from the Minecraft services:\n'
+              '$message',
             );
           case UnauthorizedAccessFailure():
             stderr.writeln(

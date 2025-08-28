@@ -87,8 +87,8 @@ final class HttpApiClient implements ApiClient {
           case ConnectionFailure<String>():
             return Result.failure(ConnectionFailure<F>(failure.message));
 
-          case UnknownFailure<String>():
-            return Result.failure(UnknownFailure<F>(failure.message));
+          case UnexpectedFailure<String>():
+            return Result.failure(UnexpectedFailure<F>(failure.message));
         }
     }
   }
@@ -274,6 +274,11 @@ final class HttpApiClient implements ApiClient {
     HttpMethod.delete => 'DELETE',
   };
 
+  /// Maps exceptions thrown during the [_request] execution
+  /// into corresponding failure results.
+  ///
+  /// * Maps [SocketException] to [ConnectionFailure]
+  /// * Maps any other [Exception] to [UnexpectedFailure]
   Future<Result<S, GeneralApiFailure<F>>> _mapExceptionsToFailure<S, F>(
     Future<Result<S, GeneralApiFailure<F>>> Function() request,
   ) async {
@@ -283,7 +288,7 @@ final class HttpApiClient implements ApiClient {
       // See also: https://github.com/dart-lang/http/blob/6656f15e88e68f6cafa2a7bbffa37fd6ac2dd33a/pkgs/http/lib/src/io_client.dart#L22-L27
       return Result.failure(ConnectionFailure(e.toString()));
     } on Exception catch (e) {
-      return Result.failure(UnknownFailure(e.toString()));
+      return Result.failure(UnexpectedFailure(e.toString()));
     }
   }
 

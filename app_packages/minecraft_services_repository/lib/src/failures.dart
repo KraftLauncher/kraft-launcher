@@ -10,14 +10,24 @@ final class ConnectionFailure extends MinecraftServicesFailure {
     : super('Failed to connect to Minecraft services: $message');
 }
 
-final class UnknownFailure extends MinecraftServicesFailure {
-  const UnknownFailure(String? message)
+final class UnexpectedFailure extends MinecraftServicesFailure {
+  const UnexpectedFailure(String? message)
     : super(
-        'Unknown failure while communicating with Minecraft services: $message',
+        'Unexpected failure while communicating with Minecraft services: $message',
       );
 }
 
-// 4xx
+final class UnhandledServerResponseFailure extends MinecraftServicesFailure {
+  const UnhandledServerResponseFailure(
+    @debugOnlyInfra int statusCode,
+    @debugOnlyInfra String? responseBody,
+  ) : super(
+        'Minecraft services returned an unhandled error ($statusCode):'
+        '\n$responseBody',
+      );
+}
+
+// Client errors
 
 final class UnauthorizedAccessFailure extends MinecraftServicesFailure {
   const UnauthorizedAccessFailure()
@@ -41,7 +51,7 @@ final class InvalidSkinImageDataFailure extends MinecraftServicesFailure {
     : super('The uploaded skin image data is invalid.');
 }
 
-// 5xx
+// Server errors
 
 final class InternalServerFailure extends MinecraftServicesFailure {
   const InternalServerFailure(

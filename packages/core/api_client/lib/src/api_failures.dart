@@ -38,8 +38,9 @@ final class HttpStatusFailure<Body> extends GeneralApiFailure<Body> {
 }
 
 /// An unexpected or unclassified failure.
-final class UnknownFailure<Body> extends GeneralApiFailure<Body> {
-  const UnknownFailure(String message) : super('Unknown failure: $message');
+final class UnexpectedFailure<Body> extends GeneralApiFailure<Body> {
+  const UnexpectedFailure(String message)
+    : super('Unexpected failure: $message');
 }
 
 /// Failures specific to JSON handling: decoding or deserialization errors.

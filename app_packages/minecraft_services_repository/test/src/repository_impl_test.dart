@@ -434,15 +434,15 @@ void _domainFailureMappingTests({
   );
 
   test(
-    'maps API client ${client.UnknownFailure} to domain $UnknownFailure',
+    'maps API client ${client.UnexpectedFailure} to domain $UnexpectedFailure',
     () async {
       const message = 'Example unknown failure';
-      mockFailure(const client.UnknownFailure(message));
+      mockFailure(const client.UnexpectedFailure(message));
 
       final failure = await makeRequest();
 
       check(failure)
-          .isA<UnknownFailure>()
+          .isA<UnexpectedFailure>()
           .has((e) => e.message, 'message')
           .endsWith(message);
     },
@@ -557,13 +557,13 @@ void _domainFailureMappingTests({
     );
 
     test(
-      'maps API client ${client.HttpStatusFailure} with unhandled status code to domain $UnknownFailure',
+      'maps API client ${client.HttpStatusFailure} with unhandled status code to domain $UnhandledServerResponseFailure',
       () async {
         mockHttpStatusFailure(statusCode: client.HttpStatusCodes.conflict);
 
         final failure = await makeRequest();
 
-        check(failure).isA<UnknownFailure>();
+        check(failure).isA<UnhandledServerResponseFailure>();
       },
     );
   });

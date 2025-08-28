@@ -367,7 +367,7 @@ void _testReturnValue<R>({
 
     final expectedResult = MinecraftApiResult<R>.failure(
       // Example dummy result.
-      const UnknownFailure('An unknown error'),
+      const UnexpectedFailure('An unexpected error'),
     );
 
     fakeApiClient.whenRequestJson = <S, F>(call) async {

@@ -8,7 +8,7 @@ import 'package:result/result.dart';
 final class FakeMinecraftServicesApiClient
     implements MinecraftServicesApiClient {
   MinecraftApiResult<T> _dummyDefault<T>() =>
-      Result.failure(const UnknownFailure('dummy'));
+      Result.failure(const UnexpectedFailure('dummy'));
 
   final List<AuthenticateWithXboxCall> _authenticateWithXboxCalls = [];
   List<AuthenticateWithXboxCall> get authenticateWithXboxCalls =>

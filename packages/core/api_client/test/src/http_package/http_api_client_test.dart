@@ -601,16 +601,13 @@ void _commonTests({
     expect(result.failureOrNull, isA<ConnectionFailure<_ErrorResponse>>());
   });
 
-  test(
-    'returns $UnknownFailure for unhandled/unknown cases correctly',
-    () async {
-      mockMakeRequest(() async => throw const FormatException());
+  test('returns $UnexpectedFailure for unhandled cases correctly', () async {
+    mockMakeRequest(() async => throw const FormatException());
 
-      final result = await makeRequest();
+    final result = await makeRequest();
 
-      expect(result.failureOrNull, isA<UnknownFailure<_ErrorResponse>>());
-    },
-  );
+    expect(result.failureOrNull, isA<UnexpectedFailure<_ErrorResponse>>());
+  });
 
   for (final method in HttpMethod.values._withNoRequestBodies()) {
     test(
