@@ -277,8 +277,8 @@ final class HttpApiClient implements ApiClient {
   /// Maps exceptions thrown during the [_request] execution
   /// into corresponding failure results.
   ///
-  /// * Maps [SocketException] to [ConnectionFailure]
-  /// * Maps any other [Exception] to [UnexpectedFailure]
+  /// * Maps [SocketException] to [ConnectionFailure].
+  /// * Maps any other [Exception] to [UnexpectedFailure].
   Future<Result<S, GeneralApiFailure<F>>> _mapExceptionsToFailure<S, F>(
     Future<Result<S, GeneralApiFailure<F>>> Function() request,
   ) async {

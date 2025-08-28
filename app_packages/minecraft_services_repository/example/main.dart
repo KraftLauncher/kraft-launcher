@@ -50,7 +50,7 @@ void main() async {
             stderr.writeln('❌ Failed to connect to Minecraft services.');
           case UnexpectedFailure():
             stderr.writeln(
-              '❌ An unknown error occurred while sending a request to Minecraft services.',
+              '❌ An unexpected error occurred while sending a request to Minecraft services.',
             );
           case UnhandledServerResponseFailure(:final message):
             stderr.writeln(

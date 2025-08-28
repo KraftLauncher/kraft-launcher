@@ -601,7 +601,7 @@ void _commonTests({
     expect(result.failureOrNull, isA<ConnectionFailure<_ErrorResponse>>());
   });
 
-  test('returns $UnexpectedFailure for unhandled cases correctly', () async {
+  test('returns $UnexpectedFailure for unexpected cases correctly', () async {
     mockMakeRequest(() async => throw const FormatException());
 
     final result = await makeRequest();

@@ -54,7 +54,7 @@ void main() async {
           case ConnectionFailure<MinecraftErrorResponse>():
             stderr.writeln('❌ Failed to connect to $_host.');
           case HttpStatusFailure<MinecraftErrorResponse>(:final response):
-            if (response.statusCode == 401) {
+            if (response.statusCode == HttpStatusCodes.unauthorized) {
               stderr.writeln(
                 '❌ Unauthorized access, please refresh your Minecraft access token.\n',
               );

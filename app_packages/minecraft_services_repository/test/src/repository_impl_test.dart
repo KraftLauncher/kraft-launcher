@@ -481,20 +481,21 @@ void _domainFailureMappingTests({
   );
 
   group('HTTP error response mapping', () {
-    const dummyErrorResponse = client.MinecraftErrorResponse(
-      path: 'dummy',
-      error: 'dummy',
-      errorMessage: 'dummy',
-    );
-
     void mockHttpStatusFailure({
       required int statusCode,
+      client.MinecraftErrorResponse? response,
       Map<String, String> headers = const {},
     }) {
       mockFailure(
         client.HttpStatusFailure(
           response: httpResponseWithDefaults(
-            body: dummyErrorResponse,
+            body:
+                response ??
+                const client.MinecraftErrorResponse(
+                  path: 'dummy',
+                  error: 'dummy',
+                  errorMessage: 'dummy',
+                ),
             statusCode: statusCode,
             headers: headers,
           ),
@@ -559,7 +560,10 @@ void _domainFailureMappingTests({
     test(
       'maps API client ${client.HttpStatusFailure} with unhandled status code to domain $UnhandledServerResponseFailure',
       () async {
-        mockHttpStatusFailure(statusCode: client.HttpStatusCodes.conflict);
+        mockHttpStatusFailure(
+          // An example of unhandled case
+          statusCode: client.HttpStatusCodes.conflict,
+        );
 
         final failure = await makeRequest();
 
