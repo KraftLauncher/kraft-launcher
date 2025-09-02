@@ -10,13 +10,15 @@ import 'package:result/result.dart';
 /// fetching profiles, managing skins, and authenticating with Xbox,
 /// without exposing low-level REST API or HTTP details.
 abstract interface class MinecraftServicesRepository {
-  /// Authenticates a user using Xbox XSTS token and user hash.
+  /// Authenticates a user using an XSTS token and a user hash.
+  ///
+  /// Does not persist session or produce side effects.
   Future<MinecraftServicesResult<MinecraftLoginResponse>> authenticateWithXbox({
-    required String xstsToken,
+    required String xstsAccessToken,
     required String xstsUserHash,
   });
 
-  /// Fetches the Minecraft profile data for the authenticated user.
+  /// Fetches the Minecraft profile for the authenticated user.
   Future<MinecraftServicesResult<MinecraftProfileResponse>> fetchProfile({
     required String accessToken,
   });

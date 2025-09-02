@@ -3,11 +3,10 @@ import 'dart:typed_data' show Uint8List;
 import 'package:checks/checks.dart';
 import 'package:minecraft_services_client/minecraft_services_client.dart'
     as client;
+import 'package:minecraft_services_client/test.dart';
 import 'package:minecraft_services_repository/minecraft_services_repository.dart';
 import 'package:result/result.dart';
 import 'package:test/scaffolding.dart';
-
-import 'fake_minecraft_services_api_client.dart';
 
 void main() {
   late DefaultMinecraftServicesRepository repository;
@@ -22,18 +21,17 @@ void main() {
 
   group('authenticateWithXbox', () {
     test('forwards the provided arguments to the API client', () async {
-      const xstsToken = 'FAKE_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
+      const xstsAccessToken = 'FAKE_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
       const xstsUserHash = 'FAKE_1234567890ABCDEF1234567890ABCDEF';
 
       await repository.authenticateWithXbox(
-        xstsToken: xstsToken,
+        xstsAccessToken: xstsAccessToken,
         xstsUserHash: xstsUserHash,
       );
 
-      final call =
-          fakeMinecraftServicesApiClient.authenticateWithXboxCalls.first;
+      final call = fakeMinecraftServicesApiClient.loginWithXboxCalls.first;
 
-      check(call.xstsToken).equals(xstsToken);
+      check(call.xstsAccessToken).equals(xstsAccessToken);
       check(call.xstsUserHash).equals(xstsUserHash);
     });
 
@@ -46,8 +44,8 @@ void main() {
           expiresIn: 3600,
         );
 
-        fakeMinecraftServicesApiClient.whenAuthenticateWithXbox = (call) async {
-          return Result.success(httpResponseWithDefaults(body: clientResponse));
+        fakeMinecraftServicesApiClient.whenLoginWithXbox = (call) async {
+          return Result.success(dummyHttpResponse(body: clientResponse));
         };
 
         final response =
@@ -67,8 +65,8 @@ void main() {
 
     _domainFailureMappingTests(
       mockFailure: (failure) {
-        fakeMinecraftServicesApiClient.whenAuthenticateWithXbox =
-            (call) async => Result.failure(failure);
+        fakeMinecraftServicesApiClient.whenLoginWithXbox = (call) async =>
+            Result.failure(failure);
       },
       makeRequest: () async =>
           (await repository.authenticateWithXboxWithDefaults()).failureOrThrow,
@@ -77,9 +75,7 @@ void main() {
     test('sends request only once', () async {
       await repository.authenticateWithXboxWithDefaults();
 
-      check(
-        fakeMinecraftServicesApiClient.authenticateWithXboxCalls.length,
-      ).equals(1);
+      check(fakeMinecraftServicesApiClient.loginWithXboxCalls.length).equals(1);
     });
   });
 
@@ -113,7 +109,7 @@ void main() {
       fakeMinecraftServicesApiClient.whenFetchProfile = (_) async {
         return Result.failure(
           client.HttpStatusFailure(
-            response: httpResponseWithDefaults(
+            response: dummyHttpResponse(
               body: const client.MinecraftErrorResponse(
                 path: 'dummy',
                 error: 'NOT_FOUND',
@@ -171,7 +167,7 @@ void main() {
         () async {
           fakeMinecraftServicesApiClient.whenFetchEntitlements = (_) async {
             return Result.success(
-              httpResponseWithDefaults(
+              dummyHttpResponse(
                 body: client.MinecraftEntitlementsResponse(
                   items: entitlementsItemNames
                       .map(
@@ -298,7 +294,7 @@ void main() {
         fakeMinecraftServicesApiClient.whenUploadSkin = (_) async {
           return Result.failure(
             client.HttpStatusFailure(
-              response: httpResponseWithDefaults(
+              response: dummyHttpResponse(
                 statusCode: client.HttpStatusCodes.badRequest,
                 body: const client.MinecraftErrorResponse(
                   path: 'dummy',
@@ -357,9 +353,7 @@ void _minecraftProfileMappingTest({
         ],
       );
 
-      mockApiClient(
-        Result.success(httpResponseWithDefaults(body: clientResponse)),
-      );
+      mockApiClient(Result.success(dummyHttpResponse(body: clientResponse)));
 
       final response = (await makeRequest()).valueOrThrow;
 
@@ -488,7 +482,7 @@ void _domainFailureMappingTests({
     }) {
       mockFailure(
         client.HttpStatusFailure(
-          response: httpResponseWithDefaults(
+          response: dummyHttpResponse(
             body:
                 response ??
                 const client.MinecraftErrorResponse(
@@ -577,9 +571,12 @@ extension _MinecraftServicesRepositoryWithDefaults
     on MinecraftServicesRepository {
   Future<MinecraftServicesResult<MinecraftLoginResponse>>
   authenticateWithXboxWithDefaults({
-    String xstsToken = 'dummy',
+    String xstsAccessToken = 'dummy',
     String xstsUserHash = 'dummy',
-  }) => authenticateWithXbox(xstsToken: xstsToken, xstsUserHash: xstsUserHash);
+  }) => authenticateWithXbox(
+    xstsAccessToken: xstsAccessToken,
+    xstsUserHash: xstsUserHash,
+  );
 
   Future<MinecraftServicesResult<MinecraftProfileResponse>>
   fetchProfileDefaults({String accessToken = 'dummy'}) =>

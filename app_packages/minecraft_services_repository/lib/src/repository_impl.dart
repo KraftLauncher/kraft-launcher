@@ -17,11 +17,11 @@ final class DefaultMinecraftServicesRepository
 
   @override
   Future<MinecraftServicesResult<MinecraftLoginResponse>> authenticateWithXbox({
-    required String xstsToken,
+    required String xstsAccessToken,
     required String xstsUserHash,
   }) async {
-    final result = await _apiClient.authenticateWithXbox(
-      xstsToken: xstsToken,
+    final result = await _apiClient.loginWithXbox(
+      xstsAccessToken: xstsAccessToken,
       xstsUserHash: xstsUserHash,
     );
 

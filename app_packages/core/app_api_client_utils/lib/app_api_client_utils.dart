@@ -8,7 +8,7 @@ import 'package:result/result.dart' show BaseFailure;
 /// This function is tailored to the requirements of this app and
 /// may not be applicable in other contexts.
 ///
-/// Callbacks must be provided for the status codes you want to map.
+/// Callbacks must be provided for the status codes to be mapped.
 /// Any response not explicitly handled will be passed to [orElse].
 ///
 /// The optional [override] allows custom handling. If returned value is
