@@ -5,7 +5,7 @@ import 'package:minecraft_services_client/minecraft_services_client.dart';
 import 'package:result/result.dart';
 import 'package:test/test.dart';
 
-const _host = MinecraftServicesApiClient.baseUrlHost;
+const _host = MinecraftServicesApiClient.apiHost;
 
 void main() {
   late FakeApiClient fakeApiClient;
@@ -20,17 +20,17 @@ void main() {
     };
   });
 
-  group('authenticateWithXbox', () {
-    Future<MinecraftApiResult<MinecraftLoginResponse>> authenticateWithXbox({
-      String? xstsToken,
+  group('loginWithXbox', () {
+    Future<MinecraftApiResult<MinecraftLoginResponse>> loginWithXbox({
+      String? xstsAccessToken,
       String? xstsUserHash,
-    }) => client.authenticateWithXbox(
-      xstsToken: xstsToken ?? 'any',
+    }) => client.loginWithXbox(
+      xstsAccessToken: xstsAccessToken ?? 'any',
       xstsUserHash: xstsUserHash ?? 'any',
     );
 
     test('passes expected URL to $ApiClient', () async {
-      await authenticateWithXbox();
+      await loginWithXbox();
 
       final call = fakeApiClient.requestJsonCalls.firstOrNull;
 
@@ -38,30 +38,30 @@ void main() {
     });
 
     test('builds and passes expected JSON body to $ApiClient', () async {
-      const xstsToken = 'example_xsts_token';
+      const xstsAccessToken = 'example_xsts_token';
       const xstsUserHash = 'example_xsts_user_hash';
 
-      await authenticateWithXbox(
-        xstsToken: xstsToken,
+      await loginWithXbox(
+        xstsAccessToken: xstsAccessToken,
         xstsUserHash: xstsUserHash,
       );
 
       final call = fakeApiClient.requestJsonCalls.firstOrNull;
 
       expect(call?.body?.jsonOrNull, {
-        'identityToken': 'XBL3.0 x=$xstsUserHash;$xstsToken',
+        'identityToken': 'XBL3.0 x=$xstsUserHash;$xstsAccessToken',
       });
     });
 
     test('passes a $JsonRequestBody to $ApiClient', () async {
-      await authenticateWithXbox();
+      await loginWithXbox();
 
       final call = fakeApiClient.requestJsonCalls.firstOrNull;
       expect(call?.body, isA<JsonRequestBody>());
     });
 
     _testClientFailureResponseParse(
-      makeRequest: () => authenticateWithXbox(),
+      makeRequest: () => loginWithXbox(),
       getFakeApiClient: () => fakeApiClient,
     );
 
@@ -83,18 +83,18 @@ void main() {
           json: json,
           expectedDecodedBody: expectedResponse,
           assertion: (result) => expect(result, expectedResponse),
-          makeRequest: authenticateWithXbox,
+          makeRequest: loginWithXbox,
         );
       },
     );
 
     _testReturnValue(
-      makeRequest: authenticateWithXbox,
+      makeRequest: loginWithXbox,
       getFakeApiClient: () => fakeApiClient,
     );
 
     test('sends request once using HTTP POST', () async {
-      await authenticateWithXbox();
+      await loginWithXbox();
       fakeApiClient.expectSingleRequest(
         isRequestJsonMethod: true,
         method: HttpMethod.post,

@@ -77,4 +77,4 @@ void main() async {
   }
 }
 
-const _host = MinecraftServicesApiClient.baseUrlHost;
+const _host = MinecraftServicesApiClient.apiHost;

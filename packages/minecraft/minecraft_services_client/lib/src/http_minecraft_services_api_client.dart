@@ -6,22 +6,24 @@ final class HttpMinecraftServicesApiClient
     implements MinecraftServicesApiClient {
   HttpMinecraftServicesApiClient({
     required ApiClient apiClient,
-    String host = MinecraftServicesApiClient.baseUrlHost,
+    String host = MinecraftServicesApiClient.apiHost,
   }) : _apiClient = apiClient,
        _host = host;
 
   final ApiClient _apiClient;
   final String _host;
 
+  Uri _buildUri(String path) => Uri.https(_host, path);
+
   @override
-  Future<MinecraftApiResult<MinecraftLoginResponse>> authenticateWithXbox({
-    required String xstsToken,
+  Future<MinecraftApiResult<MinecraftLoginResponse>> loginWithXbox({
+    required String xstsAccessToken,
     required String xstsUserHash,
   }) => _apiClient.requestJson(
-    Uri.https(_host, 'authentication/login_with_xbox'),
+    _buildUri('authentication/login_with_xbox'),
     method: HttpMethod.post,
     body: RequestBody.json({
-      'identityToken': 'XBL3.0 x=$xstsUserHash;$xstsToken',
+      'identityToken': 'XBL3.0 x=$xstsUserHash;$xstsAccessToken',
     }),
     deserializeSuccess: (response) =>
         MinecraftLoginResponse.fromJson(response.body),
@@ -33,7 +35,7 @@ final class HttpMinecraftServicesApiClient
   Future<MinecraftApiResult<MinecraftEntitlementsResponse>> fetchEntitlements({
     required String accessToken,
   }) => _apiClient.requestJson(
-    Uri.https(_host, 'entitlements/mcstore'),
+    _buildUri('entitlements/mcstore'),
     method: HttpMethod.get,
     headers: _buildAuthorizationHeader(accessToken),
     deserializeSuccess: (response) =>
@@ -46,7 +48,7 @@ final class HttpMinecraftServicesApiClient
   Future<MinecraftApiResult<MinecraftProfileResponse>> fetchProfile({
     required String accessToken,
   }) => _apiClient.requestJson(
-    Uri.https(_host, 'minecraft/profile'),
+    _buildUri('minecraft/profile'),
     method: HttpMethod.get,
     headers: _buildAuthorizationHeader(accessToken),
     deserializeSuccess: (response) =>
@@ -61,7 +63,7 @@ final class HttpMinecraftServicesApiClient
     required MultipartFile skinFile,
     required MinecraftSkinVariant variant,
   }) => _apiClient.requestJson(
-    Uri.https(_host, 'minecraft/profile/skins'),
+    _buildUri('minecraft/profile/skins'),
     method: HttpMethod.post,
     headers: _buildAuthorizationHeader(accessToken),
     body: RequestBody.multipart(
