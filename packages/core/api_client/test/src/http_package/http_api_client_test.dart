@@ -96,11 +96,11 @@ void main() {
   void verifyNoMoreClientInteractions() =>
       verifyNoMoreInteractions(mockHttpClient);
 
-  void commonTests({required _CommonTestsMakeRequest makeRequest}) =>
+  void commonTests({required _CommonTestsMakeRequest sendRequest}) =>
       _commonTests(
         mockMakeRequest: (mock) async => mockSendRequest(() async => mock()),
-        makeRequest: makeRequest,
-        verifyRequest:
+        sendRequest: sendRequest,
+        verifyRequestArguments:
             ({
               method = _notProvided,
               headers = _notProvided,
@@ -157,7 +157,7 @@ void main() {
     });
 
     commonTests(
-      makeRequest: ({url, body, headers, method}) =>
+      sendRequest: ({url, body, headers, method}) =>
           request(url: url, body: body, method: method, headers: headers),
     );
 
@@ -280,7 +280,7 @@ void main() {
     );
 
     commonTests(
-      makeRequest: ({url, body, headers, method}) => requestJson(
+      sendRequest: ({url, body, headers, method}) => requestJson(
         url: url,
         body: body,
         method: method,
@@ -577,10 +577,10 @@ typedef _CommonTestsMakeRequest =
 /// Common tests for making the request, handling the transport errors and also
 /// handling the HTTP response.
 /// Callers should provide default value that's [_notProvided]
-/// instead of null, when passing a value to [verifyRequest] argument.
+/// instead of null, when passing a value to [verifyRequestArguments] argument.
 void _commonTests({
   required _MockMakeHttpRequest mockMakeRequest,
-  required _CommonTestsMakeRequest makeRequest,
+  required _CommonTestsMakeRequest sendRequest,
   required VerificationResult Function({
     Matcher? method,
     Matcher? headers,
@@ -590,13 +590,13 @@ void _commonTests({
     Matcher? multipartBodyFields,
     Matcher? multipartBodyFiles,
   })
-  verifyRequest,
+  verifyRequestArguments,
   required void Function() verifyNoMoreClientInteractions,
 }) {
   test('returns $ConnectionFailure on $SocketException', () async {
     mockMakeRequest(() async => throw const SocketException('any'));
 
-    final result = await makeRequest();
+    final result = await sendRequest();
 
     expect(result.failureOrNull, isA<ConnectionFailure<_ErrorResponse>>());
   });
@@ -604,7 +604,7 @@ void _commonTests({
   test('returns $UnexpectedFailure for unexpected cases correctly', () async {
     mockMakeRequest(() async => throw const FormatException());
 
-    final result = await makeRequest();
+    final result = await sendRequest();
 
     expect(result.failureOrNull, isA<UnexpectedFailure<_ErrorResponse>>());
   });
@@ -614,7 +614,7 @@ void _commonTests({
       'throws $ArgumentError when HTTP ${method.httpName} request is given a non-null body',
       () async {
         await expectLater(
-          makeRequest(body: const RequestBody.raw({}), method: method),
+          sendRequest(body: const RequestBody.raw({}), method: method),
           throwsArgumentError,
         );
       },
@@ -627,25 +627,25 @@ void _commonTests({
       test(
         'passes a ${http.MultipartRequest} with method "${method.httpName}" to ${http.Client}.send()',
         () async {
-          await makeRequest(
+          await sendRequest(
             body: RequestBody.multipart(_dummyMultipartRequest),
             method: method,
           );
 
-          verifyRequest(method: equals(method.httpName));
+          verifyRequestArguments(method: equals(method.httpName));
         },
       );
 
       test('passes url argument to ${http.Client}.send()', () async {
         final url = Uri.https('example.org');
 
-        await makeRequest(
+        await sendRequest(
           body: RequestBody.multipart(_dummyMultipartRequest),
           method: method,
           url: url,
         );
 
-        verifyRequest(url: equals(url));
+        verifyRequestArguments(url: equals(url));
       });
 
       test(
@@ -653,13 +653,13 @@ void _commonTests({
         () async {
           final headers = {'Authorization': 'e_example'};
 
-          await makeRequest(
+          await sendRequest(
             headers: headers,
             body: RequestBody.multipart(_dummyMultipartRequest),
             method: method,
           );
 
-          verifyRequest(headers: _containsHeaders(headers));
+          verifyRequestArguments(headers: _containsHeaders(headers));
         },
       );
 
@@ -671,12 +671,14 @@ void _commonTests({
             files: [],
           );
 
-          await makeRequest(
+          await sendRequest(
             body: RequestBody.multipart(multipartBody),
             method: method,
           );
 
-          verifyRequest(multipartBodyFields: equals(multipartBody.fields));
+          verifyRequestArguments(
+            multipartBodyFields: equals(multipartBody.fields),
+          );
         },
       );
 
@@ -689,19 +691,21 @@ void _commonTests({
             files: [MultipartFile.fromBytes('example', [])],
           );
 
-          await makeRequest(
+          await sendRequest(
             body: RequestBody.multipart(multipartBody),
             method: method,
           );
 
-          verifyRequest(multipartBodyFiles: equals(multipartBody.files));
+          verifyRequestArguments(
+            multipartBodyFiles: equals(multipartBody.files),
+          );
         },
       );
 
       test('calls ${http.Client}.send() only once', () async {
-        await makeRequest(method: method);
+        await sendRequest(method: method);
 
-        verifyRequest().called(1);
+        verifyRequestArguments().called(1);
         verifyNoMoreClientInteractions();
       });
     }
@@ -727,13 +731,13 @@ void _commonTests({
           };
           final JsonMap body = {};
 
-          await makeRequest(
+          await sendRequest(
             body: RequestBody.json(body),
             headers: passedHeaders,
             method: method,
           );
 
-          verifyRequest(headers: _containsHeaders(expectedHeaders));
+          verifyRequestArguments(headers: _containsHeaders(expectedHeaders));
         },
       );
 
@@ -744,9 +748,9 @@ void _commonTests({
           final JsonMap body = {'username': 'Steve', 'password': '123'};
           final String expectedJsonBody = jsonEncode(body);
 
-          await makeRequest(body: RequestBody.json(body), method: method);
+          await sendRequest(body: RequestBody.json(body), method: method);
 
-          verifyRequest(body: equals(expectedJsonBody));
+          verifyRequestArguments(body: equals(expectedJsonBody));
         },
       );
 
@@ -757,9 +761,9 @@ void _commonTests({
             'application/x-www-form-urlencoded': 'body fields example',
           };
 
-          await makeRequest(body: RequestBody.raw(body), method: method);
+          await sendRequest(body: RequestBody.raw(body), method: method);
 
-          verifyRequest(bodyFields: equals(body));
+          verifyRequestArguments(bodyFields: equals(body));
         },
       );
     }
@@ -768,9 +772,9 @@ void _commonTests({
       test(
         'passes a ${http.Request} with method "${method.httpName}" to ${http.Client}.send()',
         () async {
-          await makeRequest(method: method);
+          await sendRequest(method: method);
 
-          verifyRequest(method: equals(method.httpName));
+          verifyRequestArguments(method: equals(method.httpName));
         },
       );
     }
@@ -778,15 +782,15 @@ void _commonTests({
     test('forwards url argument to ${http.Client}.send()', () async {
       final url = Uri.https('example.org');
 
-      await makeRequest(url: url);
+      await sendRequest(url: url);
 
-      verifyRequest(url: equals(url));
+      verifyRequestArguments(url: equals(url));
     });
 
     test('calls ${http.Client}.send() only once', () async {
-      await makeRequest();
+      await sendRequest();
 
-      verifyRequest().called(1);
+      verifyRequestArguments().called(1);
       verifyNoMoreClientInteractions();
     });
   });
